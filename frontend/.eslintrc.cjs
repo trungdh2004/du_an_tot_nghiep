@@ -12,7 +12,10 @@ module.exports = {
 	parser: "@typescript-eslint/parser",
 	plugins: ["react-refresh", "prettier"],
 	rules: {
-		"react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
+		"react-refresh/only-export-components": [
+			"warn",
+			{ allowConstantExport: true },
+		],
 		"prettier/prettier": [
 			"warn",
 			{
@@ -35,6 +38,10 @@ module.exports = {
 				tabWidth: 2,
 				useTabs: true,
 				embeddedLanguageFormatting: "auto",
+			},
+			"error",
+			{
+				endOfLine: "auto",
 			},
 		],
 	},
