@@ -9,7 +9,6 @@ import STATUS from "../utils/status";
 import UserModel from "../models/User.Schema";
 import bcrypt from "bcrypt";
 import jwt, { VerifyErrors } from "jsonwebtoken";
-import { redis } from "../config/redis";
 import RefreshTokenModel from "../models/RefreshToken";
 
 interface PayloadToken {
