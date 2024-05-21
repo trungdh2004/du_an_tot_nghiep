@@ -8,8 +8,8 @@ function App() {
 		<Routes>
 			<Route path="/" element={<MainLayout />}></Route>
 			<Route path="/auth" element={<AuthLayout />}>
-				<Route path="/login" element={<></>} />
-				<Route path="/register" element={<></>} />
+				<Route path="login" element={<></>} />
+				<Route path="register" element={<></>} />
 			</Route>
 		</Routes>
 	);
