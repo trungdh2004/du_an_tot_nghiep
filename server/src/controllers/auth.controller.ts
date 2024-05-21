@@ -156,7 +156,7 @@ class AuthController {
     try {
       const refreshToken = req.headers?.authorization?.split(" ")[0];
       if (!refreshToken) {
-        return res.status(STATUS.AUTHORIZED).json({
+        return res.status(STATUS.AUTHENTICATOR).json({
           message: "Bạn chưa đăng nhập ",
         });
       }

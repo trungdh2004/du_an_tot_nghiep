@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv"
+import ejs from "ejs"
 
 const transporter = nodemailer.createTransport({
   host: "smtp.ethereal.email",
@@ -11,15 +12,17 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendMail = (to:string, from:string) => {
-  const mailOptions = {
-    from: from,
-    to: to,
-    subject: "Mail nhận mã OTP quên mật khẩu",
-    html: `
-    <h1>Hello!</h1>
-    <p>This is a test email sent using <b>Nodemailer</b>.</p>
-    <p><a href="https://example.com">Visit our site</a></p>
-  `,
+ejs.renderFile(__dirname + "/requestOTP.ejs", (err, template) => {
+  
+  const sendMail = (to: string, from: string) => {
+    const mailOptions = {
+      from: from,
+      to: to,
+      subject: "Mail nhận mã OTP quên mật khẩu",
+      html: template,
+    };
   };
-};
+
+  // transporter.sendMail(sen)
+});
+
