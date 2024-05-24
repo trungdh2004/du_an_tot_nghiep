@@ -10,6 +10,8 @@ import UserModel from "../models/User.Schema";
 import bcrypt from "bcrypt";
 import jwt, { VerifyErrors } from "jsonwebtoken";
 import RefreshTokenModel from "../models/RefreshToken";
+import sendToMail from "../mail/mailConfig";
+import OtpModel from "../models/Otp.schema";
 
 interface PayloadToken {
   id: any;
@@ -113,6 +115,8 @@ class AuthController {
 
       const { email, password, forgotPassword, userName } = req.body;
 
+      console.log("userName:", userName);
+
       if (password !== forgotPassword) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Nhập lại mật khẩu không trùng nhau",
@@ -134,7 +138,7 @@ class AuthController {
       const newUser = await UserModel.create({
         email,
         password: hashPassword,
-        userName: userName,
+        full_name: userName,
       });
 
       return res.status(STATUS.OK).json({
@@ -253,14 +257,153 @@ class AuthController {
           message: "Email chưa được đăng kí",
         });
       }
-      
-      
+
+      const randomOtp = Math.floor(100000 + Math.random() * 900000);
+
+      const data = {
+        otp: randomOtp,
+        email: existing.email,
+        full_name: existing.full_name,
+      };
+
+      await sendToMail(existing?.email, "OTP xác thực mật khẩu", data);
+      const now = new Date();
+
+      now.setMinutes(now.getMinutes() + 1);
+      const existingOtp = await OtpModel.findOne({
+        email: existing.email,
+      });
+
+      if (existingOtp) {
+        await OtpModel.findOneAndUpdate(
+          {
+            email: existingOtp.email,
+          },
+          {
+            userId: existing._id,
+            email: existing.email,
+            otp: randomOtp,
+            expired: now,
+            completed: false,
+          }
+        );
+      } else {
+        await OtpModel.create({
+          userId: existing._id,
+          email: existing.email,
+          otp: randomOtp,
+          expired: now,
+          completed: false,
+        });
+      }
+      return res.status(STATUS.OK).json({
+        message: "Gửi mã otp thành công mời bạn kiểm tra email",
+      });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
       });
     }
   }
+
+  async compareOtp(req: Request, res: Response) {
+    try {
+      const { otp, email } = req.body;
+      if (!otp) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa nhập mã otp",
+        });
+      }
+      if (!email) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa nhập email",
+        });
+      }
+
+      const existingEmail = await UserModel.findOne({
+        email: email,
+      });
+
+      if (!existingEmail) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Email chưa được đăng kí",
+        });
+      }
+
+      const existingOtp = await OtpModel.findOne({
+        email: existingEmail.email,
+        userId: existingEmail._id,
+      });
+
+      if (!existingOtp) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Server chưa tạo mã Otp",
+        });
+      }
+
+      const now = new Date();
+
+      if (now.getTime() > existingOtp.expired.getTime()) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Mã otp đã hết hạn sử dụng",
+        });
+      }
+
+      const check = otp === existingOtp.otp;
+
+      if (!check) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Mã Otp không đúng",
+        });
+      }
+
+      await OtpModel.findOneAndUpdate(
+        {
+          email: existingOtp.email,
+        },
+        {
+          completed: true,
+        }
+      );
+      res.status(STATUS.OK).json({
+        message: "Mã Otp đúng",
+        data: {
+          otp: existingOtp.otp,
+          email: existingOtp.email,
+          userId: existingOtp.userId,
+        },
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async updateForgotPassword(req: Request, res: Response) {
+    try {
+      const { password, confirmPassword, email } = req.body
+      
+      if (!password || !confirmPassword || !email) { 
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Mời bạn nhập đầy đủ giá trị"
+        })
+      }
+
+      const existingEmail = await UserModel.findOne({
+        email: email
+      })
+
+      if (!existingEmail) {
+        
+      }
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+  
 }
 
 export default new AuthController();
