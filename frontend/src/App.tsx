@@ -3,12 +3,15 @@ import "./App.css";
 import MainLayout from "./layout/MainLayout";
 import AuthLayout from "./layout/AuthLayout";
 import { Toaster } from "./components/ui/sonner";
+import Address from "./pages/client/address/Address";
 
 function App() {
 	return (
 		<>
 			<Routes>
-				<Route path="/" element={<MainLayout />}></Route>
+        <Route path="/" element={<MainLayout />}>
+          <Route path="address" element={<Address/> } />
+        </Route>
 				<Route path="/auth" element={<AuthLayout />}>
 					<Route path="login" element={<></>} />
 					<Route path="register" element={<></>} />
