@@ -382,28 +382,51 @@ class AuthController {
 
   async updateForgotPassword(req: Request, res: Response) {
     try {
-      const { password, confirmPassword, email } = req.body
-      
-      if (!password || !confirmPassword || !email) { 
+      const { password, confirmPassword, email } = req.body;
+
+      if (!password || !confirmPassword || !email) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Mời bạn nhập đầy đủ giá trị"
-        })
+          message: "Mời bạn nhập đầy đủ giá trị",
+        });
       }
 
       const existingEmail = await UserModel.findOne({
-        email: email
-      })
+        email: email,
+      });
 
       if (!existingEmail) {
-        
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Xảy ra lỗi khi cập nhập mật khẩu",
+        });
       }
-    } catch (error:any) {
+
+      if (password !== confirmPassword) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Mật khẩu không trùng lập",
+        });
+      }
+
+      const hashPassword = await bcrypt.hash(password, 10);
+
+      await UserModel.findOneAndUpdate(
+        {
+          email: existingEmail,
+          _id: existingEmail._id,
+        },
+        {
+          password: hashPassword,
+        }
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Cập nhập mật khẩu thành công",
+      });
+    } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
       });
     }
   }
-  
 }
 
 export default new AuthController();
