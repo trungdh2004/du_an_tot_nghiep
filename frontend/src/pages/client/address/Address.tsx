@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -36,35 +36,61 @@ const formSchema = z.object({
 	district: z.string(),
 	commune: z.string(),
 });
+
+interface ICity {
+	idProvince: string;
+	name: string;
+}
+
+interface IDistrict extends ICity {
+	idDistrict: string;
+}
+interface ICommune extends IDistrict {
+	idDistrict: string;
+}
+
 type Props = {};
 
 const Address = (props: Props) => {
+	const [citys, setCitys] = useState<ICity[] | null>(null);
+	const [districts, setDistricts] = useState<IDistrict[] | null>(null);
+	const [commune, setCommune] = useState<ICommune[] | null>(null);
 	const form = useForm({
 		resolver: zodResolver(formSchema),
 	});
+
+	useEffect(() => {
+		(async () => {
+			const { data } = await axios.get(
+				"https://api-tinh-thanh-git-main-toiyours-projects.vercel.app/province",
+			);
+			setCitys(data);
+		})();
+	}, []);
 	const onSubmit = (data: any) => {
 		console.log(data);
 	};
-	const { data: city } = useQuery({
-		queryKey: ["CITY"],
-		queryFn: async () => {
-			const data = await axios.get(
-				"https://api-tinh-thanh-git-main-toiyours-projects.vercel.app/province",
+
+	const handleOnChangeCity = async (idProvince: string) => {
+		try {
+			const { data } = await axios.get(
+				`https://api-tinh-thanh-git-main-toiyours-projects.vercel.app/district?idProvince=${idProvince}`,
 			);
-			console.log(city);
-			return data.data;
-		},
-	});
-  const { data: district } = useQuery({
-		queryKey: ["District"],
-		queryFn: async () => {
-			const data = await axios.get(
-				"https://api-tinh-thanh-git-main-toiyours-projects.vercel.app/district",
+			console.log("data:", data);
+
+			setDistricts(data);
+		} catch (error) {}
+	};
+
+	const handleOnChangeDistrict = async (idDistrict: string) => {
+		try {
+			const { data } = await axios.get(
+				`https://api-tinh-thanh-git-main-toiyours-projects.vercel.app/commune?idDistrict=${idDistrict}`,
 			);
-			console.log(district);
-			return data.data;
-		},
-	});
+			setCommune(data);
+		} catch (error) {}
+	};
+
 	return (
 		<div>
 			<Form {...form}>
@@ -126,65 +152,81 @@ const Address = (props: Props) => {
 						<FormField
 							control={form.control}
 							name="city"
-							render={({ field }) => (
-								<FormItem className="w-[180px]">
-									<Select
-                    onValueChange={field.onChange}
-										defaultValue={field.value}
-									>
-										<FormControl>
-											<SelectTrigger className="border rounded-xl">
-												<SelectValue placeholder="Select City" />
-											</SelectTrigger>
-										</FormControl>
-                    <SelectContent className="mb-2">
-                      {city?.map((city: any) => {
+							render={({ field }) => {
+								return (
+									<FormItem className="w-[180px]">
+										<Select
+											onValueChange={(e) => {
+												field.onChange(e);
+												setDistricts(null);
+												setCommune(null);
+												console.log("e:", e);
 
-                        
-                        
-                        return (
-                          <SelectItem
-                            value={city}
-                            className="border rounded-[30px]"
-                            key={city.id}
-                          >
-                            {city.name}
-                          </SelectItem>
-                        );
-                      })}
-										</SelectContent>
-									</Select>
-									<FormMessage />
-								</FormItem>
-							)}
+												handleOnChangeCity(e);
+											}}
+											defaultValue={field.value}
+										>
+											<FormControl>
+												<SelectTrigger className="border">
+													<SelectValue placeholder="Select City" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent className="">
+												{citys?.map((city: any, index: number) => {
+													return (
+														<SelectItem
+															value={city.idProvince}
+															className="border mb-3"
+															key={city.idProvince}
+														>
+															<p>{city.name}</p>
+														</SelectItem>
+													);
+												})}
+											</SelectContent>
+										</Select>
+										<FormMessage />
+									</FormItem>
+								);
+							}}
 						/>
 						<FormField
 							control={form.control}
 							name="district"
-							render={({ field }) => (
-								<FormItem className="w-[180px]">
-									<Select
-										onValueChange={field.onChange}
-										defaultValue={field.value}
-									>
-										<FormControl>
-											<SelectTrigger className="border rounded-xl">
-												<SelectValue placeholder="Select District" />
-											</SelectTrigger>
-										</FormControl>
-										<SelectContent>
-											<SelectItem value="m@example.com">
-												m@example.com
-											</SelectItem>
-											<SelectItem value="m@google.com">m@google.com</SelectItem>
-											<SelectItem value="m@support.com">
-												m@support.com
-											</SelectItem>
-										</SelectContent>
-									</Select>
-									<FormMessage />
-								</FormItem>
-							)}
+							render={({ field }) => {
+								return (
+									<FormItem className="w-[180px]">
+										<Select
+											onValueChange={(e) => {
+												field.onChange(e);
+												setCommune(null);
+												handleOnChangeDistrict(e);
+											}}
+											defaultValue={field.value}
+										>
+											<FormControl>
+												<SelectTrigger className="border">
+													<SelectValue placeholder="Select District" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												{districts?.map((district: any, index: number) => {
+													return (
+														<SelectItem
+															value={district.idDistrict}
+															className=""
+															key={district.idDistrict}
+														>
+															{district.name}
+														</SelectItem>
+													);
+												})}
+											</SelectContent>
+										</Select>
+										<FormMessage />
+									</FormItem>
+								);
+							}}
 						/>
 						<FormField
 							control={form.control}
@@ -197,17 +239,21 @@ const Address = (props: Props) => {
 									>
 										<FormControl>
 											<SelectTrigger className="border rounded-xl">
-												<SelectValue placeholder="Select Commune" />
+												<SelectValue placeholder="Select commune" />
 											</SelectTrigger>
 										</FormControl>
 										<SelectContent>
-											<SelectItem value="m@example.com">
-												m@example.com
-											</SelectItem>
-											<SelectItem value="m@google.com">m@google.com</SelectItem>
-											<SelectItem value="m@support.com">
-												m@support.com
-											</SelectItem>
+											{commune?.map((commune: any, index: number) => {
+												return (
+													<SelectItem
+														value={commune.idCommune}
+														className="border rounded-[30px] mb-3"
+														key={commune.idCommune}
+													>
+														{commune.name}
+													</SelectItem>
+												);
+											})}
 										</SelectContent>
 									</Select>
 									<FormMessage />
