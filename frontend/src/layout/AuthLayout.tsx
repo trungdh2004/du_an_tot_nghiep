@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 
 const AuthLayout = () => {
 	return (
-		<div>
+		<div className="w-full min-h-[100vh]">
 			{/*  */}
 
 			<Outlet />

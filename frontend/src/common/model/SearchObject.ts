@@ -8,3 +8,5 @@ export class BaseSearchObject {
 		Object.assign(this, value);
 	}
 }
+
+
