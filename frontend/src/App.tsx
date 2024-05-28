@@ -3,12 +3,15 @@ import "./App.css";
 import MainLayout from "./layout/MainLayout";
 import AuthLayout from "./layout/AuthLayout";
 import { Toaster } from "./components/ui/sonner";
+
 import Register from "./pages/auth/Register";
 import NotFound from "./pages/NotFound";
-import Login from "./pages/auth/Login";
 import Home from "./pages/clients/Home";
 import { useEffect } from "react";
 import useStore from "./store/home.store";
+
+import Address from "./pages/client/address/Address";
+import Login from "./pages/auth/login";
 
 function App() {
 	const { onUpdateCart } = useStore();
@@ -28,6 +31,7 @@ function App() {
 				<Route path="/" element={<MainLayout />}>
 					<Route index element={<Home />} />
 					<Route path="*" element={<NotFound />}></Route>
+					<Route path="address" element={<Address />} />
 				</Route>
 				<Route path="/auth" element={<AuthLayout />}>
 					<Route path="login" element={<Login />} />
