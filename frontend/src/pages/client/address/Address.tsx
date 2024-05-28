@@ -21,20 +21,36 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { toast } from "sonner";
+import { callCity, callCommune, callDistrict } from "@/service/address";
 
 const formSchema = z.object({
-	username: z.string().min(2, {
-		message: "Username must be at least 2 characters.",
+	username: z
+		.string({
+			message: "Bạn phải nhập họ tên",
+		})
+		.min(6, {
+			message: "Bạn phải nhập ít nhất 6 kí tự",
+		}),
+	phone: z
+		.string({
+			message: "Bạn phải nhập số điện thoại",
+		})
+		.min(10, {
+			message: "Bạn phải nhập ít nhất 10 kí tự",
+		}),
+	address: z.string({
+		message: "Bạn phải nhập địa chỉ",
 	}),
-	phone: z.string().min(11, {
-		message: "Phone must be at least 11 characters.",
+	city: z.string({
+		message: "Bạn phải chọn tên thành phố",
 	}),
-	address: z.string(),
-	city: z.string(),
-	district: z.string(),
-	commune: z.string(),
+	district: z.string({
+		message: "Bạn phải chọn tên quận/huyện",
+	}),
+	commune: z.string({
+		message: "Bạn phải chọn tên phường/xã",
+	}),
 });
 
 interface ICity {
@@ -43,10 +59,10 @@ interface ICity {
 }
 
 interface IDistrict extends ICity {
-	idDistrict: string;
+	idDistrict: string | null;
 }
 interface ICommune extends IDistrict {
-	idDistrict: string;
+	idDistrict: string | null;
 }
 
 type Props = {};
@@ -61,9 +77,7 @@ const Address = (props: Props) => {
 
 	useEffect(() => {
 		(async () => {
-			const { data } = await axios.get(
-				"https://api-tinh-thanh-git-main-toiyours-projects.vercel.app/province",
-			);
+			const { data } = await callCity();
 			setCitys(data);
 		})();
 	}, []);
@@ -73,22 +87,20 @@ const Address = (props: Props) => {
 
 	const handleOnChangeCity = async (idProvince: string) => {
 		try {
-			const { data } = await axios.get(
-				`https://api-tinh-thanh-git-main-toiyours-projects.vercel.app/district?idProvince=${idProvince}`,
-			);
-			console.log("data:", data);
-
+			const { data } = await callDistrict(idProvince);
 			setDistricts(data);
-		} catch (error) {}
+		} catch (error: any) {
+			toast.error(error.response!.data!.message);
+		}
 	};
 
 	const handleOnChangeDistrict = async (idDistrict: string) => {
 		try {
-			const { data } = await axios.get(
-				`https://api-tinh-thanh-git-main-toiyours-projects.vercel.app/commune?idDistrict=${idDistrict}`,
-			);
+			const { data } = await callCommune(idDistrict);
 			setCommune(data);
-		} catch (error) {}
+		} catch (error: any) {
+			toast.error(error.response!.data!.message);
+		}
 	};
 
 	return (
@@ -157,12 +169,14 @@ const Address = (props: Props) => {
 									<FormItem className="w-[180px]">
 										<Select
 											onValueChange={(e) => {
-												field.onChange(e);
 												setDistricts(null);
 												setCommune(null);
 												console.log("e:", e);
-
+												form.setValue("district", null);
+												form.setValue("commune", null);
 												handleOnChangeCity(e);
+
+												field.onChange(e);
 											}}
 											defaultValue={field.value}
 										>
@@ -176,7 +190,7 @@ const Address = (props: Props) => {
 													return (
 														<SelectItem
 															value={city.idProvince}
-															className="border mb-3"
+															className=""
 															key={city.idProvince}
 														>
 															<p>{city.name}</p>
@@ -199,6 +213,8 @@ const Address = (props: Props) => {
 										<Select
 											onValueChange={(e) => {
 												field.onChange(e);
+												console.log("e2", e);
+
 												setCommune(null);
 												handleOnChangeDistrict(e);
 											}}
@@ -206,7 +222,7 @@ const Address = (props: Props) => {
 										>
 											<FormControl>
 												<SelectTrigger className="border">
-													<SelectValue placeholder="Select District" />
+													<SelectValue placeholder="Select District" hidden />
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
@@ -238,7 +254,7 @@ const Address = (props: Props) => {
 										defaultValue={field.value}
 									>
 										<FormControl>
-											<SelectTrigger className="border rounded-xl">
+											<SelectTrigger className="">
 												<SelectValue placeholder="Select commune" />
 											</SelectTrigger>
 										</FormControl>
@@ -247,7 +263,7 @@ const Address = (props: Props) => {
 												return (
 													<SelectItem
 														value={commune.idCommune}
-														className="border rounded-[30px] mb-3"
+														className=""
 														key={commune.idCommune}
 													>
 														{commune.name}
