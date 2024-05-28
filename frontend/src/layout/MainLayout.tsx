@@ -9,7 +9,7 @@ const MainLayout = () => {
 			<main>
 				<Outlet />
 			</main>
-
+			
 			{/* footer */}
 		</div>
 	);
