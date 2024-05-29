@@ -22,5 +22,4 @@ export const addressValidation = Joi.object({
     idDistrict: Joi.string().required(),
   }),
   address: Joi.string().required(),
-  location: Joi.string().required(),
 });
