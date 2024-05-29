@@ -22,6 +22,10 @@ const UserSchema = new mongoose.Schema(
       min: 6,
       required: true,
     },
+    provider: {
+      type: String
+      
+    },
     avatarUrl: {
       type: String,
       default: "",
