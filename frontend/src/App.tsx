@@ -10,7 +10,7 @@ import Home from "./pages/clients/Home";
 import { useEffect } from "react";
 import useStore from "./store/home.store";
 
-import Address from "./pages/client/address/Address";
+import Address from "./pages/clients/address/Address";
 import Login from "./pages/auth/login";
 
 function App() {
