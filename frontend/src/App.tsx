@@ -9,6 +9,7 @@ import Register from "./pages/auth/Register";
 import NotFound from "./pages/NotFound";
 
 import Address from "./pages/client/address/Address";
+import Footer from "./components/client/Footer";
 function App() {
 	return (
 		<>
@@ -16,6 +17,7 @@ function App() {
 				<Route path="/" element={<MainLayout />}>
 					<Route path="*" element={<NotFound />}></Route>
 					<Route path="address" element={<Address />} />
+					<Route path="footer" element={<Footer />} />
 				</Route>
 				<Route path="/auth" element={<AuthLayout />}>
 					<Route path="login" element={<Login />} />
