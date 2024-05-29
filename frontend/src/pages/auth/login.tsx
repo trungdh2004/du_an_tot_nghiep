@@ -129,9 +129,12 @@ const Login = () => {
 							</div>
 						</div>
 
-						<span className="float-end text-blue-500 mt-2">
+						<Link
+							to={"/auth/forgot-password"}
+							className="float-end text-blue-500 mt-2 "
+						>
 							Quên mật khẩu ?
-						</span>
+						</Link>
 						<Button
 							type="submit"
 							className="w-full mt-3 mb-6 text-white text-base font-bold bg-blue-500 hover:bg-blue-400"

@@ -6,6 +6,7 @@ import { Toaster } from "./components/ui/sonner";
 import Login from "./pages/auth/login";
 import Register from "./pages/auth/Register";
 import NotFound from "./pages/NotFound";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 
 function App() {
 	return (
@@ -17,11 +18,12 @@ function App() {
 				<Route path="/auth" element={<AuthLayout />}>
 					<Route path="login" element={<Login />} />
 					<Route path="register" element={<Register />} />
+					<Route path="forgot-password" element={<ForgotPassword />} />
 				</Route>
 
 				<Route path="*" element={<NotFound />}></Route>
 			</Routes>
-			<Toaster richColors />
+			<Toaster richColors position="top-right" />
 		</>
 	);
 }

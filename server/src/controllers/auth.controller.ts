@@ -269,7 +269,7 @@ class AuthController {
       await sendToMail(existing?.email, "OTP xác thực mật khẩu", data);
       const now = new Date();
 
-      now.setMinutes(now.getMinutes() + 1);
+      now.setMinutes(now.getMinutes() + 5);
       const existingOtp = await OtpModel.findOne({
         email: existing.email,
       });
