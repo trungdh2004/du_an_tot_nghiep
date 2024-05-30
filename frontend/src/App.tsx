@@ -12,7 +12,7 @@ import { useEffect } from "react";
 import useStore from "./store/home.store";
 
 import Address from "./pages/client/address/Address";
-import Login from "./pages/auth/login";
+import Login from "./pages/auth/Login";
 
 function App() {
 	const { onUpdateCart } = useStore();
