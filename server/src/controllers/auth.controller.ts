@@ -12,6 +12,8 @@ import jwt, { VerifyErrors } from "jsonwebtoken";
 import RefreshTokenModel from "../models/RefreshToken";
 import sendToMail from "../mail/mailConfig";
 import OtpModel from "../models/Otp.schema";
+import { RequestModel } from "../interface/models";
+import { ObjectId } from "mongoose";
 
 interface PayloadToken {
   id: any;
@@ -78,11 +80,27 @@ class AuthController {
         email: existingEmail.email,
         is_admin: existingEmail.is_admin,
       });
-
-      await RefreshTokenModel.create({
+      const existingRefreshToken = await RefreshTokenModel.findOne({
         userId: existingEmail._id,
-        token: refreshToken,
       });
+
+      console.log("existingRefreshToken: ", existingRefreshToken);
+
+      if (!existingRefreshToken) {
+        await RefreshTokenModel.create({
+          userId: existingEmail._id,
+          token: refreshToken,
+        });
+      } else {
+        await RefreshTokenModel.findOneAndUpdate(
+          {
+            userId: existingEmail._id,
+          },
+          {
+            token: refreshToken,
+          }
+        );
+      }
 
       res.cookie("token", refreshToken, {
         maxAge: 1000 * 60 * 24 * 60,
@@ -158,7 +176,7 @@ class AuthController {
 
   refreshToken = async (req: Request, res: ResponseData) => {
     try {
-      const refreshToken = req.headers?.authorization?.split(" ")[0];
+      const refreshToken = req.cookies.token;
       if (!refreshToken) {
         return res.status(STATUS.AUTHENTICATOR).json({
           message: "Bạn chưa đăng nhập ",
@@ -177,8 +195,11 @@ class AuthController {
           if (!data) {
             return;
           }
+          console.log("data:", (data as PayloadToken).id);
+          console.log("refreshToken:", refreshToken);
+
           const refreshTokenDb = await RefreshTokenModel.findOne({
-            userId: (data as PayloadToken).id,
+            userId: (data as PayloadToken).id as ObjectId,
             token: refreshToken,
           });
 
@@ -187,12 +208,19 @@ class AuthController {
               message: "Mời bạn đăng nhập lại",
             });
           }
+          const payload = {
+            id: (data as PayloadToken).id,
+            email: (data as PayloadToken).email,
+            is_admin: (data as PayloadToken).is_admin,
+          };
 
-          const newAccessToken = this.generateAccessToken(data);
-          const newRefreshToken = this.generateRefreshToken(data);
-
-          res.cookie("refreshToken", newRefreshToken, {
-            maxAge: 24 * 60 * 60 * 1000,
+          const newAccessToken = await this.generateAccessToken(payload);
+          const newRefreshToken = await this.generateRefreshToken(payload);
+          await RefreshTokenModel.findByIdAndUpdate(refreshTokenDb._id, {
+            token: newRefreshToken,
+          });
+          res.cookie("token", newRefreshToken, {
+            maxAge: 24 * 60 * 60 * 1000 * 60,
             httpOnly: true,
             path: "/",
           });
@@ -210,21 +238,17 @@ class AuthController {
     }
   };
 
-  async logout(req: Request, res: Response) {
+  async logout(req: RequestModel, res: Response) {
     try {
-      const user = {
-        id: "",
-      };
-
-      if (!user) {
+      if (!req.user) {
         return res.status(STATUS.AUTHENTICATOR).json({
           message: "Bạn chưa đăng nhập",
         });
       }
 
-      await RefreshTokenModel.findOneAndDelete({ userId: user.id });
+      await RefreshTokenModel.findOneAndDelete({ userId: req.user.id });
 
-      res.cookie("refreshToken", undefined, {
+      res.cookie("token", undefined, {
         maxAge: 0,
       });
 
