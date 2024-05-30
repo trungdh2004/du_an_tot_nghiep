@@ -1,4 +1,6 @@
+import { Request } from "express";
 import { Document, Types } from "mongoose";
+import { ObjectId } from "mongodb";
 
 interface MongooseDocument extends Document<Types.ObjectId> {
   _doc: any;
@@ -18,4 +20,12 @@ export interface IUser extends MongooseDocument {
   phone: string;
   birthDay: string;
   bio: string;
+}
+
+export interface RequestModel extends Request {
+  user?: {
+    id: ObjectId;
+    is_admin: boolean;
+    email: string;
+  };
 }
