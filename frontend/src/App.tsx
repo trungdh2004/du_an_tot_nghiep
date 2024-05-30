@@ -6,6 +6,7 @@ import { Toaster } from "./components/ui/sonner";
 
 import Register from "./pages/auth/Register";
 import NotFound from "./pages/NotFound";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 import Home from "./pages/clients/Home";
 import { useEffect } from "react";
 import useStore from "./store/home.store";
@@ -36,6 +37,7 @@ function App() {
 				<Route path="/auth" element={<AuthLayout />}>
 					<Route path="login" element={<Login />} />
 					<Route path="register" element={<Register />} />
+					<Route path="forgot-password" element={<ForgotPassword />} />
 				</Route>
 
 				<Route path="*" element={<NotFound />}></Route>
