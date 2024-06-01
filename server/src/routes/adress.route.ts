@@ -1,12 +1,12 @@
 import { Router } from "express";
-import authController from "../controllers/auth.controller";
 import addressController from "../controllers/address.controller";
-import authorization from "../middlewares/authentication";
 
 const routerAddress = Router();
 
-routerAddress.get("/paddingAddress", addressController.paddingAddress);
+routerAddress.post("/paddingAddress", addressController.paddingAddress);
 routerAddress.post("/addAddress", addressController.postAddress);
 routerAddress.delete("/deleteAddress/:id", addressController.deleteAddress);
+routerAddress.put("/updateAddress/:id", addressController.updateAddress);
+routerAddress.put("/updateMain/:id", addressController.updateMainAddress);
 
 export default routerAddress;
