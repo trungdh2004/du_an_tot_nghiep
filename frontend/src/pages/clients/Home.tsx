@@ -1,12 +1,15 @@
 import ButtonCrease from "@/components/ButtonCrease";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/auth";
 import useStore from "@/store/home.store";
-import React, { useState } from "react";
 
 const Home = () => {
 	// const [index, setIndex] = useState(1);
 	const { cart } = useStore();
+	const { authUser, isLoggedIn } = useAuth();
+	console.table({
+		"Thông tin ": authUser,
+		"Trạng tháin ": isLoggedIn,
+	});
 
 	return (
 		<>

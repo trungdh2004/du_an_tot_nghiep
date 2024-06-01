@@ -1,10 +1,13 @@
+import { setItemLocal } from "@/common/localStorage";
+import OverlayViolet from "@/components/OverlayViolet";
+import { useAuth } from "@/hooks/auth";
 import { loginAccount } from "@/service/account";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { IoIosArrowRoundBack } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "../../components/ui/button";
@@ -18,8 +21,10 @@ import {
 } from "../../components/ui/form";
 import { Input } from "../../components/ui/input";
 import SignInWithFacebookOrGoogle from "./SignInWithFacebookOrGoogle";
-import OverlayViolet from "@/components/OverlayViolet";
+import { useRouterHistory } from "@/hooks/router";
 const Login = () => {
+	const navigate = useNavigate();
+	const { setAuthUser, setIsLoggedIn } = useAuth();
 	const formSchema = z.object({
 		email: z
 			.string({ required_error: "Bạn chưa  nhập email" })
@@ -40,7 +45,12 @@ const Login = () => {
 	const onSubmit = async (payload: z.infer<typeof formSchema>) => {
 		try {
 			const { data } = await loginAccount(payload);
-			// const { accessToken, user } = data;
+			console.log(data);
+			setAuthUser?.(data?.user);
+			setIsLoggedIn?.(true);
+			setItemLocal("token", data?.accessToken);
+			setItemLocal("user", data?.user);
+			useRouterHistory();
 			toast.success(data?.message);
 		} catch (error: any) {
 			console.log(error);
