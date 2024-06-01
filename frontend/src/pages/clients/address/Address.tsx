@@ -108,7 +108,7 @@ const Address = (props: Props) => {
 					{
 						headers: {
 							Authorization:
-								"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NTg0NGFkYzc1ZTk1ZDc1NzZkOWI4ZiIsImVtYWlsIjoidHV5ZW4yMDA0QGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwiaWF0IjoxNzE3MTY0Njk5LCJleHAiOjE3MTcxNjU1OTl9.hgCh9AN85V0KF1R13c3SUFeiR8SpOfrtrtvxvvgkAqk",
+								"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NTg0NGFkYzc1ZTk1ZDc1NzZkOWI4ZiIsImVtYWlsIjoidHV5ZW4yMDA0QGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwiaWF0IjoxNzE3MjU0ODEwLCJleHAiOjE3MTcyNTg0MTB9.8vFxsSAEDBwVU8wKfPsHfV6aC9dgWL8QOAZJTxoDKi8",
 						},
 					},
 				);
@@ -268,7 +268,7 @@ const Address = (props: Props) => {
 											>
 												<FormControl>
 													<SelectTrigger className="border">
-														<SelectValue placeholder="Lựa chọn quận huyện" hidden />
+														<SelectValue placeholder="Lựa chọn quận huyện"/>
 													</SelectTrigger>
 												</FormControl>
 												<SelectContent>
@@ -302,7 +302,7 @@ const Address = (props: Props) => {
 										>
 											<FormControl>
 												<SelectTrigger className="">
-													<SelectValue placeholder="Lựa chọn phường xã" hidden />
+													<SelectValue placeholder="Lựa chọn phường xã"/>
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>

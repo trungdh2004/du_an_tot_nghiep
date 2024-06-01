@@ -18,7 +18,10 @@ import {
 } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import Paginations from "@/components/common/Pagination";
+import { Button } from "@/components/ui/button";
 import PaginatedItems from "@/components/Pagination";
+
 type Props = {
 	data: any;
 };
@@ -35,7 +38,7 @@ const AddressInformation = () => {
 						`http://localhost:5000/api/v1/address/deleteAddress/${id}`,
 						{
 							headers: {
-								Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NTg0NGFkYzc1ZTk1ZDc1NzZkOWI4ZiIsImVtYWlsIjoidHV5ZW4yMDA0QGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwiaWF0IjoxNzE3MjI5OTI5LCJleHAiOjE3MTcyMzM1Mjl9.3al3ifID9yJsCYFLXWV7NjRLf2MgCk_tKlKXYszZhKY`,
+								Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NTg0NGFkYzc1ZTk1ZDc1NzZkOWI4ZiIsImVtYWlsIjoidHV5ZW4yMDA0QGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwiaWF0IjoxNzE3MjU0ODEwLCJleHAiOjE3MTcyNTg0MTB9.8vFxsSAEDBwVU8wKfPsHfV6aC9dgWL8QOAZJTxoDKi8`,
 							},
 						},
 					);
@@ -63,7 +66,7 @@ const AddressInformation = () => {
 			},
 			{
 				headers: {
-					Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NTg0NGFkYzc1ZTk1ZDc1NzZkOWI4ZiIsImVtYWlsIjoidHV5ZW4yMDA0QGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwiaWF0IjoxNzE3MjI5OTI5LCJleHAiOjE3MTcyMzM1Mjl9.3al3ifID9yJsCYFLXWV7NjRLf2MgCk_tKlKXYszZhKY`,
+					Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NTg0NGFkYzc1ZTk1ZDc1NzZkOWI4ZiIsImVtYWlsIjoidHV5ZW4yMDA0QGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwiaWF0IjoxNzE3MjU0ODEwLCJleHAiOjE3MTcyNTg0MTB9.8vFxsSAEDBwVU8wKfPsHfV6aC9dgWL8QOAZJTxoDKi8`,
 				},
 			},
 		);
@@ -79,7 +82,6 @@ const AddressInformation = () => {
 		return (
 			<div className="flex flex-col space-y-3">
 				<Skeleton className="h-[125px] w-full rounded-xl" />
-				
 			</div>
 		);
 	if (isError)
@@ -119,7 +121,7 @@ const AddressInformation = () => {
 				})}
 			</div>
 			<div>
-				<Pagination>
+				{/* <Pagination>
 					<PaginationContent>
 						<PaginationItem>
 							<button
@@ -139,9 +141,9 @@ const AddressInformation = () => {
 							);
 						})}
 
-						{/* <PaginationItem>
+						<PaginationItem>
 							<PaginationEllipsis />
-						</PaginationItem> */}
+						</PaginationItem>
 
 						<PaginationItem>
 							<button
@@ -154,8 +156,14 @@ const AddressInformation = () => {
 							</button>
 						</PaginationItem>
 					</PaginationContent>
-				</Pagination>
-				<PaginatedItems itemsPerPage={2} />
+				</Pagination> */}
+				<Paginations
+					pageCount={data.totalPage}
+          handlePageClick={(event: any) => {
+            console.log(event.selected);         
+            setPageIndex(event.selected + 1)  
+					}}
+				/>
 			</div>
 		</div>
 	);
