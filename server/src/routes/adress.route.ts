@@ -5,7 +5,7 @@ import authorization from "../middlewares/authentication";
 
 const routerAddress = Router();
 
-routerAddress.get("/paddingAddress", addressController.paddingAddress);
+routerAddress.post("/paddingAddress", addressController.paddingAddress);
 routerAddress.post("/addAddress", addressController.postAddress);
 routerAddress.delete("/deleteAddress/:id", addressController.deleteAddress);
 

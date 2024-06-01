@@ -28,7 +28,7 @@ interface ResponseData extends Response {
 class AuthController {
   async generateAccessToken(value: PayloadToken | object | string) {
     return jwt.sign(value, process.env.SECRET_ACCESSTOKEN!, {
-      expiresIn: "15m",
+      expiresIn: "1h",
     });
   }
   async generateRefreshToken(value: PayloadToken | object | string) {

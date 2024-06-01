@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from "react";
 import { CiCircleMinus } from "react-icons/ci";
 import {
 	Pagination,
@@ -9,21 +9,95 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from "@/components/ui/pagination";
+import axios from "axios";
+import {
+	keepPreviousData,
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from "@tanstack/react-query";
+import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
+import PaginatedItems from "@/components/Pagination";
 type Props = {
-  data: any
-}
+	data: any;
+};
 
-const AddressInformation = ({ data }: Props) => {
-  console.log(data);
-  return (
+const AddressInformation = () => {
+	const [pageIndex, setPageIndex] = useState(1);
+	const [pageSize, setPageSize] = useState(5);
+	const queryClient = useQueryClient();
+	const { mutate } = useMutation({
+		mutationFn: async (id: string | number) => {
+			try {
+				if (window.confirm("Are you sure you want to delete")) {
+					const { data } = await axios.delete(
+						`http://localhost:5000/api/v1/address/deleteAddress/${id}`,
+						{
+							headers: {
+								Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NTg0NGFkYzc1ZTk1ZDc1NzZkOWI4ZiIsImVtYWlsIjoidHV5ZW4yMDA0QGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwiaWF0IjoxNzE3MjI5OTI5LCJleHAiOjE3MTcyMzM1Mjl9.3al3ifID9yJsCYFLXWV7NjRLf2MgCk_tKlKXYszZhKY`,
+							},
+						},
+					);
+					toast.success("Bạn xóa địa chỉ thành công");
+					return data;
+				}
+			} catch (error: any) {
+				toast.error(error.response!.data!.message);
+			}
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["address", pageIndex],
+			});
+		},
+		onError: (error) => {
+			console.log(error);
+		},
+	});
+	const fetchAddress = async (page: any) => {
+		const response = await axios.post(
+			`http://localhost:5000/api/v1/address/paddingAddress`,
+			{
+				pageIndex: page,
+			},
+			{
+				headers: {
+					Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NTg0NGFkYzc1ZTk1ZDc1NzZkOWI4ZiIsImVtYWlsIjoidHV5ZW4yMDA0QGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwiaWF0IjoxNzE3MjI5OTI5LCJleHAiOjE3MTcyMzM1Mjl9.3al3ifID9yJsCYFLXWV7NjRLf2MgCk_tKlKXYszZhKY`,
+				},
+			},
+		);
+		return response.data;
+	};
+	const { isPending, isError, error, data, isFetching, isPlaceholderData } =
+		useQuery({
+			queryKey: ["address", pageIndex],
+			queryFn: () => fetchAddress(pageIndex),
+			placeholderData: keepPreviousData,
+		});
+	if (isPending)
+		return (
+			<div className="flex flex-col space-y-3">
+				<Skeleton className="h-[125px] w-full rounded-xl" />
+				
+			</div>
+		);
+	if (isError)
+		return (
+			<div className="flex flex-col space-y-3">
+				<Skeleton className="h-[125px] w-full rounded-xl" />
+			</div>
+		);
+	const totalPage = [...Array(data.totalPage)].map((_, i) => i + 1);
+	return (
 		<div className="flex flex-col gap-2 max-w-4xl px-auto w-full">
 			<h2 className="text-black font-semibold">Địa chỉ của bạn</h2>
 			<div className="flex flex-col gap-5 w-full">
-				{data?.map((address: any) => {
+				{data.content?.map((address: any, index: number) => {
 					return (
 						<div
 							className=" w-full border p-5 bg-slate-100 rounded-xl grid grid-cols-1 gap-10 sm:grid-cols-3"
-							key={address.city.idProvince}
+							key={index}
 						>
 							<div className="flex flex-col gap-2 sm:w-20px col-span-2">
 								<h2 className="text-[14px]">
@@ -36,7 +110,9 @@ const AddressInformation = ({ data }: Props) => {
 								<p className="text-[14px]">{address.address}</p>
 							</div>
 							<div className="flex justify-center items-center">
-								<CiCircleMinus className="text-[30px] text-gray-400" />
+								<button onClick={() => mutate(address._id)}>
+									<CiCircleMinus className="text-[30px] text-gray-400" />
+								</button>
 							</div>
 						</div>
 					);
@@ -46,25 +122,43 @@ const AddressInformation = ({ data }: Props) => {
 				<Pagination>
 					<PaginationContent>
 						<PaginationItem>
-							<PaginationPrevious href="#" />
+							<button
+								onClick={() => setPageIndex((old: any) => Math.max(old - 1, 1))}
+								disabled={pageIndex === 1}
+							>
+								<PaginationPrevious />
+							</button>
 						</PaginationItem>
-						<PaginationItem>
-							<PaginationLink href="#">1</PaginationLink>
-						</PaginationItem>
-						<PaginationItem>
+						{totalPage.map((page: any) => {
+							return (
+								<PaginationItem key={page}>
+									<PaginationLink onClick={() => setPageIndex(page)}>
+										{page}
+									</PaginationLink>
+								</PaginationItem>
+							);
+						})}
+
+						{/* <PaginationItem>
 							<PaginationEllipsis />
-						</PaginationItem>
+						</PaginationItem> */}
+
 						<PaginationItem>
-							<PaginationLink href="#">3</PaginationLink>
-						</PaginationItem>
-						<PaginationItem>
-							<PaginationNext href="#" />
+							<button
+								onClick={() => setPageIndex((old) => old + 1)}
+								disabled={pageIndex === data.totalPage}
+								// Disable the Next Page button until we know a next page is available
+								// disabled={isPlaceholderData || !data?.hasMore}
+							>
+								<PaginationNext />
+							</button>
 						</PaginationItem>
 					</PaginationContent>
 				</Pagination>
+				<PaginatedItems itemsPerPage={2} />
 			</div>
 		</div>
 	);
-}
+};
 
-export default AddressInformation
+export default AddressInformation;

@@ -25,6 +25,8 @@ import {
 import { toast } from "sonner";
 import { callCity, callCommune, callDistrict } from "@/service/address";
 import AddressInformation from "./AddressInformation";
+import axios from "axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const formSchema = z.object({
 	username: z
@@ -76,7 +78,8 @@ type Props = {};
 const Address = (props: Props) => {
 	const [citys, setCitys] = useState<ICity[] | null>(null);
 	const [districts, setDistricts] = useState<IDistrict[] | null>(null);
-	const [commune, setCommune] = useState<ICommune[] | null>(null);
+  const [commune, setCommune] = useState<ICommune[] | null>(null);
+  const queryClient = useQueryClient();
 	const form = useForm({
 		resolver: zodResolver(formSchema),
 	});
@@ -87,50 +90,44 @@ const Address = (props: Props) => {
 			setCitys(data);
 		})();
   }, []);
-  let product: any = [
-		{
-			username: "admin1",
-			phone: "0326892004",
-			address: "Canh Nậu Thạch Thất Hà Tây",
-			city: { idProvince: "08", name: "Tỉnh Tuyên Quang" },
-			district: {
-				idProvince: "08",
-				idDistrict: "070",
-				name: "Thành phố Tuyên Quang",
-			},
-			commune: { idDistrict: "070", idCommune: "02521", name: "Xã Thái Long" },
-		},
-		{
-			username: "tuyennvph39165@fpt.edu.vn",
-			phone: "0326892004",
-			address: "Canh Nậu Thạch Thất Hà Tây",
-			city: { idProvince: "01", name: "Thành phố Hà Nội" },
-			district: {
-				idProvince: "01",
-				idDistrict: "276",
-				name: "Huyện Thạch Thất",
-			},
-			commune: { idDistrict: "276", idCommune: "09973", name: "Xã Canh Nậu" },
-		},
-	];
-  console.log(product);
-  
-  const onSubmit = (data: any) => {
+  const onSubmit =(dataForm: any) => {
     
-    const city = citys?.find(city => city.idProvince === data.city)
-    const district = districts?.find(district => district.idDistrict === data.district)
-    const communes = commune?.find(commune => commune.idCommune === data.commune)
-    let dataNew = { username: data.username, phone: data.phone, address: data.address, city: city, district: district, commune: communes }
-    console.log(dataNew);
-    product.push(...product,dataNew);
-    console.log(product);
+    const city = citys?.find(city => city.idProvince === dataForm.city)
+    const district = districts?.find(district => district.idDistrict === dataForm.district)
+    const communes = commune?.find(commune => commune.idCommune === dataForm.commune)
+    let dataNew = { username: dataForm.username, phone: dataForm.phone, address: dataForm.address, city: city, district: district, commune: communes }
+    mutate(dataNew)
     
-    // console.log(city);
-    
-    // console.log(data);
-    toast.success
 	};
-
+  const { mutate } = useMutation({
+		mutationFn: async (dataNew: any) => {
+			try {
+				const { data } = await axios.post(
+					`http://localhost:5000/api/v1/address/addAddress`,
+					dataNew,
+					{
+						headers: {
+							Authorization:
+								"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NTg0NGFkYzc1ZTk1ZDc1NzZkOWI4ZiIsImVtYWlsIjoidHV5ZW4yMDA0QGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwiaWF0IjoxNzE3MTY0Njk5LCJleHAiOjE3MTcxNjU1OTl9.hgCh9AN85V0KF1R13c3SUFeiR8SpOfrtrtvxvvgkAqk",
+						},
+					},
+				);
+				console.log(data);
+				toast.success("Bạn thêm địa chỉ thành công");
+			} catch (error: any) {
+				toast.error(error.response!.data!.message);
+			}
+		},
+    onSuccess: () => {
+      form.reset();
+			queryClient.invalidateQueries({
+				queryKey: ["address"],
+			});
+		},
+		onError: () => {
+			toast.error("Bạn thêm địa chỉ thất bại");
+		},
+	});
 	const handleOnChangeCity = async (idProvince: string) => {
 		try {
 			const { data } = await callDistrict(idProvince);
@@ -332,7 +329,7 @@ const Address = (props: Props) => {
 						</Button>
 					</form>
 				</Form>
-				<AddressInformation data={product} />
+				<AddressInformation/>
 			</div>
 		</div>
 	);

@@ -21,4 +21,8 @@ export const callCity = async () => {
 		"https://api-tinh-thanh-git-main-toiyours-projects.vercel.app/province",
   );
   return data
- }
+}
+ 
+export const addAddress = async () => {
+  
+}

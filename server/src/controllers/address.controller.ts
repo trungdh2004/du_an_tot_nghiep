@@ -12,20 +12,18 @@ class AddressController {
     try {
       const { pageIndex, pageSize } = req.body;
 
-      let limit = pageSize || 10;
-      let skip = (pageIndex - 1) * limit || 1;
+      let limit = pageSize || 5;
+      let skip = (pageIndex - 1) * limit || 0;
 
       const address = await AddressModel.find()
         // .populate("user")
-        .skip(skip - 1)
+        .skip(skip)
         .limit(limit);
       const addressLength = await AddressModel.countDocuments();
-
       const totalPage =
         addressLength === 0 ? 0 : Math.ceil(addressLength / limit);
       const totalOptionPage = address.length;
       const totalAllOptions = addressLength;
-
       const result = {
         pageIndex: pageIndex,
         pageSize: limit,
