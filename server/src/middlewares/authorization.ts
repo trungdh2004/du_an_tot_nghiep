@@ -11,7 +11,7 @@ interface PayloadToken {
 
 const authorization = async (req: Request, res: Response,next:NextFunction) => {
     try {
-        const token = req.headers.authorization?.split(" ")[0]
+        const token = req.headers.authorization?.split(" ")[1]
         
         if (!token) {
             return res.status(STATUS.AUTHENTICATOR).json({
@@ -21,7 +21,7 @@ const authorization = async (req: Request, res: Response,next:NextFunction) => {
         }
 
         jwt.verify(token, process.env.SECRET_ACCESSTOKEN!,async (err:VerifyErrors | null, data?:object | string) => {
-            if (!err) {
+            if (err) {
                 return res.status(STATUS.AUTHENTICATOR).json({
                     message:"Token đã hết hạn mời bạn đăng nhập lại"
                 })
