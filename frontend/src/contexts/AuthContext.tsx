@@ -1,4 +1,6 @@
 import { getItemLocal } from "@/common/localStorage";
+import { currentAccount } from "@/service/account";
+import { AxiosError } from "axios";
 import {
 	createContext,
 	Dispatch,
@@ -7,6 +9,7 @@ import {
 	useEffect,
 	useState,
 } from "react";
+import { toast } from "sonner";
 export interface IUser {
 	avatarUrl?: string;
 	blocked_at?: boolean;
@@ -36,14 +39,20 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const value = { authUser, setAuthUser, isLoggedIn, setIsLoggedIn };
 	useEffect(() => {
-		const user = getItemLocal("user");
-		if (user) {
-			setAuthUser(user);
-			setIsLoggedIn(true);
-		} else {
-			setAuthUser(undefined);
-			setIsLoggedIn(false);
-		}
+		(async () => {
+			const token = getItemLocal("token");
+			if (token) {
+				try {
+					const { data } = await currentAccount();
+					setAuthUser(data?.data);
+					toast.success(data?.message);
+				} catch (error) {
+					if (error instanceof AxiosError) {
+						toast.success(error.response?.data?.message);
+					}
+				}
+			}
+		})();
 	}, []);
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

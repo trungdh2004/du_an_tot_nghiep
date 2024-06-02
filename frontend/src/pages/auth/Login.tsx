@@ -22,8 +22,9 @@ import {
 import { Input } from "../../components/ui/input";
 import SignInWithFacebookOrGoogle from "./SignInWithFacebookOrGoogle";
 import { useRouterHistory } from "@/hooks/router";
+import { AxiosError } from "axios";
 const Login = () => {
-	const navigate = useNavigate();
+	const routerHistory = useRouterHistory();
 	const { setAuthUser, setIsLoggedIn } = useAuth();
 	const formSchema = z.object({
 		email: z
@@ -49,13 +50,12 @@ const Login = () => {
 			setAuthUser?.(data?.user);
 			setIsLoggedIn?.(true);
 			setItemLocal("token", data?.accessToken);
-			setItemLocal("user", data?.user);
-			useRouterHistory();
 			toast.success(data?.message);
-		} catch (error: any) {
-			console.log(error);
-
-			toast.error(error.response!.data?.message);
+			routerHistory();
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				toast.success(error.response?.data?.message);
+			}
 		}
 	};
 	return (

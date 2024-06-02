@@ -20,3 +20,11 @@ export const updateForgotPassword = (data: any) => {
 	const uri = "/auth/updateForgotPassword";
 	return instance.post(uri, data);
 };
+export const currentAccount = () => {
+	const uri = "/auth/current-user";
+	return instance.get(uri);
+};
+export const socialUser = (data: any) => {
+	const uri = "/auth/social-user";
+	return instance.post(uri, data);
+};

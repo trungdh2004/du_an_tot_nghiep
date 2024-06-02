@@ -27,6 +27,7 @@
     "clsx": "^2.1.1",
     "dotenv": "^16.4.5",
     "firebase": "^10.12.1",
+    "firebase-tools": "^13.10.2",
     "input-otp": "^1.2.4",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.378.0",
