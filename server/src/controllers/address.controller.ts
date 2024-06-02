@@ -8,18 +8,24 @@ import { RequestModel } from "../interface/models";
 import { ObjectId } from "mongoose";
 
 class AddressController {
-  async paddingAddress(req: Request, res: Response) {
+  // theo người dùng
+  async paddingAddress(req: RequestModel, res: Response) {
     try {
       const { pageIndex, pageSize } = req.body;
-
-      let limit = pageSize || 2;
+      const user = req.user;
+      let limit = pageSize || 5;
       let skip = (pageIndex - 1) * limit || 0;
 
-      const address = await AddressModel.find()
+      const address = await AddressModel.find({
+        user: user?.id,
+      })
         // .populate("user")
         .skip(skip)
         .limit(limit);
-      const addressLength = await AddressModel.countDocuments();
+      const addressLength = await AddressModel.countDocuments({
+        user: user?.id,
+      });
+
       const totalPage =
         addressLength === 0 ? 0 : Math.ceil(addressLength / limit);
       const totalOptionPage = address.length;
@@ -126,6 +132,112 @@ class AddressController {
 
       return res.status(STATUS.OK).json({
         message: "Xóa địa chỉ thành công",
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async updateMainAddress(req: RequestModel, res: Response) {
+    try {
+      const user = req.user;
+
+      const { id } = req.params;
+
+      if (!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn hay chọn giá trị bạn muốn mặc định",
+        });
+      }
+
+      const existingAddress = await AddressModel.findById(id);
+
+      if (!existingAddress) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có địa chỉ nào phù hợp",
+        });
+      }
+
+      await AddressModel.findOneAndUpdate(
+        {
+          user: user?.id,
+          is_main: true,
+        },
+        {
+          is_main: false,
+        }
+      );
+
+      const updateMainAddress = await AddressModel.findByIdAndUpdate(
+        id,
+        {
+          is_main: true,
+        },
+        { new: true }
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Thay đổi địa chỉ mặc định thành công",
+        data: updateMainAddress,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async updateAddress(req: RequestModel, res: Response) {
+    try {
+      const { error } = addressValidation.validate(req.body);
+      if (error) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: error.details[0].message,
+        });
+      }
+
+      const { username, phone, city, district, commune, address }: IAddress =
+        req.body;
+      const { id } = req.params;
+      if (!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn địa chỉ ",
+        });
+      }
+
+      const existingAddress = await AddressModel.findById(id);
+
+      if (!existingAddress) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có địa chỉ nào phù hợp ",
+        });
+      }
+
+      const location = `${commune?.name},${district?.name},${city?.name}`;
+      if (!req.user) {
+        return res.status(STATUS.AUTHENTICATOR).json({
+          message: "Mời bạn đăng nhập",
+        });
+      }
+      const newAddress = await AddressModel.findByIdAndUpdate(
+        existingAddress._id,
+        {
+          username,
+          phone,
+          city,
+          district,
+          commune,
+          address,
+          location,
+        },
+        { new: true }
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Chỉnh sửa địa chỉ thành công",
+        data: newAddress,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({

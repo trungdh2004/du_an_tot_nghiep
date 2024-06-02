@@ -84,8 +84,6 @@ class AuthController {
         userId: existingEmail._id,
       });
 
-      console.log("existingRefreshToken: ", existingRefreshToken);
-
       if (!existingRefreshToken) {
         await RefreshTokenModel.create({
           userId: existingEmail._id,
@@ -132,8 +130,6 @@ class AuthController {
       }
 
       const { email, password, forgotPassword, userName } = req.body;
-
-      console.log("userName:", userName);
 
       if (password !== forgotPassword) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -195,8 +191,6 @@ class AuthController {
           if (!data) {
             return;
           }
-          console.log("data:", (data as PayloadToken).id);
-          console.log("refreshToken:", refreshToken);
 
           const refreshTokenDb = await RefreshTokenModel.findOne({
             userId: (data as PayloadToken).id as ObjectId,
@@ -444,6 +438,31 @@ class AuthController {
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập mật khẩu thành công",
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async currentUser(req: RequestModel, res: Response) {
+    try {
+      const user = req.user;
+
+      const existingUser = await UserModel.findById(user?.id).select(
+        "-password"
+      );
+
+      if (!existingUser) {
+        return res.status(STATUS.AUTHENTICATOR).json({
+          message: "Không lấy được giá trị",
+        });
+      }
+
+      return res.status(STATUS.OK).json({
+        message: "Lấy thông tin thành công",
+        data: existingUser,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({

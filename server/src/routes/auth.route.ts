@@ -12,5 +12,7 @@ routerAuth.post("/compareOtp", authController.compareOtp);
 routerAuth.post("/updateForgotPassword", authController.updateForgotPassword);
 routerAuth.post("/refreshToken", authController.refreshToken);
 routerAuth.post("/logout", authorization, authController.logout);
+// current
+routerAuth.get("/current-user", authorization, authController.currentUser);
 
 export default routerAuth;

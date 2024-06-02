@@ -16,7 +16,7 @@ const authorization = async (
   next: NextFunction
 ) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
+    const token = req.headers.authorization?.split(" ")[1];    
 
     if (!token) {
       return res.status(STATUS.AUTHENTICATOR).json({
@@ -49,6 +49,7 @@ const authorization = async (
           email: existingUser.email,
           is_admin: existingUser.is_admin,
         };
+
         next();
       }
     );
