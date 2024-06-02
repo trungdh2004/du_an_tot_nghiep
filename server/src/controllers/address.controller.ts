@@ -140,6 +140,53 @@ class AddressController {
     }
   }
 
+  async getAddressById(req: RequestModel, res: Response) {
+    try {
+      const { id } = req.params;
+      const user = req.user;
+
+      if (!user) {
+        return res.status(STATUS.AUTHENTICATOR).json({
+          message: "Bạn chưa đăng nhập",
+        });
+      }
+
+      if (!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa truyền id của địa chỉ",
+        });
+      }
+
+      const existingAddress = await AddressModel.findById<IAddress>(
+        id
+      ).populate("user");
+
+      console.log("user:", existingAddress?.user);
+
+      if (!existingAddress) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có địa chỉ thỏa mãn",
+        });
+      }
+
+      const userID = existingAddress.user._id;
+
+      if (!userID || userID !== user?.id) {
+        return res.status(STATUS.OK).json({
+          message: "Bạn không có quyền lấy địa chỉ",
+        });
+      }
+      return res.status(STATUS.OK).json({
+        message: "Lấy địa chỉ thành công",
+        data: existingAddress,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
   async updateMainAddress(req: RequestModel, res: Response) {
     try {
       const user = req.user;

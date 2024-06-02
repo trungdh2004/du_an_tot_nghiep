@@ -16,7 +16,7 @@ const authorization = async (
   next: NextFunction
 ) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];    
+    const token = req.headers.authorization?.split(" ")[1];
 
     if (!token) {
       return res.status(STATUS.AUTHENTICATOR).json({
@@ -29,8 +29,17 @@ const authorization = async (
       process.env.SECRET_ACCESSTOKEN!,
       async (err: VerifyErrors | null, data?: object | string) => {
         if (err) {
+          let message = "Lỗi token";
+
+          if (err.message === "invalid token") {
+            message = "Token không hợp lệ";
+          }
+          if (err.message === "jwt expired") {
+            message = "Token đã hết hạn";
+          }
+
           return res.status(STATUS.AUTHENTICATOR).json({
-            message: "Token đã hết hạn mời bạn đăng nhập lại",
+            message: message,
           });
         }
 

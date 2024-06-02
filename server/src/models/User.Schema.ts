@@ -20,11 +20,15 @@ const UserSchema = new mongoose.Schema(
     password: {
       type: String,
       min: 6,
-      required: true,
+      // required: true,
     },
     provider: {
-      type: String
-      
+      type: String,
+      default: null,
+    },
+    uid: {
+      type: String,
+      default: null,
     },
     avatarUrl: {
       type: String,

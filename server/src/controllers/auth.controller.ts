@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import {
   loginFormValidation,
   registerForm,
+  socialUserValidation,
 } from "../validation/auth.validation";
 import STATUS from "../utils/status";
 import UserModel from "../models/User.Schema";
@@ -12,7 +13,7 @@ import jwt, { VerifyErrors } from "jsonwebtoken";
 import RefreshTokenModel from "../models/RefreshToken";
 import sendToMail from "../mail/mailConfig";
 import OtpModel from "../models/Otp.schema";
-import { RequestModel } from "../interface/models";
+import { IUser, RequestModel } from "../interface/models";
 import { ObjectId } from "mongoose";
 
 interface PayloadToken {
@@ -165,10 +166,135 @@ class AuthController {
       });
     }
   }
-  async socialUser(req: Request, res: Response) {
+  socialUser = async (req: Request, res: Response) => {
     try {
-    } catch (error) {}
-  }
+      const { error } = socialUserValidation.validate(req.body);
+      if (error) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: error.details[0].message,
+        });
+      }
+      const {
+        email,
+        first_name,
+        last_name,
+        full_name,
+        picture,
+        uid,
+        provider,
+      } = req.body;
+
+      const existingEmail = await UserModel.findOne<IUser>({
+        email,
+      });
+
+      if (existingEmail) {
+        if (existingEmail.uid === uid) {
+          const accessToken = await this.generateAccessToken({
+            id: existingEmail._id,
+            email: existingEmail.email,
+            is_admin: existingEmail.is_admin,
+          });
+          const refreshToken = await this.generateRefreshToken({
+            id: existingEmail._id,
+            email: existingEmail.email,
+            is_admin: existingEmail.is_admin,
+          });
+
+          const existingRefreshToken = await RefreshTokenModel.findOne({
+            userId: existingEmail._id,
+          });
+
+          if (!existingRefreshToken) {
+            await RefreshTokenModel.create({
+              userId: existingEmail._id,
+              token: refreshToken,
+            });
+          } else {
+            await RefreshTokenModel.findOneAndUpdate(
+              {
+                userId: existingEmail._id,
+              },
+              {
+                token: refreshToken,
+              }
+            );
+          }
+
+          res.cookie("token", refreshToken, {
+            maxAge: 1000 * 60 * 24 * 60,
+            httpOnly: true,
+            path: "/",
+          });
+
+          return res.status(STATUS.OK).json({
+            message: "Đăng nhập thành công",
+            accessToken: accessToken,
+            user: existingEmail,
+          });
+        }
+
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Email đã có người đăng kí",
+        });
+      }
+
+      const newUser = await UserModel.create({
+        email,
+        full_name,
+        first_name,
+        last_name,
+        uid,
+        provider,
+        avatarUrl: picture,
+      });
+      const accessToken = await this.generateAccessToken({
+        id: newUser._id,
+        email: newUser.email,
+        is_admin: newUser.is_admin,
+      });
+      const refreshToken = await this.generateRefreshToken({
+        id: newUser._id,
+        email: newUser.email,
+        is_admin: newUser.is_admin,
+      });
+      const existingRefreshToken = await RefreshTokenModel.findOne({
+        userId: newUser._id,
+      });
+
+      if (!existingRefreshToken) {
+        await RefreshTokenModel.create({
+          userId: newUser._id,
+          token: refreshToken,
+        });
+      } else {
+        await RefreshTokenModel.findOneAndUpdate(
+          {
+            userId: newUser._id,
+          },
+          {
+            token: refreshToken,
+          }
+        );
+      }
+
+      res.cookie("token", refreshToken, {
+        maxAge: 1000 * 60 * 24 * 60,
+        httpOnly: true,
+        path: "/",
+      });
+
+      return res.status(STATUS.OK).json({
+        message: "Đăng nhập thành công",
+        accessToken: accessToken,
+        user: newUser,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  };
 
   refreshToken = async (req: Request, res: ResponseData) => {
     try {
