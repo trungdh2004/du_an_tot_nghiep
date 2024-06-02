@@ -54,7 +54,7 @@ const Login = () => {
 			routerHistory();
 		} catch (error) {
 			if (error instanceof AxiosError) {
-				toast.success(error.response?.data?.message);
+				toast.error(error.response?.data?.message);
 			}
 		}
 	};
