@@ -1,3 +1,5 @@
+import { IUser } from "./models";
+
 export interface IAddress {
   username: string;
   phone: string;
@@ -15,5 +17,6 @@ export interface IAddress {
     idCommune: string;
     idDistrict: String;
   };
+  user: IUser;
   address: string;
 }

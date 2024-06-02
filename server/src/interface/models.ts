@@ -20,6 +20,8 @@ export interface IUser extends MongooseDocument {
   phone: string;
   birthDay: string;
   bio: string;
+  uid: string;
+  provider: string;
 }
 
 export interface RequestModel extends Request {
