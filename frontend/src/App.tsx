@@ -13,17 +13,25 @@ import useStore from "./store/home.store";
 
 import Address from "./pages/client/address/Address";
 import Login from "./pages/auth/Login";
+import instance from "./config/instance";
+import axios from "axios";
 
 function App() {
 	const { onUpdateCart } = useStore();
 
 	useEffect(() => {
-		const data = {
-			quantity: 1,
-			name: "sp1",
-		};
+		(async () => {
+			const { data } = await axios.post(
+				`${process.env.SERVER_URL}/auth/refreshToken`,
+				{},
+				{
+					withCredentials: true,
+				},
+			);
 
-		onUpdateCart(data);
+			instance.defaults.headers.common["Authorization"] =
+				"Bearer " + data.accessToken;
+		})();
 	}, []);
 
 	return (
