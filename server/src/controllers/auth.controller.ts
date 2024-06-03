@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import {
   loginFormValidation,
   registerForm,
+  socialUserValidation,
 } from "../validation/auth.validation";
 import STATUS from "../utils/status";
 import UserModel from "../models/User.Schema";
@@ -12,6 +13,8 @@ import jwt, { VerifyErrors } from "jsonwebtoken";
 import RefreshTokenModel from "../models/RefreshToken";
 import sendToMail from "../mail/mailConfig";
 import OtpModel from "../models/Otp.schema";
+import { IUser, RequestModel } from "../interface/models";
+import { ObjectId } from "mongoose";
 
 interface PayloadToken {
   id: any;
@@ -26,7 +29,7 @@ interface ResponseData extends Response {
 class AuthController {
   async generateAccessToken(value: PayloadToken | object | string) {
     return jwt.sign(value, process.env.SECRET_ACCESSTOKEN!, {
-      expiresIn: "15m",
+      expiresIn: "1h",
     });
   }
   async generateRefreshToken(value: PayloadToken | object | string) {
@@ -78,11 +81,25 @@ class AuthController {
         email: existingEmail.email,
         is_admin: existingEmail.is_admin,
       });
-
-      await RefreshTokenModel.create({
+      const existingRefreshToken = await RefreshTokenModel.findOne({
         userId: existingEmail._id,
-        token: refreshToken,
       });
+
+      if (!existingRefreshToken) {
+        await RefreshTokenModel.create({
+          userId: existingEmail._id,
+          token: refreshToken,
+        });
+      } else {
+        await RefreshTokenModel.findOneAndUpdate(
+          {
+            userId: existingEmail._id,
+          },
+          {
+            token: refreshToken,
+          }
+        );
+      }
 
       res.cookie("token", refreshToken, {
         maxAge: 1000 * 60 * 24 * 60,
@@ -114,8 +131,6 @@ class AuthController {
       }
 
       const { email, password, forgotPassword, userName } = req.body;
-
-      console.log("userName:", userName);
 
       if (password !== forgotPassword) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -151,14 +166,139 @@ class AuthController {
       });
     }
   }
-  async socialUser(req: Request, res: Response) {
+  socialUser = async (req: Request, res: Response) => {
     try {
-    } catch (error) {}
-  }
+      const { error } = socialUserValidation.validate(req.body);
+      if (error) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: error.details[0].message,
+        });
+      }
+      const {
+        email,
+        first_name,
+        last_name,
+        full_name,
+        picture,
+        uid,
+        provider,
+      } = req.body;
+
+      const existingEmail = await UserModel.findOne<IUser>({
+        email,
+      });
+
+      if (existingEmail) {
+        if (existingEmail.uid === uid) {
+          const accessToken = await this.generateAccessToken({
+            id: existingEmail._id,
+            email: existingEmail.email,
+            is_admin: existingEmail.is_admin,
+          });
+          const refreshToken = await this.generateRefreshToken({
+            id: existingEmail._id,
+            email: existingEmail.email,
+            is_admin: existingEmail.is_admin,
+          });
+
+          const existingRefreshToken = await RefreshTokenModel.findOne({
+            userId: existingEmail._id,
+          });
+
+          if (!existingRefreshToken) {
+            await RefreshTokenModel.create({
+              userId: existingEmail._id,
+              token: refreshToken,
+            });
+          } else {
+            await RefreshTokenModel.findOneAndUpdate(
+              {
+                userId: existingEmail._id,
+              },
+              {
+                token: refreshToken,
+              }
+            );
+          }
+
+          res.cookie("token", refreshToken, {
+            maxAge: 1000 * 60 * 24 * 60,
+            httpOnly: true,
+            path: "/",
+          });
+
+          return res.status(STATUS.OK).json({
+            message: "Đăng nhập thành công",
+            accessToken: accessToken,
+            user: existingEmail,
+          });
+        }
+
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Email đã có người đăng kí",
+        });
+      }
+
+      const newUser = await UserModel.create({
+        email,
+        full_name,
+        first_name,
+        last_name,
+        uid,
+        provider,
+        avatarUrl: picture,
+      });
+      const accessToken = await this.generateAccessToken({
+        id: newUser._id,
+        email: newUser.email,
+        is_admin: newUser.is_admin,
+      });
+      const refreshToken = await this.generateRefreshToken({
+        id: newUser._id,
+        email: newUser.email,
+        is_admin: newUser.is_admin,
+      });
+      const existingRefreshToken = await RefreshTokenModel.findOne({
+        userId: newUser._id,
+      });
+
+      if (!existingRefreshToken) {
+        await RefreshTokenModel.create({
+          userId: newUser._id,
+          token: refreshToken,
+        });
+      } else {
+        await RefreshTokenModel.findOneAndUpdate(
+          {
+            userId: newUser._id,
+          },
+          {
+            token: refreshToken,
+          }
+        );
+      }
+
+      res.cookie("token", refreshToken, {
+        maxAge: 1000 * 60 * 24 * 60,
+        httpOnly: true,
+        path: "/",
+      });
+
+      return res.status(STATUS.OK).json({
+        message: "Đăng nhập thành công",
+        accessToken: accessToken,
+        user: newUser,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  };
 
   refreshToken = async (req: Request, res: ResponseData) => {
     try {
-      const refreshToken = req.headers?.authorization?.split(" ")[0];
+      const refreshToken = req.cookies.token;
       if (!refreshToken) {
         return res.status(STATUS.AUTHENTICATOR).json({
           message: "Bạn chưa đăng nhập ",
@@ -177,8 +317,9 @@ class AuthController {
           if (!data) {
             return;
           }
+
           const refreshTokenDb = await RefreshTokenModel.findOne({
-            userId: (data as PayloadToken).id,
+            userId: (data as PayloadToken).id as ObjectId,
             token: refreshToken,
           });
 
@@ -187,12 +328,19 @@ class AuthController {
               message: "Mời bạn đăng nhập lại",
             });
           }
+          const payload = {
+            id: (data as PayloadToken).id,
+            email: (data as PayloadToken).email,
+            is_admin: (data as PayloadToken).is_admin,
+          };
 
-          const newAccessToken = this.generateAccessToken(data);
-          const newRefreshToken = this.generateRefreshToken(data);
-
-          res.cookie("refreshToken", newRefreshToken, {
-            maxAge: 24 * 60 * 60 * 1000,
+          const newAccessToken = await this.generateAccessToken(payload);
+          const newRefreshToken = await this.generateRefreshToken(payload);
+          await RefreshTokenModel.findByIdAndUpdate(refreshTokenDb._id, {
+            token: newRefreshToken,
+          });
+          res.cookie("token", newRefreshToken, {
+            maxAge: 24 * 60 * 60 * 1000 * 60,
             httpOnly: true,
             path: "/",
           });
@@ -210,21 +358,17 @@ class AuthController {
     }
   };
 
-  async logout(req: Request, res: Response) {
+  async logout(req: RequestModel, res: Response) {
     try {
-      const user = {
-        id: "",
-      };
-
-      if (!user) {
+      if (!req.user) {
         return res.status(STATUS.AUTHENTICATOR).json({
           message: "Bạn chưa đăng nhập",
         });
       }
 
-      await RefreshTokenModel.findOneAndDelete({ userId: user.id });
+      await RefreshTokenModel.findOneAndDelete({ userId: req.user.id });
 
-      res.cookie("refreshToken", undefined, {
+      res.cookie("token", undefined, {
         maxAge: 0,
       });
 
@@ -269,7 +413,7 @@ class AuthController {
       await sendToMail(existing?.email, "OTP xác thực mật khẩu", data);
       const now = new Date();
 
-      now.setMinutes(now.getMinutes() + 1);
+      now.setMinutes(now.getMinutes() + 5);
       const existingOtp = await OtpModel.findOne({
         email: existing.email,
       });
@@ -420,6 +564,31 @@ class AuthController {
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập mật khẩu thành công",
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async currentUser(req: RequestModel, res: Response) {
+    try {
+      const user = req.user;
+
+      const existingUser = await UserModel.findById(user?.id).select(
+        "-password"
+      );
+
+      if (!existingUser) {
+        return res.status(STATUS.AUTHENTICATOR).json({
+          message: "Không lấy được giá trị",
+        });
+      }
+
+      return res.status(STATUS.OK).json({
+        message: "Lấy thông tin thành công",
+        data: existingUser,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
