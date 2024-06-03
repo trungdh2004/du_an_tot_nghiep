@@ -33,6 +33,7 @@ function App() {
 					<Route index element={<Home />} />
 					<Route path="*" element={<NotFound />}></Route>
 					<Route path="address" element={<Address />} />
+					
 				</Route>
 				<Route path="/auth" element={<AuthLayout />}>
 					<Route path="login" element={<Login />} />
