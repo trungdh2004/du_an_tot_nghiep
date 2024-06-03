@@ -12,7 +12,6 @@ import { useEffect } from "react";
 import useStore from "./store/home.store";
 
 import Address from "./pages/client/address/Address";
-import Footer from "./components/client/Footer";
 import Login from "./pages/auth/Login";
 
 function App() {
@@ -34,7 +33,7 @@ function App() {
 					<Route index element={<Home />} />
 					<Route path="*" element={<NotFound />}></Route>
 					<Route path="address" element={<Address />} />
-					<Route path="footer" element={<Footer />} />
+					
 				</Route>
 				<Route path="/auth" element={<AuthLayout />}>
 					<Route path="login" element={<Login />} />
