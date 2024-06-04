@@ -21,7 +21,8 @@ class AddressController {
       })
         // .populate("user")
         .skip(skip)
-        .limit(limit);
+        .limit(limit)
+        .sort({ is_main: -1, createdAt: -1 });
       const addressLength = await AddressModel.countDocuments({
         user: user?.id,
       });
@@ -144,6 +145,7 @@ class AddressController {
     try {
       const { id } = req.params;
       const user = req.user;
+      console.log(user);
 
       if (!user) {
         return res.status(STATUS.AUTHENTICATOR).json({
@@ -170,8 +172,10 @@ class AddressController {
       }
 
       const userID = existingAddress.user._id;
+      console.log(userID);
+      console.log(user?.id);
 
-      if (!userID || userID !== user?.id) {
+      if (!userID || userID?.toString() !== user?.id.toString()) {
         return res.status(STATUS.OK).json({
           message: "Bạn không có quyền lấy địa chỉ",
         });

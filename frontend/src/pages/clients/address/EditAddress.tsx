@@ -1,13 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-import { Button } from "@/components/ui/button";
+import React, { useEffect, useState } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
 	Form,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -18,16 +13,16 @@ import {
 	Select,
 	SelectContent,
 	SelectItem,
-	SelectLabel,
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { addAddress, callCity, callCommune, callDistrict } from "@/service/address";
-import AddressInformation from "./AddressInformation";
-import axios from "axios";
+import { callCity, callCommune, callDistrict, editAddress, getAddressById } from "@/service/address";
+import { Button } from "@/components/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import instance from "@/config/instance";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const formSchema = z.object({
 	username: z
@@ -43,23 +38,26 @@ const formSchema = z.object({
 		})
 		.min(10, {
 			message: "Bạn phải nhập ít nhất 10 kí tự",
-    }).max(10, {
-      message: "Bạn phải nhập ít nhất 10 kí tự",
-    }).startsWith("0", {
-     message: "Không hợp lệ" 
-    }).trim(),
+		})
+		.max(10, {
+			message: "Bạn phải nhập ít nhất 10 kí tự",
+		})
+		.startsWith("0", {
+			message: "Không hợp lệ",
+		})
+		.trim(),
 	address: z.string({
 		message: "Bạn phải nhập địa chỉ",
 	}),
-  city: z.string({
-    message: "Bạn phải nhập tỉnh/thành phố",
-  }),
-  district: z.string({
-    message: "Bạn phải nhập quận/huyện",
-  }),
-  commune: z.string({
-    message: "Bạn phải nhập xã/phường",
-  }),
+	city: z.string({
+		message: "Bạn phải nhập tỉnh/thành phố",
+	}),
+	district: z.string({
+		message: "Bạn phải nhập quận/huyện",
+	}),
+	commune: z.string({
+		message: "Bạn phải nhập xã/phường",
+	}),
 });
 
 interface ICity {
@@ -74,52 +72,80 @@ interface ICommune extends IDistrict {
 	idCommune: string | null;
 }
 
-type Props = {};
-
-const Address = (props: Props) => {
+const EditAddress = ({ open, handleClose, id }: any) => {
 	const [citys, setCitys] = useState<ICity[] | null>(null);
 	const [districts, setDistricts] = useState<IDistrict[] | null>(null);
-  const [commune, setCommune] = useState<ICommune[] | null>(null);
-  const queryClient = useQueryClient();
+	const [commune, setCommune] = useState<ICommune[] | null>(null);
+	const queryClient = useQueryClient();
+	const [dataValue, setDataValue] = useState<any | null>(null);
+	console.log(dataValue);
 	const form = useForm({
 		resolver: zodResolver(formSchema),
 	});
+
+	useEffect(() => {
+		const fetchAlldata = async () => {
+			const { data } = await getAddressById(id);
+			setDataValue(data);
+			form.reset({
+				username: data.data.username,
+				phone: data.data.phone,
+				address: data.data.address,
+				city: data.data.city.idProvince,
+				district: data.data.district.idDistrict,
+				commune: data.data.commune.idCommune,
+			});
+			const { data: district } = await callDistrict(
+				data?.data?.city.idProvince,
+			);
+			setDistricts(district);
+			const { data: commune } = await callCommune(
+				data?.data?.district.idDistrict,
+			);
+			setCommune(commune);
+		};
+		fetchAlldata();
+	}, [id]);
 
 	useEffect(() => {
 		(async () => {
 			const { data } = await callCity();
 			setCitys(data);
 		})();
-  }, []);
-  const onSubmit =(dataForm: any) => {
-    
-    const city = citys?.find(city => city.idProvince === dataForm.city)
-    const district = districts?.find(district => district.idDistrict === dataForm.district)
-    const communes = commune?.find(commune => commune.idCommune === dataForm.commune)
-    let dataNew = { username: dataForm.username, phone: dataForm.phone, address: dataForm.address, city: city, district: district, commune: communes }
-    mutate(dataNew)
-    
+	}, []);
+
+	const onSubmit = async (dataForm: any) => {
+		const city = citys?.find((city) => city.idProvince === dataForm.city);
+		const district = districts?.find(
+			(district) => district.idDistrict === dataForm.district,
+		);
+		const communes = commune?.find(
+			(commune) => commune.idCommune === dataForm.commune,
+		);
+		let dataNew = {
+			username: dataForm.username,
+			phone: dataForm.phone,
+			address: dataForm.address,
+			city: city,
+			district: district,
+			commune: communes,
+		};
+		mutate(dataNew);
 	};
-  const { mutate } = useMutation({
+	const { mutate } = useMutation({
 		mutationFn: async (dataNew: any) => {
-				return addAddress(dataNew);
+				const { data } = await editAddress({id,dataNew})
 		},
-    onSuccess: () => {
-      form.reset({
-        username: "",
-        phone: "",
-        address: "",
-        city: "",
-        district: "",
-        commune: "",
-      });
+		onSuccess: () => {
+      handleClose(null);
+      toast.success("Bạn cập nhật địa chỉ thành công");
 			queryClient.invalidateQueries({
 				queryKey: ["address"],
       });
-      toast.success("Bạn thêm địa chỉ thành công");
 		},
 		onError: () => {
-			toast.error("Bạn thêm địa chỉ thất bại");
+			handleClose(null);
+			toast.error("Bạn cập nhật địa chỉ thất bại");
 		},
   });
   
@@ -140,10 +166,9 @@ const Address = (props: Props) => {
 			toast.error(error.response!.data!.message);
 		}
 	};
-
 	return (
-		<div className="padding mx-auto px-[20px] sm:px-[30px] md:px-[40px] xl:px-[50px] 2xl:px-[60px]">
-			<div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+		<Dialog open={open} onOpenChange={handleClose}>
+			<DialogContent className="sm:max-w-[660px]">
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 						<div className="flex flex-row gap-3 w-full">
@@ -214,7 +239,6 @@ const Address = (props: Props) => {
 													form.setValue("district", null);
 													form.setValue("commune", null);
 													handleOnChangeCity(e);
-
 													field.onChange(e);
 												}}
 												defaultValue={field.value}
@@ -243,6 +267,7 @@ const Address = (props: Props) => {
 									);
 								}}
 							/>
+
 							<FormField
 								control={form.control}
 								name="district"
@@ -253,8 +278,6 @@ const Address = (props: Props) => {
 											<Select
 												onValueChange={(e) => {
 													field.onChange(e);
-													console.log("e2", e);
-
 													setCommune(null);
 													handleOnChangeDistrict(e);
 												}}
@@ -284,6 +307,7 @@ const Address = (props: Props) => {
 									);
 								}}
 							/>
+
 							<FormField
 								control={form.control}
 								name="commune"
@@ -318,18 +342,20 @@ const Address = (props: Props) => {
 								)}
 							/>
 						</div>
+						<h4 className="text-sm">
+							<strong>Địa chỉ</strong> : {dataValue?.data?.location}
+						</h4>
 						<Button
 							type="submit"
 							className="border rounded-full w-[170px] bg-slate-950"
 						>
-							Chọn
+							Sửa
 						</Button>
 					</form>
 				</Form>
-				<AddressInformation />
-			</div>
-		</div>
+			</DialogContent>
+		</Dialog>
 	);
 };
 
-export default Address;
+export default EditAddress;

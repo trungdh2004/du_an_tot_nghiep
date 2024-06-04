@@ -23,6 +23,34 @@ export const callCity = async () => {
   return data
 }
  
-export const addAddress = async () => {
-  
+export const addAddress = async (dataNew : any) => {
+  const data = instance.post(`/address/addAddress`, dataNew);
+  return data
+}
+
+export const deleteAddress = async (id : any) => {
+  const data = instance.delete(`address/deleteAddress/${id}`);
+  return data
+}
+
+export const editAddress = async ({id,dataNew}:any) => {
+  const data = await instance.put(`address/updateAddress/${id}`, dataNew);	
+  return data
+}
+
+export const getAddressById = async (id : any) => {
+  const data = instance.get(`/address/${id}`);
+  return data
+}
+
+export const fetchAddress = async (page: any) => {
+	const response = await instance.post(`address/paddingAddress`, {
+		pageIndex: page,
+	});
+	return response.data;
+};
+
+export const editAddressMain = async (id : any) => {
+  const data = await instance.put(`address/updateMain/${id}`, {});
+  return data
 }
