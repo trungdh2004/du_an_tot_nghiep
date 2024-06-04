@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const BrandSchema = new mongoose.Schema(
+const TagsSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -15,3 +15,7 @@ const BrandSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+const TagsModel = mongoose.model("Tags", TagsSchema);
+
+export default TagsModel;
