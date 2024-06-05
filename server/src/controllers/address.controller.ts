@@ -11,9 +11,9 @@ class AddressController {
   // theo người dùng
   async paddingAddress(req: RequestModel, res: Response) {
     try {
-      const { pageIndex, pageSize } = req.body;
+      const { pageIndex = 1, pageSize } = req.body;
       const user = req.user;
-      let limit = pageSize || 5;
+      let limit = pageSize || 4;
       let skip = (pageIndex - 1) * limit || 0;
 
       const address = await AddressModel.find({
@@ -163,8 +163,6 @@ class AddressController {
         id
       ).populate("user");
 
-      console.log("user:", existingAddress?.user);
-
       if (!existingAddress) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có địa chỉ thỏa mãn",
@@ -175,7 +173,7 @@ class AddressController {
       console.log(userID);
       console.log(user?.id);
 
-      if (!userID || userID?.toString() !== user?.id.toString()) {
+      if (!userID || userID.toString() !== user?.id.toString()) {
         return res.status(STATUS.OK).json({
           message: "Bạn không có quyền lấy địa chỉ",
         });

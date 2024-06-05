@@ -168,7 +168,8 @@ const EditAddress = ({ open, handleClose, id }: any) => {
 	};
 	return (
 		<Dialog open={open} onOpenChange={handleClose}>
-			<DialogContent className="sm:max-w-[660px]">
+			<DialogContent className="sm:max-w-[660px] rounded-md">
+				<h2 className="text-xl font-bold mb-2">Cập nhật địa chỉ</h2>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 						<div className="flex flex-row gap-3 w-full">
@@ -177,7 +178,7 @@ const EditAddress = ({ open, handleClose, id }: any) => {
 								name="username"
 								render={({ field }) => (
 									<FormItem className="w-full">
-										<FormLabel className="">Username</FormLabel>
+										<FormLabel className="">Tên người nhận</FormLabel>
 										<FormControl>
 											<Input
 												placeholder="Họ và Tên"
@@ -349,7 +350,7 @@ const EditAddress = ({ open, handleClose, id }: any) => {
 							type="submit"
 							className="border rounded-full w-[170px] bg-slate-950"
 						>
-							Sửa
+							Cập nhật địa chỉ
 						</Button>
 					</form>
 				</Form>

@@ -6,7 +6,7 @@ const ProductSchema = new mongoose.Schema({
     required: true,
   },
   price: {
-    type: String,
+    type: Number,
     required: true,
   },
   discount: {
@@ -36,4 +36,13 @@ const ProductSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  category: {
+    ref: "BrandModel",
+    type: mongoose.Types.ObjectId,
+    required: true,
+  },
 });
+
+const ProductModel = mongoose.model("Product", ProductSchema);
+
+export default ProductModel;

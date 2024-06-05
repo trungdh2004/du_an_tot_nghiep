@@ -1,0 +1,40 @@
+import mongoose from "mongoose";
+
+const AttributeSchema = new mongoose.Schema(
+  {
+    product: {
+      type: mongoose.Types.ObjectId,
+      required: true,
+      ref: "Product",
+      index:true
+    },
+    color: {
+      ref: "Color",
+      type: mongoose.Types.ObjectId,
+      required: true,
+    },
+    size: {
+      ref: "Size",
+      type: mongoose.Types.ObjectId,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    discount: {
+      type: Number,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+const AttributeModel = mongoose.model("Attribute", AttributeSchema);
+
+export default AttributeModel;

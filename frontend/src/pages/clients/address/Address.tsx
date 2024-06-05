@@ -142,7 +142,8 @@ const Address = (props: Props) => {
 	};
 
 	return (
-		<div className="padding mx-auto px-[20px] sm:px-[30px] md:px-[40px] xl:px-[50px] 2xl:px-[60px]">
+    <div className="padding py-8">
+      <h2 className="text-xl font-bold mb-5">Thêm địa chỉ</h2>
 			<div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -152,7 +153,7 @@ const Address = (props: Props) => {
 								name="username"
 								render={({ field }) => (
 									<FormItem className="w-full">
-										<FormLabel className="">Username</FormLabel>
+										<FormLabel className="">Tên người nhận</FormLabel>
 										<FormControl>
 											<Input
 												placeholder="Họ và Tên"
@@ -322,7 +323,7 @@ const Address = (props: Props) => {
 							type="submit"
 							className="border rounded-full w-[170px] bg-slate-950"
 						>
-							Chọn
+							Thêm địa chỉ
 						</Button>
 					</form>
 				</Form>

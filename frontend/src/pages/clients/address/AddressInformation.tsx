@@ -10,12 +10,20 @@ import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import Paginations from "@/components/common/Pagination";
 import EditAddress from "./EditAddress";
-import { AiFillEdit } from "react-icons/ai";
-import { deleteAddress, editAddressMain, fetchAddress } from "@/service/address";
+import { RiEditCircleLine } from "react-icons/ri";
+import {
+	deleteAddress,
+	editAddressMain,
+	fetchAddress,
+} from "@/service/address";
 import { BsCheck2Circle } from "react-icons/bs";
 import { BsCircle } from "react-icons/bs";
+import { CiCircleRemove } from "react-icons/ci";
+import { TooltipComponent } from "@/components/common/TooltipComponent";
+import DialogConfirm from "@/components/common/DialogConfirm";
 const AddressInformation = () => {
 	const [openEditById, setOpenEditById] = useState<string | null>(null);
+	const [openDeleteById, setopenDeleteById] = useState<string | null>(null);
 	const [pageIndex, setPageIndex] = useState(1);
 	const queryClient = useQueryClient();
 
@@ -24,15 +32,21 @@ const AddressInformation = () => {
 	};
 	const handleEdit = (id: string) => {
 		setOpenEditById(id);
-	};
+  };
+  
+  const handleDelete = () => {
+    mutate(openDeleteById as string);
+  }
+
 	const { mutate } = useMutation({
-		mutationFn: async (id: string | number) => {		
-				const { data } = await deleteAddress(id);
-				
-				return data;
+		mutationFn: async (id: string | number) => {
+			const { data } = await deleteAddress(id);
+
+			return data;
 		},
-    onSuccess: () => {
+		onSuccess: () => {
       toast.success("Bạn xóa địa chỉ thành công");
+      setopenDeleteById(null)
 			queryClient.invalidateQueries({
 				queryKey: ["address", pageIndex],
 			});
@@ -47,9 +61,8 @@ const AddressInformation = () => {
 			const { data } = await editAddressMain(id);
 			return data;
 		},
-    onSuccess: () => {
-      
-      toast.success("Bạn cập nhật địa chỉ mặc định thành công");
+		onSuccess: () => {
+			toast.success("Bạn cập nhật địa chỉ mặc định thành công");
 			queryClient.invalidateQueries({
 				queryKey: ["address", pageIndex],
 			});
@@ -87,7 +100,7 @@ const AddressInformation = () => {
 					data.content?.map((address: any, index: number) => {
 						return (
 							<div
-								className={`w-full p-5 bg-slate-100 rounded-xl grid grid-cols-1 gap-10 sm:grid-cols-3 ${address.is_main === true ? `border-2 border-blue-500` : ` `}`}
+								className={`w-full p-5 bg-slate-100 rounded-xl grid grid-cols-1 gap-10 sm:grid-cols-3 ${address.is_main === true ? `border-2 border-green-500` : ` `}`}
 								key={index}
 							>
 								<div className="flex flex-col gap-2 sm:w-20px col-span-2">
@@ -98,20 +111,25 @@ const AddressInformation = () => {
 									<p className="text-[14px]">{address.address}</p>
 								</div>
 								<div className="flex justify-center items-center gap-2">
-									<button onClick={() => mutate(address._id)}>
-										<TiDeleteOutline className="text-[30px] text-gray-400 hover:text-black" />
-									</button>
-
-									<button onClick={() => handleEdit(address._id)}>
-										<AiFillEdit className="border-2 border-gray-400 p-[3px] rounded-full text-[22px] text-gray-400 " />
-									</button>
-                  <button onClick={() => mutate1.mutate(address._id)}>
-                    {address.is_main === true? (
-                      <BsCheck2Circle className="text-[25px] text-gray-400 hover:text-black" />
-                    ) : (
-                      <BsCircle className="text-[25px] text-gray-400 hover:text-black" />
-                    )}
-									</button>
+									<TooltipComponent label="Chọn mặc định">
+										<button onClick={() => mutate1.mutate(address._id)}>
+											{address.is_main === true ? (
+												<BsCheck2Circle className="text-[25px] text-green-400 " />
+											) : (
+												<BsCircle className="text-[22px] text-gray-400 hover:text-green-500" />
+											)}
+										</button>
+									</TooltipComponent>
+									<TooltipComponent label="Sửa địa chỉ">
+										<button onClick={() => handleEdit(address._id)}>
+											<RiEditCircleLine className="text-[25px] text-blue-400 hover:text-blue-700" />
+										</button>
+									</TooltipComponent>
+									<TooltipComponent label="Xóa địa chỉ">
+										<button onClick={() => setopenDeleteById(address._id)}>
+											<CiCircleRemove className="text-[25px] text-red-500 hover:text-red-700" />
+										</button>
+									</TooltipComponent>
 								</div>
 							</div>
 						);
@@ -132,6 +150,15 @@ const AddressInformation = () => {
 					open={!!openEditById}
 					handleClose={handleClose}
 					id={openEditById}
+				/>
+			)}
+			{!!openDeleteById && (
+				<DialogConfirm
+					open={!!openDeleteById}
+					handleClose={() => setopenDeleteById(null)}
+					content={"Bạn có chắc chắn muốn xóa địa chỉ này không?"}
+          handleSubmit={() => handleDelete()}
+          title="Xóa địa chỉ"
 				/>
 			)}
 		</div>

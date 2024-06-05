@@ -4,9 +4,26 @@ import {
 	getAuth,
 	signInWithPopup,
 	FacebookAuthProvider,
+	getAdditionalUserInfo,
+	AdditionalUserInfo,
 } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import app from "@/config/initializeFirebase";
+import instance from "@/config/instance";
+
+interface ISocial {
+	isNewUser: boolean;
+	providerId: string;
+	profile: {
+		email: string;
+		family_name: string;
+		given_name: string;
+		granted_scopes: string;
+		id: string;
+		name: string;
+		picture: string;
+	};
+}
 
 const SignInWithFacebookOrGoogle = () => {
 	const auth = getAuth(app);
@@ -14,18 +31,23 @@ const SignInWithFacebookOrGoogle = () => {
 	const handleLoginGoogle = () => {
 		const provider = new GoogleAuthProvider();
 		signInWithPopup(auth, provider)
-			.then((result) => {
-				// This gives you a Google Access Token. You can use it to access the Google API.
+			.then(async (result) => {
 				const credential = GoogleAuthProvider.credentialFromResult(result);
-
-				// The signed-in user info.
-				const user = result.user;
-
+				const user: AdditionalUserInfo | null = getAdditionalUserInfo(result);
 				console.log("user:", user);
-				console.log("credential:", credential);
 
-				// IdP data available using getAdditionalUserInfo(result)
-				// ...
+				const body = {
+					full_name: user?.profile?.name,
+					last_name: user?.profile?.given_name,
+					first_name: user?.profile?.family_name,
+					picture: user?.profile?.picture,
+					uid: user?.profile?.id,
+					provider: user?.providerId,
+					email: user?.profile?.email,
+				};
+				const { data } = await instance.post("/auth/social-user", body);
+
+				console.log("data User:", data);
 			})
 			.catch((error) => {
 				// Handle Errors here.
@@ -56,6 +78,8 @@ const SignInWithFacebookOrGoogle = () => {
 				// ...
 			})
 			.catch((error) => {
+				console.log("error:", error);
+
 				// Handle Errors here.
 				const errorCode = error.code;
 				const errorMessage = error.message;
