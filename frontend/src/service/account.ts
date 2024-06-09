@@ -1,4 +1,5 @@
 import instance from "@/config/instance";
+import axios from "axios";
 
 export const createAccount = (data: any) => {
 	const uri = "/auth/register";
@@ -6,7 +7,7 @@ export const createAccount = (data: any) => {
 };
 export const loginAccount = (data: any) => {
 	const uri = "/auth/login";
-	return instance.post(uri, data);
+	return axios.post((process.env.SERVER_URL + uri) as string, data);
 };
 export const findEmail = (data: any) => {
 	const uri = "/auth/forgotPassword";
@@ -27,4 +28,8 @@ export const currentAccount = () => {
 export const socialUser = (data: any) => {
 	const uri = "/auth/social-user";
 	return instance.post(uri, data);
+};
+export const logOut = () => {
+	const uri = "/auth/logout";
+	return instance.post(uri);
 };

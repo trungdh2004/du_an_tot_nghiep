@@ -1,4 +1,5 @@
 import { getItemLocal } from "@/common/localStorage";
+import instance from "@/config/instance";
 import { currentAccount } from "@/service/account";
 import { AxiosError } from "axios";
 import {
@@ -40,16 +41,17 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 	const value = { authUser, setAuthUser, isLoggedIn, setIsLoggedIn };
 	useEffect(() => {
 		(async () => {
-			const token = getItemLocal("token");
-			if (token) {
-				try {
-					const { data } = await currentAccount();
-					setAuthUser(data?.data);
-					toast.success(data?.message);
-				} catch (error) {
-					if (error instanceof AxiosError) {
-						toast.success(error.response?.data?.message);
-					}
+			try {
+				if (getItemLocal("token")) {
+					instance.defaults.headers.common.Authorization = `Bearer ${getItemLocal("token")}`;
+				}
+				const { data } = await currentAccount();
+				setAuthUser(data?.data);
+				setIsLoggedIn(true);
+				toast.success(data?.message);
+			} catch (error) {
+				if (error instanceof AxiosError) {
+					toast.error(error.response?.data?.message);
 				}
 			}
 		})();

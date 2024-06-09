@@ -12,18 +12,33 @@ const Home = () => {
 	});
 	const handleTest = async () => {
 		try {
-			const { data }: any = await instance.get<any>("/address/paddingAddress", {
-				withCredentials: true,
-			});
+			const { data }: any = await instance.post<any>(
+				"/address/paddingAddress",
+				{
+					withCredentials: true,
+				},
+			);
 		} catch (error) {
 			console.log("error", error);
 		}
 	};
 	return (
 		<div className="px-4 sm:px-6 md:px-[40px] xl:px-[50px] 2xl:px-[60px]">
-			<div className="w-full bg-red-500 min-h-[100vh]">
+			<div className="w-full bg-green-400 min-h-[20vh]">
 				<button>handleTest</button>
-				<button>Login</button>
+				<button onClick={() => handleTest()}>Login</button>
+			</div>
+			<div className="w-full bg-white min-h-[20vh]">
+				<button>handleTest</button>
+				<button onClick={() => handleTest()}>Login</button>
+			</div>
+			<div className="w-full bg-red-400 min-h-[20vh]">
+				<button>handleTest</button>
+				<button onClick={() => handleTest()}>Login</button>
+			</div>
+			<div className="w-full bg-orange-400 min-h-[80vh]">
+				<button>handleTest</button>
+				<button onClick={() => handleTest()}>Login</button>
 			</div>
 		</div>
 	);

@@ -13,10 +13,25 @@ import useStore from "./store/home.store";
 
 import Address from "./pages/client/address/Address";
 import Login from "./pages/auth/Login";
+import axios from "axios";
+import instance from "./config/instance";
 
 function App() {
 	const { onUpdateCart } = useStore();
+	useEffect(() => {
+		(async () => {
+			const { data } = await axios.post(
+				`${process.env.SERVER_URL}/auth/refreshToken`,
+				{},
+				{
+					withCredentials: true,
+				},
+			);
 
+			instance.defaults.headers.common["Authorization"] =
+				"Bearer " + data.accessToken;
+		})();
+	}, []);
 	useEffect(() => {
 		const data = {
 			quantity: 1,
@@ -33,7 +48,6 @@ function App() {
 					<Route index element={<Home />} />
 					<Route path="*" element={<NotFound />}></Route>
 					<Route path="address" element={<Address />} />
-					
 				</Route>
 				<Route path="/auth" element={<AuthLayout />}>
 					<Route path="login" element={<Login />} />

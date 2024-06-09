@@ -1,13 +1,16 @@
 import { setItemLocal } from "@/common/localStorage";
 import OverlayViolet from "@/components/OverlayViolet";
+import instance from "@/config/instance";
 import { useAuth } from "@/hooks/auth";
+import { useRouterHistory } from "@/hooks/router";
 import { loginAccount } from "@/service/account";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { IoIosArrowRoundBack } from "react-icons/io";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "../../components/ui/button";
@@ -21,8 +24,6 @@ import {
 } from "../../components/ui/form";
 import { Input } from "../../components/ui/input";
 import SignInWithFacebookOrGoogle from "./SignInWithFacebookOrGoogle";
-import { useRouterHistory } from "@/hooks/router";
-import { AxiosError } from "axios";
 const Login = () => {
 	const routerHistory = useRouterHistory();
 	const { setAuthUser, setIsLoggedIn } = useAuth();
@@ -50,6 +51,7 @@ const Login = () => {
 			setAuthUser?.(data?.user);
 			setIsLoggedIn?.(true);
 			setItemLocal("token", data?.accessToken);
+			instance.defaults.headers.common.Authorization = `Bearer ${data?.accessToken}`;
 			toast.success(data?.message);
 			routerHistory();
 		} catch (error) {
@@ -62,7 +64,7 @@ const Login = () => {
 		<div className="">
 			<OverlayViolet />
 
-			<div className="flex justify-between items-center pr-5">
+			<div className="absolute left-3 top-3  flex justify-between items-center pr-5">
 				<Link
 					to={"/"}
 					className="dark:bg-slate-600 relative flex items-center justify-center max-w-36 p-3 bg-white rounded-lg shadow-lg"

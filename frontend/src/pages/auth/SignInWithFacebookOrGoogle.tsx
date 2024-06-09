@@ -5,13 +5,11 @@ import { useRouterHistory } from "@/hooks/router";
 import { socialUser } from "@/service/account";
 import { AxiosError } from "axios";
 import {
-	FacebookAuthProvider,
 	GoogleAuthProvider,
 	getAdditionalUserInfo,
 	getAuth,
 	signInWithPopup,
 } from "firebase/auth";
-import { BsFacebook } from "react-icons/bs";
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
 
@@ -38,7 +36,6 @@ const SignInWithFacebookOrGoogle = () => {
 				};
 				socialUser(payload)
 					.then(({ data }) => {
-						// toast.success(result.)
 						console.log(data);
 						setAuthUser?.(data?.user);
 						setIsLoggedIn?.(true);
@@ -48,7 +45,7 @@ const SignInWithFacebookOrGoogle = () => {
 					})
 					.catch((error) => {
 						if (error instanceof AxiosError) {
-							toast.success(error.response?.data?.message);
+							toast.error(error.response?.data?.message);
 						}
 					});
 				// IdP data available using getAdditionalUserInfo(result)

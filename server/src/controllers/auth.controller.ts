@@ -304,12 +304,16 @@ class AuthController {
           message: "Bạn chưa đăng nhập ",
         });
       }
+      console.log(process.env.SECRET_REFRESHTOKEN);
+      console.log(refreshToken);
 
       jwt.verify(
         refreshToken,
         process.env.SECRET_REFRESHTOKEN!,
         async (err: VerifyErrors | null, data?: object | string) => {
           if (err) {
+            console.log(err);
+
             return res.status(STATUS.AUTHENTICATOR).json({
               message: "Token đã hết hạn mời bạn đăng nhập lại",
             });
