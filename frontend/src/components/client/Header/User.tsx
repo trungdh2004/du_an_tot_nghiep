@@ -1,5 +1,4 @@
 import { removeItemLocal } from "@/common/localStorage";
-
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -20,7 +19,6 @@ const User = () => {
 	const handleLogout = async () => {
 		try {
 			const data = await logOut();
-			console.log(data);
 			setAuthUser?.(undefined);
 			setIsLoggedIn?.(false);
 			removeItemLocal("token");
