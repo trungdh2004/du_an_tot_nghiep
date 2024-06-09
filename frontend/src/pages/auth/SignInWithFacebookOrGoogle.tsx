@@ -27,11 +27,11 @@ const SignInWithFacebookOrGoogle = () => {
 				const user = getAdditionalUserInfo(result);
 				const payload = {
 					email: result?.user?.email,
-					first_name: user?.profile?.family_name,
+					first_name: user?.profile?.given_name,
 					last_name: user?.profile?.family_name,
-					full_name: user?.profile?.family_name,
-					picture: user?.profile?.family_name,
-					uid: user?.profile?.family_name,
+					full_name: user?.profile?.name,
+					picture: user?.profile?.picture,
+					uid: user?.profile?.id,
 					provider: user?.providerId,
 				};
 				socialUser(payload)
@@ -69,10 +69,11 @@ const SignInWithFacebookOrGoogle = () => {
 		<div className="space-y-5">
 			<div className="grid grid-cols-6 gap-x-4 *:border *:border-gray-200 *:rounded-lg  ">
 				<div
-					className="col-span-6 flex items-center justify-center p-2 max-h-10 cursor-pointer hover:bg-gray-100"
+					className="col-span-6 flex items-center gap-3 justify-center p-2 max-h-10 cursor-pointer hover:bg-gray-100"
 					onClick={handleLoginGoogle}
 				>
 					<FcGoogle size={24} />
+					<span className="text-sm">Đăng nhập với Google</span>
 				</div>
 			</div>
 			{/* line */}

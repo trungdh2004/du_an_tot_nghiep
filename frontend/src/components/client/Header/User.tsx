@@ -1,4 +1,5 @@
 import { removeItemLocal } from "@/common/localStorage";
+
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -7,9 +8,11 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import app from "@/config/initializeFirebase";
 import { useAuth } from "@/hooks/auth";
 import { logOut } from "@/service/account";
 import { AxiosError } from "axios";
+import { getAuth, signOut } from "firebase/auth";
 import { LucideUser } from "lucide-react";
 import { toast } from "sonner";
 const User = () => {
@@ -21,6 +24,7 @@ const User = () => {
 			setAuthUser?.(undefined);
 			setIsLoggedIn?.(false);
 			removeItemLocal("token");
+			signOut(getAuth(app));
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				toast.error(error.response?.data?.message);
@@ -49,8 +53,8 @@ const User = () => {
 							/>
 						</div>
 						<div className="">
-							<p className="text-sm">{authUser?.full_name}</p>
-							<span className="w-24 line-clamp-1 text-xs font-normal text-[#757575] ">
+							<p className="w-20 line-clamp-1 text-sm">{authUser?.full_name}</p>
+							<span className="w-20 line-clamp-1 text-xs font-normal text-[#757575] ">
 								{authUser?.email}
 							</span>
 						</div>
