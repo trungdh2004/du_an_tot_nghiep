@@ -10,7 +10,7 @@ interface PayloadToken {
   is_admin: boolean;
 }
 
-const authorization = async (
+const authentication = async (
   req: RequestModel,
   res: Response,
   next: NextFunction
@@ -69,4 +69,4 @@ const authorization = async (
   }
 };
 
-export default authorization;
+export default authentication;

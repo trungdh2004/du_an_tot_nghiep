@@ -1,5 +1,11 @@
+import { setItemLocal } from "@/common/localStorage";
+import OverlayViolet from "@/components/OverlayViolet";
+import instance from "@/config/instance";
+import { useAuth } from "@/hooks/auth";
+import { useRouterHistory } from "@/hooks/router";
 import { loginAccount } from "@/service/account";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
@@ -18,9 +24,9 @@ import {
 } from "../../components/ui/form";
 import { Input } from "../../components/ui/input";
 import SignInWithFacebookOrGoogle from "./SignInWithFacebookOrGoogle";
-import OverlayViolet from "@/components/OverlayViolet";
-import axios from "axios";
 const Login = () => {
+	const routerHistory = useRouterHistory();
+	const { setAuthUser, setIsLoggedIn } = useAuth();
 	const formSchema = z.object({
 		email: z
 			.string({ required_error: "Bạn chưa  nhập email" })
@@ -40,23 +46,25 @@ const Login = () => {
 	});
 	const onSubmit = async (payload: z.infer<typeof formSchema>) => {
 		try {
-			// const { data } = await loginAccount(payload);
-			const { data } = await axios.post('http://localhost:5000/api/v1/auth/login', payload, {
-				withCredentials:true
-			})
-			// const {  accessToken, user } = data;
+			const { data } = await loginAccount(payload);
+			console.log(data);
+			setAuthUser?.(data?.user);
+			setIsLoggedIn?.(true);
+			setItemLocal("token", data?.accessToken);
+			instance.defaults.headers.common.Authorization = `Bearer ${data?.accessToken}`;
 			toast.success(data?.message);
-		} catch (error: any) {
-			console.log(error);
-
-			toast.error(error.response!.data?.message);
+			routerHistory();
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				toast.error(error.response?.data?.message);
+			}
 		}
 	};
 	return (
 		<div className="">
 			<OverlayViolet />
 
-			<div className="flex justify-between items-center pr-5">
+			<div className="absolute left-3 top-3  flex justify-between items-center pr-5">
 				<Link
 					to={"/"}
 					className="dark:bg-slate-600 relative flex items-center justify-center max-w-36 p-3 bg-white rounded-lg shadow-lg"

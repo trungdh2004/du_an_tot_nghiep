@@ -1,0 +1,10 @@
+::-webkit-scrollbar{
+	width: 0px;
+}
+header .sub-menu::after {
+	position: absolute;
+	top: -25px;
+	content: "";
+	width: 100%;
+	height: 40px;
+}

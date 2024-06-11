@@ -300,6 +300,8 @@ class AuthController {
           message: "Bạn chưa đăng nhập ",
         });
       }
+      console.log(process.env.SECRET_REFRESHTOKEN);
+      console.log(refreshToken);
 
       jwt.verify(
         refreshToken,
@@ -613,6 +615,35 @@ class AuthController {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
       });
+    }
+  }
+
+  async blockCurrentUser(req: RequestModel, res: Response) {
+    try {
+      const user = req.user
+      const { id } = req.params
+      if (!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Chưa chọn người dùng"
+        })
+      }
+
+      const existingUser = await UserModel.findById(id);
+
+      if (!existingUser) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Không có người dùng"
+        })
+      }
+
+      const blockUserNew = await UserModel.findByIdAndUpdate(id, {
+        
+      })
+
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      })
     }
   }
 }

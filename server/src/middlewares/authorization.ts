@@ -2,6 +2,7 @@ import jwt, { VerifyErrors } from "jsonwebtoken";
 import STATUS from "../utils/status";
 import { NextFunction, Request, Response } from "express";
 import UserModel from "../models/User.Schema";
+import { RequestModel } from "../interface/models";
 
 interface PayloadToken {
   id: any;
@@ -10,13 +11,12 @@ interface PayloadToken {
 }
 
 const authorization = async (
-  req: Request,
+  req: RequestModel,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
-    console.log("test");
     
     if (!token) {
       return res.status(STATUS.AUTHORIZED).json({
@@ -58,6 +58,12 @@ const authorization = async (
             message: "Bạn không có quyền",
           });
         }
+
+        req.user = {
+          id: existingUser._id,
+          email: existingUser.email,
+          is_admin: existingUser.is_admin,
+        };
 
         next();
       }

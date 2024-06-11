@@ -13,7 +13,7 @@ class AddressController {
     try {
       const { pageIndex = 1, pageSize } = req.body;
       const user = req.user;
-      let limit = pageSize || 5;
+      let limit = pageSize || 4;
       let skip = (pageIndex - 1) * limit || 0;
 
       const address = await AddressModel.find({
@@ -21,7 +21,8 @@ class AddressController {
       })
         // .populate("user")
         .skip(skip)
-        .limit(limit);
+        .limit(limit)
+        .sort({ is_main: -1, createdAt: -1 });
       const addressLength = await AddressModel.countDocuments({
         user: user?.id,
       });
@@ -30,7 +31,6 @@ class AddressController {
         addressLength === 0 ? 0 : Math.ceil(addressLength / limit);
       const totalOptionPage = address.length;
       const totalAllOptions = addressLength;
-
       const result = {
         pageIndex: pageIndex,
         pageSize: limit,
@@ -145,6 +145,7 @@ class AddressController {
     try {
       const { id } = req.params;
       const user = req.user;
+      console.log(user);
 
       if (!user) {
         return res.status(STATUS.AUTHENTICATOR).json({
@@ -169,6 +170,8 @@ class AddressController {
       }
 
       const userID = existingAddress.user._id;
+      console.log(userID);
+      console.log(user?.id);
 
       if (!userID || userID.toString() !== user?.id.toString()) {
         return res.status(STATUS.OK).json({
