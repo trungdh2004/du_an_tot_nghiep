@@ -19,7 +19,7 @@ export function TooltipComponent({
 	align = "center",
 }: ITooltipComponent) {
 	return (
-		<TooltipProvider>
+		<TooltipProvider delayDuration={0}>
 			<Tooltip>
 				<TooltipTrigger asChild>{children}</TooltipTrigger>
 				<TooltipContent side={side} align={align}>

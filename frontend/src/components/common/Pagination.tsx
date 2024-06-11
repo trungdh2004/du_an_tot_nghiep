@@ -1,17 +1,17 @@
 import ReactPaginate from "react-paginate";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 
-function Pagination({ pageCount, handlePageClick }: any) {
+function Paginations({ pageCount, handlePageClick}: any) {
 	return (
 		<>
 			<ReactPaginate
 				breakLabel=". . ."
-				nextLabel={<FaAngleRight />}
+				nextLabel={<FaAngleRight/>}
 				onPageChange={handlePageClick}
 				pageRangeDisplayed={1}
 				marginPagesDisplayed={2}
 				pageCount={pageCount}
-				previousLabel={<FaAngleLeft />}
+				previousLabel={<FaAngleLeft/>}
 				renderOnZeroPageCount={null}
 				pageLinkClassName={
 					"border w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-md hover:bg-gray-100"
@@ -35,4 +35,4 @@ function Pagination({ pageCount, handlePageClick }: any) {
 	);
 }
 
-export default Pagination;
+export default Paginations;
