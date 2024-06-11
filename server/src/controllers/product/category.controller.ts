@@ -2,9 +2,9 @@ import { Response } from "express";
 import { RequestModel } from "../../interface/models";
 import STATUS from "../../utils/status";
 import { categoryValidation } from "../../validation/product.validation";
-import BrandModel from "../../models/products/Brand.schema";
 import { formatDataPaging } from "../../common/pagingData";
 import CategoryModel from "../../models/products/Category.schema";
+import { generateSlugs } from "../../middlewares/generateSlug";
 
 class categoryController {
   async addCategory(req: RequestModel, res: Response) {
@@ -12,7 +12,7 @@ class categoryController {
       const { error } = categoryValidation.validate(req.body);
       if (error) {
         console.log("error", error);
-        
+
         return res.status(STATUS.BAD_REQUEST).json({
           message: error.details[0].message,
         });
@@ -23,7 +23,6 @@ class categoryController {
         name,
         description,
       });
-
       return res.status(STATUS.OK).json({
         message: "Tạo loại thành công",
         data: newCategory,
@@ -42,7 +41,10 @@ class categoryController {
       let limit = pagesize || 10;
       let skip = (pageIndex - 1) * limit || 0;
 
-      const dataCategory = await CategoryModel.find().populate("products").limit(limit).skip(skip);
+      const dataCategory = await CategoryModel.find()
+        .populate("products")
+        .limit(limit)
+        .skip(skip);
       const countCategory = await CategoryModel.countDocuments();
       const result = formatDataPaging({
         limit,
@@ -167,6 +169,35 @@ class categoryController {
       return res.status(STATUS.OK).json({
         message: "Thay đổi thành công",
         data: newCategory,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async getCategoryBySlug(req: RequestModel, res: Response) {
+    try {
+      const { slug } = req.params;
+
+      if (!slug) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn Brand",
+        });
+      }
+
+      const CategoryData = await CategoryModel.findOne({ slug: slug });
+
+      if (!CategoryData) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có loại sản phẩm thỏa mãn",
+        });
+      }
+
+      return res.status(STATUS.OK).json({
+        message: "Lấy giá trị thành công",
+        data: CategoryData,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({

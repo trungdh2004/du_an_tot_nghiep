@@ -16,9 +16,10 @@ const authorization = async (
 ) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
-
+    console.log("test");
+    
     if (!token) {
-      return res.status(STATUS.AUTHENTICATOR).json({
+      return res.status(STATUS.AUTHORIZED).json({
         message: "Bạn chưa đăng nhập",
       });
     }
@@ -37,7 +38,7 @@ const authorization = async (
             message = "Token đã hết hạn";
           }
 
-          return res.status(STATUS.AUTHENTICATOR).json({
+          return res.status(STATUS.AUTHORIZED).json({
             message: message,
           });
         }
@@ -47,7 +48,7 @@ const authorization = async (
         );
 
         if (!existingUser) {
-          return res.status(STATUS.AUTHENTICATOR).json({
+          return res.status(STATUS.AUTHORIZED).json({
             message: "Tài khoản không thỏa mãn",
           });
         }

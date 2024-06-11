@@ -102,7 +102,8 @@ class AuthController {
       }
 
       res.cookie("token", refreshToken, {
-        maxAge: 1000 * 60 * 24 * 60,
+        maxAge: 1000 * 60 * 24 * 60 * 60
+        ,
         httpOnly: true,
         path: "/",
       });
@@ -186,56 +187,51 @@ class AuthController {
 
       const existingEmail = await UserModel.findOne<IUser>({
         email,
+        uid,
       });
 
       if (existingEmail) {
-        if (existingEmail.uid === uid) {
-          const accessToken = await this.generateAccessToken({
-            id: existingEmail._id,
-            email: existingEmail.email,
-            is_admin: existingEmail.is_admin,
-          });
-          const refreshToken = await this.generateRefreshToken({
-            id: existingEmail._id,
-            email: existingEmail.email,
-            is_admin: existingEmail.is_admin,
-          });
+        const accessToken = await this.generateAccessToken({
+          id: existingEmail._id,
+          email: existingEmail.email,
+          is_admin: existingEmail.is_admin,
+        });
+        const refreshToken = await this.generateRefreshToken({
+          id: existingEmail._id,
+          email: existingEmail.email,
+          is_admin: existingEmail.is_admin,
+        });
 
-          const existingRefreshToken = await RefreshTokenModel.findOne({
+        const existingRefreshToken = await RefreshTokenModel.findOne({
+          userId: existingEmail._id,
+        });
+
+        if (!existingRefreshToken) {
+          await RefreshTokenModel.create({
             userId: existingEmail._id,
+            token: refreshToken,
           });
-
-          if (!existingRefreshToken) {
-            await RefreshTokenModel.create({
+        } else {
+          await RefreshTokenModel.findOneAndUpdate(
+            {
               userId: existingEmail._id,
+            },
+            {
               token: refreshToken,
-            });
-          } else {
-            await RefreshTokenModel.findOneAndUpdate(
-              {
-                userId: existingEmail._id,
-              },
-              {
-                token: refreshToken,
-              }
-            );
-          }
-
-          res.cookie("token", refreshToken, {
-            maxAge: 1000 * 60 * 24 * 60,
-            httpOnly: true,
-            path: "/",
-          });
-
-          return res.status(STATUS.OK).json({
-            message: "Đăng nhập thành công",
-            accessToken: accessToken,
-            user: existingEmail,
-          });
+            }
+          );
         }
 
-        return res.status(STATUS.BAD_REQUEST).json({
-          message: "Email đã có người đăng kí",
+        res.cookie("token", refreshToken, {
+          maxAge: 1000 * 60 * 24 * 60,
+          httpOnly: true,
+          path: "/",
+        });
+
+        return res.status(STATUS.OK).json({
+          message: "Đăng nhập thành công",
+          accessToken: accessToken,
+          user: existingEmail,
         });
       }
 
@@ -310,6 +306,8 @@ class AuthController {
         process.env.SECRET_REFRESHTOKEN!,
         async (err: VerifyErrors | null, data?: object | string) => {
           if (err) {
+            console.log("err:", err);
+
             return res.status(STATUS.AUTHENTICATOR).json({
               message: "Token đã hết hạn mời bạn đăng nhập lại",
             });
@@ -343,6 +341,8 @@ class AuthController {
             maxAge: 24 * 60 * 60 * 1000 * 60,
             httpOnly: true,
             path: "/",
+            sameSite: 'none',
+            secure: true, 
           });
 
           return res.status(STATUS.OK).json({
