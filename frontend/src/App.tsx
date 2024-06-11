@@ -18,9 +18,10 @@ import instance from "./config/instance";
 import axios from "axios";
 
 function App() {
-
+  const { onUpdateCart } = useStore();
   const [loading, setLoading] = useState(false)
   
+
 	useEffect(() => {
 		(async () => {
 			const { data } = await axios.post(
@@ -47,7 +48,7 @@ function App() {
 				<Route path="/" element={<MainLayout />}>
 					<Route index element={<Home />} />
 					<Route path="*" element={<NotFound />}></Route>
-          <Route path="address" element={<Address />} />
+					<Route path="address" element={<Address />} />
 				</Route>
 				<Route path="/auth" element={<AuthLayout />}>
 					<Route path="login" element={<Login />} />

@@ -78,7 +78,7 @@ const VerifyOtp = ({ setStep, email }: PropsVerifyOtp) => {
 	return (
 		<div className="">
 			<OverlayViolet />
-			<div className="flex justify-between items-center pr-5">
+			<div className="absolute left-3 top-3 flex justify-between items-center pr-5">
 				<Link
 					to={"/"}
 					className="dark:bg-slate-600 relative flex items-center justify-center max-w-36 mt-10 ml-12 p-3 bg-white rounded-lg shadow-lg"
