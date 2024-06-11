@@ -364,21 +364,40 @@ class AuthController {
 
   async logout(req: RequestModel, res: Response) {
     try {
-      if (!req.user) {
+      const refreshToken = req.cookies.token;
+      if (!refreshToken) {
         return res.status(STATUS.AUTHENTICATOR).json({
-          message: "Bạn chưa đăng nhập",
+          message: "Bạn chưa đăng nhập ",
         });
       }
 
-      await RefreshTokenModel.findOneAndDelete({ userId: req.user.id });
+      jwt.verify(
+        refreshToken,
+        process.env.SECRET_REFRESHTOKEN!,
+        async (err: VerifyErrors | null, data?: object | string) => {
+          if (err) {
+            res.cookie("token", "", {
+              maxAge: 0,
+            });
+            return res.status(STATUS.OK).json({
+              message: "Đăng xuất thành công",
+            });
+          }
 
-      res.cookie("token", undefined, {
-        maxAge: 0,
-      });
+          await RefreshTokenModel.findOneAndDelete({
+            userId: (data as PayloadToken).id as ObjectId,
+            token: refreshToken,
+          });
 
-      return res.status(STATUS.OK).json({
-        message: "Bạn đã đăng xuất thành công",
-      });
+          res.cookie("token", "", {
+            maxAge: 0,
+          });
+
+          return res.status(STATUS.OK).json({
+            message: "Đăng xuất thành công",
+          });
+        }
+      );
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,

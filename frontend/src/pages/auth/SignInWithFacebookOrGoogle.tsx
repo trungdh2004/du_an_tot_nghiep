@@ -12,6 +12,27 @@ import {
 } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
+	FacebookAuthProvider,
+	getAdditionalUserInfo,
+	AdditionalUserInfo,
+} from "firebase/auth";
+import { FcGoogle } from "react-icons/fc";
+import app from "@/config/initializeFirebase";
+import instance from "@/config/instance";
+
+interface ISocial {
+	isNewUser: boolean;
+	providerId: string;
+	profile: {
+		email: string;
+		family_name: string;
+		given_name: string;
+		granted_scopes: string;
+		id: string;
+		name: string;
+		picture: string;
+	};
+}
 
 const SignInWithFacebookOrGoogle = () => {
 	const auth = getAuth(app);
@@ -20,11 +41,10 @@ const SignInWithFacebookOrGoogle = () => {
 	const handleLoginGoogle = () => {
 		const provider = new GoogleAuthProvider();
 		signInWithPopup(auth, provider)
-			.then((result) => {
-				// This gives you a Google Access Token. You can use it to access the Google API.
+			.then(async (result) => {
 				const credential = GoogleAuthProvider.credentialFromResult(result);
 				// The signed-in user info.
-				const user = getAdditionalUserInfo(result);
+				const user: AdditionalUserInfo | null = getAdditionalUserInfo(result);
 				const payload = {
 					email: result?.user?.email,
 					first_name: user?.profile?.given_name,
@@ -49,12 +69,8 @@ const SignInWithFacebookOrGoogle = () => {
 						}
 					});
 				// IdP data available using getAdditionalUserInfo(result)
-				// ...
 			})
 			.catch((error) => {
-				// Handle Errors here.
-				console.log(error);
-
 				const errorCode = error.code;
 				const errorMessage = error.message;
 				// The email of the user's account used.
