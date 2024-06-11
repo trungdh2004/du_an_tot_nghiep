@@ -19,6 +19,7 @@ import {
 import { Input } from "../../components/ui/input";
 import SignInWithFacebookOrGoogle from "./SignInWithFacebookOrGoogle";
 import OverlayViolet from "@/components/OverlayViolet";
+import axios from "axios";
 const Login = () => {
 	const formSchema = z.object({
 		email: z
@@ -39,8 +40,11 @@ const Login = () => {
 	});
 	const onSubmit = async (payload: z.infer<typeof formSchema>) => {
 		try {
-			const { data } = await loginAccount(payload);
-			// const { accessToken, user } = data;
+			// const { data } = await loginAccount(payload);
+			const { data } = await axios.post('http://localhost:5000/api/v1/auth/login', payload, {
+				withCredentials:true
+			})
+			// const {  accessToken, user } = data;
 			toast.success(data?.message);
 		} catch (error: any) {
 			console.log(error);

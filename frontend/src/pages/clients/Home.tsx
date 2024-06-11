@@ -5,22 +5,21 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 const Home = () => {
-	const [open, setOpen] = useState(false);
-
-	const handleSubmit = () => {};
-	const handleTesst = async () => {
-		toast.success("hihi");
-	};
+	const handleTesst =async () => {
+		try {
+			const { data } = await instance.post("/address/paddingAddress", {})
+		} catch (error) {
+			
+		}
+	}
 
 	return (
-		<div className="px-4 sm:px-6 md:px-[40px] xl:px-[50px] 2xl:px-[60px]">
-			<DialogConfirm
-				open={open}
-				handleClose={() => setOpen(false)}
-				handleSubmit={handleTesst}
-				content="Tôi muốn xóa"
-			/>
-			<button onClick={() => setOpen(true)}>click</button>
+		<div className="flex w-full h-screen flex items-center justify-center">
+			<div className="w-[200px] h-[200px] bg-red-500 border">
+				<Button onClick={handleTesst}>
+					CLick
+				</Button>
+			</div>
 		</div>
 	);
 };

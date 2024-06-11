@@ -19,20 +19,20 @@ import axios from "axios";
 function App() {
 	const { onUpdateCart } = useStore();
 
-	useEffect(() => {
-		(async () => {
-			const { data } = await axios.post(
-				`${process.env.SERVER_URL}/auth/refreshToken`,
-				{},
-				{
-					withCredentials: true,
-				},
-			);
+	// useEffect(() => {
+	// 	(async () => {
+	// 		const { data } = await axios.post(
+	// 			`${process.env.SERVER_URL}/auth/refreshToken`,
+	// 			{},
+	// 			{
+	// 				withCredentials: true,
+	// 			},
+	// 		);
 
-			instance.defaults.headers.common["Authorization"] =
-				"Bearer " + data.accessToken;
-		})();
-	}, []);
+	// 		instance.defaults.headers.common["Authorization"] =
+	// 			"Bearer " + data.accessToken;
+	// 	})();
+	// }, []);
 
 	return (
 		<>
