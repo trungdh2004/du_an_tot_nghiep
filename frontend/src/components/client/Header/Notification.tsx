@@ -10,11 +10,8 @@ import { IoNotificationsOutline } from "react-icons/io5";
 const Notification = () => {
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger className="border-none outline-none">
-				<IoNotificationsOutline
-					strokeWidth={4}
-					className="text-xl md:text-2xl"
-				/>
+			<DropdownMenuTrigger className="border-none outline-none hover:bg-[#919eab27] p-1 rounded-full">
+				<IoNotificationsOutline strokeWidth={4} className="text-2xl" />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
 				style={{ boxShadow: "0 -4px 32px rgba(0, 0, 0, .2)" }}
