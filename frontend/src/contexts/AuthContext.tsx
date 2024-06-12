@@ -1,4 +1,5 @@
 import { getItemLocal } from "@/common/localStorage";
+import LoadingFixed from "@/components/LoadingFixed";
 import instance from "@/config/instance";
 import { currentAccount } from "@/service/account";
 import { AxiosError } from "axios";
@@ -38,6 +39,7 @@ interface AuthProviderProps {
 const AuthProvider = ({ children }: AuthProviderProps) => {
 	const [authUser, setAuthUser] = useState<IUser | undefined>(undefined);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
 	const value = { authUser, setAuthUser, isLoggedIn, setIsLoggedIn };
 	useEffect(() => {
 		(async () => {
@@ -53,9 +55,12 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 				if (error instanceof AxiosError) {
 					toast.error(error.response?.data?.message);
 				}
+			} finally {
+				setIsLoading(false);
 			}
 		})();
 	}, []);
+	if (isLoading) return <LoadingFixed />;
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 

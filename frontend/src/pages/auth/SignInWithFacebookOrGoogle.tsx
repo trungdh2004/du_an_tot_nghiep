@@ -5,6 +5,7 @@ import { useRouterHistory } from "@/hooks/router";
 import { socialUser } from "@/service/account";
 import { AxiosError } from "axios";
 import {
+	AdditionalUserInfo,
 	GoogleAuthProvider,
 	getAdditionalUserInfo,
 	getAuth,
@@ -12,27 +13,6 @@ import {
 } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
-	FacebookAuthProvider,
-	getAdditionalUserInfo,
-	AdditionalUserInfo,
-} from "firebase/auth";
-import { FcGoogle } from "react-icons/fc";
-import app from "@/config/initializeFirebase";
-import instance from "@/config/instance";
-
-interface ISocial {
-	isNewUser: boolean;
-	providerId: string;
-	profile: {
-		email: string;
-		family_name: string;
-		given_name: string;
-		granted_scopes: string;
-		id: string;
-		name: string;
-		picture: string;
-	};
-}
 
 const SignInWithFacebookOrGoogle = () => {
 	const auth = getAuth(app);
