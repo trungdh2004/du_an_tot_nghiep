@@ -12,15 +12,9 @@ import {
 } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
-	FacebookAuthProvider,
-	getAdditionalUserInfo,
-	AdditionalUserInfo,
-} from "firebase/auth";
-import { FcGoogle } from "react-icons/fc";
-import app from "@/config/initializeFirebase";
 import instance from "@/config/instance";
 
-interface ISocial {
+interface AdditionalUserInfo {
 	isNewUser: boolean;
 	providerId: string;
 	profile: {
@@ -44,7 +38,7 @@ const SignInWithFacebookOrGoogle = () => {
 			.then(async (result) => {
 				const credential = GoogleAuthProvider.credentialFromResult(result);
 				// The signed-in user info.
-				const user: AdditionalUserInfo | null = getAdditionalUserInfo(result);
+				const user = getAdditionalUserInfo(result);
 				const payload = {
 					email: result?.user?.email,
 					first_name: user?.profile?.given_name,

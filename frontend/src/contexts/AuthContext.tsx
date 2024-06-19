@@ -50,9 +50,9 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 				setIsLoggedIn(true);
 				toast.success(data?.message);
 			} catch (error) {
-				if (error instanceof AxiosError) {
-					toast.error(error.response?.data?.message);
-				}
+				// if (error instanceof AxiosError) {
+				// 	toast.error(error.response?.data?.message);
+				// }
 			}
 		})();
 	}, []);

@@ -41,6 +41,8 @@ const Home = () => {
 				<button>handleTest</button>
 				<button onClick={() => handleTest()}>Login</button>
 			</div>
-  )
+		</div>
+)
+}
 
 export default Home;

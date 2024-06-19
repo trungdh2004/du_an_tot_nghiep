@@ -16,31 +16,29 @@ import Address from "./pages/clients/address/Address";
 import EditAddress from "./pages/clients/address/EditAddress";
 import instance from "./config/instance";
 import axios from "axios";
+import AdminLayout from "./layout/AdminLayout";
+import Dashboard from "./pages/admin/Dashboard";
 
 function App() {
-  const { onUpdateCart } = useStore();
-  const [loading, setLoading] = useState(false)
-  
+	const { onUpdateCart } = useStore();
+	const [loading, setLoading] = useState(false);
 
-	useEffect(() => {
-		(async () => {
-			const { data } = await axios.post(
-				`${process.env.SERVER_URL}/auth/refreshToken`,
-				{},
-				{
-					withCredentials: true,
-				},
-			);
-			const accessToken = data.accessToken;
+	// 	useEffect(() => {
+	// 		(async () => {
+	// 			const { data } = await axios.post(
+	// 				`${process.env.SERVER_URL}/auth/refreshToken`,
+	// 				{},
+	// 				{
+	// 					withCredentials: true,
+	// 				},
+	// 			);
+	// 			const accessToken = data.accessToken;
 
-			instance.defaults.headers.common["Authorization"] =
-        `Bearer ${accessToken}`;
-      setLoading(true)
-		})();
-  }, []);
-  if (!loading) {
-		return "loading";
-	}
+	// 			instance.defaults.headers.common["Authorization"] =
+	//         `Bearer ${accessToken}`;
+	//       setLoading(true)
+	// 		})();
+	//   }, []);
 
 	return (
 		<>
@@ -55,7 +53,12 @@ function App() {
 					<Route path="register" element={<Register />} />
 					<Route path="forgot-password" element={<ForgotPassword />} />
 				</Route>
-
+				<Route path="/admin" element={<AdminLayout />}>
+					<Route index element={<Dashboard />} />
+					<Route path="add" element={<Dashboard />} />
+					<Route path="user" element={<Dashboard />} />
+					<Route path="user/staff" element={<Dashboard />} />
+				</Route>
 				<Route path="*" element={<NotFound />}></Route>
 			</Routes>
 			<Toaster richColors position="top-right" />
