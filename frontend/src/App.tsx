@@ -16,6 +16,9 @@ import Address from "./pages/clients/address/Address";
 import EditAddress from "./pages/clients/address/EditAddress";
 import instance from "./config/instance";
 import axios from "axios";
+import ProductDetail from "./pages/clients/product/ProductDetail";
+import LayoutAdmin from "./layout/LayoutAdmin";
+import { DataTableDemo } from "./pages/admin/users/UserHome";
 
 function App() {
 
@@ -47,12 +50,18 @@ function App() {
 				<Route path="/" element={<MainLayout />}>
 					<Route index element={<Home />} />
 					<Route path="*" element={<NotFound />}></Route>
-          <Route path="address" element={<Address />} />
+					<Route path="address" element={<Address />} />
+					<Route path="product/:id" element={<ProductDetail />} />
 				</Route>
 				<Route path="/auth" element={<AuthLayout />}>
 					<Route path="login" element={<Login />} />
 					<Route path="register" element={<Register />} />
 					<Route path="forgot-password" element={<ForgotPassword />} />
+				</Route>
+				<Route>
+					<Route path="/admin" element={<LayoutAdmin />}>
+						<Route path="users" element={<DataTableDemo/>} />
+					</Route>
 				</Route>
 
 				<Route path="*" element={<NotFound />}></Route>
