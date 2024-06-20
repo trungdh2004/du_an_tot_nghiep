@@ -15,7 +15,7 @@ const Notification = () => {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
 				style={{ boxShadow: "0 -4px 32px rgba(0, 0, 0, .2)" }}
-				className="absolute right-0 top-2 max-sm:w-[330px] w-[400px]  py-2 px-4 *:cursor-pointer  text-[#1d2129] rounded-lg border-none"
+				className="absolute right-0 top-2 max-sm:-right-1/2 max-sm:translate-x-1/4  max-sm:w-[330px] w-[400px]  py-2 px-4 *:cursor-pointer  text-[#1d2129] rounded-lg border-none"
 			>
 				<DropdownMenuLabel>
 					<div className="flex items-center justify-between">

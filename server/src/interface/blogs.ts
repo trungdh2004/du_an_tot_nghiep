@@ -17,7 +17,6 @@ export interface IBlogs {
   comments_count?: number;
   countLike: number;
   selected_tags?: [];
-  image_url: string;
   thumbnail_url: string;
   isNotification: boolean;
   is_delete: boolean;

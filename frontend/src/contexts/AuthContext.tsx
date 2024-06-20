@@ -44,16 +44,13 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 	useEffect(() => {
 		(async () => {
 			try {
-				if (getItemLocal("token")) {
-					instance.defaults.headers.common.Authorization = `Bearer ${getItemLocal("token")}`;
-				}
 				const { data } = await currentAccount();
 				setAuthUser(data?.data);
 				setIsLoggedIn(true);
 				toast.success(data?.message);
 			} catch (error) {
 				if (error instanceof AxiosError) {
-					toast.error(error.response?.data?.message);
+					// toast.error(error.response?.data?.message);
 				}
 			} finally {
 				setIsLoading(false);
