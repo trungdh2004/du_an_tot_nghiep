@@ -304,7 +304,6 @@ class AuthController {
           message: "Bạn chưa đăng nhập ",
         });
       }
-
       jwt.verify(
         refreshToken,
         process.env.SECRET_REFRESHTOKEN!,
@@ -468,7 +467,6 @@ class AuthController {
       });
     }
   }
-
   async compareOtp(req: Request, res: Response) {
     try {
       const { otp, email } = req.body;
