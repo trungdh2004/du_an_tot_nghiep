@@ -3,9 +3,12 @@ import "./App.css";
 import MainLayout from "./layout/MainLayout";
 import AuthLayout from "./layout/AuthLayout";
 import { Toaster } from "./components/ui/sonner";
+
 import Login from "./pages/auth/login";
 import Register from "./pages/auth/Register";
 import NotFound from "./pages/NotFound";
+import Cart from "./pages/client/Cart";
+import Address from "./pages/client/address/Address";
 
 function App() {
 	return (
@@ -13,6 +16,9 @@ function App() {
 			<Routes>
 				<Route path="/" element={<MainLayout />}>
 					<Route path="*" element={<NotFound />}></Route>
+					<Route path="address" element={<Address />} />
+          <Route path="cart" element={<Cart />}></Route>
+          
 				</Route>
 				<Route path="/auth" element={<AuthLayout />}>
 					<Route path="login" element={<Login />} />
