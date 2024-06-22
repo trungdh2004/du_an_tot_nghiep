@@ -5,6 +5,7 @@ import { RouterProvider } from "react-router-dom";
 import { Toaster } from "sonner";
 import router from "./App.tsx";
 import { AuthProvider } from "./contexts/AuthContext.tsx";
+import "react-quill/dist/quill.snow.css";
 import "./index.css";
 const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById("root")!).render(
