@@ -8,7 +8,7 @@ export const generateSlugs = (value: string) => {
     locale: "vn",
     trim: true,
     remove: /[*+~.()'"!:@]/g,
-  })}-${Math.random().toString(36).substring(2, 9)}.${crypto
+  })}-${Math.random().toString(36).substring(2, 9)}-${crypto
     .randomBytes(10)
     .toString("hex")}`;
 

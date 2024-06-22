@@ -3,13 +3,11 @@ export interface IBlogs {
   user_id: string;
   title: string;
   slug: string;
-  description: string;
   meta_title: string;
   meta_description: string;
   content: string;
   views_count: number;
-  is_recommend: boolean;
-  is_approved: boolean;
+  // is_recommend: boolean;
   published_at: string;
   deleted_at?: string;
   created_at?: string;
@@ -20,4 +18,11 @@ export interface IBlogs {
   thumbnail_url: string;
   isNotification: boolean;
   is_delete: boolean;
+}
+
+export interface ITags {
+  _id?: string;
+  name: string;
+  description: string;
+  slug: string;
 }
