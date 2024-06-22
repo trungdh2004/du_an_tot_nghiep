@@ -17,7 +17,7 @@ const Actions = () => {
 				<Notification />
 			</div>
 			<div className="hover:bg-[#919eab27] p-1">
-				<LucideShoppingCart strokeWidth={1.5} className="text-2xl" />
+				<LucideShoppingCart strokeWidth={1.5} size={20} />
 			</div>
 
 			{isLoggedIn ? (

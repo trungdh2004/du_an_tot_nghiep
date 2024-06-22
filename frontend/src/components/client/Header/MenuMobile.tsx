@@ -10,14 +10,26 @@ import {
 	SheetTrigger,
 } from "@/components/ui/sheet";
 import { AccordionItem } from "@radix-ui/react-accordion";
+import { useEffect, useState } from "react";
 import { IoMenu } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
+import { useMediaQuery } from "usehooks-ts";
 const MenuMobile = () => {
+	const matches = useMediaQuery("(min-width: 768px)");
+	const [isOpen, setClose] = useState(false);
+	useEffect(() => {
+		if (matches) {
+			setClose(false);
+		}
+	}, [matches]);
 	return (
-		<Sheet>
-			<SheetTrigger asChild>
-				<IoMenu className="text-2xl cursor-pointer" />
-			</SheetTrigger>
+		<Sheet open={isOpen} onOpenChange={() => setClose(false)}>
+			{/* <SheetTrigger asChild> */}
+			<IoMenu
+				onClick={() => setClose(true)}
+				className="text-2xl cursor-pointer"
+			/>
+			{/* </SheetTrigger> */}
 			<SheetContent side={"left"} className="flex flex-col gap-y-5">
 				<SheetHeader>
 					<div className="flex items-center gap-3">

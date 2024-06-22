@@ -9,8 +9,10 @@ import { IoSearch } from "react-icons/io5";
 const Search = () => {
 	return (
 		<Dialog>
-			<DialogTrigger className="border-none outline-none hover:bg-[#919eab27] p-1 rounded-full">
-				<IoIosSearch strokeWidth={0.5} className="text-2xl " />
+			<DialogTrigger asChild>
+				<div className="hover:bg-[#919eab27] p-1 rounded-full">
+					<IoIosSearch strokeWidth={0.5} size={20} />
+				</div>
 			</DialogTrigger>
 			<DialogContent className="max-sm:max-w-[92%] rounded-md">
 				<DialogHeader className="border-b border-gray-300 pb-3">
