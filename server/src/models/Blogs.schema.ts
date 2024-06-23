@@ -1,3 +1,4 @@
+
 import { required } from "joi";
 import mongoose from "mongoose";
 
@@ -76,3 +77,4 @@ const BlogsSchema = new mongoose.Schema(
 const BlogsModel = mongoose.model("Blogs", BlogsSchema);
 
 export default BlogsModel;
+

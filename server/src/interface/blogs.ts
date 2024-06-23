@@ -1,3 +1,4 @@
+
 export interface IBlogs {
   id?: number;
   user_id: string;
@@ -26,3 +27,4 @@ export interface ITags {
   description: string;
   slug:string
 }
+

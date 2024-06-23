@@ -1,4 +1,3 @@
-import { setItemLocal } from "@/common/localStorage";
 import OverlayViolet from "@/components/OverlayViolet";
 import instance from "@/config/instance";
 import { useAuth } from "@/hooks/auth";
@@ -50,7 +49,6 @@ const Login = () => {
 			console.log(data);
 			setAuthUser?.(data?.user);
 			setIsLoggedIn?.(true);
-			setItemLocal("token", data?.accessToken);
 			instance.defaults.headers.common.Authorization = `Bearer ${data?.accessToken}`;
 			toast.success(data?.message);
 			routerHistory();

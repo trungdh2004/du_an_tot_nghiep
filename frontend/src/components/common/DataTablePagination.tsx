@@ -13,32 +13,44 @@ import Paginations from "./Pagination";
 
 interface DataTablePaginationProps<TData> {
 	table: Table<TData>;
+	handleChangePage: ({ selected }: { selected: number }) => void;
+	totalElement: number;
+	pageCount: number;
+	dataPageSize?: number[];
+	handleChangePageSize: (value: number) => void;
+	pageSize: number;
 }
 
 export function DataTablePagination<TData>({
 	table,
+	handleChangePage,
+	totalElement,
+	pageCount,
+	handleChangePageSize,
+	dataPageSize,
+	pageSize,
 }: DataTablePaginationProps<TData>) {
+	const listSize = dataPageSize ? dataPageSize : [5, 10, 15, 20, 25];
+
 	return (
-		<div className="flex items-center justify-between px-2">
+		<div className="block sm:flex items-center justify-between px-2">
 			<div className="flex-1 text-sm text-muted-foreground">
-				Tổng : {table.getRowCount()} -{" "}
-				{table.getFilteredSelectedRowModel().rows.length} /{" "}
-				{table.getFilteredRowModel().rows.length} chọn.
+				Tổng : {totalElement}
 			</div>
-			<div className="flex items-center space-x-2">
+			<div className="flex space-y-2 sm:flex-row flex-col items-center space-x-2">
 				<div className="flex items-center space-x-2">
 					<p className="text-sm font-medium">Số lượng</p>
 					<Select
-						value={`${table.getState().pagination.pageSize}`}
+						value={`${pageSize}`}
 						onValueChange={(value) => {
-							table.setPageSize(Number(value));
+							handleChangePageSize(+value as number);
 						}}
 					>
 						<SelectTrigger className="h-8 w-[70px]">
 							<SelectValue placeholder={table.getState().pagination.pageSize} />
 						</SelectTrigger>
 						<SelectContent side="top">
-							{[1, 5, 10, 20, 30, 40, 50].map((pageSize) => (
+							{listSize.map((pageSize) => (
 								<SelectItem key={pageSize} value={`${pageSize}`}>
 									{pageSize}
 								</SelectItem>
@@ -46,36 +58,15 @@ export function DataTablePagination<TData>({
 						</SelectContent>
 					</Select>
 				</div>
-				<div className="flex w-[100px] items-center justify-center text-sm font-medium">
-					Trang {table.getState().pagination.pageIndex + 1} /{" "}
-					{table.getPageCount()}
+				<div className="hidden sm:flex w-[100px] items-center justify-center text-sm font-medium">
+					Trang {table.getState().pagination.pageIndex + 1} / {pageCount}
 				</div>
 				<div className="flex items-center space-x-2">
-					<Button
-						variant="outline"
-						className="hidden h-8 w-8 p-0 lg:flex"
-						onClick={() => table.setPageIndex(0)}
-						disabled={!table.getCanPreviousPage()}
-					>
-						<span className="sr-only">Go to first page</span>
-						<ChevronLeftIcon className="h-4 w-4" />
-					</Button>
 					<Paginations
 						size="sm"
-						pageCount={table.getPageCount()}
-						handlePageClick={({ selected }: { selected: number }) => {
-							table.setPageIndex(selected);
-						}}
+						pageCount={pageCount}
+						handlePageClick={handleChangePage}
 					/>
-					<Button
-						variant="outline"
-						className="h-8 w-8 p-0"
-						onClick={() => table.nextPage()}
-						disabled={!table.getCanNextPage()}
-					>
-						<span className="sr-only">Go to next page</span>
-						<ChevronRightIcon className="h-4 w-4" />
-					</Button>
 				</div>
 			</div>
 		</div>

@@ -3,7 +3,7 @@ import Menu from "./Menu";
 import MenuMobile from "./MenuMobile";
 const Header = () => {
 	return (
-		<header className="backdrop-blur-md  fixed top-0 inset-x-0  padding">
+		<header className="backdrop-blur-md  fixed top-0 inset-x-0  padding z-50">
 			<div className="">
 				<div className="flex h-16 items-center justify-between">
 					<div className="block md:hidden">

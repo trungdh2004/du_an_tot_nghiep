@@ -5,16 +5,16 @@ import {
 	flexRender,
 	getCoreRowModel,
 	useReactTable,
-	getPaginationRowModel,
 	getSortedRowModel,
 	SortingState,
 	VisibilityState,
-	PaginationState,
+	RowSelectionState,
 } from "@tanstack/react-table";
 
 import {
 	Table,
 	TableBody,
+	TableCaption,
 	TableCell,
 	TableHead,
 	TableHeader,
@@ -30,89 +30,46 @@ import {
 import { DataTablePagination } from "./DataTablePagination";
 
 interface DataTableProps<TData, TValue> {
-	columns: ColumnDef<TData, TValue>[];
-	data: TData[];
-	pageIndex?: number;
-	pageSize?: number;
-	handleChangePage?: () => void;
-	paginationEnabled?: boolean;
-	isVisibility?: boolean;
-	sorting?: { id: string; desc: boolean }[];
+	columns: ColumnDef<TData, TValue>[]; //!column các cột dùng
+	data: TData[]; //!data
+	pageCount: number; //! số lượng trang
+	pageIndex: number; //! trang hiện tại
+	totalElement: number; //!số lượng sản phẩm
+	handleChangePage: ({ selected }: { selected: number }) => void; //!hàm thay đổi trang
+	rowSelection?: RowSelectionState; //! lưu trữ các row selected
+	setRowSelection?: React.Dispatch<React.SetStateAction<RowSelectionState>>; //! hàm để selected
+	dataPageSize?: number[]; //! data mảng các size tùy chỉnh
+	pageSize: number; //! số lượng phàn tử trong trang
+	handleChangePageSize: (value: number) => void; //! thay đổi phần tử trang
 }
 
 const TableComponent = <TData, TValue>({
 	columns,
 	data,
+	handleChangePage,
+	pageSize = 10,
+	pageCount = 0,
+	totalElement = 0,
+	rowSelection,
+	setRowSelection,
+	handleChangePageSize,
+	dataPageSize,
 }: DataTableProps<TData, TValue>) => {
-	const [sorting, setSorting] = useState<SortingState>([]);
-	const [columnVisibility, setColumnVisibility] =
-		React.useState<VisibilityState>({});
-	const [rowSelection, setRowSelection] = React.useState({});
-	const [pagination, setPagination] = React.useState<PaginationState>({
-		pageIndex: 0,
-		pageSize: 5,
-	});
-
 	const table = useReactTable({
 		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
-		onSortingChange: setSorting,
 		getSortedRowModel: getSortedRowModel(),
-		onColumnVisibilityChange: setColumnVisibility,
 		onRowSelectionChange: setRowSelection,
 		state: {
-			sorting,
-			columnVisibility,
 			rowSelection,
-			pagination,
 		},
-		// manualPagination: true,
-		// manualSorting: true,
-
-		onPaginationChange: setPagination,
 	});
 
-	console.log("sorting:", sorting);
-
 	return (
-		<div className="min-h-screen ">
-			<p>
-				Count:
-				{table.getPageCount()}
-			</p>
-			<div className="w-full flex justify-end">
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant="outline" className="ml-auto">
-							Thay đổi
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						{table
-							.getAllColumns()
-							.filter((column) => column.getCanHide())
-							.map((column) => {
-								return (
-									<DropdownMenuCheckboxItem
-										key={column.id}
-										className="capitalize"
-										checked={column.getIsVisible()}
-										onCheckedChange={(value) =>
-											column.toggleVisibility(!!value)
-										}
-									>
-										{column.id}
-									</DropdownMenuCheckboxItem>
-								);
-							})}
-					</DropdownMenuContent>
-				</DropdownMenu>
-			</div>
-
-			<Table>
-				<TableHeader>
+		<div className=" scroll-custom">
+			<Table className="scroll-custom">
+				<TableHeader className="scroll-custom">
 					{table.getHeaderGroups().map((headerGroup) => {
 						return (
 							<TableRow key={headerGroup.id}>
@@ -133,12 +90,12 @@ const TableComponent = <TData, TValue>({
 					})}
 				</TableHeader>
 
-				<TableBody>
+				<TableBody className="scroll-custom">
 					{table.getRowModel().rows?.length ? (
 						table.getRowModel().rows.map((row) => (
 							<TableRow
 								key={row.id}
-								data-state={row.getIsSelected() && "selected"}
+								// data-state={(row.getIsSelected() && "selected") || ""}
 							>
 								{row.getVisibleCells().map((cell) => (
 									<TableCell key={cell.id}>
@@ -156,8 +113,15 @@ const TableComponent = <TData, TValue>({
 					)}
 				</TableBody>
 			</Table>
-
-			<DataTablePagination table={table} />
+			<DataTablePagination
+				table={table}
+				handleChangePage={handleChangePage}
+				pageCount={pageCount}
+				totalElement={totalElement}
+				handleChangePageSize={handleChangePageSize}
+				dataPageSize={dataPageSize}
+				pageSize={pageSize}
+			/>
 		</div>
 	);
 };
