@@ -13,11 +13,19 @@ import useStore from "./store/home.store";
 
 import Login from "./pages/auth/Login";
 import Address from "./pages/clients/address/Address";
-import EditAddress from "./pages/clients/address/EditAddress";
-import instance from "./config/instance";
-import axios from "axios";
+
 import AdminLayout from "./layout/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
+
+import UserIndex from "./pages/UserIndex";
+
+interface ITable {
+	id: string;
+	name: string;
+	address: string;
+	email: string;
+	age?: number;
+}
 
 function App() {
 	const { onUpdateCart } = useStore();
@@ -40,6 +48,9 @@ function App() {
 	// 		})();
 	//   }, []);
 
+	
+	
+
 	return (
 		<>
 			<Routes>
@@ -47,6 +58,12 @@ function App() {
 					<Route index element={<Home />} />
 					<Route path="*" element={<NotFound />}></Route>
 					<Route path="address" element={<Address />} />
+					<Route
+						path="table"
+						element={
+							<UserIndex />
+						}
+					/>
 				</Route>
 				<Route path="/auth" element={<AuthLayout />}>
 					<Route path="login" element={<Login />} />

@@ -8,7 +8,7 @@ import { IoIosSearch } from "react-icons/io";
 import { IoSearch } from "react-icons/io5";
 const Search = () => {
 	return (
-		<Dialog>
+		<Dialog >
 			<DialogTrigger asChild>
 				<IoIosSearch strokeWidth={0.5} size={20} />
 			</DialogTrigger>

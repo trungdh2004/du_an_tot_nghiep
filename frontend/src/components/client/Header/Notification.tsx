@@ -12,7 +12,8 @@ const Notification = () => {
 	return (
 		<DropdownMenu modal={false}>
 			<DropdownMenuTrigger asChild>
-				<div>
+				<div className="relative">
+					<span className=" rounded-full bg-red-500 text-white absolute w-4 h-4 text-xs flex items-center justify-center -top-1 -right-1" >1</span>
 					<IoNotificationsOutline strokeWidth={4} size={20} />
 				</div>
 			</DropdownMenuTrigger>
