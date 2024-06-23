@@ -67,52 +67,61 @@ const TableComponent = <TData, TValue>({
 	});
 
 	return (
-		<div className=" scroll-custom">
-			<Table className="scroll-custom">
-				<TableHeader className="scroll-custom">
-					{table.getHeaderGroups().map((headerGroup) => {
-						return (
-							<TableRow key={headerGroup.id}>
-								{headerGroup.headers.map((header) => {
-									return (
-										<TableHead key={header.id}>
-											{header.isPlaceholder
-												? null
-												: flexRender(
-														header.column.columnDef.header,
-														header.getContext(),
-													)}
-										</TableHead>
-									);
-								})}
-							</TableRow>
-						);
-					})}
-				</TableHeader>
+		<div className="space-y-2">
+			<div className="border rounded-md">
+				<Table>
+					<TableHeader className="scroll-custom">
+						{table.getHeaderGroups().map((headerGroup) => {
+							return (
+								<TableRow key={headerGroup.id}>
+									{headerGroup.headers.map((header) => {
+										return (
+											<TableHead key={header.id}>
+												{header.isPlaceholder
+													? null
+													: flexRender(
+															header.column.columnDef.header,
+															header.getContext(),
+														)}
+											</TableHead>
+										);
+									})}
+								</TableRow>
+							);
+						})}
+					</TableHeader>
 
-				<TableBody className="scroll-custom">
-					{table.getRowModel().rows?.length ? (
-						table.getRowModel().rows.map((row) => (
-							<TableRow
-								key={row.id}
-								// data-state={(row.getIsSelected() && "selected") || ""}
-							>
-								{row.getVisibleCells().map((cell) => (
-									<TableCell key={cell.id}>
-										{flexRender(cell.column.columnDef.cell, cell.getContext())}
-									</TableCell>
-								))}
+					<TableBody className="scroll-custom">
+						{table.getRowModel().rows?.length ? (
+							table.getRowModel().rows.map((row) => (
+								<TableRow
+									key={row.id}
+									// data-state={(row.getIsSelected() && "selected") || ""}
+								>
+									{row.getVisibleCells().map((cell) => (
+										<TableCell key={cell.id}>
+											{flexRender(
+												cell.column.columnDef.cell,
+												cell.getContext(),
+											)}
+										</TableCell>
+									))}
+								</TableRow>
+							))
+						) : (
+							<TableRow>
+								<TableCell
+									colSpan={columns.length}
+									className="h-24 text-center"
+								>
+									Không có giá trị
+								</TableCell>
 							</TableRow>
-						))
-					) : (
-						<TableRow>
-							<TableCell colSpan={columns.length} className="h-24 text-center">
-								Không có giá trị
-							</TableCell>
-						</TableRow>
-					)}
-				</TableBody>
-			</Table>
+						)}
+					</TableBody>
+				</Table>
+			</div>
+
 			<DataTablePagination
 				table={table}
 				handleChangePage={handleChangePage}
