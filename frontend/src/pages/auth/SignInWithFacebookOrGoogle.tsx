@@ -5,6 +5,7 @@ import { useRouterHistory } from "@/hooks/router";
 import { socialUser } from "@/service/account";
 import { AxiosError } from "axios";
 import {
+	AdditionalUserInfo,
 	GoogleAuthProvider,
 	getAdditionalUserInfo,
 	getAuth,

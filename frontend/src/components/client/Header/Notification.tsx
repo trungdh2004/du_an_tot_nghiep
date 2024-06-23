@@ -12,7 +12,7 @@ const Notification = () => {
 	return (
 		<DropdownMenu modal={false}>
 			<DropdownMenuTrigger asChild>
-				<div>
+				<div className="hover:bg-[#919eab27] p-1 rounded-full">
 					<IoNotificationsOutline strokeWidth={4} size={20} />
 				</div>
 			</DropdownMenuTrigger>
@@ -22,8 +22,10 @@ const Notification = () => {
 			>
 				<DropdownMenuLabel>
 					<div className="flex items-center justify-between">
-						<h6 className="h6 text-lg">Thông báo</h6>
-						<p className="text-xs font-normal text-blue-500">Đánh dấu đã đọc</p>
+						<h6 className="h6 text-lg max-sm:text-sm">Thông báo</h6>
+						<p className="text-xs font-normal text-blue-500 max-sm:text-sm">
+							Đánh dấu đã đọc
+						</p>
 					</div>
 				</DropdownMenuLabel>
 				<div className="max-h-[68vh] overflow-y-auto scroll-custom">
@@ -37,8 +39,12 @@ const Notification = () => {
 								/>
 							</div>
 							<div className="">
-								<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-								<span className="text-xs text-gray-500">vài giờ trước</span>
+								<p className="max-sm:text-sm">
+									Lorem ipsum dolor sit amet consectetur adipisicing elit.
+								</p>
+								<span className="text-xs text-gray-500 max-sm:text-sm">
+									vài giờ trước
+								</span>
 							</div>
 						</div>
 					</DropdownMenuItem>
@@ -52,8 +58,12 @@ const Notification = () => {
 								/>
 							</div>
 							<div className="">
-								<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-								<span className="text-xs text-gray-500">vài giờ trước</span>
+								<p className="max-sm:text-sm">
+									Lorem ipsum dolor sit amet consectetur adipisicing elit.
+								</p>
+								<span className="text-xs text-gray-500 max-sm:text-sm">
+									vài giờ trước
+								</span>
 							</div>
 						</div>
 					</DropdownMenuItem>
@@ -67,8 +77,12 @@ const Notification = () => {
 								/>
 							</div>
 							<div className="">
-								<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-								<span className="text-xs text-gray-500">vài giờ trước</span>
+								<p className="max-sm:text-sm">
+									Lorem ipsum dolor sit amet consectetur adipisicing elit.
+								</p>
+								<span className="text-xs text-gray-500 max-sm:text-sm">
+									vài giờ trước
+								</span>
 							</div>
 						</div>
 					</DropdownMenuItem>
@@ -82,8 +96,12 @@ const Notification = () => {
 								/>
 							</div>
 							<div className="">
-								<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-								<span className="text-xs text-gray-500">vài giờ trước</span>
+								<p className="max-sm:text-sm">
+									Lorem ipsum dolor sit amet consectetur adipisicing elit.
+								</p>
+								<span className="text-xs text-gray-500 max-sm:text-sm">
+									vài giờ trước
+								</span>
 							</div>
 						</div>
 					</DropdownMenuItem>
@@ -97,8 +115,12 @@ const Notification = () => {
 								/>
 							</div>
 							<div className="">
-								<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-								<span className="text-xs text-gray-500">vài giờ trước</span>
+								<p className="max-sm:text-sm">
+									Lorem ipsum dolor sit amet consectetur adipisicing elit.
+								</p>
+								<span className="text-xs text-gray-500 max-sm:text-sm">
+									vài giờ trước
+								</span>
 							</div>
 						</div>
 					</DropdownMenuItem>
@@ -112,128 +134,12 @@ const Notification = () => {
 								/>
 							</div>
 							<div className="">
-								<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-								<span className="text-xs text-gray-500">vài giờ trước</span>
-							</div>
-						</div>
-					</DropdownMenuItem>
-					<DropdownMenuItem>
-						<div className="flex items-center justify-start gap-x-2 cursor-pointer">
-							<div className="min-w-12 min-h-12 max-w-12 max-h-12">
-								<img
-									src="https://i.pinimg.com/564x/bc/8d/09/bc8d0915de817023c79a85f26be26ea9.jpg"
-									alt=""
-									className="w-full h-full object-cover rounded-full"
-								/>
-							</div>
-							<div className="">
-								<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-								<span className="text-xs text-gray-500">vài giờ trước</span>
-							</div>
-						</div>
-					</DropdownMenuItem>
-					<DropdownMenuItem>
-						<div className="flex items-center justify-start gap-x-2 cursor-pointer">
-							<div className="min-w-12 min-h-12 max-w-12 max-h-12">
-								<img
-									src="https://i.pinimg.com/564x/bc/8d/09/bc8d0915de817023c79a85f26be26ea9.jpg"
-									alt=""
-									className="w-full h-full object-cover rounded-full"
-								/>
-							</div>
-							<div className="">
-								<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-								<span className="text-xs text-gray-500">vài giờ trước</span>
-							</div>
-						</div>
-					</DropdownMenuItem>
-					<DropdownMenuItem>
-						<div className="flex items-center justify-start gap-x-2 cursor-pointer">
-							<div className="min-w-12 min-h-12 max-w-12 max-h-12">
-								<img
-									src="https://i.pinimg.com/564x/bc/8d/09/bc8d0915de817023c79a85f26be26ea9.jpg"
-									alt=""
-									className="w-full h-full object-cover rounded-full"
-								/>
-							</div>
-							<div className="">
-								<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-								<span className="text-xs text-gray-500">vài giờ trước</span>
-							</div>
-						</div>
-					</DropdownMenuItem>
-					<DropdownMenuItem>
-						<div className="flex items-center justify-start gap-x-2 cursor-pointer">
-							<div className="min-w-12 min-h-12 max-w-12 max-h-12">
-								<img
-									src="https://i.pinimg.com/564x/bc/8d/09/bc8d0915de817023c79a85f26be26ea9.jpg"
-									alt=""
-									className="w-full h-full object-cover rounded-full"
-								/>
-							</div>
-							<div className="">
-								<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-								<span className="text-xs text-gray-500">vài giờ trước</span>
-							</div>
-						</div>
-					</DropdownMenuItem>
-					<DropdownMenuItem>
-						<div className="flex items-center justify-start gap-x-2 cursor-pointer">
-							<div className="min-w-12 min-h-12 max-w-12 max-h-12">
-								<img
-									src="https://i.pinimg.com/564x/bc/8d/09/bc8d0915de817023c79a85f26be26ea9.jpg"
-									alt=""
-									className="w-full h-full object-cover rounded-full"
-								/>
-							</div>
-							<div className="">
-								<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-								<span className="text-xs text-gray-500">vài giờ trước</span>
-							</div>
-						</div>
-					</DropdownMenuItem>
-					<DropdownMenuItem>
-						<div className="flex items-center justify-start gap-x-2 cursor-pointer">
-							<div className="min-w-12 min-h-12 max-w-12 max-h-12">
-								<img
-									src="https://i.pinimg.com/564x/bc/8d/09/bc8d0915de817023c79a85f26be26ea9.jpg"
-									alt=""
-									className="w-full h-full object-cover rounded-full"
-								/>
-							</div>
-							<div className="">
-								<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-								<span className="text-xs text-gray-500">vài giờ trước</span>
-							</div>
-						</div>
-					</DropdownMenuItem>
-					<DropdownMenuItem>
-						<div className="flex items-center justify-start gap-x-2 cursor-pointer">
-							<div className="min-w-12 min-h-12 max-w-12 max-h-12">
-								<img
-									src="https://i.pinimg.com/564x/bc/8d/09/bc8d0915de817023c79a85f26be26ea9.jpg"
-									alt=""
-									className="w-full h-full object-cover rounded-full"
-								/>
-							</div>
-							<div className="">
-								<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-								<span className="text-xs text-gray-500">vài giờ trước</span>
-							</div>
-						</div>
-					</DropdownMenuItem>
-					<DropdownMenuItem>
-						<div className="flex items-center justify-start gap-x-2 cursor-pointer">
-							<div className="min-w-12 min-h-12 max-w-12 max-h-12">
-								<img
-									src="https://i.pinimg.com/564x/bc/8d/09/bc8d0915de817023c79a85f26be26ea9.jpg"
-									alt=""
-									className="w-full h-full object-cover rounded-full"
-								/>
-							</div>
-							<div className="">
-								<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-								<span className="text-xs text-gray-500">vài giờ trước</span>
+								<p className="max-sm:text-sm">
+									Lorem ipsum dolor sit amet consectetur adipisicing elit.
+								</p>
+								<span className="text-xs text-gray-500 max-sm:text-sm">
+									vài giờ trước
+								</span>
 							</div>
 						</div>
 					</DropdownMenuItem>

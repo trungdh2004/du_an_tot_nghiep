@@ -1,4 +1,3 @@
-
 import instance from "@/config/instance";
 import { useAuth } from "@/hooks/auth";
 import useStore from "@/store/home.store";
@@ -23,6 +22,7 @@ const Home = () => {
 			console.log("error", error);
 		}
 	};
+
 	return (
 		<div className="px-4 sm:px-6 md:px-[40px] xl:px-[50px] 2xl:px-[60px]">
 			<div className="w-full bg-green-400 min-h-[20vh]">
@@ -42,7 +42,7 @@ const Home = () => {
 				<button onClick={() => handleTest()}>Login</button>
 			</div>
 		</div>
-)
-}
+	);
+};
 
 export default Home;
