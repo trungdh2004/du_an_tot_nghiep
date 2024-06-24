@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import { IProduct } from "../../interface/product";
+import { generateSlugs } from "../../middlewares/generateSlug";
 
 const ProductSchema = new mongoose.Schema({
   name: {
@@ -41,8 +43,28 @@ const ProductSchema = new mongoose.Schema({
     type: mongoose.Types.ObjectId,
     required: true,
   },
+  quantitySold: {
+    type: Number,
+    default: 0,
+  },
+  quantity: {
+    type: Number,
+    default: 0,
+  },
+  attributes: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Attribute",
+    },
+  ],
 });
 
-const ProductModel = mongoose.model("Product", ProductSchema);
+ProductSchema.pre<IProduct>("save", async function (next) {
+  const slug = generateSlugs(this.name);
+  this.slug = slug;
+  next();
+});
+
+const ProductModel = mongoose.model<IProduct>("Product", ProductSchema);
 
 export default ProductModel;

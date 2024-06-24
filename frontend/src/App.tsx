@@ -16,33 +16,32 @@ import Address from "./pages/clients/address/Address";
 import EditAddress from "./pages/clients/address/EditAddress";
 import instance from "./config/instance";
 import axios from "axios";
-import ProductDetail from "./pages/clients/product/ProductDetail";
-import LayoutAdmin from "./layout/LayoutAdmin";
-import { DataTableDemo } from "./pages/admin/users/UserHome";
+import AdminLayout from "./layout/AdminLayout";
+import Dashboard from "./pages/admin/Dashboard";
+import { DataTableDemo } from "./pages/admin/users/Users";
+import UserHome from "./pages/admin/users/UserHome";
+import UserDetail from "./pages/admin/users/UserDetail";
 
 function App() {
+	const { onUpdateCart } = useStore();
+	const [loading, setLoading] = useState(false);
 
-  const [loading, setLoading] = useState(false)
-  
-	useEffect(() => {
-		(async () => {
-			const { data } = await axios.post(
-				`${process.env.SERVER_URL}/auth/refreshToken`,
-				{},
-				{
-					withCredentials: true,
-				},
-			);
-			const accessToken = data.accessToken;
+	// 	useEffect(() => {
+	// 		(async () => {
+	// 			const { data } = await axios.post(
+	// 				`${process.env.SERVER_URL}/auth/refreshToken`,
+	// 				{},
+	// 				{
+	// 					withCredentials: true,
+	// 				},
+	// 			);
+	// 			const accessToken = data.accessToken;
 
-			instance.defaults.headers.common["Authorization"] =
-        `Bearer ${accessToken}`;
-      setLoading(true)
-		})();
-  }, []);
-  if (!loading) {
-		return "loading";
-	}
+	// 			instance.defaults.headers.common["Authorization"] =
+	//         `Bearer ${accessToken}`;
+	//       setLoading(true)
+	// 		})();
+	//   }, []);
 
 	return (
 		<>
@@ -51,19 +50,18 @@ function App() {
 					<Route index element={<Home />} />
 					<Route path="*" element={<NotFound />}></Route>
 					<Route path="address" element={<Address />} />
-					<Route path="product/:id" element={<ProductDetail />} />
 				</Route>
 				<Route path="/auth" element={<AuthLayout />}>
 					<Route path="login" element={<Login />} />
 					<Route path="register" element={<Register />} />
 					<Route path="forgot-password" element={<ForgotPassword />} />
 				</Route>
-				<Route>
-					<Route path="/admin" element={<LayoutAdmin />}>
-						<Route path="users" element={<DataTableDemo/>} />
-					</Route>
+				<Route path="/admin" element={<AdminLayout />}>
+					<Route index element={<Dashboard />} />
+					<Route path="add" element={<Dashboard />} />
+					<Route path="user" element={<UserHome />} />
+					<Route path="user/staff" element={<UserDetail />} />
 				</Route>
-
 				<Route path="*" element={<NotFound />}></Route>
 			</Routes>
 			<Toaster richColors position="top-right" />

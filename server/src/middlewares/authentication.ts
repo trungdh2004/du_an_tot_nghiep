@@ -10,7 +10,7 @@ interface PayloadToken {
   is_admin: boolean;
 }
 
-const authorization = async (
+const authentication = async (
   req: RequestModel,
   res: Response,
   next: NextFunction
@@ -19,7 +19,7 @@ const authorization = async (
     const token = req.headers.authorization?.split(" ")[1];
 
     if (!token) {
-      return res.status(STATUS.AUTHENTICATOR).json({
+      return res.status(STATUS.AUTHORIZED).json({
         message: "Bạn chưa đăng nhập",
       });
     }
@@ -38,7 +38,7 @@ const authorization = async (
             message = "Token đã hết hạn";
           }
 
-          return res.status(STATUS.AUTHENTICATOR).json({
+          return res.status(STATUS.AUTHORIZED).json({
             message: message,
           });
         }
@@ -48,7 +48,7 @@ const authorization = async (
         );
 
         if (!existingUser) {
-          return res.status(STATUS.AUTHENTICATOR).json({
+          return res.status(STATUS.AUTHORIZED).json({
             message: "Tài khoản không thỏa mãn",
           });
         }
@@ -69,4 +69,4 @@ const authorization = async (
   }
 };
 
-export default authorization;
+export default authentication;

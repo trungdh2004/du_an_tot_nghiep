@@ -1,4 +1,7 @@
 import mongoose from "mongoose";
+import { IColor } from "../../interface/product";
+import { required } from "joi";
+import { generateSlugs } from "../../middlewares/generateSlug";
 
 const ColorSchema = new mongoose.Schema(
   {
@@ -10,12 +13,23 @@ const ColorSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-const ColorModel = mongoose.model("Color", ColorSchema);
+ColorSchema.pre<IColor>("save", async function (next) {
+  const slug = generateSlugs(this.name);
+  this.slug = slug;
+  next();
+});
+
+const ColorModel = mongoose.model<IColor>("Color", ColorSchema);
 
 export default ColorModel;

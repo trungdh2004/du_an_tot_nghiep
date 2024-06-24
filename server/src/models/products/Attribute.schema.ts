@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { IAttribute } from "../../interface/product";
 
 const AttributeSchema = new mongoose.Schema(
   {
@@ -6,7 +7,7 @@ const AttributeSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       required: true,
       ref: "Product",
-      index:true
+      index: true,
     },
     color: {
       ref: "Color",
@@ -35,6 +36,6 @@ const AttributeSchema = new mongoose.Schema(
   }
 );
 
-const AttributeModel = mongoose.model("Attribute", AttributeSchema);
+const AttributeModel = mongoose.model<IAttribute>("Attribute", AttributeSchema);
 
 export default AttributeModel;
