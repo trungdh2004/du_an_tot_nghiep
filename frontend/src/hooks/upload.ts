@@ -1,29 +1,50 @@
 import { uploadFileService, uploadMultipleFileService } from "@/service/upload";
+import { ChangeEvent, useState } from "react";
 
 export const useUploadFile = () => {
-	return async (file: FileList, width?: number, height?: number) => {
+	const [preview, setPreview] = useState<string>();
+	const uploadFile = async (
+		file: FileList,
+		width?: number,
+		height?: number,
+	) => {
 		if (typeof file === "object") {
 			const formData = new FormData();
 			formData.append("image", file[0]);
 			const { data } = await uploadFileService(formData, width, height);
 			console.log(data);
-			return data.path;
+			return data;
 		}
+	};
+	const setPreviewImage = (e: ChangeEvent<HTMLInputElement>) => {
+		if (e.target.files) {
+			const src = URL.createObjectURL(e.target.files?.[0]);
+			setPreview(src);
+		}
+	};
+	return {
+		preview,
+		setPreviewImage,
+		uploadFile,
 	};
 };
 export const useMultipleImage = () => {
-	return (files: FileList, width?: number, height?: number) => {
+	const uploadMultipleImage = async (
+		files: FileList,
+		width?: number,
+		height?: number,
+	) => {
 		if (typeof files === "object") {
-			let urlImages;
 			const formData = new FormData();
 			for (let i = 0; i < files.length; i++) {
 				formData.append("images", files[i]);
 			}
-
-			uploadMultipleFileService(formData, width, height).then(({ data }) => {
-				urlImages = data?.map((file: any) => file?.path);
-				return urlImages;
-			});
+			await uploadMultipleFileService(formData, width, height).then(
+				({ data }) => {
+					return data;
+				},
+			);
 		}
 	};
+	return { uploadMultipleImage };
 };
