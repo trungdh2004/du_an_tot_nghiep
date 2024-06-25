@@ -12,25 +12,24 @@ const BlogsSchema = new mongoose.Schema(
     },
     title: {
       type: String,
-      required: true,
+    },
+    thumbnail_url: {
+      type: String,
+      default:null
     },
     slug: {
       type: String,
-      required: true,
       unique: true,
       index: true,
     },
     meta_title: {
       type: String,
-      required: true,
     },
     meta_description: {
       type: String,
-      required: true,
     },
     content: {
       type: String,
-      required: true,
     },
     views_count: {
       type: Number,
@@ -39,18 +38,11 @@ const BlogsSchema = new mongoose.Schema(
     },
     published_at: {
       type: Date,
+      default:null
     },
     deleted_at: {
-      type: Date,
-      required: true,
-    },
-    created_at: {
-      type: Date,
-      required: true,
-    },
-    updated_at: {
-      type: Date,
-      required: true,
+      type: Date!,
+      default:null
     },
     comments_count: {
       type: Number,

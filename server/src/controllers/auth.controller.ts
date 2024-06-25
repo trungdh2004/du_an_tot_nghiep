@@ -78,6 +78,12 @@ class AuthController {
         });
       }
 
+      if (existingEmail?.blocked_at) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Tài khoản của bạn đã bị khóa"
+        })
+      }
+
       const accessToken = await this.generateAccessToken({
         id: existingEmail._id,
         email: existingEmail.email,
@@ -644,15 +650,14 @@ class AuthController {
       }
 
       let obj = {
-        blocked_at: type === TYPEBLOCKED.is_block ? true : false,
+        blocked_at: type === TYPEBLOCKED.is_block ? new Date() : null,
         comment_blocked_at:
-          type === TYPEBLOCKED.is_block_comment ? true : false,
+          type === TYPEBLOCKED.is_block_comment ? new Date() : null,
       };
 
       const blockUserNew = await UserModel.findByIdAndUpdate(id, obj, {
         new: true,
       });
-
       return res.status(STATUS.OK).json({
         message: "Chặn thành công",
         data: blockUserNew,

@@ -47,6 +47,10 @@ const UserSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    is_staff: {
+      type: Boolean,
+      default: false,
+    },
     blocked_at: {
       type: Boolean,
       default: false,
