@@ -15,6 +15,7 @@ import sendToMail from "../mail/mailConfig";
 import OtpModel from "../models/Otp.schema";
 import { IUser, RequestModel } from "../interface/models";
 import { ObjectId } from "mongoose";
+import { TYPEBLOCKED } from "../utils/confirm";
 
 interface PayloadToken {
   id: any;
@@ -60,6 +61,12 @@ class AuthController {
         });
       }
 
+      if (existingEmail.blocked_at) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Tài khoản của bạn đã bị chặn ",
+        });
+      }
+
       const isComparePass = await bcrypt.compare(
         password,
         existingEmail.password
@@ -102,8 +109,7 @@ class AuthController {
       }
 
       res.cookie("token", refreshToken, {
-        maxAge: 1000 * 60 * 24 * 60 * 60
-        ,
+        maxAge: 1000 * 60 * 24 * 60 * 60,
         httpOnly: true,
         path: "/",
       });
@@ -343,8 +349,8 @@ class AuthController {
             maxAge: 24 * 60 * 60 * 1000 * 60,
             httpOnly: true,
             path: "/",
-            sameSite: 'none',
-            secure: true, 
+            sameSite: "none",
+            secure: true,
           });
 
           return res.status(STATUS.OK).json({
@@ -617,34 +623,47 @@ class AuthController {
     }
   }
 
-  async blockCurrentUser(req: RequestModel, res: Response) {
+  async blockedCurrentUser(req: RequestModel, res: Response) {
     try {
-      const user = req.user
-      const { id } = req.params
+      const { id } = req.params;
+      const { type } = req.body;
+
       if (!id) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Chưa chọn người dùng"
-        })
+          message: "Chưa chọn người dùng",
+        });
       }
 
       const existingUser = await UserModel.findById(id);
 
       if (!existingUser) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Không có người dùng"
-        })
+          message: "Không có người dùng",
+        });
       }
 
-      const blockUserNew = await UserModel.findByIdAndUpdate(id, {
-        
-      })
+      let obj = {
+        blocked_at: type === TYPEBLOCKED.is_block ? true : false,
+        comment_blocked_at:
+          type === TYPEBLOCKED.is_block_comment ? true : false,
+      };
 
-    } catch (error:any) {
+      const blockUserNew = await UserModel.findByIdAndUpdate(id, obj, {
+        new: true,
+      });
+
+      return res.status(STATUS.OK).json({
+        message: "Chặn thành công",
+        data: blockUserNew,
+      });
+    } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
-      })
+      });
     }
   }
+
+  
 }
 
 export default new AuthController();

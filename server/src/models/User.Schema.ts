@@ -24,7 +24,7 @@ const UserSchema = new mongoose.Schema(
     },
     provider: {
       type: String,
-      default: null,
+      default: "credential",
     },
     uid: {
       type: String,

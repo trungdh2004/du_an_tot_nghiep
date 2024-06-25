@@ -8,7 +8,7 @@ export const createAccount = (data: any) => {
 export const loginAccount = (data: any) => {
 	const uri = "/auth/login";
 	return axios.post((process.env.SERVER_URL + uri) as string, data, {
-		withCredentials:true
+		withCredentials: true,
 	});
 };
 export const findEmail = (data: any) => {
