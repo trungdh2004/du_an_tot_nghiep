@@ -2,6 +2,10 @@ import { Response } from "express";
 import { RequestModel } from "../interface/models";
 import STATUS from "../utils/status";
 import BlogsModel from "../models/Blogs.schema";
+import { BlogValidation } from "../validation/blog.validation";
+import { truncateSentence } from "../utils/cutText";
+
+
 
 
 class BlogController {
@@ -20,6 +24,7 @@ class BlogController {
                 ...req.body
             })
 
+            
             return res.status(STATUS.OK).json(newPos)
         } catch (error:any) {
             return res.status(STATUS.INTERNAL).json({
@@ -90,6 +95,53 @@ class BlogController {
                 })
             }
 
+
+            return res.status(STATUS.OK).json({
+                message:"Lấy bài viết thành công",
+                data:existingBlog
+            })
+        } catch (error:any) {
+            return res.status(STATUS.INTERNAL).json({
+                message: error?.message
+            })
+        }
+    }
+
+    async publish(req: RequestModel, res: Response) { 
+        try {
+            const user = req.user
+            const {id} = req.params
+            if (!user?.id) {
+                return res.status(STATUS.AUTHENTICATOR).json({
+                    message:"Bạn chưa đăng nhập"
+                })
+            }
+            if (!id) {
+                return res.status(STATUS.AUTHENTICATOR).json({
+                    message:"Bạn chưa chọn blogs"
+                })
+            }
+
+            const {error} = BlogValidation.validate(req.body)
+
+            if (error) {
+                return res.status(STATUS.BAD_REQUEST).json({
+                    message:error.details[0]
+                })
+            }
+
+            const { title, content } = req.body
+            
+            const meta_title = truncateSentence(title,50)
+
+            const existingBlog = await BlogsModel.findById(id)
+
+            if (!existingBlog) { 
+                return res.status(STATUS.BAD_REQUEST).json({
+                    message:"Không có bài blog nào"
+                })
+            }
+            
 
             return res.status(STATUS.OK).json({
                 message:"Lấy bài viết thành công",

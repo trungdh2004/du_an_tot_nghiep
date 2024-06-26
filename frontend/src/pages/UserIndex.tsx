@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
@@ -34,6 +34,7 @@ const UserIndex = () => {
 		pageIndex: 1,
 		pageSize: 5,
 	});
+	const [] = useTransition()
 	const [data, setData] = useState<IData[]>([]);
 
 	useEffect(() => {
