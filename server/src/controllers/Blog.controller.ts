@@ -24,7 +24,6 @@ class BlogController {
                 ...req.body
             })
 
-            
             return res.status(STATUS.OK).json(newPos)
         } catch (error:any) {
             return res.status(STATUS.INTERNAL).json({
