@@ -8,7 +8,6 @@ const BlogsSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
     },
     title: {
       type: String,
@@ -36,9 +35,17 @@ const BlogsSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
+    isPublish: {
+      type: Boolean,
+      default: false
+    },
     published_at: {
       type: Date,
       default:null
+    },
+    isDeleted: {
+      type: Boolean,
+      default:false
     },
     deleted_at: {
       type: Date!,

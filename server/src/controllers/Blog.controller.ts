@@ -125,14 +125,16 @@ class BlogController {
 
             if (error) {
                 return res.status(STATUS.BAD_REQUEST).json({
-                    message:error.details[0]
+                    message:error.details[0].message
                 })
             }
 
-            const { title, content } = req.body
+            const { title, content,thumbnail,tags } = req.body
             
-            const meta_title = truncateSentence(title,50)
-
+            const meta_title = truncateSentence(title,30)
+            const meta_description = truncateSentence(content,50)
+            console.log("id:",id);
+            
             const existingBlog = await BlogsModel.findById(id)
 
             if (!existingBlog) { 
@@ -141,10 +143,27 @@ class BlogController {
                 })
             }
             
+            if (existingBlog?.user_id?.toString() !== user?.id.toString()) {
+                return res.status(STATUS.BAD_REQUEST).json({
+                    message:"Bạn không có quyền đăng tải"
+                })
+            }
+
+            const newBlog = await BlogsModel.findOneAndUpdate(existingBlog._id, {
+                published_at: new Date(),
+                isPublish: true,
+                content,
+                title,
+                meta_title,
+                meta_description,
+                thumbnail_url: thumbnail,
+                selected_tags:tags || []
+            },{new :true})
+
 
             return res.status(STATUS.OK).json({
-                message:"Lấy bài viết thành công",
-                data:existingBlog
+                message:"Đăng bài viết thành công",
+                data:newBlog
             })
         } catch (error:any) {
             return res.status(STATUS.INTERNAL).json({
@@ -155,3 +174,4 @@ class BlogController {
 }
 
 export default new BlogController();
+
