@@ -5,7 +5,7 @@ const routerUpload = Router();
 
 routerUpload.post(
   "/singleImage",
-  uploadCloud.single("images"),
+  uploadCloud.single("image"),
   UploadController.uploadSingleFileCloudinary
 );
 
