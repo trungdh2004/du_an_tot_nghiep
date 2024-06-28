@@ -1,6 +1,8 @@
 
 import { required } from "joi";
 import mongoose from "mongoose";
+import { IBlogs } from "../interface/blogs";
+import { generateSlugs } from "../middlewares/generateSlug";
 
 const BlogsSchema = new mongoose.Schema(
   {
@@ -72,8 +74,14 @@ const BlogsSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+BlogsSchema.pre<IBlogs>("save", async function (next) {
+  const slug = generateSlugs(this.title);
+  this.slug = slug;
+  next();
+});
 
-const BlogsModel = mongoose.model("Blogs", BlogsSchema);
+
+const BlogsModel = mongoose.model<IBlogs>("Blogs", BlogsSchema);
 
 export default BlogsModel;
 
