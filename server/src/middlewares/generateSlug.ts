@@ -8,9 +8,17 @@ export const generateSlugs = (value: string) => {
     locale: "vn",
     trim: true,
     remove: /[*+~.()'"!:@]/g,
-  })}-${Math.random().toString(36).substring(2, 9)}-${crypto
-    .randomBytes(10)
-    .toString("hex")}`;
+  })}-${crypto.randomBytes(5).toString("hex")}`;
 
   return slug;
 };
+
+// const slug = `${slugify(value, {
+//   lower: true,
+//   replacement: "-",
+//   locale: "vn",
+//   trim: true,
+//   remove: /[*+~.()'"!:@]/g,
+// })}-${Math.random().toString(36).substring(2, 9)}-${crypto
+//   .randomBytes(10)
+//   .toString("hex")}`;

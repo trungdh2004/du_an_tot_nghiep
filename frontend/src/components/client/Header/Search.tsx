@@ -8,7 +8,7 @@ import { IoIosSearch } from "react-icons/io";
 import { IoSearch } from "react-icons/io5";
 const Search = () => {
 	return (
-		<Dialog>
+		<Dialog >
 			<DialogTrigger asChild>
 				<div className="hover:bg-[#919eab27] p-1 rounded-full">
 					<IoIosSearch strokeWidth={0.5} size={20} />

@@ -5,19 +5,21 @@ import cookieParser from "cookie-parser";
 import router from "./routes/index.route";
 import STATUS from "./utils/status";
 import dbConnect from "./config/db";
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary } from "cloudinary";
 
 dotenv.config();
 const app = express();
 
 // cấu hình req
 app.use(express.json());
-app.use(express.urlencoded({
-  extended:true
-}))
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
 app.use(
   cors({
-    origin: [process.env.CLIENT_URL!],
+    origin: [process.env.CLIENT_URL!, "http://localhost:4000"],
     credentials: true,
   })
 );

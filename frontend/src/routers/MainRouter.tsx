@@ -2,6 +2,7 @@ import MainLayout from "@/layout/MainLayout";
 import Address from "@/pages/clients/address/Address";
 import Home from "@/pages/clients/Home";
 import NotFound from "@/pages/NotFound";
+import UserIndex from "@/pages/UserIndex";
 
 const MainRouter = [
 	{
@@ -11,6 +12,7 @@ const MainRouter = [
 			{ path: "", element: <Home /> },
 			{ path: "*", element: <NotFound /> },
 			{ path: "address", element: <Address /> },
+			{ path: "table", element: <UserIndex /> },
 		],
 	},
 ];

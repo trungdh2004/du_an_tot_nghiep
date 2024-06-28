@@ -7,49 +7,48 @@ const BlogsSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
     },
     title: {
       type: String,
-      required: true,
+    },
+    thumbnail_url: {
+      type: String,
+      default: null,
     },
     slug: {
       type: String,
-      required: true,
       unique: true,
       index: true,
     },
     meta_title: {
       type: String,
-      required: true,
     },
     meta_description: {
       type: String,
-      required: true,
     },
     content: {
       type: String,
-      required: true,
     },
     views_count: {
       type: Number,
       required: true,
       default: 0,
     },
+    isPublish: {
+      type: Boolean,
+      default: false,
+    },
     published_at: {
       type: Date,
+      default: null,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
     deleted_at: {
-      type: Date,
-      required: true,
-    },
-    created_at: {
-      type: Date,
-      required: true,
-    },
-    updated_at: {
-      type: Date,
-      required: true,
+      type: Date!,
+      default: null,
     },
     comments_count: {
       type: Number,

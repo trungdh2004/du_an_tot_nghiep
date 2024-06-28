@@ -55,15 +55,15 @@ const MenuMobile = () => {
 								Trang chủ
 							</NavLink>
 						</li>
-						<li className="py-0">
+						<li className="py-0 !px-0">
 							<Accordion type="single" collapsible className="w-full">
 								<AccordionItem value="item-1">
-									<AccordionTrigger className="py-4 hover:bg-[#919eab14] has-[.active]:bg-[#919eab14]">
+									<AccordionTrigger className="py-4 px-1 hover:bg-[#919eab14] rounded has-[.active]:bg-[#919eab14]">
 										<NavLink to={"/shop"} className="block">
 											Sản phẩm
 										</NavLink>
 									</AccordionTrigger>
-									<AccordionContent>
+									<AccordionContent className="py-0">
 										<ul className=" w-full   bg-white   *:cursor-pointer  *:px-5 *:py-2 *:text-nowrap  ">
 											<li className="hover:bg-[#919eab14]">Áo nike</li>
 											<li className="hover:bg-[#919eab14]">Áo nike</li>

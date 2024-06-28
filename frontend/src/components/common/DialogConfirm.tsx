@@ -9,6 +9,7 @@ interface IDialogConfirm {
 	content: string;
 	handleSubmit: () => void;
 	status?: "success" | "danger";
+	labelConfirm?:string
 }
 
 const DialogConfirm = ({
@@ -18,6 +19,7 @@ const DialogConfirm = ({
 	content,
 	handleSubmit,
 	status = "danger",
+	labelConfirm
 }: IDialogConfirm) => {
 	return (
 		<>
@@ -46,7 +48,7 @@ const DialogConfirm = ({
 							variant={status === "danger" ? "danger" : "success"}
 							onClick={handleSubmit}
 						>
-							{status === "danger" ? "Xoá" : "Lưu"}
+							{labelConfirm ? labelConfirm : status === "danger" ? "Xoá" : "Lưu"}
 						</Button>
 					</div>
 				</DialogContent>
