@@ -78,6 +78,12 @@ class AuthController {
         });
       }
 
+      if (existingEmail?.blocked_at) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Tài khoản của bạn đã bị khóa"
+        })
+      }
+
       const accessToken = await this.generateAccessToken({
         id: existingEmail._id,
         email: existingEmail.email,
@@ -651,7 +657,6 @@ class AuthController {
       const blockUserNew = await UserModel.findByIdAndUpdate(id, obj, {
         new: true,
       });
-
       return res.status(STATUS.OK).json({
         message: "Chặn thành công",
         data: blockUserNew,

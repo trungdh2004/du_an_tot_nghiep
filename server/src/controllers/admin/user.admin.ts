@@ -7,8 +7,8 @@ import { formatDataPaging } from "../../common/pagingData";
 class UserAdmin {
   async listCurrentUsers(req: RequestModel, res: Response) {
     try {
-      console.log("file:",req.file);
-      
+      console.log("file:", req.file);
+
       const {
         pageIndex = 1,
         pageSize,
@@ -16,6 +16,7 @@ class UserAdmin {
         sort = -1,
         keyword,
         provider,
+        tab = 1
       } = req.body;
       const user = req.user;
       let limit = pageSize || 10;
@@ -27,6 +28,20 @@ class UserAdmin {
         pipeline.push({
           $match: {
             full_name: { $regex: keyword, $options: "i" },
+          },
+        });
+      }
+
+      if (tab === 1) {
+        pipeline.push({
+          $match: {
+            blocked_at: false,
+          },
+        });
+      } else if(tab === 2) {
+        pipeline.push({
+          $match: {
+            blocked_at: true,
           },
         });
       }
@@ -65,7 +80,6 @@ class UserAdmin {
         },
       });
 
-      console.log("pipeline:", pipeline);
       const countListUser = await UserModel.countDocuments();
 
       const listUser = await UserModel.aggregate(pipeline).collation({
@@ -88,9 +102,7 @@ class UserAdmin {
     }
   }
 
-  async getAdminCurrentById(req: RequestModel, res: Response) {
-    
-  };
+  async getAdminCurrentById(req: RequestModel, res: Response) {}
 }
 
 export default new UserAdmin();

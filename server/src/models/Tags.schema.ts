@@ -12,6 +12,11 @@ const TagsSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    slug: {
+      type: String,
+      unique: true,
+      index: true,
+    },
   },
   {
     timestamps: true,
@@ -19,6 +24,8 @@ const TagsSchema = new mongoose.Schema(
 );
 
 TagsSchema.pre<ITags>("save", async function (next) {
+  console.log("hihi chạy r nè");
+
   const slug = generateSlugs(this.name);
   this.slug = slug;
   next();
