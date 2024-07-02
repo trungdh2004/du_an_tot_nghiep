@@ -36,9 +36,9 @@ class categoryController {
 
   async pagingCategory(req: RequestModel, res: Response) {
     try {
-      const { pageIndex = 1, pagesize } = req.body;
+      const { pageIndex = 1, pageSize } = req.body;
 
-      let limit = pagesize || 10;
+      let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
 
       const dataCategory = await CategoryModel.find()
