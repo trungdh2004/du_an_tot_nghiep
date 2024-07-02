@@ -7,8 +7,6 @@ import { formatDataPaging } from "../../common/pagingData";
 class UserAdmin {
   async listCurrentUsers(req: RequestModel, res: Response) {
     try {
-      console.log("file:", req.file);
-
       const {
         pageIndex = 1,
         pageSize,
@@ -16,7 +14,7 @@ class UserAdmin {
         sort = -1,
         keyword,
         provider,
-        tab = 1
+        tab = 1,
       } = req.body;
       const user = req.user;
       let limit = pageSize || 10;
@@ -32,20 +30,6 @@ class UserAdmin {
         });
       }
 
-      if (tab === 1) {
-        pipeline.push({
-          $match: {
-            blocked_at: false,
-          },
-        });
-      } else if(tab === 2) {
-        pipeline.push({
-          $match: {
-            blocked_at: true,
-          },
-        });
-      }
-
       if (provider) {
         pipeline.push({
           $match: {
@@ -54,8 +38,7 @@ class UserAdmin {
         });
       }
       // skip
-      pipeline.push({ $skip: skip }, { $limit: limit });
-
+      // pipeline.push({ $skip: skip }, { $limit: limit });
       // sắp xếp
       if (fieldSort) {
         pipeline.push({
@@ -64,6 +47,20 @@ class UserAdmin {
       } else {
         pipeline.push({
           $sort: { createdAt: sort },
+        });
+      }
+
+      if (tab === 1) {
+        pipeline.push({
+          $match: {
+            blocked_at: false,
+          },
+        });
+      } else if (tab === 2) {
+        pipeline.push({
+          $match: {
+            blocked_at: true,
+          },
         });
       }
 
@@ -80,18 +77,26 @@ class UserAdmin {
         },
       });
 
-      const countListUser = await UserModel.countDocuments();
-
-      const listUser = await UserModel.aggregate(pipeline).collation({
-        locale: "en_US",
-        strength: 1,
-      });
+      const countDocuments = await UserModel.aggregate([
+        ...pipeline,
+        {
+          $count: "total",
+        },
+      ]);
+      
+      const listUser = await UserModel.aggregate(pipeline)
+        .collation({
+          locale: "en_US",
+          strength: 1,
+        })
+        .skip(skip)
+        .limit(limit);
 
       const data = formatDataPaging({
         limit,
         pageIndex,
         data: listUser,
-        count: countListUser,
+        count: countDocuments[0]?.total || 0,
       });
 
       return res.status(STATUS.OK).json(data);
