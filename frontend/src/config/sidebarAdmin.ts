@@ -29,7 +29,7 @@ const sidebarConfig: any[] = [
 		],
 	},
 	{
-		path: "/user",
+		path: "/users",
 		isVisible: true,
 		label: "Người dùng",
 		children: [

@@ -80,7 +80,7 @@ class UserAdmin {
         },
       });
 
-      const countListUser = await UserModel.countDocuments();
+      const countListUser = await UserModel.countDocuments(pipeline);
 
       const listUser = await UserModel.aggregate(pipeline).collation({
         locale: "en_US",

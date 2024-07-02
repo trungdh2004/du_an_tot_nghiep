@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -10,101 +10,119 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Input } from '@/components/ui/input';
+import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
 	Form,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import instance from '@/config/instance';
-import { toast } from 'sonner';
+import instance from "@/config/instance";
+import { toast } from "sonner";
+import { SearchObjectType } from "@/types/searchObjecTypes";
 
 interface FormDialog {
-	id?: string;
-	title?: string;
-  labelConfirm?: string;
-
+	open: boolean | string;
+	title?: "Thêm sản phẩm" | "Cập nhật";
+	labelConfirm?: string;
+	handleClose: () => void;
+  handlePaging: () => void;
 }
 const formSchema = z.object({
-  name: z.string({
-    message: "Tên danh mục không được để trống",
-  }).min(6, {
-		message: "Bạn nên tạo danh mục lớn hơn 6",
-	}),
-  description: z.string({
-    message: "Mô tả danh mục không được để trống",
-  }).min(6, {
-		message: "Bạn nên tạo chi tiết danh mục lớn hơn 6",
-	}),
+	name: z
+		.string({
+			message: "Tên danh mục không được để trống",
+		})
+		.min(6, {
+			message: "Bạn nên tạo danh mục lớn hơn 6",
+		}),
+	description: z
+		.string({
+			message: "Mô tả danh mục không được để trống",
+		})
+		.min(6, {
+			message: "Bạn nên tạo chi tiết danh mục lớn hơn 6",
+		}),
 });
 const CategoryAdd = ({
-  id,title,labelConfirm
-}:FormDialog) => {
-  const form = useForm<z.infer<typeof formSchema>>({
+	title,
+	open,
+	handleClose,
+	handlePaging,
+}: FormDialog) => {
+	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-      name: "",
-      description:""
+			name: "",
+			description: "",
 		},
-  })
-  const [open,setOpen] = useState<boolean>()
-  const onHandleUpdate = async (dataForm: any) => {
+	});
+	const onHandleUpdate = async (dataForm: any) => {
 		try {
-      const {data } = await instance.put(`/category/updateCate/${id}`, dataForm);
-      console.log("Update category success");
-      setOpen(false);
-      toast.success("Bạn cập nhật danh mục thành công");
-      
-      
-		} catch (error) {
-			console.error("Error:", error);
-		}
-  };
-  const onHandleAdd = async (dataForm: any) => {
-		try {
-      const { data } = await instance.post(`/category/addCate`, dataForm);
-      console.log(data);
-      console.log("Add category success");
-      setOpen(false)
-      form.reset();
-      toast.success("Bạn thêm danh mục thành công")
+			const { data } = await instance.put(
+				`/category/updateCate/${open}`,
+				dataForm,
+			);
+			console.log("Update category success");
+      handleClose();
+      handlePaging();
+			toast.success("Bạn cập nhật danh mục thành công");
 		} catch (error) {
 			console.error("Error:", error);
 		}
 	};
-  if (id) {
-    useEffect(()=> {
-      (async () => {
-        try {
-          const { data } = await instance.get(`/category/cate/${id}`)
-          console.log(data);
-          form.reset(data.data)
-        } catch (error) {
-          console.error("Error:", error);
-        }
-      })()
-    }, [id])
-  }
-  const onSubmit = (data:{name:string,description:string}) => {
-    { id ? onHandleUpdate(data) : onHandleAdd(data); }
-  };
+	const onHandleAdd = async (dataForm: any) => {
+		try {
+			const { data } = await instance.post(`/category/addCate`, dataForm);
+			console.log(data);
+			console.log("Add category success");
+			form.reset();
+      handleClose();
+      handlePaging();
+			toast.success("Bạn thêm danh mục thành công");
+		} catch (error) {
+			console.error("Error:", error);
+		}
+	};
 
-  return (
+	useEffect(() => {
+		if (typeof open === "string") {
+			(async () => {
+				try {
+					const { data } = await instance.get(`/category/cate/${open}`);
+					console.log(data);
+					form.reset(data.data);
+				} catch (error) {
+					console.error("Error:", error);
+				}
+			})();
+		}
+	}, [open]);
+
+	const onSubmit = (data: { name: string; description: string }) => {
+		if (typeof open === "string") {
+			onHandleUpdate(data);
+		} else {
+			onHandleAdd(data);
+		}
+	};
+
+	return (
 		<div>
-			<Dialog open={open}>
+			<Dialog open={!!open} onOpenChange={handleClose}>
 				<DialogTrigger asChild>
-					<Button variant="outline" onClick={()=>setOpen(true)}>{title}</Button>
+					<Button variant="outline">{title}</Button>
 				</DialogTrigger>
 				<DialogContent className="sm:max-w-[425px]">
-					<DialogHeader onClick={()=>setOpen(false)}>
-						<DialogTitle>{title}</DialogTitle>
+					<DialogHeader>
+						<DialogTitle>
+							{typeof open === "string" ? "Cập nhật" : "Thêm sản phẩm"}
+						</DialogTitle>
 					</DialogHeader>
 
 					<Form {...form}>
@@ -135,13 +153,15 @@ const CategoryAdd = ({
 									</FormItem>
 								)}
 							/>
-							<Button type="submit">{labelConfirm}</Button>
+							<Button type="submit">
+								{typeof open === "string" ? "Cập nhật" : "Thêm sản phẩm"}
+							</Button>
 						</form>
 					</Form>
 				</DialogContent>
 			</Dialog>
 		</div>
 	);
-}
+};
 
-export default CategoryAdd
+export default CategoryAdd;
