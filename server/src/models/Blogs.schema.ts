@@ -1,6 +1,8 @@
 
 import { required } from "joi";
 import mongoose from "mongoose";
+import { IBlogs } from "../interface/blogs";
+import { generateSlugs } from "../middlewares/generateSlug";
 
 const BlogsSchema = new mongoose.Schema(
   {
@@ -8,7 +10,6 @@ const BlogsSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
     },
     title: {
       type: String,
@@ -36,9 +37,17 @@ const BlogsSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
+    isPublish: {
+      type: Boolean,
+      default: false
+    },
     published_at: {
       type: Date,
       default:null
+    },
+    isDeleted: {
+      type: Boolean,
+      default:false
     },
     deleted_at: {
       type: Date!,
@@ -65,8 +74,14 @@ const BlogsSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+BlogsSchema.pre<IBlogs>("save", async function (next) {
+  const slug = generateSlugs(this.title);
+  this.slug = slug;
+  next();
+});
 
-const BlogsModel = mongoose.model("Blogs", BlogsSchema);
+
+const BlogsModel = mongoose.model<IBlogs>("Blogs", BlogsSchema);
 
 export default BlogsModel;
 

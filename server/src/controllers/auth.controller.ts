@@ -668,7 +668,44 @@ class AuthController {
     }
   }
 
-  
+  async unBlockCurrentUser(req: RequestModel, res: Response) {
+    try {
+      const { id } = req.params;
+      const { type } = req.body;
+
+      if (!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Chưa chọn người dùng",
+        });
+      }
+
+      const existingUser = await UserModel.findById(id);
+
+      if (!existingUser) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có người dùng",
+        });
+      }
+
+      let obj = {
+        blocked_at: type === TYPEBLOCKED.is_block ? false : true,
+        comment_blocked_at:
+          type === TYPEBLOCKED.is_block_comment ? false : true,
+      };
+
+      const blockUserNew = await UserModel.findByIdAndUpdate(id, obj, {
+        new: true,
+      });
+      return res.status(STATUS.OK).json({
+        message: "Bỏ chặn thành công",
+        data: blockUserNew,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
 }
 
 export default new AuthController();

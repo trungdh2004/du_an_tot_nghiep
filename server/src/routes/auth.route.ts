@@ -14,6 +14,7 @@ routerAuth.post("/refreshToken", authController.refreshToken);
 routerAuth.post("/logout", authController.logout);
 routerAuth.post("/social-user", authController.socialUser);
 routerAuth.put("/blocked/:id", authController.blockedCurrentUser);
+routerAuth.put("/unblocked/:id", authController.unBlockCurrentUser);
 // current
 routerAuth.get("/current-user", authorization, authController.currentUser);
 

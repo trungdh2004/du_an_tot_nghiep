@@ -10,6 +10,25 @@ const sidebarConfig: any[] = [
 		label: "Thống kê",
 	},
 	{
+		path: "/category",
+		isVisible: true,
+		label: "Danh mục",
+		children: [
+			{
+				path: "",
+				icon: LuLayoutDashboard,
+				isVisible: true,
+				label: "Danh sách danh mục",
+			},
+			{
+				path: "/overview",
+				icon: LuLayoutDashboard,
+				isVisible: true,
+				label: "Danh",
+			},
+		],
+	},
+	{
 		path: "/user",
 		isVisible: true,
 		label: "Người dùng",

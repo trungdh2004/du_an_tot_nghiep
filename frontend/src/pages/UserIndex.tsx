@@ -4,25 +4,10 @@ import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import TableComponent from "@/components/common/TableComponent";
+import { ArrowUpDown } from "lucide-react";
 import instance from "@/config/instance";
 import { Link } from "react-router-dom";
-import { parseISO, format } from "date-fns";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { HiOutlineDotsVertical } from "react-icons/hi";
-import { Badge } from "@/components/ui/badge";
-import DialogConfirm from "@/components/common/DialogConfirm";
-import { toast } from "sonner";
-import { banUser, unBanUser } from "@/service/user-admin";
-import { Input } from "@/components/ui/input";
-import { IoFilter } from "react-icons/io5";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 interface IData {
 	_id: string;
 	full_name: string;
@@ -37,9 +22,7 @@ interface IData {
 const UserIndex = () => {
 	const [rowSelection, setRowSelection] = useState<RowSelectionState>({}); // xử lí selected
 	const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
-	const [openBanId, setopenBanId] = useState<string | null>(null);
-	const [isPending, startTransition] = useTransition();
-  const [openUnbanId, setopenUnbanId] = useState<string | null>(null);
+
 	const [response, setResponse] = useState({
 		pageIndex: 1,
 		pageSize: 5,
@@ -50,21 +33,13 @@ const UserIndex = () => {
 	const [searchObject, setSearchObject] = useState({
 		pageIndex: 1,
 		pageSize: 5,
-		keyword: "",
-		sort: 1,
-		sortField: "",
-		tab: 1,
 	});
+	const [] = useTransition()
 	const [data, setData] = useState<IData[]>([]);
-	useEffect(() => {
-		handlePagingUser();
-	}, [searchObject]);
 
-	const handlePagingUser = async () => {
-		try {
-      const { data } = await instance.post("/admin/list-user", searchObject);
-      console.log(data);
-      
+	useEffect(() => {
+		(async () => {
+			const { data } = await instance.post("/admin/list-user", searchObject);
 			setData(data.content);
 			setResponse({
 				pageIndex: data.pageIndex,
@@ -73,19 +48,20 @@ const UserIndex = () => {
 				totalElement: data.totalAllOptions,
 				totalOptionPage: data.totalOptionPage,
 			});
-		} catch (error) {
-			toast.error("Không lấy được data người dùng");
-		}
-	};
+		})();
+	}, [searchObject]);
 
 	const handleChangePageSize = (value: number) => {
-		console.log(value);
-
 		setSearchObject((prev) => ({
 			...prev,
 			pageSize: value,
 		}));
 	};
+
+	const onDelete = (id: string) => {
+		console.log("id:", id);
+	};
+
 	const columns: ColumnDef<IData>[] = [
 		{
 			id: "select",
@@ -154,62 +130,29 @@ const UserIndex = () => {
 		{
 			accessorKey: "createdAt",
 			header: "Ngày tạo",
-			cell: ({ row }) => {
-				const parsedDate = parseISO(row.original.createdAt);
-				const formattedDate = format(parsedDate, "dd/MM/yyyy");
-				return <div className="font-medium">{formattedDate}</div>;
-			},
 		},
 		{
-			id: "status",
+			id: "action",
 			header: () => {
-				return <div>Trạng thái</div>;
+				return <div>Action</div>;
 			},
 			cell: ({ row }) => {
-				const status = row.original.blocked_at ? "Bị cấm" : "Hoạt động";
 				return (
-					<Badge
-						className={`font-medium ${row.original.blocked_at ? "bg-[#cf4040]" : "bg-green-500"} text-center items-center`}
-					>
-						{status}
-					</Badge>
-				);
-			},
-		},
-		{
-			id: "actions",
-			enableHiding: false,
-			cell: ({ row }) => {
-				return (
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button variant="ghost" className="h-8 w-8 p-0">
-								<span className="sr-only">Open menu</span>
-								<HiOutlineDotsVertical className="h-4 w-4" />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuLabel>Actions</DropdownMenuLabel>
-							<DropdownMenuSeparator />
-
-							<DropdownMenuItem>Xem chi tiết</DropdownMenuItem>
-							{row?.original?.blocked_at ? (
-								<DropdownMenuItem
-									className="text-green-400"
-									onClick={() => setopenUnbanId(row?.original?._id)}
-								>
-									Mở
-								</DropdownMenuItem>
-							) : (
-								<DropdownMenuItem
-									className="text-red-400"
-									onClick={() => setopenBanId(row?.original?._id)}
-								>
-									Cấm
-								</DropdownMenuItem>
-							)}
-						</DropdownMenuContent>
-					</DropdownMenu>
+					<div>
+						<Button
+							variant={"danger"}
+							onClick={() => onDelete(row?.original?._id)}
+							asChild
+						>
+							<Link to={row.original._id}>Chi tiết</Link>
+						</Button>
+						<Button
+							variant={"danger"}
+							onClick={() => onDelete(row?.original?._id)}
+						>
+							Xóa
+						</Button>
+					</div>
 				);
 			},
 		},
@@ -229,32 +172,8 @@ const UserIndex = () => {
 	};
 
 	return (
-		<div className="flex flex-col gap-3">
-			<div className="flex flex-col gap-3">
-				<h4 className="font-medium text-xl">Danh sách người dùng</h4>
-				<div className="flex justify-between">
-					<Input placeholder="Tìm kiếm người dùng" className="w-[40%]" />
-					<div className="pr-5">
-						<IoFilter size={20} />
-					</div>
-				</div>
-			</div>
-			<Tabs value={`${searchObject.tab}`} className="w-full">
-				<TabsList className="grid w-full grid-cols-2">
-					<TabsTrigger
-						value="1"
-						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 1 }))}
-					>
-						User
-					</TabsTrigger>
-					<TabsTrigger
-						value="2"
-						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 2 }))}
-					>
-						UserBan
-					</TabsTrigger>
-				</TabsList>
-			</Tabs>
+		<div>
+			<h4 className="">Danh sách test</h4>
 			<TableComponent
 				data={data}
 				columns={columns}
@@ -268,8 +187,9 @@ const UserIndex = () => {
 				pageCount={response.pageCount}
 				totalElement={response.totalElement}
 				handleChangePageSize={handleChangePageSize}
-				dataPageSize={[1, 2,3, 5]}
+				dataPageSize={[1, 2, 3, 5]}
 			/>
+			<button onClick={handleSubmit}>click</button>
 		</div>
 	);
 };

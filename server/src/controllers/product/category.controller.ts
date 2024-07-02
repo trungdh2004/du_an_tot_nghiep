@@ -4,7 +4,6 @@ import STATUS from "../../utils/status";
 import { categoryValidation } from "../../validation/product.validation";
 import { formatDataPaging } from "../../common/pagingData";
 import CategoryModel from "../../models/products/Category.schema";
-import { generateSlugs } from "../../middlewares/generateSlug";
 
 class categoryController {
   async addCategory(req: RequestModel, res: Response) {
@@ -34,6 +33,7 @@ class categoryController {
     }
   }
 
+
   async pagingCategory(req: RequestModel, res: Response) {
     try {
       const { pageIndex = 1, pagesize } = req.body;
@@ -42,7 +42,6 @@ class categoryController {
       let skip = (pageIndex - 1) * limit || 0;
 
       const dataCategory = await CategoryModel.find()
-        .populate("products")
         .limit(limit)
         .skip(skip);
       const countCategory = await CategoryModel.countDocuments();
@@ -61,6 +60,7 @@ class categoryController {
     }
   }
 
+
   async getAllCategory(req: RequestModel, res: Response) {
     try {
       console.log("hihi");
@@ -78,6 +78,7 @@ class categoryController {
       });
     }
   }
+
 
   async getCategoryById(req: RequestModel, res: Response) {
     try {
@@ -107,6 +108,7 @@ class categoryController {
       });
     }
   }
+
 
   async deleteById(req: RequestModel, res: Response) {
     try {
