@@ -46,7 +46,7 @@ class categoryController {
       if (keyword) {
         pipeline.push({
           $match: {
-            full_name: { $regex: keyword, $options: "i" },
+            name: { $regex: keyword, $options: "i" },
           },
         });
       }
