@@ -43,8 +43,8 @@ const UserIndex = () => {
 	const [openBanId, setopenBanId] = useState<string | null>(null);
 	const [isPending, startTransition] = useTransition();
 	const [openUnbanId, setopenUnbanId] = useState<string | null>(null);
-	const debounced = useDebounceCallback((inputValue: string) => {
-		setSearchObject({
+  const debounced = useDebounceCallback((inputValue: string) => {
+    setSearchObject({
 			pageIndex: 1,
 			pageSize: 5,
 			keyword: inputValue,
@@ -53,7 +53,8 @@ const UserIndex = () => {
 			tab: searchObject.tab,
 		});
 	}, 300);
-
+  
+  
 	const [response, setResponse] = useState({
 		pageIndex: 1,
 		pageSize: 5,
@@ -183,7 +184,7 @@ const UserIndex = () => {
 			},
 			cell: ({ row }) => {
 				console.log(row);
-
+				
 				const value = `${row.getValue("provider") ? "Create" : "Google"}`;
 				return <div className="font-medium">{value}</div>;
 			},
@@ -309,8 +310,7 @@ const UserIndex = () => {
 									>
 										Giảm dần
 									</DropdownMenuItem>
-									<DropdownMenuSeparator />
-									<DropdownMenuLabel>Sắp xếp đăng ký</DropdownMenuLabel>
+									<DropdownMenuLabel>Sắp xếp theo chiều</DropdownMenuLabel>
 									<DropdownMenuItem
 										onClick={() => {
 											setSearchObject({
@@ -345,14 +345,15 @@ const UserIndex = () => {
 						<div className="pr-5">
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
-									<Button variant="outline">
+									<div className="cursor-pointer">
 										<IoFilter size={20} />
-									</Button>
+									</div>
 								</DropdownMenuTrigger>
-								<DropdownMenuContent className="w-56">
+								<DropdownMenuContent className="w-[150px] text-center">
 									<DropdownMenuLabel>Sắp xếp theo</DropdownMenuLabel>
 									<DropdownMenuSeparator />
 									<DropdownMenuCheckboxItem
+										className="cursor-pointer"
 										onClick={() =>
 											setSearchObject({
 												pageIndex: 1,
@@ -377,6 +378,7 @@ const UserIndex = () => {
 												tab: searchObject.tab,
 											})
 										}
+										className="cursor-pointer"
 									>
 										Name
 									</DropdownMenuCheckboxItem>
@@ -391,9 +393,27 @@ const UserIndex = () => {
 												tab: searchObject.tab,
 											})
 										}
+										className="cursor-pointer"
 									>
 										Ngày tạo
 									</DropdownMenuCheckboxItem>
+									<DropdownMenuSeparator />
+									<DropdownMenuCheckboxItem
+										onClick={() =>
+											setSearchObject({
+												pageIndex: 1,
+												pageSize: 5,
+												keyword: "",
+												sort: searchObject.sort,
+												fieldSort: "createdAt",
+												tab: searchObject.tab,
+											})
+										}
+										className="cursor-pointer hover:bg-[#ee6e6e]"
+									>
+										Reset
+									</DropdownMenuCheckboxItem>
+								
 								</DropdownMenuContent>
 							</DropdownMenu>
 						</div>
