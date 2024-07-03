@@ -17,6 +17,10 @@ const CategorySchema = new mongoose.Schema(
       unique: true,
       index: true,
     },
+    deleted: {
+      type: Boolean,
+      default: false,
+    }
     // products: [
     //   {
     //     type: mongoose.Types.ObjectId,
