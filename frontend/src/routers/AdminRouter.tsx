@@ -1,6 +1,7 @@
 import AdminLayout from "@/layout/AdminLayout";
 import Dashboard from "@/pages/admin/Dashboard";
 import CategoryIndex from "@/pages/admin/category/CategoryIndex";
+import SizeIndex from "@/pages/admin/size/SizeIndex";
 import UserDetail from "@/pages/admin/users/UserDetail";
 import UserIndex from "@/pages/admin/users/UserIndex";
 
@@ -28,7 +29,11 @@ const AdminRouter = [
 			{
 				path: "category",
 				element: <CategoryIndex />,
-			}
+			},
+			{
+				path: "size",
+				element: <SizeIndex />,
+			},
 		],
 	},
 ];

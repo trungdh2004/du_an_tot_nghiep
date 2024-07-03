@@ -124,6 +124,25 @@ const sidebarConfig: any[] = [
 		],
 	},
 	{
+		path: "/size",
+		isVisible: true,
+		label: "Size",
+		children: [
+			{
+				path: "/",
+				icon: LuLayoutDashboard,
+				isVisible: true,
+				label: "Danh sách Size",
+			},
+			{
+				path: "/add",
+				icon: LuLayoutDashboard,
+				isVisible: true,
+				label: "Thêm sản phẩm",
+			},
+		],
+	},
+	{
 		path: "",
 		icon: LuLayoutDashboard,
 		isVisible: true,
