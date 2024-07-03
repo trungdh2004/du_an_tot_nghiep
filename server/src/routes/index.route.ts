@@ -8,6 +8,7 @@ import routerAdmin from "./analytics.route";
 import routerUpload from "./upload.route";
 import routerTags from "./tags.route";
 import routerBlogs from "./blog.route";
+import routerSize from "./size.route";
 
 const router = Router();
 
@@ -19,5 +20,6 @@ router.use("/admin", routerAdmin);
 router.use("/upload", routerUpload);
 router.use("/tags", routerTags);
 router.use("/blogs", routerBlogs);
+router.use("/size", routerSize);
 
 export default router;

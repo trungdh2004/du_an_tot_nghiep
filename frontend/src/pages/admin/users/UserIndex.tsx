@@ -6,9 +6,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import TableComponent from "@/components/common/TableComponent";
 import instance from "@/config/instance";
 import { Link } from "react-router-dom";
+import { useDebounceCallback } from "usehooks-ts";
 import { parseISO, format } from "date-fns";
 import {
 	DropdownMenu,
+	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
@@ -23,6 +25,7 @@ import { banUser, unBanUser } from "@/service/user-admin";
 import { Input } from "@/components/ui/input";
 import { IoFilter } from "react-icons/io5";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SearchObjectType } from "@/types/searchObjecTypes";
 interface IData {
 	_id: string;
 	full_name: string;
@@ -39,7 +42,18 @@ const UserIndex = () => {
 	const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
 	const [openBanId, setopenBanId] = useState<string | null>(null);
 	const [isPending, startTransition] = useTransition();
-  const [openUnbanId, setopenUnbanId] = useState<string | null>(null);
+	const [openUnbanId, setopenUnbanId] = useState<string | null>(null);
+	const debounced = useDebounceCallback((inputValue: string) => {
+		setSearchObject({
+			pageIndex: 1,
+			pageSize: 5,
+			keyword: inputValue,
+			sort: 1,
+			fieldSort: "",
+			tab: searchObject.tab,
+		});
+	}, 300);
+
 	const [response, setResponse] = useState({
 		pageIndex: 1,
 		pageSize: 5,
@@ -47,12 +61,12 @@ const UserIndex = () => {
 		totalElement: 0,
 		totalOptionPage: 0,
 	});
-	const [searchObject, setSearchObject] = useState({
+	const [searchObject, setSearchObject] = useState<SearchObjectType>({
 		pageIndex: 1,
 		pageSize: 5,
 		keyword: "",
 		sort: 1,
-		sortField: "",
+		fieldSort: "",
 		tab: 1,
 	});
 	const [data, setData] = useState<IData[]>([]);
@@ -62,9 +76,9 @@ const UserIndex = () => {
 
 	const handlePagingUser = async () => {
 		try {
-      const { data } = await instance.post("/admin/list-user", searchObject);
-      console.log(data);
-      
+			const { data } = await instance.post("/admin/list-user", searchObject);
+			console.log(data);
+
 			setData(data.content);
 			setResponse({
 				pageIndex: data.pageIndex,
@@ -78,6 +92,27 @@ const UserIndex = () => {
 		}
 	};
 
+	const handleBlock = async (id: string) => {
+		try {
+			const { data } = await banUser(id);
+			setopenBanId(null);
+			handlePagingUser();
+			toast.success("Đã cấm người dùng thành công");
+		} catch (error) {
+			toast.error("Cấm người dùng thất bại");
+		}
+	};
+
+	const handleUnBlock = async (id: string) => {
+		try {
+			const { data } = await unBanUser(id);
+			setopenUnbanId(null);
+			handlePagingUser();
+			toast.success("Bỏ cấm người dùng thành công");
+		} catch (error) {
+			toast.error("Bỏ Cấm người dùng thất bại");
+		}
+	};
 	const handleChangePageSize = (value: number) => {
 		console.log(value);
 
@@ -122,7 +157,7 @@ const UserIndex = () => {
 		{
 			accessorKey: "full_name",
 			header: () => {
-				return <div className="text-red-500">Name</div>;
+				return <div>Name</div>;
 			},
 		},
 		{
@@ -147,7 +182,9 @@ const UserIndex = () => {
 				return <div>Phương thức</div>;
 			},
 			cell: ({ row }) => {
-				const value = `${row.getValue("provider") ? "google" : "Create"}`;
+				console.log(row);
+
+				const value = `${row.getValue("provider") ? "Create" : "Google"}`;
 				return <div className="font-medium">{value}</div>;
 			},
 		},
@@ -233,9 +270,133 @@ const UserIndex = () => {
 			<div className="flex flex-col gap-3">
 				<h4 className="font-medium text-xl">Danh sách người dùng</h4>
 				<div className="flex justify-between">
-					<Input placeholder="Tìm kiếm người dùng" className="w-[40%]" />
-					<div className="pr-5">
-						<IoFilter size={20} />
+					<Input
+						placeholder="Tìm kiếm người dùng"
+						className="w-[40%]"
+						onChange={(event) => debounced(event.target.value)}
+					/>
+					<div className="flex gap-3 justify-center items-center">
+						<div>
+							<DropdownMenu>
+								<DropdownMenuTrigger>Lọc</DropdownMenuTrigger>
+								<DropdownMenuContent>
+									<DropdownMenuLabel>Sắp xếp theo chiều</DropdownMenuLabel>
+									<DropdownMenuItem
+										onClick={() => {
+											setSearchObject({
+												pageIndex: 1,
+												pageSize: 5,
+												keyword: "",
+												sort: 1,
+												fieldSort: searchObject.fieldSort,
+												tab: searchObject.tab,
+											});
+										}}
+									>
+										Tăng đần
+									</DropdownMenuItem>
+									<DropdownMenuItem
+										onClick={() => {
+											setSearchObject({
+												pageIndex: 1,
+												pageSize: 5,
+												keyword: "",
+												sort: -1,
+												fieldSort: searchObject.fieldSort,
+												tab: searchObject.tab,
+											});
+										}}
+									>
+										Giảm dần
+									</DropdownMenuItem>
+									<DropdownMenuSeparator />
+									<DropdownMenuLabel>Sắp xếp đăng ký</DropdownMenuLabel>
+									<DropdownMenuItem
+										onClick={() => {
+											setSearchObject({
+												pageIndex: 1,
+												pageSize: 5,
+												keyword: "",
+												sort: 1,
+												fieldSort: searchObject.fieldSort,
+												tab: searchObject.tab,
+											});
+										}}
+									>
+										Google
+									</DropdownMenuItem>
+									<DropdownMenuItem
+										onClick={() => {
+											setSearchObject({
+												pageIndex: 1,
+												pageSize: 5,
+												keyword: "",
+												sort: -1,
+												fieldSort: searchObject.fieldSort,
+												tab: searchObject.tab,
+											});
+										}}
+									>
+										Create
+									</DropdownMenuItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
+						</div>
+						<div className="pr-5">
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<Button variant="outline">
+										<IoFilter size={20} />
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent className="w-56">
+									<DropdownMenuLabel>Sắp xếp theo</DropdownMenuLabel>
+									<DropdownMenuSeparator />
+									<DropdownMenuCheckboxItem
+										onClick={() =>
+											setSearchObject({
+												pageIndex: 1,
+												pageSize: 5,
+												keyword: "",
+												sort: searchObject.sort,
+												fieldSort: "email",
+												tab: searchObject.tab,
+											})
+										}
+									>
+										Email
+									</DropdownMenuCheckboxItem>
+									<DropdownMenuCheckboxItem
+										onClick={() =>
+											setSearchObject({
+												pageIndex: 1,
+												pageSize: 5,
+												keyword: "",
+												sort: searchObject.sort,
+												fieldSort: "full_name",
+												tab: searchObject.tab,
+											})
+										}
+									>
+										Name
+									</DropdownMenuCheckboxItem>
+									<DropdownMenuCheckboxItem
+										onClick={() =>
+											setSearchObject({
+												pageIndex: 1,
+												pageSize: 5,
+												keyword: "",
+												sort: searchObject.sort,
+												fieldSort: "createdAt",
+												tab: searchObject.tab,
+											})
+										}
+									>
+										Ngày tạo
+									</DropdownMenuCheckboxItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -268,8 +429,24 @@ const UserIndex = () => {
 				pageCount={response.pageCount}
 				totalElement={response.totalElement}
 				handleChangePageSize={handleChangePageSize}
-				dataPageSize={[1, 2,3, 5]}
+				dataPageSize={[1, 2, 3, 5]}
 			/>
+			{!!openBanId && (
+				<DialogConfirm
+					open={!!openBanId}
+					handleClose={() => setopenBanId(null)}
+					content="Cấm người dùng"
+					handleSubmit={() => handleBlock(openBanId)}
+				/>
+			)}
+			{!!openUnbanId && (
+				<DialogConfirm
+					open={!!openUnbanId}
+					handleClose={() => setopenUnbanId(null)}
+					content="Bỏ cấm người dùng"
+					handleSubmit={() => handleUnBlock(openUnbanId)}
+				/>
+			)}
 		</div>
 	);
 };

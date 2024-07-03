@@ -2,8 +2,9 @@ export interface SearchObjectType {
 	pageIndex: number;
 	pageSize: number;
 	keyword?: string;
-	sortField?: string;
+	fieldSort?: string;
 	sort?: 1 | -1;
 	totalElement?: number;
-	totalOptionPage?: number;
+  totalOptionPage?: number;
+  tab?:number
 }

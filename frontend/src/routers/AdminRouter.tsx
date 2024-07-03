@@ -16,18 +16,19 @@ const AdminRouter = [
 			{
 				path: "add",
 				element: <Dashboard />,
-      },
-      {
-        path: "users",
-        element: <UserIndex />,
-      },
-      {
-        path: "users/detail",
-        element: <UserDetail />,
-      }, {
-        path: "category",
-        element: <CategoryIndex />,
-      }
+			},
+			{
+				path: "users",
+				element: <UserIndex />,
+			},
+			{
+				path: "users/detail",
+				element: <UserDetail />,
+			},
+			{
+				path: "category",
+				element: <CategoryIndex />,
+			}
 		],
 	},
 ];

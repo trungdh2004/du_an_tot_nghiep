@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 import { parseISO, format } from "date-fns";
 import { IoFilter } from "react-icons/io5";
 import instance from "@/config/instance";
-import CategoryAdd from "./CategoryAdd";
+import CategoryAdd from "./CategoryAddandUpdate";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -37,6 +37,8 @@ const CategoryIndex = () => {
 		pageIndex: 1,
 		pageSize: 5,
 		keyword: "",
+    fieldSort: "",
+    sort:1
 	});
 	console.log(searchObject);
 	const [response, setResponse] = useState<typeResponse>({
@@ -170,7 +172,21 @@ const CategoryIndex = () => {
 			<div className="flex flex-col gap-3">
 				<h4 className="font-medium text-xl">Danh sách danh mục</h4>
 				<div className="flex justify-between">
-					<Input placeholder="Tìm kiếm người dùng" className="w-[40%]" />
+					<Input
+						placeholder="Tìm kiếm người dùng"
+						className="w-[40%]"
+						onChange={(e: any) => {
+							console.log(e.target.value);
+
+							return setSearchObject({
+								pageIndex: 1,
+								pageSize: 5,
+								keyword: e.target.value,
+                fieldSort: "",
+                sort: 1
+							});
+						}}
+					/>
 					<div className="flex items-center gap-4 pr-5">
 						<Button
 							onClick={() => setOpenId(true)}
