@@ -118,7 +118,8 @@ const UserIndex = () => {
 
 		setSearchObject((prev) => ({
 			...prev,
-			pageSize: value,
+      pageSize: value,
+      pageIndex: 1,
 		}));
 	};
 	const columns: ColumnDef<IData>[] = [
@@ -385,7 +386,7 @@ const UserIndex = () => {
 											value="credential"
 											className="cursor-pointer"
 										>
-											Create
+											Đăng ký
 										</DropdownMenuRadioItem>
 									</DropdownMenuRadioGroup>
 									<DropdownMenuSeparator />
@@ -401,9 +402,9 @@ const UserIndex = () => {
 												provider: "",
 											})
 										}
-										className="cursor-pointer hover:bg-[#ee6e6e]"
+										className="cursor-pointer bg-[#f0f0f0] text-red-500 pl-8"
 									>
-										Reset
+										Mặc định
 									</DropdownMenuItem>
 								</DropdownMenuContent>
 							</DropdownMenu>

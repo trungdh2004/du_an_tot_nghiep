@@ -34,8 +34,8 @@ const CategoryIndex = () => {
 	interface IData {
 		_id: string;
 		name: string;
-    description: string;
-    deleted: boolean;
+		description: string;
+		deleted: boolean;
 		createdAt: string;
 		updatedAt: string;
 		slug: string;
@@ -44,13 +44,17 @@ const CategoryIndex = () => {
 	const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
 	const [data, setData] = useState<IData[]>([]);
 	const [openId, setOpenId] = useState<string | boolean>(false);
-	const [openUnhiddenCategory, setopenUnhiddenCategory] = useState<string | boolean>(false);
-	const [openHiddenCategory, setOpenHiddenCategory] = useState<string | boolean>(false);
+	const [openUnhiddenCategory, setopenUnhiddenCategory] = useState<
+		string | boolean
+	>(false);
+	const [openHiddenCategory, setOpenHiddenCategory] = useState<
+		string | boolean
+	>(false);
 	const debounced = useDebounceCallback((inputValue: string) => {
-    setSearchObject((prev) => ({
-      ...prev,
-      pageIndex:1,
-      keyword: inputValue,
+		setSearchObject((prev) => ({
+			...prev,
+			pageIndex: 1,
+			keyword: inputValue,
 		}));
 	}, 300);
 	const [searchObject, setSearchObject] = useState<SearchObjectType>({
@@ -80,6 +84,7 @@ const CategoryIndex = () => {
 			);
 			console.log(data);
 			setData(data.content);
+
 			setResponse({
 				pageCount: data.totalPage,
 				totalElement: data.totalAllOptions,
@@ -111,11 +116,10 @@ const CategoryIndex = () => {
 		}
 	};
 	const handleChangePageSize = (value: number) => {
-		console.log(value);
-
 		setSearchObject((prev) => ({
 			...prev,
 			pageSize: value,
+			pageIndex: 1,
 		}));
 	};
 	const handleChangePage = (value: any) => {
@@ -173,7 +177,7 @@ const CategoryIndex = () => {
 		{
 			accessorKey: "description",
 			header: () => {
-				return <div className="md:text-base text-xs">Description</div>;
+				return <div className="md:text-base text-xs">Mô tả</div>;
 			},
 			cell: ({ row }) => {
 				return (
@@ -243,12 +247,10 @@ const CategoryIndex = () => {
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex flex-col gap-3">
-				<h4 className="font-medium md:text-xl text-base">
-					Danh sách danh mục
-				</h4>
+				<h4 className="font-medium md:text-xl text-base">Danh sách danh mục</h4>
 				<div className="flex justify-between">
 					<Input
-						placeholder="Tìm kiếm người dùng"
+						placeholder="Tìm kiếm danh mục"
 						className="w-[40%] md:text-base text-xs"
 						onChange={(event) => debounced(event.target.value)}
 					/>
