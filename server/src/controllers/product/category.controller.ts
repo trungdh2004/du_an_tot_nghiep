@@ -4,7 +4,6 @@ import STATUS from "../../utils/status";
 import { categoryValidation } from "../../validation/product.validation";
 import { formatDataPaging } from "../../common/pagingData";
 import CategoryModel from "../../models/products/Category.schema";
-import { generateSlugs } from "../../middlewares/generateSlug";
 
 class categoryController {
   async addCategory(req: RequestModel, res: Response) {
@@ -36,7 +35,7 @@ class categoryController {
 
   async pagingCategory(req: RequestModel, res: Response) {
     try {
-      const { pageIndex = 1, pageSize,keyword ,tab=1} = req.body;
+      const { pageIndex = 1, pageSize, keyword, tab = 1 } = req.body;
 
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
@@ -65,18 +64,21 @@ class categoryController {
         });
       }
 
-      const dataCategory = await CategoryModel.aggregate(pipeline).collation({
-        locale: "en_US",
-        strength: 1,
-      }).limit(limit).skip(skip)
+      const dataCategory = await CategoryModel.aggregate(pipeline)
+        .collation({
+          locale: "en_US",
+          strength: 1,
+        })
+        .skip(skip)
+        .limit(limit);
+
       const countCategory = await CategoryModel.aggregate([
         ...pipeline,
         {
-          $count:"total"
-        }
+          $count: "total",
+        },
       ]);
 
-      
       const result = formatDataPaging({
         limit,
         pageIndex,
@@ -94,10 +96,10 @@ class categoryController {
 
   async getAllCategory(req: RequestModel, res: Response) {
     try {
-      const {tab = 1} = req.body 
+      const { tab = 1 } = req.body;
 
       const allCategory = await CategoryModel.find({
-        deleted:tab === 1 ? false : true
+        deleted: tab === 1 ? false : true,
       });
       return res.status(STATUS.OK).json({
         message: "Lấy giá trị thành công",
@@ -157,9 +159,13 @@ class categoryController {
         });
       }
 
-      await CategoryModel.findByIdAndUpdate(id, {
-        deleted:true
-      },{new:true});
+      await CategoryModel.findByIdAndUpdate(
+        id,
+        {
+          deleted: true,
+        },
+        { new: true }
+      );
 
       return res.status(STATUS.OK).json({
         message: "Xóa thành công",
@@ -257,15 +263,19 @@ class categoryController {
         });
       }
 
-      const newCate = await CategoryModel.findByIdAndUpdate(id, {
-        deleted:false
-      },{new:true});
+      const newCate = await CategoryModel.findByIdAndUpdate(
+        id,
+        {
+          deleted: false,
+        },
+        { new: true }
+      );
 
       return res.status(STATUS.OK).json({
         message: "Khôi phục thành công",
-        data:newCate
+        data: newCate,
       });
-    } catch (error:any) {
+    } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
       });

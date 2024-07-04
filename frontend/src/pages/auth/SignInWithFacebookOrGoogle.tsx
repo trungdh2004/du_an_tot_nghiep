@@ -5,7 +5,6 @@ import { useRouterHistory } from "@/hooks/router";
 import { socialUser } from "@/service/account";
 import { AxiosError } from "axios";
 import {
-	AdditionalUserInfo,
 	GoogleAuthProvider,
 	getAdditionalUserInfo,
 	getAuth,
@@ -36,10 +35,15 @@ const SignInWithFacebookOrGoogle = () => {
 	const handleLoginGoogle = () => {
 		const provider = new GoogleAuthProvider();
 		signInWithPopup(auth, provider)
-			.then(async (result) => {
+      .then(async (result) => {
+        console.log(result?.user);
+        
 				const credential = GoogleAuthProvider.credentialFromResult(result);
 				// The signed-in user info.
 				const user = getAdditionalUserInfo(result);
+				console.log("user:", user);
+				console.log("credential:", credential);
+
 				const payload = {
 					email: result?.user?.email,
 					first_name: user?.profile?.given_name,

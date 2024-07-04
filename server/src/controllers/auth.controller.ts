@@ -482,7 +482,6 @@ class AuthController {
       });
     }
   }
-
   async compareOtp(req: Request, res: Response) {
     try {
       const { otp, email } = req.body;
