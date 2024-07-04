@@ -9,12 +9,14 @@ import routerUpload from "./upload.route";
 import routerTags from "./tags.route";
 import routerBlogs from "./blog.route";
 import routerSize from "./size.route";
+import routerColor from "./product/color.route";
 
 const router = Router();
 
 router.use("/auth", routerAuth);
 router.use("/address", authentication, routerAddress);
 router.use("/category", routerCategory);
+router.use("/color", routerColor);
 router.use("/product", routerProduct);
 router.use("/admin", routerAdmin);
 router.use("/upload", routerUpload);
