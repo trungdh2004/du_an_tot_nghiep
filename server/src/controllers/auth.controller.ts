@@ -396,7 +396,6 @@ class AuthController {
 
           await RefreshTokenModel.findOneAndDelete({
             userId: (data as PayloadToken).id as ObjectId,
-            token: refreshToken,
           });
 
           res.cookie("token", "", {

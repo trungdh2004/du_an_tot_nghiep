@@ -27,7 +27,7 @@ const SidebarList = () => {
 									</p>
 								</AccordionTrigger>
 								<AccordionContent className="pb-0 pl-4" datatype="open">
-									<div className="space-y-1  mt-2">
+									<div className="space-y-1  mt-2 ">
 										{item.children.map((row: any) => (
 											<SidebarItem
 												key={item.path}
@@ -53,6 +53,7 @@ const SidebarList = () => {
 						Icon={item.icon}
 						path={`/admin${item.path}`}
 						isAction={location.pathname === `/admin${item.path}`}
+						isParent
 					/>
 				);
 			})}
