@@ -14,6 +14,8 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -43,18 +45,14 @@ const UserIndex = () => {
 	const [openBanId, setopenBanId] = useState<string | null>(null);
 	const [isPending, startTransition] = useTransition();
 	const [openUnbanId, setopenUnbanId] = useState<string | null>(null);
-  const debounced = useDebounceCallback((inputValue: string) => {
-    setSearchObject({
+	const debounced = useDebounceCallback((inputValue: string) => {
+		setSearchObject((prev) => ({
+			...prev,
 			pageIndex: 1,
-			pageSize: 5,
 			keyword: inputValue,
-			sort: 1,
-			fieldSort: "",
-			tab: searchObject.tab,
-		});
+		}));
 	}, 300);
-  
-  
+
 	const [response, setResponse] = useState({
 		pageIndex: 1,
 		pageSize: 5,
@@ -69,6 +67,7 @@ const UserIndex = () => {
 		sort: 1,
 		fieldSort: "",
 		tab: 1,
+		provider: "",
 	});
 	const [data, setData] = useState<IData[]>([]);
 	useEffect(() => {
@@ -154,60 +153,80 @@ const UserIndex = () => {
 				/>
 			),
 			size: 100,
-		},
+    },
 		{
 			accessorKey: "full_name",
 			header: () => {
-				return <div>Name</div>;
+				return <div className="md:text-base text-xs">Tên</div>;
+			},
+			cell: ({ row }) => {
+				return (
+					<div className="md:text-base text-xs">{row?.original?.full_name}</div>
+				);
 			},
 		},
 		{
 			accessorKey: "email",
-			header: "Email",
+			header: () => {
+				return <div className="md:text-base text-xs">Email</div>;
+			},
+			cell: ({ row }) => {
+				return (
+					<div className="md:text-base text-xs">{row?.original?.email}</div>
+				);
+			},
 		},
 		{
 			accessorKey: "avatarUrl",
-			header: "AvatarUrl",
+			header: () => {
+				return <div className="md:text-base text-xs">Ảnh</div>;
+			},
 			cell: ({ row }) => {
 				return (
 					<img
 						src={row.original.avatarUrl || "/avatar_25.jpg"}
-						className="w-[40px] h-[40px] rounded-full"
+						className="md:w-[40px] md:h-[40px] w-[30px] h-[30px] rounded-full"
 					/>
 				);
 			},
 		},
 		{
 			accessorKey: "provider",
-			header: ({}) => {
-				return <div>Phương thức</div>;
+			header: () => {
+				return <div className="md:text-base text-xs">Phương thức</div>;
 			},
 			cell: ({ row }) => {
 				console.log(row);
-				
-				const value = `${row.getValue("provider") ? "Create" : "Google"}`;
-				return <div className="font-medium">{value}</div>;
+
+				const value = `${row.getValue("provider") === "google.com" ? "Google" : "Đăng ký"}`;
+				return <div className="font-medium md:text-base text-xs">{value}</div>;
 			},
 		},
 		{
 			accessorKey: "createdAt",
-			header: "Ngày tạo",
+			header: () => {
+				return <div className="md:text-base text-xs">Ngày tạo</div>;
+			},
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.createdAt);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
-				return <div className="font-medium">{formattedDate}</div>;
+				return (
+					<div className="font-medium md:text-base text-xs">
+						{formattedDate}
+					</div>
+				);
 			},
 		},
 		{
 			id: "status",
 			header: () => {
-				return <div>Trạng thái</div>;
+				return <div className="md:text-base text-xs">Trạng thái</div>;
 			},
 			cell: ({ row }) => {
 				const status = row.original.blocked_at ? "Bị cấm" : "Hoạt động";
 				return (
 					<Badge
-						className={`font-medium ${row.original.blocked_at ? "bg-[#cf4040]" : "bg-green-500"} text-center items-center`}
+						className={`font-medium ${row.original.blocked_at ? "bg-[#cf4040]" : "bg-green-500"} text-center items-center md:text-base text-xs`}
 					>
 						{status}
 					</Badge>
@@ -269,79 +288,16 @@ const UserIndex = () => {
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex flex-col gap-3">
-				<h4 className="font-medium text-xl">Danh sách người dùng</h4>
+				<h4 className="font-medium md:text-xl text-base">
+					Danh sách người dùng
+				</h4>
 				<div className="flex justify-between">
 					<Input
 						placeholder="Tìm kiếm người dùng"
-						className="w-[40%]"
+						className="w-[40%] md:text-base text-xs"
 						onChange={(event) => debounced(event.target.value)}
 					/>
 					<div className="flex gap-3 justify-center items-center">
-						<div>
-							<DropdownMenu>
-								<DropdownMenuTrigger>Lọc</DropdownMenuTrigger>
-								<DropdownMenuContent>
-									<DropdownMenuLabel>Sắp xếp theo chiều</DropdownMenuLabel>
-									<DropdownMenuItem
-										onClick={() => {
-											setSearchObject({
-												pageIndex: 1,
-												pageSize: 5,
-												keyword: "",
-												sort: 1,
-												fieldSort: searchObject.fieldSort,
-												tab: searchObject.tab,
-											});
-										}}
-									>
-										Tăng đần
-									</DropdownMenuItem>
-									<DropdownMenuItem
-										onClick={() => {
-											setSearchObject({
-												pageIndex: 1,
-												pageSize: 5,
-												keyword: "",
-												sort: -1,
-												fieldSort: searchObject.fieldSort,
-												tab: searchObject.tab,
-											});
-										}}
-									>
-										Giảm dần
-									</DropdownMenuItem>
-									<DropdownMenuLabel>Sắp xếp theo chiều</DropdownMenuLabel>
-									<DropdownMenuItem
-										onClick={() => {
-											setSearchObject({
-												pageIndex: 1,
-												pageSize: 5,
-												keyword: "",
-												sort: 1,
-												fieldSort: searchObject.fieldSort,
-												tab: searchObject.tab,
-											});
-										}}
-									>
-										Google
-									</DropdownMenuItem>
-									<DropdownMenuItem
-										onClick={() => {
-											setSearchObject({
-												pageIndex: 1,
-												pageSize: 5,
-												keyword: "",
-												sort: -1,
-												fieldSort: searchObject.fieldSort,
-												tab: searchObject.tab,
-											});
-										}}
-									>
-										Create
-									</DropdownMenuItem>
-								</DropdownMenuContent>
-							</DropdownMenu>
-						</div>
 						<div className="pr-5">
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
@@ -349,71 +305,106 @@ const UserIndex = () => {
 										<IoFilter size={20} />
 									</div>
 								</DropdownMenuTrigger>
-								<DropdownMenuContent className="w-[150px] text-center">
+								<DropdownMenuContent className="w-[150px]">
 									<DropdownMenuLabel>Sắp xếp theo</DropdownMenuLabel>
 									<DropdownMenuSeparator />
-									<DropdownMenuCheckboxItem
+									<DropdownMenuRadioGroup
 										className="cursor-pointer"
-										onClick={() =>
-											setSearchObject({
+										value={`${searchObject.fieldSort}`}
+										onValueChange={(e) => {
+											setSearchObject((prev) => ({
+												...prev,
 												pageIndex: 1,
-												pageSize: 5,
-												keyword: "",
-												sort: searchObject.sort,
-												fieldSort: "email",
-												tab: searchObject.tab,
-											})
-										}
+												fieldSort: e,
+											}));
+										}}
 									>
-										Email
-									</DropdownMenuCheckboxItem>
-									<DropdownMenuCheckboxItem
-										onClick={() =>
-											setSearchObject({
-												pageIndex: 1,
-												pageSize: 5,
-												keyword: "",
-												sort: searchObject.sort,
-												fieldSort: "full_name",
-												tab: searchObject.tab,
-											})
-										}
-										className="cursor-pointer"
-									>
-										Name
-									</DropdownMenuCheckboxItem>
-									<DropdownMenuCheckboxItem
-										onClick={() =>
-											setSearchObject({
-												pageIndex: 1,
-												pageSize: 5,
-												keyword: "",
-												sort: searchObject.sort,
-												fieldSort: "createdAt",
-												tab: searchObject.tab,
-											})
-										}
-										className="cursor-pointer"
-									>
-										Ngày tạo
-									</DropdownMenuCheckboxItem>
+										<DropdownMenuRadioItem
+											value="email"
+											className="cursor-pointer"
+										>
+											Email
+										</DropdownMenuRadioItem>
+										<DropdownMenuRadioItem
+											value="full_name"
+											className="cursor-pointer"
+										>
+											Tên
+										</DropdownMenuRadioItem>
+										<DropdownMenuRadioItem
+											value="createdAt"
+											className="cursor-pointer"
+										>
+											Ngày tạo
+										</DropdownMenuRadioItem>
+									</DropdownMenuRadioGroup>
 									<DropdownMenuSeparator />
-									<DropdownMenuCheckboxItem
+									<DropdownMenuLabel>Sắp xếp theo chiều</DropdownMenuLabel>
+									<DropdownMenuRadioGroup
+										value={`${searchObject.sort}`}
+										onValueChange={(e) => {
+											const sortNumber = parseInt(e) as 1 | -1;
+											console.log(sortNumber);
+
+											setSearchObject((prev) => ({
+												...prev,
+												pageIndex: 1,
+												sort: sortNumber,
+											}));
+										}}
+									>
+										<DropdownMenuRadioItem value="1" className="cursor-pointer">
+											Tăng dần
+										</DropdownMenuRadioItem>
+										<DropdownMenuRadioItem
+											value="-1"
+											className="cursor-pointer"
+										>
+											Giảm dần
+										</DropdownMenuRadioItem>
+									</DropdownMenuRadioGroup>
+									<DropdownMenuSeparator />
+									<DropdownMenuLabel>Sắp xếp theo Login</DropdownMenuLabel>
+									<DropdownMenuRadioGroup
+										value={searchObject.provider}
+										onValueChange={(e) => {
+											setSearchObject((prev) => ({
+												...prev,
+												pageIndex: 1,
+												provider: e,
+											}));
+										}}
+									>
+										<DropdownMenuRadioItem
+											value="google.com"
+											className="cursor-pointer"
+										>
+											Google
+										</DropdownMenuRadioItem>
+										<DropdownMenuRadioItem
+											value="credential"
+											className="cursor-pointer"
+										>
+											Create
+										</DropdownMenuRadioItem>
+									</DropdownMenuRadioGroup>
+									<DropdownMenuSeparator />
+									<DropdownMenuItem
 										onClick={() =>
 											setSearchObject({
 												pageIndex: 1,
 												pageSize: 5,
 												keyword: "",
-												sort: searchObject.sort,
-												fieldSort: "createdAt",
-												tab: searchObject.tab,
+												sort: 1,
+												fieldSort: "",
+												tab: 1,
+												provider: "",
 											})
 										}
 										className="cursor-pointer hover:bg-[#ee6e6e]"
 									>
 										Reset
-									</DropdownMenuCheckboxItem>
-								
+									</DropdownMenuItem>
 								</DropdownMenuContent>
 							</DropdownMenu>
 						</div>
@@ -425,14 +416,16 @@ const UserIndex = () => {
 					<TabsTrigger
 						value="1"
 						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 1 }))}
+						className="md:text-base text-sm"
 					>
-						User
+						Người dùng
 					</TabsTrigger>
 					<TabsTrigger
 						value="2"
 						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 2 }))}
+						className="md:text-base text-sm"
 					>
-						UserBan
+						Người dùng bị cấm
 					</TabsTrigger>
 				</TabsList>
 			</Tabs>
@@ -457,6 +450,7 @@ const UserIndex = () => {
 					handleClose={() => setopenBanId(null)}
 					content="Cấm người dùng"
 					handleSubmit={() => handleBlock(openBanId)}
+					labelConfirm="Cấm"
 				/>
 			)}
 			{!!openUnbanId && (
@@ -465,6 +459,7 @@ const UserIndex = () => {
 					handleClose={() => setopenUnbanId(null)}
 					content="Bỏ cấm người dùng"
 					handleSubmit={() => handleUnBlock(openUnbanId)}
+					labelConfirm="Bỏ cấm"
 				/>
 			)}
 		</div>

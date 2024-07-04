@@ -1,7 +1,11 @@
 import TableComponent from "@/components/common/TableComponent";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { paddingCate } from "@/service/category-admin";
+import {
+	hiddencate,
+	paddingCate,
+	unhiddencate,
+} from "@/service/category-admin";
 import { SearchObjectType } from "@/types/searchObjecTypes";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import React, { useEffect, useState } from "react";
@@ -9,9 +13,12 @@ import { parseISO, format } from "date-fns";
 import { IoFilter } from "react-icons/io5";
 import instance from "@/config/instance";
 import CategoryAdd from "./CategoryAddandUpdate";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
 	DropdownMenu,
+	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
+	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
@@ -19,12 +26,16 @@ import {
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { Button } from "@/components/ui/button";
 import { typeResponse } from "@/types/typeReponse";
+import { useDebounceCallback } from "usehooks-ts";
+import { toast } from "sonner";
+import DialogConfirm from "@/components/common/DialogConfirm";
 
 const CategoryIndex = () => {
 	interface IData {
 		_id: string;
 		name: string;
-		description: string;
+    description: string;
+    deleted: boolean;
 		createdAt: string;
 		updatedAt: string;
 		slug: string;
@@ -33,12 +44,22 @@ const CategoryIndex = () => {
 	const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
 	const [data, setData] = useState<IData[]>([]);
 	const [openId, setOpenId] = useState<string | boolean>(false);
+	const [openUnhiddenCategory, setopenUnhiddenCategory] = useState<string | boolean>(false);
+	const [openHiddenCategory, setOpenHiddenCategory] = useState<string | boolean>(false);
+	const debounced = useDebounceCallback((inputValue: string) => {
+    setSearchObject((prev) => ({
+      ...prev,
+      pageIndex:1,
+      keyword: inputValue,
+		}));
+	}, 300);
 	const [searchObject, setSearchObject] = useState<SearchObjectType>({
 		pageIndex: 1,
 		pageSize: 5,
 		keyword: "",
-    fieldSort: "",
-    sort:1
+		fieldSort: "",
+		sort: 1,
+		tab: 1,
 	});
 	console.log(searchObject);
 	const [response, setResponse] = useState<typeResponse>({
@@ -66,6 +87,27 @@ const CategoryIndex = () => {
 			});
 		} catch (error) {
 			console.error("Error fetching data", error);
+		}
+	};
+	const handleHiddenCate = async (id: string | boolean) => {
+		try {
+			const { data } = await hiddencate(id);
+			setOpenHiddenCategory(false);
+			handleCategory();
+			toast.success("Đã ẩn danh mục thành công");
+		} catch (error) {
+			toast.error("Ẩn danh mục thất bại");
+		}
+	};
+
+	const handleUnhiddenCate = async (id: string | boolean) => {
+		try {
+			const { data } = await unhiddencate(id);
+			setopenUnhiddenCategory(false);
+			handleCategory();
+			toast.success("Bỏ ẩn danh mục thành công");
+		} catch (error) {
+			toast.error("Bỏ ẩn danh mục thất bại");
 		}
 	};
 	const handleChangePageSize = (value: number) => {
@@ -119,20 +161,42 @@ const CategoryIndex = () => {
 		},
 		{
 			accessorKey: "name",
-			header: "Name",
+			header: () => {
+				return <div className="md:text-base text-xs">Tên</div>;
+			},
+			cell: ({ row }) => {
+				return (
+					<div className="md:text-base text-xs">{row?.original?.name}</div>
+				);
+			},
 		},
 		{
 			accessorKey: "description",
-			header: "Description",
+			header: () => {
+				return <div className="md:text-base text-xs">Description</div>;
+			},
+			cell: ({ row }) => {
+				return (
+					<div className="md:text-base text-xs">
+						{row?.original?.description}
+					</div>
+				);
+			},
 		},
 
 		{
 			accessorKey: "createdAt",
-			header: "Ngày tạo",
+			header: () => {
+				return <div className="md:text-base text-xs">Ngày tạo</div>;
+			},
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.createdAt);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
-				return <div className="font-medium">{formattedDate}</div>;
+				return (
+					<div className="font-medium md:text-base text-xs">
+						{formattedDate}
+					</div>
+				);
 			},
 		},
 		{
@@ -155,12 +219,21 @@ const CategoryIndex = () => {
 							>
 								Sửa danh mục
 							</Button>
-							<Button
-								onClick={() => setOpenId(row?.original?._id)}
-								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full"
-							>
-								Xóa danh mục
-							</Button>
+							{row?.original?.deleted ? (
+								<DropdownMenuItem
+									className="text-green-400 text-center"
+									onClick={() => setopenUnhiddenCategory(row?.original?._id)}
+								>
+									Bỏ ẩn
+								</DropdownMenuItem>
+							) : (
+								<DropdownMenuItem
+									className="text-red-400 text-center"
+									onClick={() => setOpenHiddenCategory(row?.original?._id)}
+								>
+									Ẩn
+								</DropdownMenuItem>
+							)}
 						</DropdownMenuContent>
 					</DropdownMenu>
 				);
@@ -170,35 +243,43 @@ const CategoryIndex = () => {
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex flex-col gap-3">
-				<h4 className="font-medium text-xl">Danh sách danh mục</h4>
+				<h4 className="font-medium md:text-xl text-base">
+					Danh sách danh mục
+				</h4>
 				<div className="flex justify-between">
 					<Input
 						placeholder="Tìm kiếm người dùng"
-						className="w-[40%]"
-						onChange={(e: any) => {
-							console.log(e.target.value);
-
-							return setSearchObject({
-								pageIndex: 1,
-								pageSize: 5,
-								keyword: e.target.value,
-                fieldSort: "",
-                sort: 1
-							});
-						}}
+						className="w-[40%] md:text-base text-xs"
+						onChange={(event) => debounced(event.target.value)}
 					/>
-					<div className="flex items-center gap-4 pr-5">
+					<div className="flex items-center gap-4">
 						<Button
 							onClick={() => setOpenId(true)}
 							className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
 						>
 							Thêm danh mục
 						</Button>
-
-						<IoFilter size={20} />
 					</div>
 				</div>
 			</div>
+			<Tabs value={`${searchObject.tab}`} className="w-full">
+				<TabsList className="grid w-full grid-cols-2">
+					<TabsTrigger
+						value="1"
+						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 1 }))}
+						className="md:text-base text-sm"
+					>
+						Danh mục
+					</TabsTrigger>
+					<TabsTrigger
+						value="2"
+						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 2 }))}
+						className="md:text-base text-sm"
+					>
+						Danh mục ẩn
+					</TabsTrigger>
+				</TabsList>
+			</Tabs>
 			<TableComponent
 				data={data}
 				columns={columns}
@@ -214,6 +295,26 @@ const CategoryIndex = () => {
 				handleChangePageSize={handleChangePageSize}
 				dataPageSize={[1, 3, 5, 10]}
 			/>
+			{!!openHiddenCategory && (
+				<DialogConfirm
+					open={!!openHiddenCategory}
+					title="Xác nhận ẩn danh mục"
+					handleClose={() => setOpenHiddenCategory(false)}
+					handleSubmit={() => handleHiddenCate(openHiddenCategory)}
+					content="Bạn có chắc muốn ẩn danh mục này?"
+					labelConfirm="Ẩn"
+				/>
+			)}
+			{!!openUnhiddenCategory && (
+				<DialogConfirm
+					open={!!openUnhiddenCategory}
+					title="Xác nhận bỏ ẩn danh mục"
+					handleClose={() => setopenUnhiddenCategory(false)}
+					handleSubmit={() => handleUnhiddenCate(openUnhiddenCategory)}
+					content="Bạn có chắc muốn bỏ ẩn danh mục này?"
+					labelConfirm="Bỏ ẩn"
+				/>
+			)}
 			{!!openId && (
 				<CategoryAdd
 					open={openId}
