@@ -10,7 +10,26 @@ const sidebarConfig: any[] = [
 		label: "Thống kê",
 	},
 	{
-		path: "/user",
+		path: "/category",
+		isVisible: true,
+		label: "Danh mục",
+		children: [
+			{
+				path: "",
+				icon: LuLayoutDashboard,
+				isVisible: true,
+				label: "Danh sách danh mục",
+			},
+			{
+				path: "/overview",
+				icon: LuLayoutDashboard,
+				isVisible: true,
+				label: "Danh",
+			},
+		],
+	},
+	{
+		path: "/users",
 		isVisible: true,
 		label: "Người dùng",
 		children: [
@@ -48,15 +67,15 @@ const sidebarConfig: any[] = [
 		],
 	},
 	{
-		path: "/blog",
+		path: "/user",
 		isVisible: true,
-		label: "Bài viết",
+		label: "Người dùng",
 		children: [
 			{
 				path: "",
 				icon: FaUsers,
 				isVisible: true,
-				label: "Danh sách bài viết",
+				label: "Danh sách",
 			},
 			{
 				path: "/staff",
@@ -128,6 +147,25 @@ const sidebarConfig: any[] = [
 		icon: LuLayoutDashboard,
 		isVisible: true,
 		label: "Thống kê",
+	},
+	{
+		path: "/blog",
+		isVisible: true,
+		label: "Bài viết",
+		children: [
+			{
+				path: "",
+				icon: FaUsers,
+				isVisible: true,
+				label: "Danh sách bài viết",
+			},
+			{
+				path: "/staff",
+				icon: FaUsersCog,
+				isVisible: true,
+				label: "Danh sách nhân viên",
+			},
+		],
 	},
 ];
 export default sidebarConfig;

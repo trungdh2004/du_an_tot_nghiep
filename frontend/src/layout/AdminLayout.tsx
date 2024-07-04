@@ -29,7 +29,7 @@ const AdminLayout = () => {
 			<div className="lg:pl-[280px] w-full">
 				{/* header */}
 				<HeaderAdmin />
-				<div className="py-[80px] px-8">
+				<div className="py-[80px] px-4 md:px-8">
 					<Outlet />
 				</div>
 			</div>

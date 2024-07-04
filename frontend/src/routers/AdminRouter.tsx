@@ -1,9 +1,8 @@
 import AdminLayout from "@/layout/AdminLayout";
 import Dashboard from "@/pages/admin/Dashboard";
-import BlogList from "@/pages/admin/blog/BlogList";
-import ColorForm from "@/pages/admin/color/ColorForm";
-import ColorList from "@/pages/admin/color/ColorList";
-import path from "path";
+import CategoryIndex from "@/pages/admin/category/CategoryIndex";
+import UserDetail from "@/pages/admin/users/UserDetail";
+import UserIndex from "@/pages/admin/users/UserIndex";
 
 const AdminRouter = [
 	{
@@ -19,22 +18,21 @@ const AdminRouter = [
 				element: <Dashboard />,
 			},
 			{
-				path: "blog",
-				element: <BlogList />
+				path: "users",
+				element: <UserIndex />,
+			},
+			{
+				path: "users/detail",
+				element: <UserDetail />,
+			},
+			{
+				path: "category",
+				element: <CategoryIndex />,
 			},
 			{
 				path: "color",
 				element: <ColorList />
 			},
-			{
-				path: "color/add",
-				element: <ColorForm />
-			},
-			{
-				path: "color/:id",
-				element: <ColorForm />
-			}
-
 		],
 	},
 ];
