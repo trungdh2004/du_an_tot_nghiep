@@ -13,7 +13,7 @@ class AddressController {
     try {
       const { pageIndex = 1, pageSize } = req.body;
       const user = req.user;
-      let limit = pageSize || 4;
+      let limit = pageSize || 5;
       let skip = (pageIndex - 1) * limit || 0;
 
       const address = await AddressModel.find({

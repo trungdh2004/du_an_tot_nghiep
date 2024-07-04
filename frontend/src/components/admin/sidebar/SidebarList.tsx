@@ -10,10 +10,9 @@ import sidebarConfig from "@/config/sidebarAdmin";
 import { useLocation } from "react-router-dom";
 import SidebarItem from "./SidebarItem";
 
+
 const SidebarList = () => {
 	const location = useLocation();
-
-
 	return (
 		<div>
 			{sidebarConfig?.map((item, index) => {

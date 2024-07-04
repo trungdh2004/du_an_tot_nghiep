@@ -45,7 +45,8 @@ export const getAddressById = async (id : any) => {
 
 export const fetchAddress = async (page: any) => {
 	const response = await instance.post(`address/paddingAddress`, {
-		pageIndex: page,
+    pageIndex: page,
+    pageSize:4,
 	});
 	return response.data;
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 
@@ -21,6 +21,7 @@ const DialogConfirm = ({
 	status = "danger",
 	labelConfirm
 }: IDialogConfirm) => {
+  const [check,setCheck]= useState(false)
 	return (
 		<>
 			<Dialog open={open} onOpenChange={handleClose}>
