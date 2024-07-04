@@ -1,6 +1,9 @@
 import AdminLayout from "@/layout/AdminLayout";
 import Dashboard from "@/pages/admin/Dashboard";
 import BlogList from "@/pages/admin/blog/BlogList";
+import ColorForm from "@/pages/admin/color/ColorForm";
+import ColorList from "@/pages/admin/color/ColorList";
+import path from "path";
 
 const AdminRouter = [
 	{
@@ -18,6 +21,18 @@ const AdminRouter = [
 			{
 				path: "blog",
 				element: <BlogList />
+			},
+			{
+				path: "color",
+				element: <ColorList />
+			},
+			{
+				path: "color/add",
+				element: <ColorForm />
+			},
+			{
+				path: "color/:id",
+				element: <ColorForm />
 			}
 
 		],

@@ -86,21 +86,21 @@ const sidebarConfig: any[] = [
 		],
 	},
 	{
-		path: "/user",
+		path: "/color",
 		isVisible: true,
-		label: "Người dùng",
+		label: "Màu sắc",
 		children: [
 			{
-				path: "",
+				path: "/",
 				icon: FaUsers,
 				isVisible: true,
-				label: "Danh sách",
+				label: "Danh sách màu sắc",
 			},
 			{
-				path: "/staff",
+				path: "/add",
 				icon: FaUsersCog,
 				isVisible: true,
-				label: "Danh sách nhân viên",
+				label: "Thêm màu sắc",
 			},
 		],
 	},
