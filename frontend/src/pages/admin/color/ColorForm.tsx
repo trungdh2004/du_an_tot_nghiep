@@ -104,9 +104,9 @@ const ColorForm = ({ open, title, labelConfirm, handleClose, handlePaging }: For
     return (
         <>
             <Dialog open={!!open} onOpenChange={handleClose}>
-                <DialogTrigger asChild>
+                {/* <DialogTrigger asChild>
                     <Button variant="default">Thêm màu mới</Button>
-                </DialogTrigger>
+                </DialogTrigger> */}
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>{typeof open === "string" ? 'Cập nhật' : 'Thêm màu'}</DialogTitle>
@@ -144,7 +144,6 @@ const ColorForm = ({ open, title, labelConfirm, handleClose, handlePaging }: For
                             </form>
                         </Form>
                     </div>
-
                 </DialogContent>
             </Dialog></>
     )

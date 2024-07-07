@@ -7,7 +7,7 @@ export const sizeValidation = Joi.object({
 
 export const colorValidation = Joi.object({
   name: Joi.string().required().messages({}),
-  code: Joi.number().required().messages({}),
+  code: Joi.string().required().messages({}),
 });
 export const categoryValidation = Joi.object({
   name: Joi.string().required().messages({}),

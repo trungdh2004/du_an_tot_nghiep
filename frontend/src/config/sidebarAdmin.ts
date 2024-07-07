@@ -114,13 +114,7 @@ const sidebarConfig: any[] = [
 				icon: FaUsers,
 				isVisible: true,
 				label: "Danh sách màu sắc",
-			},
-			{
-				path: "/add",
-				icon: FaUsersCog,
-				isVisible: true,
-				label: "Thêm màu sắc",
-			},
+			}
 		],
 	},
 	{

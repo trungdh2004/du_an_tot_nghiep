@@ -19,6 +19,8 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { useDebounceCallback } from "usehooks-ts";
 import ColorForm from "./ColorForm";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import DialogConfirm from "@/components/common/DialogConfirm";
 interface IData {
     _id: string;
     name: string;
@@ -28,6 +30,7 @@ interface IData {
     updatedAt: string;
     slug: string;
 }
+
 export const hiddencolor = async (id: string | boolean) => {
     const data = await instance.delete(`color/delete/${id}`);
     return data;
@@ -60,7 +63,7 @@ const ColorList = () => {
         sort: 1,
         tab: 1,
     });
-    console.log(searchObject);
+    // console.log(searchObject);
     const [response, setResponse] = useState<any>({
         pageCount: 0,
         totalElement: 0, //tổng số phần tử
@@ -68,7 +71,7 @@ const ColorList = () => {
     });
     const handleColor = async () => {
         try {
-            const { data } = await instance.post('/color/paging');
+            const { data } = await instance.post('/color/paging', searchObject);
             setData(data.content);
             setResponse({
                 pageCount: data.totalPage,
@@ -93,10 +96,10 @@ const ColorList = () => {
         }
     };
 
-    const handleUnhiddenCate = async (id: string | boolean) => {
+    const handleUnhiddenColor = async (id: string | boolean) => {
         try {
             const { data } = await unhiddencolor(id);
-            setopenUnhiddenCategory(false);
+            setopenUnhiddenColor(false);
             handleColor();
             toast.success("Bỏ ẩn danh mục thành công");
         } catch (error) {
@@ -142,7 +145,6 @@ const ColorList = () => {
                 return <div className="md:text-base text-xs">Tên</div>;
             },
             cell: ({ row }) => {
-                console.log(row.original)
                 return (
                     <div className="md:text-base text-xs">{row?.original?.name}</div>
                 );
@@ -161,7 +163,6 @@ const ColorList = () => {
                 );
             },
         },
-
         {
             accessorKey: "createdAt",
             header: () => {
@@ -199,14 +200,14 @@ const ColorList = () => {
                             </Button>
                             {row?.original?.deleted ? (
                                 <DropdownMenuItem
-                                    className="text-green-400 text-center"
+                                    className="text-green-400 text-center pl-4"
                                     onClick={() => setopenUnhiddenColor(row?.original?._id)}
                                 >
                                     Bỏ ẩn
                                 </DropdownMenuItem>
                             ) : (
                                 <DropdownMenuItem
-                                    className="text-red-400 text-center"
+                                    className="text-red-400 text-center pl-4"
                                     onClick={() => setOpenHiddenColor(row?.original?._id)}
                                 >
                                     Ẩn
@@ -219,7 +220,7 @@ const ColorList = () => {
         },
     ];
     const handleChangePageSize = (value: number) => {
-        setSearchObject((prev) => ({
+        setSearchObject((prev: any) => ({
             ...prev,
             pageSize: value,
             pageIndex: 1,
@@ -227,14 +228,13 @@ const ColorList = () => {
     };
     const handleChangePage = (value: any) => {
         console.log("value change page", value);
-
-        setSearchObject((prev) => ({
+        setSearchObject((prev: any) => ({
             ...prev,
             pageIndex: value.selected + 1,
         }));
     };
     const debounced = useDebounceCallback((inputValue: string) => {
-        setSearchObject((prev) => ({
+        setSearchObject((prev: any) => ({
             ...prev,
             pageIndex: 1,
             keyword: inputValue,
@@ -262,24 +262,24 @@ const ColorList = () => {
                     </div>
                 </div>
             </div>
-            {/* <Tabs value={`${searchObject.tab}`} className="w-full">
+            {<Tabs value={`${searchObject.tab}`} className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger
                         value="1"
-                        onClick={() => setSearchObject((prev) => ({ ...prev, tab: 1 }))}
+                        onClick={() => setSearchObject((prev: any) => ({ ...prev, tab: 1 }))}
                         className="md:text-base text-sm"
                     >
                         Danh mục
                     </TabsTrigger>
                     <TabsTrigger
                         value="2"
-                        onClick={() => setSearchObject((prev) => ({ ...prev, tab: 2 }))}
+                        onClick={() => setSearchObject((prev: any) => ({ ...prev, tab: 2 }))}
                         className="md:text-base text-sm"
                     >
                         Danh mục ẩn
                     </TabsTrigger>
                 </TabsList>
-            </Tabs> */}
+            </Tabs>}
 
             <TableComponent
                 data={data}
@@ -296,6 +296,26 @@ const ColorList = () => {
                 handleChangePageSize={handleChangePageSize}
                 dataPageSize={[1, 3, 5, 10]}
             />
+            {!!openHiddenColor && (
+                <DialogConfirm
+                    open={!!openHiddenColor}
+                    title="Xác nhận ẩn danh mục"
+                    handleClose={() => setopenUnhiddenColor(false)}
+                    handleSubmit={() => handleHiddenColor(openHiddenColor)}
+                    content="Bạn có chắc muốn ẩn danh mục này?"
+                    labelConfirm="Ẩn"
+                />
+            )}
+            {!!openUnhiddenColor && (
+                <DialogConfirm
+                    open={!!openUnhiddenColor}
+                    title="Xác nhận bỏ ẩn danh mục"
+                    handleClose={() => setopenUnhiddenColor(false)}
+                    handleSubmit={() => handleUnhiddenColor(openUnhiddenColor)}
+                    content="Bạn có chắc muốn bỏ ẩn danh mục này?"
+                    labelConfirm="Bỏ ẩn"
+                />
+            )}
             {!!openId && (
                 <ColorForm
                     open={openId}
