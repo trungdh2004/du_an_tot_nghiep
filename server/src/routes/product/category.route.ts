@@ -11,5 +11,7 @@ routerCategory.put("/updateCate/:id", categoryController.updateCategory);
 routerCategory.get("/cate/:id", categoryController.getCategoryById);
 routerCategory.get("/cateSlug/:slug", categoryController.getCategoryBySlug);
 routerCategory.put("/unDelete/:id", categoryController.unDeleteCategory);
+routerCategory.delete("/deleteMany", categoryController.deleteMany);
+routerCategory.delete("/unDeleteMany", categoryController.unDeleteMany);
 
 export default routerCategory;
