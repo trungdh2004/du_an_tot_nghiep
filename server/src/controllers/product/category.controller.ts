@@ -69,6 +69,7 @@ class categoryController {
         })
         .skip(skip)
         .limit(limit);
+
       const countCategory = await CategoryModel.aggregate([
         ...pipeline,
         {

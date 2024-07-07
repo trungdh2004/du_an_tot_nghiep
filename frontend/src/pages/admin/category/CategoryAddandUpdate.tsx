@@ -28,7 +28,7 @@ import { SearchObjectType } from "@/types/searchObjecTypes";
 
 interface FormDialog {
 	open: boolean | string;
-	title?: "Thêm sản phẩm" | "Cập nhật";
+	title?: "Thêm danh mục" | "Cập nhật";
 	labelConfirm?: string;
 	handleClose: () => void;
   handlePaging: () => void;
@@ -61,14 +61,15 @@ const CategoryAdd = ({
 			name: "",
 			description: "",
 		},
-	});
+  });
+  console.log(open);
+  
 	const onHandleUpdate = async (dataForm: any) => {
 		try {
 			const { data } = await instance.put(
 				`/category/updateCate/${open}`,
 				dataForm,
 			);
-			console.log("Update category success");
       handleClose();
       handlePaging();
 			toast.success("Bạn cập nhật danh mục thành công");
@@ -79,8 +80,6 @@ const CategoryAdd = ({
 	const onHandleAdd = async (dataForm: any) => {
 		try {
 			const { data } = await instance.post(`/category/addCate`, dataForm);
-			console.log(data);
-			console.log("Add category success");
 			form.reset();
       handleClose();
       handlePaging();
@@ -95,7 +94,6 @@ const CategoryAdd = ({
 			(async () => {
 				try {
 					const { data } = await instance.get(`/category/cate/${open}`);
-					console.log(data);
 					form.reset(data.data);
 				} catch (error) {
 					console.error("Error:", error);
@@ -121,7 +119,7 @@ const CategoryAdd = ({
 				<DialogContent className="sm:max-w-[425px]">
 					<DialogHeader>
 						<DialogTitle>
-							{typeof open === "string" ? "Cập nhật" : "Thêm sản phẩm"}
+							{typeof open === "string" ? "Cập nhật" : "Thêm danh mục"}
 						</DialogTitle>
 					</DialogHeader>
 
@@ -154,7 +152,7 @@ const CategoryAdd = ({
 								)}
 							/>
 							<Button type="submit">
-								{typeof open === "string" ? "Cập nhật" : "Thêm sản phẩm"}
+								{typeof open === "string" ? "Cập nhật" : "Thêm danh mục"}
 							</Button>
 						</form>
 					</Form>
