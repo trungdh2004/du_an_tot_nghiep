@@ -32,12 +32,14 @@ const SignInWithFacebookOrGoogle = () => {
 	const auth = getAuth(app);
 	const { setAuthUser, setIsLoggedIn } = useAuth();
 	const routerHistory = useRouterHistory();
-	const handleLoginGoogle = () => {
+	const handleLoginGoogle = async () => {
 		const provider = new GoogleAuthProvider();
+		provider.addScope("https://www.googleapis.com/auth/userinfo.email");
+
 		signInWithPopup(auth, provider)
-      .then(async (result) => {
-        console.log(result?.user);
-        
+			.then(async (result) => {
+				console.log(result?.user);
+
 				const credential = GoogleAuthProvider.credentialFromResult(result);
 				// The signed-in user info.
 				const user = getAdditionalUserInfo(result);
@@ -45,7 +47,7 @@ const SignInWithFacebookOrGoogle = () => {
 				console.log("credential:", credential);
 
 				const payload = {
-					email: result?.user?.email,
+					email: user?.profile?.email,
 					first_name: user?.profile?.given_name,
 					last_name: user?.profile?.family_name,
 					full_name: user?.profile?.name,

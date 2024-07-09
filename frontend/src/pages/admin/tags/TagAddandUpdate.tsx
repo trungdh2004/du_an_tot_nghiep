@@ -36,17 +36,20 @@ interface FormDialog {
 const formSchema = z.object({
 	name: z
 		.string({
-			message: "Tên danh mục không được để trống",
+			required_error: "Tên tag là bắt buộc",
+			invalid_type_error: "Tên là một chuỗi",
 		})
-		.min(6, {
-			message: "Bạn nên tạo danh mục lớn hơn 6",
+		.min(1, {
+			message: "Tên bắt buộc phải nhập",
 		}),
+
 	description: z
 		.string({
-			message: "Mô tả danh mục không được để trống",
+			required_error: "Description là bắt buộc",
+			invalid_type_error: "Description là một chuỗi",
 		})
-		.min(6, {
-			message: "Bạn nên tạo chi tiết danh mục lớn hơn 6",
+		.min(1, {
+			message: "Mô tả bắt buộc phải nhập",
 		}),
 });
 const TagAdd = ({
