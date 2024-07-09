@@ -28,10 +28,10 @@ import { SearchObjectType } from "@/types/searchObjecTypes";
 
 interface FormDialog {
 	open: boolean | string;
-	title?: "Thêm danh mục" | "Cập nhật";
+	title?: "Thêm sản phẩm" | "Cập nhật";
 	labelConfirm?: string;
 	handleClose: () => void;
-  handlePaging: () => void;
+	handlePaging: () => void;
 }
 const formSchema = z.object({
 	name: z
@@ -49,7 +49,7 @@ const formSchema = z.object({
 			message: "Bạn nên tạo chi tiết danh mục lớn hơn 6",
 		}),
 });
-const CategoryAdd = ({
+const TagAdd = ({
 	title,
 	open,
 	handleClose,
@@ -61,29 +61,27 @@ const CategoryAdd = ({
 			name: "",
 			description: "",
 		},
-  });
-  console.log(open);
-  
+	});
 	const onHandleUpdate = async (dataForm: any) => {
 		try {
-			const { data } = await instance.put(
-				`/category/updateCate/${open}`,
-				dataForm,
-			);
-      handleClose();
-      handlePaging();
-			toast.success("Bạn cập nhật danh mục thành công");
+			const { data } = await instance.put(`/tags/update/${open}`, dataForm);
+			console.log("Update tag success");
+			handleClose();
+			handlePaging();
+			toast.success("Bạn cập nhật tags thành công");
 		} catch (error) {
 			console.error("Error:", error);
 		}
 	};
 	const onHandleAdd = async (dataForm: any) => {
 		try {
-			const { data } = await instance.post(`/category/addCate`, dataForm);
+			const { data } = await instance.post(`/tags/add`, dataForm);
+			console.log(data);
+			console.log("Add tag success");
 			form.reset();
-      handleClose();
-      handlePaging();
-			toast.success("Bạn thêm danh mục thành công");
+			handleClose();
+			handlePaging();
+			toast.success("Bạn thêm tag thành công");
 		} catch (error) {
 			console.error("Error:", error);
 		}
@@ -93,7 +91,8 @@ const CategoryAdd = ({
 		if (typeof open === "string") {
 			(async () => {
 				try {
-					const { data } = await instance.get(`/category/cate/${open}`);
+					const { data } = await instance.get(`/tags/tag/${open}`);
+					console.log(data);
 					form.reset(data.data);
 				} catch (error) {
 					console.error("Error:", error);
@@ -119,7 +118,7 @@ const CategoryAdd = ({
 				<DialogContent className="sm:max-w-[425px]">
 					<DialogHeader>
 						<DialogTitle>
-							{typeof open === "string" ? "Cập nhật" : "Thêm danh mục"}
+							{typeof open === "string" ? "Cập nhật" : "Thêm thẻ tag"}
 						</DialogTitle>
 					</DialogHeader>
 
@@ -152,7 +151,7 @@ const CategoryAdd = ({
 								)}
 							/>
 							<Button type="submit">
-								{typeof open === "string" ? "Cập nhật" : "Thêm danh mục"}
+								{typeof open === "string" ? "Cập nhật" : "Thêm thẻ tag"}
 							</Button>
 						</form>
 					</Form>
@@ -162,4 +161,4 @@ const CategoryAdd = ({
 	);
 };
 
-export default CategoryAdd;
+export default TagAdd;
