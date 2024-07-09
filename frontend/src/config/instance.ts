@@ -4,7 +4,7 @@ import { JwtPayload, jwtDecode } from "jwt-decode";
 const instance = axios.create({
 	baseURL: process.env.SERVER_URL,
 	timeout: 1000,
-	headers: { "X-Custom-Header": "foobar" },
+	headers: { "X-Custom-Header": "foobar"},
 });
 
 const refreshToken = async () => {
