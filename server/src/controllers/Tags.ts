@@ -35,7 +35,9 @@ class TagsController {
 
   async pagingTags(req: RequestModel, res: Response) {
     try {
+
       const { pageIndex = 1, pageSize, keyword, tab = 1 } = req.body;
+
 
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
@@ -64,6 +66,7 @@ class TagsController {
         });
       }
 
+
       const dataTags = await TagsModel.aggregate(pipeline)
         .collation({
           locale: "en_US",
@@ -76,6 +79,7 @@ class TagsController {
         {
           $count: "total",
         },
+
       ]);
 
       const result = formatDataPaging({
@@ -83,6 +87,7 @@ class TagsController {
         pageIndex,
         data: dataTags,
         count: countTags[0]?.total || 0,
+
       });
 
       return res.status(STATUS.OK).json(result);
