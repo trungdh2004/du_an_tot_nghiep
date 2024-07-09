@@ -23,7 +23,7 @@ const Home = () => {
 	}, [content]);
 	return (
 		<div className="px-4 sm:px-6 md:px-[40px] xl:px-[50px] 2xl:px-[60px]">
-			<div className="mt-40 h-72">
+			<div className="mt-40 ">
 				<FroalaEditor content={content} onChangeContext={setContent} />
 			</div>
 			<div className="mt-30">{/* <ProgessBarLoading />; */}</div>

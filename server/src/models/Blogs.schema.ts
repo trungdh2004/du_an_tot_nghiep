@@ -17,11 +17,11 @@ const BlogsSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    slug: {
-      type: String,
-      unique: true,
-      index: true,
-    },
+    // slug: {
+    //   type: String,
+    //   unique: true,
+    //   index: true,
+    // },
     meta_title: {
       type: String,
     },
@@ -73,12 +73,11 @@ const BlogsSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-BlogsSchema.pre<IBlogs>("save", async function (next) {
-  const slug = generateSlugs(this.title);
-  this.slug = slug;
-  next();
-});
-
+// BlogsSchema.pre<IBlogs>("save", async function (next) {
+//   const slug = generateSlugs(this.title);
+//   this.slug = slug;
+//   next();
+// });
 
 const BlogsModel = mongoose.model<IBlogs>("Blogs", BlogsSchema);
 

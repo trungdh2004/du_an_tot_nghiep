@@ -5,7 +5,8 @@ import "froala-editor/js/plugins.pkgd.min.js";
 import Froala from "react-froala-wysiwyg";
 const froalaEditorConfig = {
 	attribution: false,
-	height: 400,
+	heightMin: "calc(100vh-100px)",
+	height: "auto",
 	quickInsertEnabled: false,
 	imageDefaultWidth: 0,
 	imageResizeWithPercent: true,

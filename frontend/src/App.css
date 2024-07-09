@@ -1,6 +1,12 @@
 /* ::-webkit-scrollbar{
 	width: 0px;
 } */
+.box-shadow {
+	box-shadow:
+		rgba(191, 197, 203, 0.22) 0px 0px 2px 0px,
+		rgba(145, 158, 171, 0.15) 0px 12px 24px -4px;
+	transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
 header .sub-menu::after {
 	position: absolute;
 	top: -25px;
@@ -47,4 +53,29 @@ header .sub-menu::after {
 	100% {
 		transform: translateX(100%) scaleX(0.5);
 	}
+}
+/* CSS React Select */
+.css-t3ipsp-control:hover {
+	border: none !important;
+}
+.react-select__value-container
+	.react-select__multi-value.css-1p3m7a8-multiValue {
+	background-color: #f93a0b1a !important;
+	color: #f93a0b !important;
+}
+.react-select__multi-value__label {
+	color: #f93a0b !important;
+}
+.react-select__multi-value__remove.css-12a83d4-MultiValueRemove {
+	background-color: transparent !important;
+	color: #f93a0b !important;
+}
+.react-select__multi-value__remove.css-12a83d4-MultiValueRemove:hover {
+	background-color: #f1f1f1 !important;
+	color: #333 !important;
+	outline: none !important;
+}
+.react-select__option.react-select__option--is-focused {
+	background-color: #f93a0b !important;
+	color: #fff !important;
 }

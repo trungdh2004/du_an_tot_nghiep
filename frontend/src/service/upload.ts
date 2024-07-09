@@ -6,8 +6,6 @@ export const uploadFileService = (
 	height?: number,
 ) => {
 	const uri = `/upload/singleImage${width || height ? `?${width ? `width=${width}` : ""}${width && height ? "&" : ""}${height ? `height=${height}` : ""}` : ""}`;
-	console.log(uri, width, height);
-
 	return axios.post(process.env.SERVER_URL + uri, data, {
 		headers: {
 			"Content-Type": "multipart/form-data",

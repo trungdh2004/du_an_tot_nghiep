@@ -1,18 +1,15 @@
-import React from "react";
 import {
 	Accordion,
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
 } from "@/components/ui/accordion";
-import { LuLayoutDashboard } from "react-icons/lu";
 import sidebarConfig from "@/config/sidebarAdmin";
 import { useLocation } from "react-router-dom";
 import SidebarItem from "./SidebarItem";
 
 const SidebarList = () => {
 	const location = useLocation();
-
 
 	return (
 		<div>

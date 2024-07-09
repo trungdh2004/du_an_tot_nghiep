@@ -39,7 +39,9 @@ instance.interceptors.response.use(
 		const originalRequest = error.config;
 
 		// If error is 401 and it's not a retry, attempt to refresh the token
-		if (error.response.status === 401 && !originalRequest._retry) {
+		console.log(error.response);
+
+		if (error.response.status === 401) {
 			originalRequest._retry = true;
 			try {
 				const newToken = await refreshToken();

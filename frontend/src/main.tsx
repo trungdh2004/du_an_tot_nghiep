@@ -11,7 +11,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 	<QueryClientProvider client={queryClient}>
 		<AuthProvider>
 			<App />
-			<Toaster richColors position="top-right" />
+			<Toaster richColors position="top-right" duration={1500} />
 		</AuthProvider>
 	</QueryClientProvider>,
 );
