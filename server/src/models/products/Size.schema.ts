@@ -8,10 +8,31 @@ const SizeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    code: {
-      type: String,
+    fromHeight: {
+      type: Number,
       required: true,
     },
+    toHeight: {
+      type: Number,
+      required: true,
+    },
+    toWeight: {
+      type: Number,
+      required: true,
+    },
+    fromWeight: {
+      type: Number,
+      required: true,
+    },
+    slug: {
+      index: true,
+      type: String,
+      unique: true,
+    },
+    deleted: {
+      type: Boolean,
+      default: false,
+    }
   },
   {
     timestamps: true,
