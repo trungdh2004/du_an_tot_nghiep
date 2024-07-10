@@ -17,3 +17,20 @@ export const unBanUser = async (openUnbanId: string) => {
 	);
 	return data;
 };
+
+
+export const unBanManyUser = async (listId: any) => {
+  const data = await instance.put(`auth/unBlockedMany`, {
+		listId: listId,
+		type: 1,
+	});
+	return data;
+};
+
+export const BanManyUser = async (listId: any) => {
+  const data = await instance.put(`auth/blockedMany`, {
+    listId:listId,
+		type: 1,
+	});
+	return data;
+};
