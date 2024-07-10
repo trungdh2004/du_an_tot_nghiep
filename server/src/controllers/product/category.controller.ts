@@ -284,7 +284,9 @@ class categoryController {
 
   async deleteMany(req: RequestModel, res: Response) {
     try {
-      const { listId , type } = req.body;
+      const { listId, type } = req.body;
+      console.log(listId);
+      
 
       if (!listId || listId.length === 0) {
         return res.status(STATUS.BAD_REQUEST).json({
