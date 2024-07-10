@@ -47,6 +47,26 @@ const sidebarConfig: any[] = [
 			},
 		],
 	},
+	,
+	{
+		path: "/tags",
+		isVisible: true,
+		label: "Tags",
+		children: [
+			{
+				path: "",
+				icon: FaUsers,
+				isVisible: true,
+				label: "Danh sách",
+			},
+			{
+				path: "/staff",
+				icon: FaUsersCog,
+				isVisible: true,
+				label: "Danh sách nhân viên",
+			},
+		],
+	},
 	{
 		path: "/product",
 		isVisible: true,

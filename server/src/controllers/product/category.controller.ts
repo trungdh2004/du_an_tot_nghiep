@@ -10,8 +10,6 @@ class categoryController {
     try {
       const { error } = categoryValidation.validate(req.body);
       if (error) {
-        console.log("error", error);
-
         return res.status(STATUS.BAD_REQUEST).json({
           message: error.details[0].message,
         });

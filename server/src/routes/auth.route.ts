@@ -15,6 +15,8 @@ routerAuth.post("/logout", authController.logout);
 routerAuth.post("/social-user", authController.socialUser);
 routerAuth.put("/blocked/:id", authController.blockedCurrentUser);
 routerAuth.put("/unblocked/:id", authController.unBlockCurrentUser);
+routerAuth.put("/blockedMany", authController.blockedMany);
+routerAuth.put("/unBlockedMany", authController.unBlockedMany);
 // current
 routerAuth.get("/current-user", authorization, authController.currentUser);
 

@@ -10,7 +10,10 @@ export interface IColor {
 }
 export interface ISize {
   name: string;
-  code: string;
+  toHeight: number;
+  fromHeight: number;
+  toWeight: number;
+  fromWeight: number;
   slug: string;
 }
 

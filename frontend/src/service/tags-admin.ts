@@ -1,0 +1,11 @@
+import instance from "@/config/instance";
+
+export const hiddentag = async (id: string | boolean) => {
+	const data = await instance.delete(`tags/delete/${id}`);
+	return data;
+};
+
+export const unhiddentag = async (id: string | boolean) => {
+	const data = await instance.put(`tags/unDelete/${id}`);
+	return data;
+};
