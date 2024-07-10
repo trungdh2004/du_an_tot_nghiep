@@ -35,19 +35,51 @@ class TagsController {
 
   async pagingTags(req: RequestModel, res: Response) {
     try {
-      const { pageIndex, pageSize } = req.body;
+      const { pageIndex = 1, pageSize,keyword ,tab=1} = req.body;
 
       let limit = pageSize || 10;
-      let skip = (pageIndex - 1) * pageSize || 0;
+      let skip = (pageIndex - 1) * limit || 0;
 
-      const dataTags = await TagsModel.find().limit(limit).skip(skip);
-      const countTags = await TagsModel.countDocuments();
+      let pipeline: any[] = [];
+      // search
+      if (keyword) {
+        pipeline.push({
+          $match: {
+            name: { $regex: keyword, $options: "i" },
+          },
+        });
+      }
+
+      if (tab === 1) {
+        pipeline.push({
+          $match: {
+            deleted: false,
+          },
+        });
+      } else if (tab === 2) {
+        pipeline.push({
+          $match: {
+            deleted: true,
+          },
+        });
+      }
+
+      const dataColor = await TagsModel.aggregate(pipeline).collation({
+        locale: "en_US",
+        strength: 1,
+      }).limit(limit).skip(skip)
+      const countColor = await TagsModel.aggregate([
+        ...pipeline,
+        {
+          $count:"total"
+        }
+      ]);
 
       const result = formatDataPaging({
         limit,
         pageIndex,
-        data: dataTags,
-        count: countTags,
+        data: dataColor,
+        count: countColor[0]?.total || 0,
       });
 
       return res.status(STATUS.OK).json(result);

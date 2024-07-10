@@ -19,7 +19,6 @@ const AdminRouter = [
 				path: "blog",
 				element: <BlogList />
 			}
-
 		],
 	},
 ];
