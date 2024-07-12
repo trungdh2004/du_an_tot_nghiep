@@ -396,7 +396,6 @@ class AuthController {
 
           await RefreshTokenModel.findOneAndDelete({
             userId: (data as PayloadToken).id as ObjectId,
-            token: refreshToken,
           });
 
           res.cookie("token", "", {
@@ -482,7 +481,6 @@ class AuthController {
       });
     }
   }
-
   async compareOtp(req: Request, res: Response) {
     try {
       const { otp, email } = req.body;

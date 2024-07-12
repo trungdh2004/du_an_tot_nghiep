@@ -2,7 +2,7 @@ import MainLayout from "@/layout/MainLayout";
 import Address from "@/pages/clients/address/Address";
 import Home from "@/pages/clients/Home";
 import NotFound from "@/pages/NotFound";
-import UserIndex from "@/pages/UserIndex";
+import UserIndex from "@/pages/admin/users/UserIndex";
 
 const MainRouter = [
 	{

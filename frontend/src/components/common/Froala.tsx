@@ -146,7 +146,7 @@ type FroalaEditorType = {
 };
 const FroalaEditor = ({ content, onChangeContext }: FroalaEditorType) => {
 	return (
-		<div className="">
+		<div className="z-0">
 			<Froala
 				model={content}
 				onModelChange={onChangeContext}

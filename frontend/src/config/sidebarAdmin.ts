@@ -11,9 +11,29 @@ const sidebarConfig: any[] = [
 		label: "Thống kê",
 	},
 	{
-		path: "/user",
+		path: "/category",
 		isVisible: true,
-		label: "Người dùng",
+		label: "Danh mục",
+		children: [
+			{
+				path: "",
+				icon: LuLayoutDashboard,
+				isVisible: true,
+				label: "Danh sách danh mục",
+			},
+			{
+				path: "/overview",
+				icon: LuLayoutDashboard,
+				isVisible: true,
+				label: "Danh",
+			},
+		],
+	},
+
+	{
+		path: "/tags",
+		isVisible: true,
+		label: "Tags",
 		children: [
 			{
 				path: "",
@@ -79,6 +99,7 @@ const sidebarConfig: any[] = [
 			},
 		],
 	},
+
 	{
 		path: "/user",
 		isVisible: true,
@@ -98,63 +119,7 @@ const sidebarConfig: any[] = [
 			},
 		],
 	},
-	{
-		path: "/product",
-		isVisible: true,
-		label: "Sản phẩm",
-		children: [
-			{
-				path: "/",
-				icon: LuLayoutDashboard,
-				isVisible: true,
-				label: "Danh sách sản phẩm",
-			},
-			{
-				path: "/add",
-				icon: LuLayoutDashboard,
-				isVisible: true,
-				label: "Thêm sản phẩm",
-			},
-		],
-	},
-	{
-		path: "/user",
-		isVisible: true,
-		label: "Người dùng",
-		children: [
-			{
-				path: "",
-				icon: FaUsers,
-				isVisible: true,
-				label: "Danh sách",
-			},
-			{
-				path: "/staff",
-				icon: FaUsersCog,
-				isVisible: true,
-				label: "Danh sách nhân viên",
-			},
-		],
-	},
-	{
-		path: "/product",
-		isVisible: true,
-		label: "Sản phẩm",
-		children: [
-			{
-				path: "/",
-				icon: LuLayoutDashboard,
-				isVisible: true,
-				label: "Danh sách sản phẩm",
-			},
-			{
-				path: "/add",
-				icon: LuLayoutDashboard,
-				isVisible: true,
-				label: "Thêm sản phẩm",
-			},
-		],
-	},
+
 	{
 		path: "",
 		icon: LuLayoutDashboard,

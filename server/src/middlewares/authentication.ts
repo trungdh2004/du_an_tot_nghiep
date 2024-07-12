@@ -54,6 +54,12 @@ const authentication = async (
           });
         }
 
+        if (existingUser?.blocked_at === true) {
+          return res.status(STATUS.AUTHORIZED).json({
+            message: "Tài khoản của bạn đã bị khóa",
+          });
+        }
+
         req.user = {
           id: existingUser._id,
           email: existingUser.email,

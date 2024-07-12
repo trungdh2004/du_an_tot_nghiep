@@ -45,19 +45,21 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 		(async () => {
 			try {
 				const { data } = await currentAccount();
-				setAuthUser(data?.data);
 				setIsLoggedIn(true);
+				setAuthUser(data?.data);
 				toast.success(data?.message);
 			} catch (error) {
-				// if (error instanceof AxiosError) {
-				// 	toast.error(error.response?.data?.message);
-				// }
+				console.error(error);
+				setAuthUser(undefined);
+				setIsLoggedIn(false);
 			} finally {
 				setIsLoading(false);
 			}
 		})();
 	}, []);
-	if (isLoading) return <LoadingFixed />;
+	if (isLoading) {
+		return <LoadingFixed />;
+	}
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 

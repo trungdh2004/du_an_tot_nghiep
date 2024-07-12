@@ -53,6 +53,8 @@ const Login = () => {
 			toast.success(data?.message);
 			routerHistory();
 		} catch (error) {
+			setAuthUser?.(undefined);
+			setIsLoggedIn?.(false);
 			if (error instanceof AxiosError) {
 				toast.error(error.response?.data?.message);
 			}

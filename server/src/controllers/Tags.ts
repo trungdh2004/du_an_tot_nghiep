@@ -35,22 +35,80 @@ class TagsController {
 
   async pagingTags(req: RequestModel, res: Response) {
     try {
-      const { pageIndex, pageSize } = req.body;
+
+      const { pageIndex = 1, pageSize, keyword, tab = 1 } = req.body;
+
 
       let limit = pageSize || 10;
-      let skip = (pageIndex - 1) * pageSize || 0;
+      let skip = (pageIndex - 1) * limit || 0;
 
-      const dataTags = await TagsModel.find().limit(limit).skip(skip);
-      const countTags = await TagsModel.countDocuments();
+      let pipeline: any[] = [];
+      // search
+      if (keyword) {
+        pipeline.push({
+          $match: {
+            name: { $regex: keyword, $options: "i" },
+          },
+        });
+      }
+
+      if (tab === 1) {
+        pipeline.push({
+          $match: {
+            deleted: false,
+          },
+        });
+      } else if (tab === 2) {
+        pipeline.push({
+          $match: {
+            deleted: true,
+          },
+        });
+      }
+
+
+      const dataTags = await TagsModel.aggregate(pipeline)
+        .collation({
+          locale: "en_US",
+          strength: 1,
+        })
+        .skip(skip)
+        .limit(limit);
+      const countTags = await TagsModel.aggregate([
+        ...pipeline,
+        {
+          $count: "total",
+        },
+
+      ]);
 
       const result = formatDataPaging({
         limit,
         pageIndex,
         data: dataTags,
-        count: countTags,
+        count: countTags[0]?.total || 0,
+
       });
 
       return res.status(STATUS.OK).json(result);
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async getAllTags(req: RequestModel, res: Response) {
+    try {
+      const { tab = 1 } = req.body;
+
+      const allTags = await TagsModel.find({
+        deleted: tab === 1 ? false : true,
+      });
+      return res.status(STATUS.OK).json({
+        message: "Lấy giá trị thành công",
+        data: allTags,
+      });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
@@ -105,10 +163,52 @@ class TagsController {
         });
       }
 
-      await TagsModel.findByIdAndDelete(id);
+      await TagsModel.findByIdAndUpdate(
+        id,
+        {
+          deleted: true,
+        },
+        { new: true }
+      );
 
       return res.status(STATUS.OK).json({
         message: "Xóa thành công",
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async UndeleteById(req: RequestModel, res: Response) {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn thẻ",
+        });
+      }
+
+      const tagsData = await TagsModel.findById(id);
+
+      if (!tagsData) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có thẻ thỏa mãn",
+        });
+      }
+
+      await TagsModel.findByIdAndUpdate(
+        id,
+        {
+          deleted: false,
+        },
+        { new: true }
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Khôi phục thành công",
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({

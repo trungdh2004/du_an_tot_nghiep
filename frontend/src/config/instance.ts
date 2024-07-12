@@ -3,7 +3,7 @@ import { JwtPayload, jwtDecode } from "jwt-decode";
 
 const instance = axios.create({
 	baseURL: process.env.SERVER_URL,
-	timeout: 1000,
+	timeout: 5000,
 	headers: { "X-Custom-Header": "foobar" },
 });
 
@@ -39,7 +39,7 @@ instance.interceptors.response.use(
 		const originalRequest = error.config;
 
 		// If error is 401 and it's not a retry, attempt to refresh the token
-		console.log(error.response);
+		console.log(error);
 
 		if (error.response.status === 401) {
 			originalRequest._retry = true;
