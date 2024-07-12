@@ -10,6 +10,8 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from '@/components/ui/button';
+import { AspectRatio } from '@radix-ui/react-aspect-ratio';
+
 const BlogList = () => {
 
     return (
@@ -55,6 +57,13 @@ const BlogList = () => {
                     </div>
                 </div>
             </div>
+
+            <AspectRatio ratio={16 / 9} className="bg-muted">
+                <img src="https://minimal-kit-react.vercel.app/assets/images/covers/cover_1.jpg" className='w-full h-full object-cover' alt="" />
+
+            </AspectRatio>
+
+
         </>
     )
 }
