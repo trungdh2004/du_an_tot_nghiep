@@ -46,6 +46,7 @@ const authentication = async (
         const existingUser = await UserModel.findById(
           (data as PayloadToken).id
         );
+        console.log(existingUser);
 
         if (!existingUser) {
           return res.status(STATUS.AUTHORIZED).json({

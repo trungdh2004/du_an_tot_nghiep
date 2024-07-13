@@ -144,6 +144,25 @@ const sidebarConfig: any[] = [
 		],
 	},
 	{
+		path: "/blogs",
+		isVisible: true,
+		label: "Bài viết",
+		children: [
+			{
+				path: "/new-blog",
+				icon: MdOutlinePostAdd,
+				isVisible: true,
+				label: "Tạo bài viết",
+			},
+			{
+				path: "/",
+				icon: LuLayoutDashboard,
+				isVisible: true,
+				label: "Danh sách bài viết",
+			},
+      ]
+  },
+	{
 		path: "",
 		icon: LuLayoutDashboard,
 		isVisible: true,

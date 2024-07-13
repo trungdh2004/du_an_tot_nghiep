@@ -80,8 +80,8 @@ class AuthController {
 
       if (existingEmail?.blocked_at) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Tài khoản của bạn đã bị khóa"
-        })
+          message: "Tài khoản của bạn đã bị khóa",
+        });
       }
 
       const accessToken = await this.generateAccessToken({
