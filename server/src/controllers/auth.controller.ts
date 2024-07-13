@@ -705,6 +705,71 @@ class AuthController {
       });
     }
   }
+
+
+  async blockedMany(req: RequestModel, res: Response) {
+    try {
+      const { listId  } = req.body;
+
+      if (!listId || listId.length === 0) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn người dùng",
+        });
+      }
+
+      await UserModel.find({ _id: { $in: listId } }).select("_id");
+
+      await UserModel.updateMany(
+        { _id: { $in: listId } },
+        { $set: { blocked_at: true  } },{new:true}
+      );
+
+
+      return res.status(STATUS.OK).json({
+        message: "Chặn người dùng thành công",
+      });
+    } catch (error: any) {
+      console.log("error", error.kind);
+
+      return res.status(STATUS.INTERNAL).json({
+        message: error.kind
+          ? "Có một người dùng không có trong dữ liệu"
+          : error.message,
+      });
+    }
+  }
+
+  async unBlockedMany(req: RequestModel, res: Response) {
+    try {
+      const { listId  } = req.body;
+
+      if (!listId || listId.length === 0) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn người dùng",
+        });
+      }
+
+      await UserModel.find({ _id: { $in: listId } }).select("_id");
+
+      await UserModel.updateMany(
+        { _id: { $in: listId } },
+        { $set: { blocked_at: false  } },{new:true}
+      );
+
+
+      return res.status(STATUS.OK).json({
+        message: "Bỏ chặn người dùng thành công",
+      });
+    } catch (error: any) {
+      console.log("error", error.kind);
+
+      return res.status(STATUS.INTERNAL).json({
+        message: error.kind
+          ? "Có một người dùng không có trong dữ liệu"
+          : error.message,
+      });
+    }
+  }
 }
 
 export default new AuthController();

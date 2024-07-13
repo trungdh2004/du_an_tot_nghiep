@@ -30,20 +30,6 @@ class UserAdmin {
         });
       }
 
-      if (tab === 1) {
-        pipeline.push({
-          $match: {
-            blocked_at: false,
-          },
-        });
-      } else if (tab === 2) {
-        pipeline.push({
-          $match: {
-            blocked_at: true,
-          },
-        });
-      }
-
       if (provider) {
         pipeline.push({
           $match: {

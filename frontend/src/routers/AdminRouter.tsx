@@ -51,6 +51,7 @@ const AdminRouter = [
 				path: "blogs/:id/edit",
 				element: <EditBlog />,
 			},
+
 		],
 	},
 ];

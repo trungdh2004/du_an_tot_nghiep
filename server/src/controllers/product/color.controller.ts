@@ -66,7 +66,8 @@ class ColorController {
       const dataColor = await ColorModel.aggregate(pipeline).collation({
         locale: "en_US",
         strength: 1,
-      }).limit(limit).skip(skip)
+      }).skip(skip).limit(limit)
+
       const countColor = await ColorModel.aggregate([
         ...pipeline,
         {
@@ -236,6 +237,71 @@ class ColorController {
     } catch (error:any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
+      });
+    }
+  }
+
+
+  async blockedMany(req: RequestModel, res: Response) {
+    try {
+      const { listId  } = req.body;
+
+      if (!listId || listId.length === 0) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn màu",
+        });
+      }
+
+      await ColorModel.find({ _id: { $in: listId } }).select("_id");
+
+      await ColorModel.updateMany(
+        { _id: { $in: listId } },
+        { $set: { blocked: true  } },{new:true}
+      );
+
+
+      return res.status(STATUS.OK).json({
+        message: "Xóa màu thành công",
+      });
+    } catch (error: any) {
+      console.log("error", error.kind);
+
+      return res.status(STATUS.INTERNAL).json({
+        message: error.kind
+          ? "Có một người dùng không có trong dữ liệu"
+          : error.message,
+      });
+    }
+  }
+
+  async unBlockedMany(req: RequestModel, res: Response) {
+    try {
+      const { listId  } = req.body;
+
+      if (!listId || listId.length === 0) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn màu",
+        });
+      }
+
+      await ColorModel.find({ _id: { $in: listId } }).select("_id");
+
+      await ColorModel.updateMany(
+        { _id: { $in: listId } },
+        { $set: { blocked_at: false  } },{new:true}
+      );
+
+
+      return res.status(STATUS.OK).json({
+        message: "Khôi phục thành công",
+      });
+    } catch (error: any) {
+      console.log("error", error.kind);
+
+      return res.status(STATUS.INTERNAL).json({
+        message: error.kind
+          ? "Có một người dùng không có trong dữ liệu"
+          : error.message,
       });
     }
   }

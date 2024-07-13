@@ -176,12 +176,12 @@ class BlogController {
         message: error?.message,
       });
     }
-  }
-
-  pagingBlog(req: RequestModel, res: Response) {
-    try {
-    } catch (error) {}
-  }
+    pagingBlog(req: RequestModel, res: Response) {
+        try {
+        } catch (error) {
+            
+        }
+    }
 }
 
 export default new BlogController();
