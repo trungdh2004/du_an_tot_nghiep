@@ -246,7 +246,7 @@ const UserIndex = () => {
 								<HiOutlineDotsVertical className="h-4 w-4" />
 							</Button>
 						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
+						<DropdownMenuContent align="end" >
 							<DropdownMenuLabel>Actions</DropdownMenuLabel>
 							<DropdownMenuSeparator />
 
@@ -306,7 +306,7 @@ const UserIndex = () => {
 										<IoFilter size={20} />
 									</div>
 								</DropdownMenuTrigger>
-								<DropdownMenuContent className="w-[150px]">
+								<DropdownMenuContent className="w-[150px]" align="end">
 									<DropdownMenuLabel>Sắp xếp theo</DropdownMenuLabel>
 									<DropdownMenuSeparator />
 									<DropdownMenuRadioGroup
