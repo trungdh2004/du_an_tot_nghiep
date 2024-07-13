@@ -176,6 +176,7 @@ class BlogController {
         message: error?.message,
       });
     }
+  }
     pagingBlog(req: RequestModel, res: Response) {
         try {
         } catch (error) {
