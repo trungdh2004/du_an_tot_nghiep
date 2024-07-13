@@ -86,7 +86,7 @@ class BlogController {
                 })
             }
 
-            const existingBlog = await BlogsModel.findById(id)
+            const existingBlog = await BlogsModel.findById(id).populate("selected_tags")
 
             if (!existingBlog) { 
                 return res.status(STATUS.BAD_REQUEST).json({

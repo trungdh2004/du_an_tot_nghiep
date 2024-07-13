@@ -43,7 +43,7 @@ const SignInWithFacebookOrGoogle = () => {
 				const user = getAdditionalUserInfo(result);
 
 				const payload = {
-					email: result?.user?.email,
+					email: user?.profile?.email,
 					first_name: user?.profile?.given_name,
 					last_name: user?.profile?.family_name,
 					full_name: user?.profile?.name,
