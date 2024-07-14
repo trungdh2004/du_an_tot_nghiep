@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaCommentDots, FaEye, FaShareAlt } from 'react-icons/fa';
 import { SlOptionsVertical } from "react-icons/sl";
 import {
@@ -12,9 +12,38 @@ import {
 import { Button } from '@/components/ui/button';
 import { AspectRatio } from '@radix-ui/react-aspect-ratio';
 import { Input } from '@/components/ui/input';
+import instance from '@/config/instance';
+import { da } from 'date-fns/locale';
+import useDebounce from '@/hooks/shared';
+
+type IBlog = {
+    id?: string,
+    title: string,
+    content: string,
+    isDeleted: string,
+    meta_description: string,
+}
 
 const BlogList = () => {
+    const [blogs, setBlogs] = useState<IBlog[]>([]);
+    const [response, setResponse] = useState<any>([
 
+    ])
+    const handleBlog = async () => {
+        try {
+            const { data } = await instance.post(`/blogs/pagingBlog`, { tab: 2 });
+            console.log(data);
+            setBlogs(data.content)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+    useEffect(() => {
+        (async () => {
+            handleBlog()
+        })()
+    }, [])
+    console.log('blog', blogs)
     return (
         <>
             <div className="">
@@ -28,130 +57,46 @@ const BlogList = () => {
                             <Input
                                 placeholder="Tìm kiếm bài viết"
                                 className="w-[40%] md:text-base text-xs"
-
                             />
-
                         </div>
                     </div>
                 </div>
             </div>
             <div className="grid grid-cols-12 gap-6 xl:gap-8 mt-10">
-                <div className="col-span-6 min-[600px]:col-span-6 min-[900px]:col-span-4 h-[360px] ">
-                    <div className="h-[350px] grid grid-rows-2 border rounded-xl overflow-hidden relative" >
-                        {/* card-head */}
-                        <div className="absolute z-10 top-3 right-3">
-                            <DropdownMenu >
-                                <DropdownMenuTrigger><SlOptionsVertical /></DropdownMenuTrigger>
-                                <DropdownMenuContent align='end'>
-                                    {/* <DropdownMenuLabel>Xóa</DropdownMenuLabel>
-                                    <DropdownMenuSeparator /> */}
-                                    <DropdownMenuItem >Xóa</DropdownMenuItem>
-                                    <DropdownMenuItem>Sửa</DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
-                        <div className="h1/2 ">
-                            <AspectRatio ratio={16 / 8} className="bg-muted">
-                                <img src="https://minimal-kit-react.vercel.app/assets/images/covers/cover_1.jpg" className='w-full h-full object-cover' alt="" />
+                {blogs.map((item: IBlog, index: number) => (
 
-                            </AspectRatio>
-                            <div className="-mt-5 pl-5  relative">
-                                <img src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_1.jpg" className='w-[40px] h-[40px] border-[3px] border-white rounded-full' alt="" />
+                    <div className="col-span-12 min-[600px]:col-span-6 min-[900px]:col-span-4 h-[360px] " >
+                        <div className="h-[350px] grid grid-rows-2 border rounded-xl overflow-hidden relative" >
+                            {/* card-head */}
+                            <div className="absolute z-10 top-3 right-3">
+                                <DropdownMenu >
+                                    <DropdownMenuTrigger><SlOptionsVertical /></DropdownMenuTrigger>
+                                    <DropdownMenuContent align='end'>
+                                        <DropdownMenuItem >Xóa</DropdownMenuItem>
+                                        <DropdownMenuItem>Sửa</DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                             </div>
-                        </div>
-                        {/* card-content */}
-                        <div className="h1/2 p-5">
-
-                            <p className=" line-clamp-1 text-[#212B36] text-base font-semibold hover:underline transition-all duration-300">
-                                Designify Agency Landing Page Design</p>
-                            <p className="text-xs pt-2 text-gray-400 line-clamp-2">Description dhakjdah akhdfakdhakda akdhakdadkahdak.dadadda....</p>
-                            <div className="grid grid-cols-2">
-                                <div>
-                                    <p className="text-xs text-[#212B36] opacity-50 pt-1 pb-2">02 Apr 2024</p>
+                            <div className="h1/2">
+                                <img src="https://minimal-kit-react.vercel.app/assets/images/covers/cover_1.jpg" className='w-full h-full object-cover' alt="" />
+                                <div className="-mt-5 pl-5">
+                                    <img src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_1.jpg" className='w-[40px] h-[40px] border-[3px] border-white rounded-full' alt="" />
                                 </div>
+                            </div>
+                            {/* card-content */}
+                            <div className="h1/2 p-5">
+                                <p className="text-xs text-[#212B36] opacity-50 pt-1 pb-2">02 Apr 2024</p>
+                                <p className=" line-clamp-1 text-[#212B36] text-base font-semibold hover:underline transition-all duration-300">{item.title}</p>
+                                <p className="text-xs pt-2 text-gray-400 line-clamp-2">{item.meta_description}</p>
                                 <div className="flex space-x-4 min-[900px]:space-x-1 xl:space-x-4 absolute bottom-5 right-4">
                                     <span className="text-[#212B36] text-xs flex items-center gap-1"><FaCommentDots />94.34k</span>
                                     <span className="text-[#212B36] text-xs flex items-center gap-1"> <FaEye />24.34k</span>
                                 </div>
                             </div>
-
                         </div>
                     </div>
-                </div>
-                <div className="col-span-12 min-[600px]:col-span-6 min-[900px]:col-span-4 h-[360px] ">
-                    <div className="h-[350px] grid grid-rows-2 border rounded-xl overflow-hidden relative" >
-                        {/* card-head */}
-                        <div className="absolute z-10 top-3 right-3">
-                            <DropdownMenu >
-                                <DropdownMenuTrigger><SlOptionsVertical /></DropdownMenuTrigger>
-                                <DropdownMenuContent align='end'>
-                                    {/* <DropdownMenuLabel>Xóa</DropdownMenuLabel>
-                                    <DropdownMenuSeparator /> */}
-                                    <DropdownMenuItem >Xóa</DropdownMenuItem>
-                                    <DropdownMenuItem>Sửa</DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
-                        <div className="h1/2">
-                            <img src="https://minimal-kit-react.vercel.app/assets/images/covers/cover_1.jpg" className='w-full h-full object-cover' alt="" />
-                            <div className="-mt-5 pl-5">
-                                <img src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_1.jpg" className='w-[40px] h-[40px] border-[3px] border-white rounded-full' alt="" />
-                            </div>
-                        </div>
-                        {/* card-content */}
-                        <div className="h1/2 p-5">
-                            <p className="text-xs text-[#212B36] opacity-50 pt-1 pb-2">02 Apr 2024</p>
-                            <p className=" line-clamp-1 text-[#212B36] text-base font-semibold hover:underline transition-all duration-300">
-                                Designify Agency Landing Page Design</p>
-                            <p className="text-xs pt-2 text-gray-400 line-clamp-2">Description dhakjdah akhdfakdhakda akdhakdadkahdak.dadadda....</p>
-                            <div className="flex space-x-4 min-[900px]:space-x-1 xl:space-x-4 absolute bottom-5 right-4">
-                                <span className="text-[#212B36] text-xs flex items-center gap-1"><FaCommentDots />94.34k</span>
-                                <span className="text-[#212B36] text-xs flex items-center gap-1"> <FaEye />24.34k</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="col-span-12 min-[600px]:col-span-6 min-[900px]:col-span-4 h-[360px] ">
-                    <div className="h-[350px] grid grid-rows-2 border rounded-xl overflow-hidden relative" >
-                        {/* card-head */}
-                        <div className="absolute z-10 top-3 right-3">
-                            <DropdownMenu >
-                                <DropdownMenuTrigger><SlOptionsVertical /></DropdownMenuTrigger>
-                                <DropdownMenuContent align='end'>
-                                    {/* <DropdownMenuLabel>Xóa</DropdownMenuLabel>
-                                    <DropdownMenuSeparator /> */}
-                                    <DropdownMenuItem >Xóa</DropdownMenuItem>
-                                    <DropdownMenuItem>Sửa</DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
-                        <div className="h1/2">
-                            <img src="https://minimal-kit-react.vercel.app/assets/images/covers/cover_1.jpg" className='w-full h-full object-cover' alt="" />
-                            <div className="-mt-5 pl-5">
-                                <img src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_1.jpg" className='w-[40px] h-[40px] border-[3px] border-white rounded-full' alt="" />
-                            </div>
-                        </div>
-                        {/* card-content */}
-                        <div className="h1/2 p-5">
-                            <p className="text-xs text-[#212B36] opacity-50 pt-1 pb-2">02 Apr 2024</p>
-                            <p className=" line-clamp-1 text-[#212B36] text-base font-semibold hover:underline transition-all duration-300">
-                                Designify Agency Landing Page Design</p>
-                            <p className="text-xs pt-2 text-gray-400 line-clamp-2">Description dhakjdah akhdfakdhakda akdhakdadkahdak.dadadda....</p>
-                            <div className="flex space-x-4 min-[900px]:space-x-1 xl:space-x-4 absolute bottom-5 right-4">
-                                <span className="text-[#212B36] text-xs flex items-center gap-1"><FaCommentDots />94.34k</span>
-                                <span className="text-[#212B36] text-xs flex items-center gap-1"> <FaEye />24.34k</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <AspectRatio ratio={16 / 9} className="bg-muted">
-                <img src="https://minimal-kit-react.vercel.app/assets/images/covers/cover_1.jpg" className='w-full h-full object-cover' alt="" />
-
-            </AspectRatio>
-
-
+                ))}
+            </div >
         </>
     )
 }

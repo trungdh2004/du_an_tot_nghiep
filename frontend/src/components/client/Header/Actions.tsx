@@ -7,7 +7,7 @@ import Notification from "./Notification";
 import Search from "./Search";
 import User from "./User";
 const Actions = () => {
-	const { isLoggedIn } = useAuth();
+	const { isLoggedIn, authUser } = useAuth();
 	return (
 		<div className="flex items-center justify-center max-h-8 gap-1 md:gap-4  *:rounded-full  *:cursor-pointer">
 			<div className="">
@@ -20,7 +20,7 @@ const Actions = () => {
 				<LucideShoppingCart strokeWidth={1.5} size={20} />
 			</div>
 
-			{isLoggedIn ? (
+			{isLoggedIn && authUser?._id ? (
 				<div className="hover:bg-[#919eab27] p-1 ">
 					<User />
 				</div>

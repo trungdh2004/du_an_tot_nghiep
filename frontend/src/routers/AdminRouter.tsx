@@ -1,16 +1,21 @@
 import AdminLayout from "@/layout/AdminLayout";
-import Dashboard from "@/pages/admin/Dashboard";
-import BlogDetail from "@/pages/admin/blog/BlogDetail";
 import BlogList from "@/pages/admin/blog/BlogList";
+import EditBlog from "@/pages/admin/Blogs/EditBlog";
+import NewBlog from "@/pages/admin/Blogs/NewBlog";
 import CategoryIndex from "@/pages/admin/category/CategoryIndex";
+import Dashboard from "@/pages/admin/Dashboard";
 import UserDetail from "@/pages/admin/users/UserDetail";
 import UserIndex from "@/pages/admin/users/UserIndex";
-import path from "path";
+import PrivateRouter from "./PrivateRouter";
 
 const AdminRouter = [
 	{
 		path: "/admin",
-		element: <AdminLayout />,
+		element: (
+			<PrivateRouter>
+				<AdminLayout />
+			</PrivateRouter>
+		),
 		children: [
 			{
 				path: "",
@@ -36,10 +41,16 @@ const AdminRouter = [
 				path: "blog",
 				element: <BlogList />
 			},
+			// Blogs
 			{
-				path: "blog/detail",
-				element: <BlogDetail />
-			}
+				path: "blogs/new-blog",
+				element: <NewBlog />,
+			},
+			{
+				path: "blogs/:id/edit",
+				element: <EditBlog />,
+			},
+
 		],
 	},
 ];
