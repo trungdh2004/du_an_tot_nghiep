@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import instance from '@/config/instance';
 import { da } from 'date-fns/locale';
 import useDebounce from '@/hooks/shared';
+import { typeResponse } from '@/types/typeReponse';
 
 type IBlog = {
     id?: string,
@@ -26,14 +27,21 @@ type IBlog = {
 
 const BlogList = () => {
     const [blogs, setBlogs] = useState<IBlog[]>([]);
-    const [response, setResponse] = useState<any>([
-
-    ])
+    const [response, setResponse] = useState<typeResponse>({
+        pageCount: 0,
+        totalElement: 0,
+        totalOptionPage: 0,
+    })
     const handleBlog = async () => {
         try {
             const { data } = await instance.post(`/blogs/pagingBlog`, { tab: 2 });
-            console.log(data);
-            setBlogs(data.content)
+            console.log(data)
+            setBlogs(data.content);
+            setResponse({
+                pageCount: data.totalPage,
+                totalElement: data.totalOptionPage,
+                totalOptionPage: data.totalAllOptions,
+            })
         } catch (error) {
             console.error(error)
         }
@@ -43,7 +51,8 @@ const BlogList = () => {
             handleBlog()
         })()
     }, [])
-    console.log('blog', blogs)
+    console.log('blog', blogs);
+    console.log('respone', response)
     return (
         <>
             <div className="">
