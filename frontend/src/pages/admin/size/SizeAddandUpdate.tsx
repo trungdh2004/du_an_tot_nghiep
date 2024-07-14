@@ -41,14 +41,10 @@ const formSchema = z.object({
 		.min(1, {
 			message: "Bạn nên tạo danh mục lớn hơn 1 ",
 		}),
-	code: z.preprocess(
-		(val) => parseInt(val as string, 10),
-		z
-			.number({ invalid_type_error: "Nhập code là số" })
-			.int("Code phải là số nguyên")
-			.positive("Code phải là số dương")
-			.min(1, "Bạn nên tạo chi tiết danh mục lớn hơn 1"),
-	),
+	toWeight: z.number().min(1, "Phải lớn hơn 0"),
+	fromWeight: z.number().min(1, "Phải lớn hơn 0"),
+  toHeight:z.number().min(1, "Phải lớn hơn 0"),
+  fromHeight: z.number().min(1, "Phải lớn hơn 0"),
 });
 const SizeAddandUpdate = ({
 	title,
@@ -60,10 +56,19 @@ const SizeAddandUpdate = ({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: "",
-			code: 0,
+      toHeight: 0,
+      fromHeight: 0,
+      toWeight: 0,
+      fromWeight: 0,
 		},
 	});
-	const onHandleUpdate = async (dataForm: { name: string; code: number }) => {
+	const onHandleUpdate = async (dataForm: {
+		name: string;
+		toWeight: number;
+		fromHeight: number;
+		toHeight: number;
+		fromWeight: number;
+	}) => {
 		try {
 			const { data } = await instance.put(`/size/updateSize/${open}`, dataForm);
 			console.log("Update size success");
@@ -74,7 +79,13 @@ const SizeAddandUpdate = ({
 			console.error("Error:", error);
 		}
 	};
-	const onHandleAdd = async (dataForm: { name: string; code: number }) => {
+	const onHandleAdd = async (dataForm: {
+		name: string;
+		toWeight: number;
+		fromHeight: number;
+		toHeight: number;
+		fromWeight: number;
+	}) => {
 		try {
 			const { data } = await instance.post(`/size/addSize`, dataForm);
 			console.log(data);
@@ -102,7 +113,7 @@ const SizeAddandUpdate = ({
 		}
 	}, [open]);
 
-	const onSubmit = (data: { name: string; code: number }) => {
+	const onSubmit = (data: { name: string; toWeight: number,fromHeight:number,toHeight:number,fromWeight:number }) => {
 		if (typeof open === "string") {
 			onHandleUpdate(data);
 		} else {
@@ -124,7 +135,7 @@ const SizeAddandUpdate = ({
 					</DialogHeader>
 
 					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 							<FormField
 								control={form.control}
 								name="name"
@@ -138,19 +149,90 @@ const SizeAddandUpdate = ({
 									</FormItem>
 								)}
 							/>
-							<FormField
-								control={form.control}
-								name="code"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Code</FormLabel>
-										<FormControl>
-											<Input placeholder="Code" {...field} type="number" />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
+							<div className="grid grid-cols-2 gap-3">
+								<FormField
+									control={form.control}
+									name="fromHeight"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Chiều cao nhỏ</FormLabel>
+											<FormControl>
+												<Input
+													placeholder="Chiều cao nhỏ"
+													{...field}
+													onChange={(event) =>
+														field.onChange(+event.target.value)
+													}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name="toHeight"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Chiều cao lớn</FormLabel>
+											<FormControl>
+												<Input
+													placeholder="Chiều cao lớn"
+													{...field}
+													type="number"
+													onChange={(event) =>
+														field.onChange(+event.target.value)
+													}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
+							<div className="grid grid-cols-2 gap-3">
+								<FormField
+									control={form.control}
+									name="fromWeight"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Cân nặng thấp</FormLabel>
+											<FormControl>
+												<Input
+													placeholder="Cân nặng thấp"
+													{...field}
+													type="number"
+													onChange={(event) =>
+														field.onChange(+event.target.value)
+													}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name="toWeight"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Cân nặng cao</FormLabel>
+											<FormControl>
+												<Input
+													placeholder="Cân nặng cao"
+													{...field}
+													type="number"
+													onChange={(event) =>
+														field.onChange(+event.target.value)
+													}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
+
 							<Button type="submit">
 								{typeof open === "string" ? "Cập nhật" : "Thêm size"}
 							</Button>

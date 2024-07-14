@@ -33,6 +33,7 @@ class AuthController {
       expiresIn: "1h",
     });
   }
+  
   async generateRefreshToken(value: PayloadToken | object | string) {
     return jwt.sign(value, process.env.SECRET_REFRESHTOKEN!, {
       expiresIn: "60d",

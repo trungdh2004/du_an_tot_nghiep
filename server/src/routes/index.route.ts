@@ -8,7 +8,7 @@ import routerAdmin from "./analytics.route";
 import routerUpload from "./upload.route";
 import routerTags from "./tags.route";
 import routerBlogs from "./blog.route";
-import routerSize from "./size.route";
+import routerSize from "./product/size.route";
 import routerColor from "./product/color.route";
 
 const router = Router();
