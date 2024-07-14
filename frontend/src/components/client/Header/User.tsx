@@ -13,6 +13,7 @@ import { logOut } from "@/service/account";
 import { AxiosError } from "axios";
 import { getAuth, signOut } from "firebase/auth";
 import { LucideUser } from "lucide-react";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 const User = () => {
 	const { authUser, setAuthUser, setIsLoggedIn } = useAuth();
@@ -58,6 +59,11 @@ const User = () => {
 						</div>
 					</div>
 				</DropdownMenuLabel>
+				<DropdownMenuSeparator />
+				<DropdownMenuItem>
+					<Link to={"/admin"}>Vào trang quản trị</Link>
+				</DropdownMenuItem>
+
 				<DropdownMenuSeparator />
 				<DropdownMenuItem>Tài khoản của tôi</DropdownMenuItem>
 				<DropdownMenuItem>Địa chỉ</DropdownMenuItem>
