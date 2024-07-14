@@ -81,8 +81,8 @@ class AuthController {
 
       if (existingEmail?.blocked_at) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Tài khoản của bạn đã bị khóa"
-        })
+          message: "Tài khoản của bạn đã bị khóa",
+        });
       }
 
       const accessToken = await this.generateAccessToken({
@@ -313,16 +313,11 @@ class AuthController {
           message: "Bạn chưa đăng nhập ",
         });
       }
-      console.log(process.env.SECRET_REFRESHTOKEN);
-      console.log(refreshToken);
-
       jwt.verify(
         refreshToken,
         process.env.SECRET_REFRESHTOKEN!,
         async (err: VerifyErrors | null, data?: object | string) => {
           if (err) {
-            console.log("err:", err);
-
             return res.status(STATUS.AUTHENTICATOR).json({
               message: "Token đã hết hạn mời bạn đăng nhập lại",
             });
@@ -730,7 +725,6 @@ class AuthController {
         message: "Chặn người dùng thành công",
       });
     } catch (error: any) {
-      console.log("error", error.kind);
 
       return res.status(STATUS.INTERNAL).json({
         message: error.kind
@@ -762,7 +756,6 @@ class AuthController {
         message: "Bỏ chặn người dùng thành công",
       });
     } catch (error: any) {
-      console.log("error", error.kind);
 
       return res.status(STATUS.INTERNAL).json({
         message: error.kind

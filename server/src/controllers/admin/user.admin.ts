@@ -83,7 +83,7 @@ class UserAdmin {
           $count: "total",
         },
       ]);
-      
+
       const listUser = await UserModel.aggregate(pipeline)
         .collation({
           locale: "en_US",

@@ -118,8 +118,8 @@ const UserIndex = () => {
 
 		setSearchObject((prev) => ({
 			...prev,
-      pageSize: value,
-      pageIndex: 1,
+			pageSize: value,
+			pageIndex: 1,
 		}));
 	};
 	const columns: ColumnDef<IData>[] = [
@@ -154,7 +154,7 @@ const UserIndex = () => {
 				/>
 			),
 			size: 100,
-    },
+		},
 		{
 			accessorKey: "full_name",
 			header: () => {
@@ -227,7 +227,7 @@ const UserIndex = () => {
 				const status = row.original.blocked_at ? "Bị cấm" : "Hoạt động";
 				return (
 					<Badge
-						className={`font-medium ${row.original.blocked_at ? "bg-[#cf4040]" : "bg-green-500"} text-center items-center md:text-base text-xs`}
+						className={`font-medium ${row.original.blocked_at ? "bg-[#cf4040]" : "bg-green-500"} text-center items-center text-xs text-nowrap leading-[14px]`}
 					>
 						{status}
 					</Badge>
@@ -247,9 +247,6 @@ const UserIndex = () => {
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
-							<DropdownMenuLabel>Actions</DropdownMenuLabel>
-							<DropdownMenuSeparator />
-
 							<DropdownMenuItem>Xem chi tiết</DropdownMenuItem>
 							{row?.original?.blocked_at ? (
 								<DropdownMenuItem
@@ -306,7 +303,7 @@ const UserIndex = () => {
 										<IoFilter size={20} />
 									</div>
 								</DropdownMenuTrigger>
-								<DropdownMenuContent className="w-[150px]">
+								<DropdownMenuContent className="w-[150px]" align="end">
 									<DropdownMenuLabel>Sắp xếp theo</DropdownMenuLabel>
 									<DropdownMenuSeparator />
 									<DropdownMenuRadioGroup

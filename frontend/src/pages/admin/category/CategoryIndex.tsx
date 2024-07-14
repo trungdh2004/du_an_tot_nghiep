@@ -213,13 +213,13 @@ const CategoryIndex = () => {
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
-							<DropdownMenuSeparator />
-							<Button
+							
+							<DropdownMenuItem
+								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full text-start cursor-pointer"
 								onClick={() => setOpenId(row?.original?._id)}
-								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full"
 							>
-								Sửa danh mục
-							</Button>
+								Sửa thẻ tag
+							</DropdownMenuItem>
 							{row?.original?.deleted ? (
 								<DropdownMenuItem
 									className="text-green-400 text-center"

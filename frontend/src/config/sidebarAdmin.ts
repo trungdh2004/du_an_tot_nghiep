@@ -1,6 +1,7 @@
 import { LuLayoutDashboard } from "react-icons/lu";
 import { FaUsers } from "react-icons/fa";
 import { FaUsersCog } from "react-icons/fa";
+import { MdOutlinePostAdd } from "react-icons/md";
 
 const sidebarConfig: any[] = [
 	{
@@ -144,7 +145,33 @@ const sidebarConfig: any[] = [
 		],
 	},
 	{
-		path: "/size",
+
+		path: "/blogs",
+		isVisible: true,
+		label: "Bài viết",
+		children: [
+			{
+				path: "/new-blog",
+				icon: MdOutlinePostAdd,
+				isVisible: true,
+				label: "Tạo bài viết",
+			},
+			{
+				path: "/",
+				icon: LuLayoutDashboard,
+				isVisible: true,
+				label: "Danh sách bài viết",
+			},
+      ]
+  },
+	{
+		path: "",
+		icon: LuLayoutDashboard,
+		isVisible: true,
+		label: "Thống kê",
+	},
+    {
+    path: "/size",
 		isVisible: true,
 		label: "Size",
 		children: [
@@ -162,11 +189,6 @@ const sidebarConfig: any[] = [
 			},
 		],
 	},
-	{
-		path: "",
-		icon: LuLayoutDashboard,
-		isVisible: true,
-		label: "Thống kê",
-	},
+    }
 ];
 export default sidebarConfig;

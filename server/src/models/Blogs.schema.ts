@@ -1,4 +1,3 @@
-
 import { required } from "joi";
 import mongoose from "mongoose";
 import { IBlogs } from "../interface/blogs";
@@ -16,13 +15,13 @@ const BlogsSchema = new mongoose.Schema(
     },
     thumbnail_url: {
       type: String,
-      default:null
+      default: null,
     },
-    slug: {
-      type: String,
-      unique: true,
-      index: true,
-    },
+    // slug: {
+    //   type: String,
+    //   unique: true,
+    //   index: true,
+    // },
     meta_title: {
       type: String,
     },
@@ -39,19 +38,19 @@ const BlogsSchema = new mongoose.Schema(
     },
     isPublish: {
       type: Boolean,
-      default: false
+      default: false,
     },
     published_at: {
       type: Date,
-      default:null
+      default: null,
     },
     isDeleted: {
       type: Boolean,
-      default:false
+      default: false,
     },
     deleted_at: {
       type: Date!,
-      default:null
+      default: null,
     },
     comments_count: {
       type: Number,
@@ -74,14 +73,12 @@ const BlogsSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-BlogsSchema.pre<IBlogs>("save", async function (next) {
-  const slug = generateSlugs(this.title);
-  this.slug = slug;
-  next();
-});
-
+// BlogsSchema.pre<IBlogs>("save", async function (next) {
+//   const slug = generateSlugs(this.title);
+//   this.slug = slug;
+//   next();
+// });
 
 const BlogsModel = mongoose.model<IBlogs>("Blogs", BlogsSchema);
 
 export default BlogsModel;
-

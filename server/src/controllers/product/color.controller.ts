@@ -67,6 +67,7 @@ class ColorController {
         locale: "en_US",
         strength: 1,
       }).skip(skip).limit(limit)
+
       const countColor = await ColorModel.aggregate([
         ...pipeline,
         {
@@ -239,6 +240,7 @@ class ColorController {
       });
     }
   }
+
 
   async blockedMany(req: RequestModel, res: Response) {
     try {
