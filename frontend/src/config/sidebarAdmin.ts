@@ -145,7 +145,6 @@ const sidebarConfig: any[] = [
 		],
 	},
 	{
-
 		path: "/blogs",
 		isVisible: true,
 		label: "Bài viết",
@@ -162,16 +161,16 @@ const sidebarConfig: any[] = [
 				isVisible: true,
 				label: "Danh sách bài viết",
 			},
-      ]
-  },
+		],
+	},
 	{
 		path: "",
 		icon: LuLayoutDashboard,
 		isVisible: true,
 		label: "Thống kê",
 	},
-    {
-    path: "/size",
+	{
+		path: "/size",
 		isVisible: true,
 		label: "Size",
 		children: [
@@ -189,6 +188,5 @@ const sidebarConfig: any[] = [
 			},
 		],
 	},
-    }
 ];
 export default sidebarConfig;
