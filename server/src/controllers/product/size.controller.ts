@@ -121,7 +121,7 @@ class SizeController {
   }
 
   async getSizeById(req: RequestModel, res: Response) {
-try {
+    try {
       const { id } = req.params;
 
       if (!id) {
