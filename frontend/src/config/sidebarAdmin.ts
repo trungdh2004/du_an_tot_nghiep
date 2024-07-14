@@ -180,8 +180,8 @@ const sidebarConfig: any[] = [
 				isVisible: true,
 				label: "Danh sách bài viết",
 			},
-      ]
-  },
+		],
+	},
 	{
 		path: "",
 		icon: LuLayoutDashboard,
