@@ -189,6 +189,7 @@ const sidebarConfig: any[] = [
 			},
 		],
 	},
-    }
 ];
+
+
 export default sidebarConfig;
