@@ -8,6 +8,7 @@ import CategoryIndex from "@/pages/admin/category/CategoryIndex";
 import TagIndex from "@/pages/admin/tags/TagIndex";
 import UserDetail from "@/pages/admin/users/UserDetail";
 import UserIndex from "@/pages/admin/users/UserIndex";
+import SizeIndex from "@/pages/admin/size/SizeIndex";
 
 const AdminRouter = [
 	{
@@ -51,7 +52,10 @@ const AdminRouter = [
 				path: "blogs/:id/edit",
 				element: <EditBlog />,
 			},
-			
+			{
+				path: "size",
+				element: <SizeIndex />,
+			},
 		],
 	},
 ];
