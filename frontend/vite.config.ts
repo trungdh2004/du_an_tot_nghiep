@@ -21,4 +21,7 @@ export default defineConfig({
 	define: {
 		"process.env": process.env, // wrapping in "" since it's a string
 	},
+	optimizeDeps: {
+		include: ["quill-image-resize-module-react"],
+	},
 });
