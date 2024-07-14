@@ -1,6 +1,7 @@
 import { LuLayoutDashboard } from "react-icons/lu";
 import { FaUsers } from "react-icons/fa";
 import { FaUsersCog } from "react-icons/fa";
+import { MdOutlinePostAdd } from "react-icons/md";
 
 const sidebarConfig: any[] = [
 	{
@@ -160,8 +161,8 @@ const sidebarConfig: any[] = [
 				isVisible: true,
 				label: "Danh sách bài viết",
 			},
-      ]
-  },
+		],
+	},
 	{
 		path: "",
 		icon: LuLayoutDashboard,

@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import app from "@/config/initializeFirebase";
 import { useAuth } from "@/hooks/auth";
+import { cn } from "@/lib/utils";
 import { logOut } from "@/service/account";
 import { AxiosError } from "axios";
 import { getAuth, signOut } from "firebase/auth";
@@ -59,8 +60,10 @@ const User = () => {
 						</div>
 					</div>
 				</DropdownMenuLabel>
-				<DropdownMenuSeparator />
-				<DropdownMenuItem>
+				<DropdownMenuSeparator
+					className={cn(!authUser?.is_admin && "hidden")}
+				/>
+				<DropdownMenuItem className={cn(!authUser?.is_admin && "hidden")}>
 					<Link to={"/admin"}>Vào trang quản trị</Link>
 				</DropdownMenuItem>
 
