@@ -171,6 +171,13 @@ class BlogController {
             })
         }
     }
+
+    pagingBlog(req: RequestModel, res: Response) {
+        try {
+        } catch (error) {
+            
+        }
+    }
 }
 
 export default new BlogController();

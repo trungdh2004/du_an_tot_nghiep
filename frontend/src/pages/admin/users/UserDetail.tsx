@@ -1,5 +1,5 @@
 import React from 'react'
-import { DataTableDemo } from './Users';
+
 import SimpleBarChart from '@/components/common/Chart';
 import { Button } from '@/components/ui/button';
 
@@ -11,7 +11,7 @@ const UserDetail = () => {
           <SimpleBarChart/>
         </div>
 				<div className="pt-4 w-full">
-					<DataTableDemo />
+					{/* <DataTableDemo /> */}
 				</div>
 			</div>
 			<div className="grid lg:col-span-2 col-span-1 border rounded-md h-[440px] my-5 lg:order-2 order-1">
