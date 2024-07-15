@@ -8,17 +8,19 @@ interface Props {
 	label: string;
 	path: string;
 	isAction: boolean;
+	isParent?:boolean
 }
 
-const SidebarItem = ({ Icon, label, path, isAction }: Props) => {
+const SidebarItem = ({ Icon, label, path, isAction , isParent }: Props) => {
 	const { setClose } = useOpenSidebar();
 
 	return (
 		<Link to={path} onClick={setClose}>
 			<div
 				className={cn(
-					"h-10 px-4 group py-3 gap-2 flex items-center hover:bg-[rgba(24,119,242,0.08)]   rounded-md cursor-pointer mt-2",
+					"h-10 px-4 group py-3 gap-2 flex items-center hover:bg-[rgba(24,119,242,0.08)] rounded-md cursor-pointer mt-2",
 					isAction && "bg-[rgba(24,119,242,0.08)]",
+					isParent && "font-semibold"
 				)}
 			>
 				{!!Icon && (
@@ -33,7 +35,7 @@ const SidebarItem = ({ Icon, label, path, isAction }: Props) => {
 
 				<span
 					className={cn(
-						"group-hover:text-blue-500 text-[#4b5563]",
+						"group-hover:text-blue-500 text-[#4b5563] text-sm",
 						isAction && "text-blue-500",
 					)}
 				>

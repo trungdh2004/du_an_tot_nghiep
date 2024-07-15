@@ -134,7 +134,10 @@ const ColorForm = ({ open, title, labelConfirm, handleClose, handlePaging }: For
                                         <FormItem>
                                             <FormLabel>Mã màu</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Mã màu..." {...field} />
+                                                <div className='space-y-4'>
+                                                    <Input type='color' placeholder="Mã màu..." {...field} />
+                                                    <Input placeholder="Mã màu..." {...field} />
+                                                </div>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

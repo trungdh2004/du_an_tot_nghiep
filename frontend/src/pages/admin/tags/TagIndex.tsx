@@ -1,25 +1,18 @@
 import TableComponent from "@/components/common/TableComponent";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import {
-	hiddencate,
-	paddingCate,
-	unhiddencate,
-} from "@/service/category-admin";
+
 import { SearchObjectType } from "@/types/searchObjecTypes";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import React, { useEffect, useState } from "react";
 import { parseISO, format } from "date-fns";
 import { IoFilter } from "react-icons/io5";
 import instance from "@/config/instance";
-import CategoryAdd from "./CategoryAddandUpdate";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
 	DropdownMenu,
-	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -29,8 +22,10 @@ import { typeResponse } from "@/types/typeReponse";
 import { useDebounceCallback } from "usehooks-ts";
 import { toast } from "sonner";
 import DialogConfirm from "@/components/common/DialogConfirm";
+import TagAdd from "./TagAddandUpdate";
+import { hiddentag, unhiddentag } from "@/service/tags-admin";
 
-const CategoryIndex = () => {
+const TagIndex = () => {
 	interface IData {
 		_id: string;
 		name: string;
@@ -44,12 +39,10 @@ const CategoryIndex = () => {
 	const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
 	const [data, setData] = useState<IData[]>([]);
 	const [openId, setOpenId] = useState<string | boolean>(false);
-	const [openUnhiddenCategory, setopenUnhiddenCategory] = useState<
-		string | boolean
-	>(false);
-	const [openHiddenCategory, setOpenHiddenCategory] = useState<
-		string | boolean
-	>(false);
+	const [openUnhiddenTag, setopenUnhiddenTag] = useState<string | boolean>(
+		false,
+	);
+	const [openHiddenTag, setOpenHiddenTag] = useState<string | boolean>(false);
 	const debounced = useDebounceCallback((inputValue: string) => {
 		setSearchObject((prev) => ({
 			...prev,
@@ -65,7 +58,6 @@ const CategoryIndex = () => {
 		sort: 1,
 		tab: 1,
 	});
-	console.log(searchObject);
 	const [response, setResponse] = useState<typeResponse>({
 		pageCount: 0,
 		totalElement: 0, //tổng số phần tử
@@ -73,18 +65,13 @@ const CategoryIndex = () => {
 	});
 
 	useEffect(() => {
-		handleCategory();
+		handleTags();
 	}, [searchObject]);
 
-	const handleCategory = async () => {
+	const handleTags = async () => {
 		try {
-			const { data } = await instance.post(
-				`/category/paddingCate`,
-				searchObject,
-			);
-			console.log(data);
+			const { data } = await instance.post(`/tags/paging`, searchObject);
 			setData(data.content);
-
 			setResponse({
 				pageCount: data.totalPage,
 				totalElement: data.totalAllOptions,
@@ -96,26 +83,28 @@ const CategoryIndex = () => {
 	};
 	const handleHiddenCate = async (id: string | boolean) => {
 		try {
-			const { data } = await hiddencate(id);
-			setOpenHiddenCategory(false);
-			handleCategory();
-			toast.success("Đã ẩn danh mục thành công");
+			const { data } = await hiddentag(id);
+			setOpenHiddenTag(false);
+			handleTags();
+			toast.success("Đã ẩn thẻ tag thành công");
 		} catch (error) {
-			toast.error("Ẩn danh mục thất bại");
+			toast.error("Ẩn thẻ tag thất bại");
 		}
 	};
 
 	const handleUnhiddenCate = async (id: string | boolean) => {
 		try {
-			const { data } = await unhiddencate(id);
-			setopenUnhiddenCategory(false);
-			handleCategory();
-			toast.success("Bỏ ẩn danh mục thành công");
+			const { data } = await unhiddentag(id);
+			setopenUnhiddenTag(false);
+			handleTags();
+			toast.success("Bỏ ẩn thẻ tag thành công");
 		} catch (error) {
-			toast.error("Bỏ ẩn danh mục thất bại");
+			toast.error("Bỏ ẩn thẻ tag thất bại");
 		}
 	};
 	const handleChangePageSize = (value: number) => {
+		console.log(value);
+
 		setSearchObject((prev) => ({
 			...prev,
 			pageSize: value,
@@ -216,7 +205,6 @@ const CategoryIndex = () => {
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
-							
 							<DropdownMenuItem
 								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full text-start cursor-pointer"
 								onClick={() => setOpenId(row?.original?._id)}
@@ -225,15 +213,15 @@ const CategoryIndex = () => {
 							</DropdownMenuItem>
 							{row?.original?.deleted ? (
 								<DropdownMenuItem
-									className="text-green-400 text-center"
-									onClick={() => setopenUnhiddenCategory(row?.original?._id)}
+									className="text-green-400"
+									onClick={() => setopenUnhiddenTag(row?.original?._id)}
 								>
 									Bỏ ẩn
 								</DropdownMenuItem>
 							) : (
 								<DropdownMenuItem
-									className="text-red-400 text-center"
-									onClick={() => setOpenHiddenCategory(row?.original?._id)}
+									className="text-red-400"
+									onClick={() => setOpenHiddenTag(row?.original?._id)}
 								>
 									Ẩn
 								</DropdownMenuItem>
@@ -247,10 +235,10 @@ const CategoryIndex = () => {
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex flex-col gap-3">
-				<h4 className="font-medium md:text-xl text-base">Danh sách danh mục</h4>
+				<h4 className="font-medium md:text-xl text-base">Danh sách thẻ tag</h4>
 				<div className="flex justify-between">
 					<Input
-						placeholder="Tìm kiếm danh mục"
+						placeholder="Tìm kiếm thẻ tag"
 						className="w-[40%] md:text-base text-xs"
 						onChange={(event) => debounced(event.target.value)}
 					/>
@@ -259,7 +247,7 @@ const CategoryIndex = () => {
 							onClick={() => setOpenId(true)}
 							className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
 						>
-							Thêm danh mục
+							Thêm thẻ tag
 						</Button>
 					</div>
 				</div>
@@ -271,14 +259,14 @@ const CategoryIndex = () => {
 						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 1 }))}
 						className="md:text-base text-sm"
 					>
-						Danh mục
+						Thẻ tag
 					</TabsTrigger>
 					<TabsTrigger
 						value="2"
 						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 2 }))}
 						className="md:text-base text-sm"
 					>
-						Danh mục ẩn
+						Thẻ tag ẩn
 					</TabsTrigger>
 				</TabsList>
 			</Tabs>
@@ -297,36 +285,36 @@ const CategoryIndex = () => {
 				handleChangePageSize={handleChangePageSize}
 				dataPageSize={[1, 3, 5, 10]}
 			/>
-			{!!openHiddenCategory && (
+			{!!openHiddenTag && (
 				<DialogConfirm
-					open={!!openHiddenCategory}
-					title="Xác nhận ẩn danh mục"
-					handleClose={() => setOpenHiddenCategory(false)}
-					handleSubmit={() => handleHiddenCate(openHiddenCategory)}
-					content="Bạn có chắc muốn ẩn danh mục này?"
+					open={!!openHiddenTag}
+					title="Xác nhận ẩn thẻ tag"
+					handleClose={() => setOpenHiddenTag(false)}
+					handleSubmit={() => handleHiddenCate(openHiddenTag)}
+					content="Bạn có chắc muốn ẩn thẻ tag này?"
 					labelConfirm="Ẩn"
 				/>
 			)}
-			{!!openUnhiddenCategory && (
+			{!!openUnhiddenTag && (
 				<DialogConfirm
-					open={!!openUnhiddenCategory}
-					title="Xác nhận bỏ ẩn danh mục"
-					handleClose={() => setopenUnhiddenCategory(false)}
-					handleSubmit={() => handleUnhiddenCate(openUnhiddenCategory)}
-					content="Bạn có chắc muốn bỏ ẩn danh mục này?"
+					open={!!openUnhiddenTag}
+					title="Xác nhận bỏ ẩn thẻ tag"
+					handleClose={() => setopenUnhiddenTag(false)}
+					handleSubmit={() => handleUnhiddenCate(openUnhiddenTag)}
+					content="Bạn có chắc muốn bỏ ẩn thẻ tag này?"
 					labelConfirm="Bỏ ẩn"
 				/>
 			)}
 			{!!openId && (
-				<CategoryAdd
+				<TagAdd
 					open={openId}
 					title="Cập nhật"
 					handleClose={() => setOpenId(false)}
-					handlePaging={() => handleCategory()}
+					handlePaging={() => handleTags()}
 				/>
 			)}
 		</div>
 	);
 };
 
-export default CategoryIndex;
+export default TagIndex;

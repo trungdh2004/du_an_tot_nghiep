@@ -2,7 +2,10 @@ import Joi from "joi";
 
 export const sizeValidation = Joi.object({
   name: Joi.string().required().messages({}),
-  code: Joi.number().required().messages({}),
+  toHeight: Joi.number().required().messages({}),
+  fromHeight: Joi.number().required().messages({}),
+  toWeight: Joi.number().required().messages({}),
+  fromWeight: Joi.number().required().messages({}),
 });
 
 export const colorValidation = Joi.object({

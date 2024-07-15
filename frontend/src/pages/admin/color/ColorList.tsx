@@ -21,6 +21,7 @@ import { useDebounceCallback } from "usehooks-ts";
 import ColorForm from "./ColorForm";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DialogConfirm from "@/components/common/DialogConfirm";
+import { object } from "zod";
 interface IData {
     _id: string;
     name: string;
@@ -151,7 +152,7 @@ const ColorList = () => {
             },
         },
         {
-            accessorKey: "description",
+            accessorKey: "code",
             header: () => {
                 return <div className="md:text-base text-xs">Mã màu</div>;
             },
@@ -159,6 +160,19 @@ const ColorList = () => {
                 return (
                     <div className="md:text-base text-xs">
                         {row?.original?.code}
+                    </div>
+                );
+            },
+        },
+        {
+            accessorKey: "color",
+            header: () => {
+                return <div className="md:text-base text-xs">Màu</div>;
+            },
+            cell: ({ row }) => {
+                return (
+                    <div className="md:text-base text-xs w-8 h-8 border rounded-full" style={{ backgroundColor: `${row.original.code}` }}>
+
                     </div>
                 );
             },
@@ -191,7 +205,7 @@ const ColorList = () => {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuSeparator />
+
                             <Button
                                 onClick={() => setOpenId(row?.original?._id)}
                                 className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full"
