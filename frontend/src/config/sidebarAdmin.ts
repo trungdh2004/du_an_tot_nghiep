@@ -169,17 +169,18 @@ const sidebarConfig: any[] = [
 		label: "Bài viết",
 		children: [
 			{
-				path: "/new-blog",
-				icon: MdOutlinePostAdd,
-				isVisible: true,
-				label: "Tạo bài viết",
-			},
-			{
 				path: "/",
 				icon: LuLayoutDashboard,
 				isVisible: true,
 				label: "Danh sách bài viết",
 			},
+			{
+				path: "/new-blog",
+				icon: MdOutlinePostAdd,
+				isVisible: true,
+				label: "Tạo bài viết",
+			},
+
 		],
 	},
 	{
@@ -188,24 +189,6 @@ const sidebarConfig: any[] = [
 		isVisible: true,
 		label: "Thống kê",
 	},
-	{
-		path: "/blog",
-		isVisible: true,
-		label: "Bài viết",
-		children: [
-			{
-				path: "",
-				icon: FaUsers,
-				isVisible: true,
-				label: "Danh sách bài viết",
-			},
-			{
-				path: "/staff",
-				icon: FaUsersCog,
-				isVisible: true,
-				label: "Danh sách nhân viên",
-			},
-		],
-	},
+
 ];
 export default sidebarConfig;

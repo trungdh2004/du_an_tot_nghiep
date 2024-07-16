@@ -4,14 +4,43 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { SlOptions, SlOptionsVertical } from "react-icons/sl";
-
+import instance from "@/config/instance";
+import { showBlogsEdit } from "@/service/blog";
+import { parseISO } from "date-fns";
+import { da } from "date-fns/locale";
+import { format } from "path";
+import { useEffect, useState } from "react";
+import { SlOptions } from "react-icons/sl";
+import { useParams } from "react-router-dom";
+type IBlog = {
+    _id: string,
+    title: string,
+    user: string,
+    content: string,
+    isDeleted: string,
+    published_at: string,
+    meta_description: string,
+}
 const BlogDetail = () => {
+    const [blog, setBlog] = useState<IBlog>();
+    const [user, setUser] = useState();
+    const { id } = useParams();
+    useEffect(() => {
+        (async () => {
+            const { data } = await showBlogsEdit(id as string);
+            console.log('blog', data.data)
+            setBlog(data.data)
+        })()
+    }, [id])
+
+    // console.log(blog?.published_at)
+    // const pareDate = parseISO(blog.published_at)
+    // const formattedDate = format(pareDate, "dd/MM/yyyy");
     return (
         <>
             <div className="w-[700px] mx-auto">
                 {/* title */}
-                <h3 className="text-3xl font-bold text-[#222222] mt-5">Config Zsh bằng Oh-my-zsh và P10k trên WSL cực ngầu </h3>
+                <h3 className="text-3xl font-bold text-[#222222] mt-5">{blog?.title}</h3>
                 {/* user-information */}
                 <div className="flex my-[30px] justify-between items-center">
                     {/*  */}
@@ -22,7 +51,7 @@ const BlogDetail = () => {
                         </div>
                         <div className="flex-row">
                             <h3 className="text-[#292929] text-base font-medium ">Nguyễn Tuấn Đức</h3>
-                            <p className='text-[#757575] text-sm'>một tháng trước</p>
+                            <p className='text-[#757575] text-sm'>{blog?.published_at}</p>
                         </div>
                     </div>
                     <div className="">
