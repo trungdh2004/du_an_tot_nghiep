@@ -210,8 +210,8 @@ class BlogController {
         $lookup: {
           from: 'users',           // Collection to join
           localField: 'user_id',    // Field from the input documents
-          foreignField: '_id',         // Field from the documents of the "from" collection
-          as: 'user'               // Output array field
+          foreignField: '_id',
+          as:'user'// Field from the documents of the "from" collection
         }
       })
 
@@ -271,14 +271,22 @@ class BlogController {
       });
 
       const countDocuments = await BlogsModel.aggregate([
-        
         ...pipeline,
+        
         {
           $count: "total",
         },
       ]);
 
-      const listBlogs = await BlogsModel.aggregate(pipeline)
+      const listBlogs = await BlogsModel.aggregate([
+        ...pipeline,
+        {
+          $unwind: {
+            path: '$user',
+            preserveNullAndEmptyArrays: true 
+          }
+        }
+      ])
         .collation({
           locale: "en_US",
           strength: 1,
@@ -296,6 +304,47 @@ class BlogController {
       return res.status(STATUS.OK).json(data);
     } catch (error) {
       return res.status(STATUS.INTERNAL).json({ error: error });
+    }
+  }
+
+  async getBlogById(req: RequestModel, res: Response) {
+    try {
+      const {id} = req.params
+
+      
+      if (!id) return res.status(STATUS.BAD_REQUEST).json({
+        message:"Bạn chưa chọn bài viết"
+      })
+
+      const existingBlog = await BlogsModel.findById(id).populate([
+        {
+          path: "user_id",
+          model: "User",
+          select: {
+            "_id": 1,
+            "full_name": 1,
+            "email": 1,
+            "avatarUrl":1
+          }
+        },
+        {
+          path: "selected_tags",
+          model:"Tags"
+        }
+      ])
+
+      if (!existingBlog) return res.status(STATUS.BAD_REQUEST).json({
+        message:"Không có bài viết nào"
+      })
+
+      return res.status(STATUS.OK).json({
+        message: "Lấy thành công",
+        data:existingBlog
+      })
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error?.message,
+      });
     }
   }
 }
