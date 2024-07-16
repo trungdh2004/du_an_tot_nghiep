@@ -4,6 +4,7 @@ import STATUS from "../utils/status";
 import BlogsModel from "../models/Blogs.schema";
 import { BlogValidation } from "../validation/blog.validation";
 import { truncateSentence } from "../utils/cutText";
+import { formatDataPaging } from "../common/pagingData";
 
 class BlogController {
   async postBlogs(req: RequestModel, res: Response) {
@@ -177,12 +178,126 @@ class BlogController {
       });
     }
   }
-    pagingBlog(req: RequestModel, res: Response) {
-        try {
-        } catch (error) {
-            
+  async pagingBlog(req: RequestModel, res: Response) {
+    try {
+      const {
+        keyword,
+        sort,
+        fieldSort,
+        published_at,
+        tags,
+        pageSize,
+        pageIndex,
+        tab=1,
+      } = req.body;
+      console.log("hehe");
+      
+      const user = req.user;
+      let limit = pageSize || 10;
+      let skip = (pageIndex - 1) * limit || 0;
+
+      let pipeline: any[] = [];
+      // search
+      if (keyword) {
+        pipeline.push({
+          $match: {
+            title: { $regex: keyword, $options: "i" },
+          },
+        });
+      }
+
+      pipeline.push({
+        $lookup: {
+          from: 'users',           // Collection to join
+          localField: 'user_id',    // Field from the input documents
+          foreignField: '_id',         // Field from the documents of the "from" collection
+          as: 'user'               // Output array field
         }
+      })
+
+      pipeline.push({
+        $lookup: {
+          from: 'tags',           // Collection to join
+          localField: 'selected_tags',    // Field from the input documents
+          foreignField: '_id',         // Field from the documents of the "from" collection
+          as: 'selected_tags'               // Output array field
+        }
+      })
+
+      // skip
+      // pipeline.push({ $skip: skip }, { $limit: limit });
+      // sắp xếp
+      // if (fieldSort) {
+      //   pipeline.push({
+      //     $sort: { [fieldSort]: sort },
+      //   });
+      // } else {
+      //   pipeline.push({
+      //     $sort: { published_at: sort },
+      //   });
+      // }
+
+      if (tab === 1) {
+        pipeline.push({
+          $match: {
+            isPublish: true,
+          },
+        });
+      } else if (tab === 2) {
+        pipeline.push({
+          $match: {
+            isPublish: false,
+          },
+        });
+      }
+
+      pipeline.push({
+        $project: {
+          _id: 1, // Loại bỏ trường _id
+          meta_title: 1, // Trường name
+          title: 1, // Trường name
+          meta_description: 1, // Trường age
+          views_count: 1, // Trường email
+          isPublish:1,
+          published_at: 1, // Trường email
+          comments_count: 1, // Trường email
+          countLike: 1, // Trường email
+          selected_tags: 1,
+          'user._id': 1,
+          'user.full_name': 1,
+          'user.email': 1,
+          'user.avatarUrl': 1,
+        },
+      });
+
+      const countDocuments = await BlogsModel.aggregate([
+        
+        ...pipeline,
+        {
+          $count: "total",
+        },
+      ]);
+
+      const listBlogs = await BlogsModel.aggregate(pipeline)
+        .collation({
+          locale: "en_US",
+          strength: 1,
+        })
+        .skip(skip)
+        .limit(limit);
+
+      const data = formatDataPaging({
+        limit,
+        pageIndex,
+        data: listBlogs,
+        count: countDocuments[0]?.total || 0,
+      });
+
+      return res.status(STATUS.OK).json(data);
+    } catch (error) {
+      return res.status(STATUS.INTERNAL).json({ error: error });
     }
+  }
 }
 
 export default new BlogController();

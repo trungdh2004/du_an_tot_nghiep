@@ -39,7 +39,9 @@ const TagIndex = () => {
 	const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
 	const [data, setData] = useState<IData[]>([]);
 	const [openId, setOpenId] = useState<string | boolean>(false);
-	const [openUnhiddenTag, setopenUnhiddenTag] = useState<string | boolean>(false);
+	const [openUnhiddenTag, setopenUnhiddenTag] = useState<string | boolean>(
+		false,
+	);
 	const [openHiddenTag, setOpenHiddenTag] = useState<string | boolean>(false);
 	const debounced = useDebounceCallback((inputValue: string) => {
 		setSearchObject((prev) => ({
@@ -105,8 +107,8 @@ const TagIndex = () => {
 
 		setSearchObject((prev) => ({
 			...prev,
-      pageSize: value,
-      pageIndex: 1,
+			pageSize: value,
+			pageIndex: 1,
 		}));
 	};
 	const handleChangePage = (value: any) => {
@@ -203,23 +205,22 @@ const TagIndex = () => {
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
-							<DropdownMenuSeparator />
-							<Button
+							<DropdownMenuItem
+								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full text-start cursor-pointer"
 								onClick={() => setOpenId(row?.original?._id)}
-								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full"
 							>
 								Sửa thẻ tag
-							</Button>
+							</DropdownMenuItem>
 							{row?.original?.deleted ? (
 								<DropdownMenuItem
-									className="text-green-400 text-center"
+									className="text-green-400"
 									onClick={() => setopenUnhiddenTag(row?.original?._id)}
 								>
 									Bỏ ẩn
 								</DropdownMenuItem>
 							) : (
 								<DropdownMenuItem
-									className="text-red-400 text-center"
+									className="text-red-400"
 									onClick={() => setOpenHiddenTag(row?.original?._id)}
 								>
 									Ẩn

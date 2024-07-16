@@ -13,6 +13,7 @@ const MainRouter = [
 			{ path: "*", element: <NotFound /> },
 			{ path: "address", element: <Address /> },
 			{ path: "table", element: <UserIndex /> },
+			{ path: "*", element: <NotFound /> },
 		],
 	},
 ];

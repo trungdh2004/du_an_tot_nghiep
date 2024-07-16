@@ -12,7 +12,6 @@ export const useUploadFile = () => {
 			const formData = new FormData();
 			formData.append("image", file[0]);
 			const { data } = await uploadFileService(formData, width, height);
-			console.log(data);
 			return data;
 		}
 	};
