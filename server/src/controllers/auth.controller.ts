@@ -94,25 +94,25 @@ class AuthController {
         email: existingEmail.email,
         is_admin: existingEmail.is_admin,
       });
-      const existingRefreshToken = await RefreshTokenModel.findOne({
-        userId: existingEmail._id,
-      });
+      // const existingRefreshToken = await RefreshTokenModel.findOne({
+      //   userId: existingEmail._id,
+      // });
 
-      if (!existingRefreshToken) {
-        await RefreshTokenModel.create({
-          userId: existingEmail._id,
-          token: refreshToken,
-        });
-      } else {
-        await RefreshTokenModel.findOneAndUpdate(
-          {
-            userId: existingEmail._id,
-          },
-          {
-            token: refreshToken,
-          }
-        );
-      }
+      // if (!existingRefreshToken) {
+      //   await RefreshTokenModel.create({
+      //     userId: existingEmail._id,
+      //     token: refreshToken,
+      //   });
+      // } else {
+      //   await RefreshTokenModel.findOneAndUpdate(
+      //     {
+      //       userId: existingEmail._id,
+      //     },
+      //     {
+      //       token: refreshToken,
+      //     }
+      //   );
+      // }
 
       res.cookie("token", refreshToken, {
         maxAge: 1000 * 60 * 24 * 60 * 60,
@@ -214,25 +214,25 @@ class AuthController {
           is_admin: existingEmail.is_admin,
         });
 
-        const existingRefreshToken = await RefreshTokenModel.findOne({
-          userId: existingEmail._id,
-        });
+        // const existingRefreshToken = await RefreshTokenModel.findOne({
+        //   userId: existingEmail._id,
+        // });
 
-        if (!existingRefreshToken) {
-          await RefreshTokenModel.create({
-            userId: existingEmail._id,
-            token: refreshToken,
-          });
-        } else {
-          await RefreshTokenModel.findOneAndUpdate(
-            {
-              userId: existingEmail._id,
-            },
-            {
-              token: refreshToken,
-            }
-          );
-        }
+        // if (!existingRefreshToken) {
+        //   await RefreshTokenModel.create({
+        //     userId: existingEmail._id,
+        //     token: refreshToken,
+        //   });
+        // } else {
+        //   await RefreshTokenModel.findOneAndUpdate(
+        //     {
+        //       userId: existingEmail._id,
+        //     },
+        //     {
+        //       token: refreshToken,
+        //     }
+        //   );
+        // }
 
         res.cookie("token", refreshToken, {
           maxAge: 1000 * 60 * 24 * 60,
@@ -325,16 +325,16 @@ class AuthController {
             return;
           }
 
-          const refreshTokenDb = await RefreshTokenModel.findOne({
-            userId: (data as PayloadToken).id as ObjectId,
-            token: refreshToken,
-          });
+          // const refreshTokenDb = await RefreshTokenModel.findOne({
+          //   userId: (data as PayloadToken).id as ObjectId,
+          //   token: refreshToken,
+          // });
 
-          if (!refreshTokenDb) {
-            return res.status(STATUS.AUTHENTICATOR).json({
-              message: "Mời bạn đăng nhập lại",
-            });
-          }
+          // if (!refreshTokenDb) {
+          //   return res.status(STATUS.AUTHENTICATOR).json({
+          //     message: "Mời bạn đăng nhập lại",
+          //   });
+          // }
           const payload = {
             id: (data as PayloadToken).id,
             email: (data as PayloadToken).email,
@@ -343,9 +343,9 @@ class AuthController {
 
           const newAccessToken = await this.generateAccessToken(payload);
           const newRefreshToken = await this.generateRefreshToken(payload);
-          await RefreshTokenModel.findByIdAndUpdate(refreshTokenDb._id, {
-            token: newRefreshToken,
-          });
+          // await RefreshTokenModel.findByIdAndUpdate(refreshTokenDb._id, {
+          //   token: newRefreshToken,
+          // });
           res.cookie("token", newRefreshToken, {
             maxAge: 24 * 60 * 60 * 1000 * 60,
             httpOnly: true,
@@ -388,10 +388,6 @@ class AuthController {
               message: "Đăng xuất thành công",
             });
           }
-
-          await RefreshTokenModel.findOneAndDelete({
-            userId: (data as PayloadToken).id as ObjectId,
-          });
 
           res.cookie("token", "", {
             maxAge: 0,
