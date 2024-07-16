@@ -240,6 +240,10 @@ const EditBlog = () => {
 										});
 									}
 								}}
+								props={{
+									heightMin:"400px"
+								}}
+
 							/>
 							{/*  */}
 							<FormField
@@ -346,7 +350,7 @@ const EditBlog = () => {
 															className="border-none"
 														>
 															<AccordionTrigger className="pt-0 px-5 py-3 border-none">
-																<FormLabel>Nhãn</FormLabel>
+																<FormLabel className="cursor-pointer">Nhãn</FormLabel>
 															</AccordionTrigger>
 															<AccordionContent className="px-5">
 																<div>
@@ -391,7 +395,7 @@ const EditBlog = () => {
 															className="border-none"
 														>
 															<AccordionTrigger className="pt-0 px-5 py-3 border-none">
-																<FormLabel>Hình ảnh thu nhỏ</FormLabel>
+																<FormLabel className="cursor-pointer">Hình ảnh thu nhỏ</FormLabel>
 															</AccordionTrigger>
 															<AccordionContent className="px-5 ">
 																<div className="w-full ">
