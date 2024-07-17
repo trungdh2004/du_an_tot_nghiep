@@ -43,6 +43,7 @@ import { useParams } from "react-router-dom";
 import Select from "react-select";
 import { toast } from "sonner";
 import { z } from "zod";
+
 const EditBlog = () => {
 	const [statusLoading, setStatusLoading] = useState({
 		isSubmitted: false,
@@ -52,7 +53,10 @@ const EditBlog = () => {
 	const { id } = useParams();
 	const [tags, setTags] = useState();
 	const [blogs, setBlogs] = useState<z.infer<typeof formSchema>>();
-	const [previewUrl, setPreviewUrl] = useState("");
+	const [previewUrl, setPreviewUrl] = useState({
+		url: "",
+		isLoading: false,
+	});
 	const [content, setContent] = useState("");
 	const formSchema = z.object({
 		title: z.string({
@@ -87,6 +91,7 @@ const EditBlog = () => {
 			setContent(blog?.data?.content);
 			form.reset(blog?.data);
 			setBlogs(blog?.data);
+			setTags(tags?.data);
 		})();
 	}, []);
 
@@ -96,7 +101,7 @@ const EditBlog = () => {
 		const { _id, ...rest } = formData as any;
 		const payload = {
 			...rest,
-			thumbnail_url: previewUrl || formData?.thumbnail_url,
+			thumbnail_url: formData?.thumbnail_url,
 		};
 		try {
 			setStatusLoading({ isSubmitted: true, isLoading: true });
@@ -115,7 +120,11 @@ const EditBlog = () => {
 			const formdata = new FormData();
 			formdata.append("image", file);
 			const { data } = await uploadFileService(formdata);
-			setPreviewUrl(data.path);
+			URL.revokeObjectURL(previewUrl.url);
+			setPreviewUrl({
+				url: data.path,
+				isLoading: false,
+			});
 			return data.path;
 		} catch (error) {
 			console.error(error);
@@ -401,14 +410,15 @@ const EditBlog = () => {
 																	<label
 																		htmlFor="file-upload"
 																		className={cn(
-																			"w-full relative cursor-pointer  rounded-lg p-6",
+																			"w-full relative cursor-pointer  rounded-lg p-6 ",
 																		)}
 																		id=""
 																	>
 																		<div
 																			className={cn(
 																				"flex flex-col justify-center items-center ",
-																				(previewUrl || blogs?.thumbnail_url) &&
+																				(previewUrl.url ||
+																					blogs?.thumbnail_url) &&
 																					"hidden",
 																			)}
 																		>
@@ -423,16 +433,30 @@ const EditBlog = () => {
 																				PNG, JPG, GIF.
 																			</p>
 																		</div>
-																		<img
-																			src={previewUrl || blogs?.thumbnail_url}
-																			className={cn(
-																				"w-full relative max-h-[180px] object-cover",
-																				previewUrl || blogs?.thumbnail_url
-																					? ""
-																					: "hidden",
+																		<div className="max-h-[180px] relative">
+																			<img
+																				src={
+																					previewUrl?.url ||
+																					blogs?.thumbnail_url
+																				}
+																				className={cn(
+																					"w-full relative max-h-[180px] object-cover",
+																					previewUrl.url || blogs?.thumbnail_url
+																						? ""
+																						: "hidden",
+																				)}
+																				id="preview"
+																			/>
+																			{previewUrl.isLoading && (
+																				<div className="absolute bg-slate-50/50 inset-0 flex items-center justify-center">
+																					<AiOutlineLoading3Quarters
+																						size={20}
+																						strokeWidth="4px"
+																						className="animate-spin "
+																					/>
+																				</div>
 																			)}
-																			id="preview"
-																		/>
+																		</div>
 																	</label>
 																	<input
 																		type="file"
@@ -440,24 +464,19 @@ const EditBlog = () => {
 																		id="file-upload"
 																		onChange={(event) =>
 																			field.onChange(async () => {
-																				setPreviewUrl(
-																					URL.createObjectURL(
+																				setPreviewUrl({
+																					url: URL.createObjectURL(
 																						(event?.target as HTMLInputElement)
 																							?.files?.[0] as File,
 																					),
-																				);
-																				form.setValue(
-																					"thumbnail_url",
-																					previewUrl,
-																				);
+																					isLoading: true,
+																				});
 																				form.clearErrors("thumbnail_url");
 																				const url = await handleUploadFile(
 																					(event?.target as HTMLInputElement)
 																						?.files?.[0] as File,
 																				);
 																				form.setValue("thumbnail_url", url);
-
-																				URL.revokeObjectURL(previewUrl);
 																			})
 																		}
 																		hidden

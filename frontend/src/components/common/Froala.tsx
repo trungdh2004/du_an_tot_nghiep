@@ -5,7 +5,6 @@ import "froala-editor/js/plugins.pkgd.min.js";
 import Froala from "react-froala-wysiwyg";
 const froalaEditorConfig = {
 	attribution: false,
-	
 	quickInsertEnabled: false,
 	imageDefaultWidth: 0,
 	imageResizeWithPercent: true,
@@ -142,16 +141,21 @@ const froalaEditorConfig = {
 type FroalaEditorType = {
 	content: string;
 	onChangeContext: (value: string) => void;
-	props?:any
+	props?: any;
 };
-const FroalaEditor = ({ content, onChangeContext,props }: FroalaEditorType) => {
+const FroalaEditor = ({
+	content,
+	onChangeContext,
+	props
+}: FroalaEditorType) => {
+	
 	return (
 		<div className="z-0">
 			<Froala
 				model={content}
 				onModelChange={onChangeContext}
 				tag="textarea"
-				config={{...props,froalaEditorConfig}}
+				config={{ ...froalaEditorConfig, ...props }}
 			></Froala>
 		</div>
 	);
