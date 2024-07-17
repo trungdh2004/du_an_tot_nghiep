@@ -119,7 +119,7 @@ const NewBlog = () => {
 	};
 	const debouncedChangeHandler = useDebounce(() => {
 		handleAutoSave();
-	}, 3000);
+	}, 1000);
 	console.log(tags);
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {

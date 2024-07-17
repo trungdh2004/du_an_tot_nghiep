@@ -64,9 +64,8 @@ const EditBlog = () => {
 			required_error: "Nội dung bài viết là bắt buộc",
 			invalid_type_error: "Nội dung bài viết là một chuỗi",
 		}),
-		published_at: z.string({
+		published_at: z.date({
 			required_error: "Ngày đăng bài viết là bắt buộc",
-			invalid_type_error: "Ngày đăng bài viết là một chuỗi",
 		}),
 		selected_tags: z
 			.array(z.object({ value: z.string(), label: z.string() }))
@@ -95,9 +94,7 @@ const EditBlog = () => {
 			form.setValue("selected_tags", selectedTags as any);
 			setBlogs(blog?.data);
 			setDefaultSelect(selectedTags);
-			setTags(
-				tags?.data?.map((tag: any) => ({ value: tag?._id, label: tag?.name })),
-			);
+			setTags(tags?.data);
 		})();
 	}, []);
 
@@ -143,19 +140,21 @@ const EditBlog = () => {
 			if (isOpen) {
 				toast.warning("Vui lòng chờ ảnh tải xong");
 			} else {
-				const payload = {
-					...values,
-					selected_tags: defaultSelect?.map((select: any) => select.value),
-				};
+				console.log("values:", values);
 
-				setStatusLoading({ isSubmitted: true, isLoading: true });
+				// const payload = {
+				// 	...values,
+				// 	selected_tags: defaultSelect?.map((select: any) => select.value),
+				// };
 
-				const reponse = await updateBlogs(id as string, payload);
-				if (reponse.status === 200) {
-					toast.success("Cập nhập bài viết thành công");
-				} else {
-					throw new Error("Cập nhập bài viết thất bại");
-				}
+				// setStatusLoading({ isSubmitted: true, isLoading: true });
+
+				// const reponse = await updateBlogs(id as string, payload);
+				// if (reponse.status === 200) {
+				// 	toast.success("Cập nhập bài viết thành công");
+				// } else {
+				// 	throw new Error("Cập nhập bài viết thất bại");
+				// }
 			}
 		} catch (error) {
 			if (error instanceof AxiosError) {
@@ -361,15 +360,25 @@ const EditBlog = () => {
 																		options={tags}
 																		isMulti
 																		{...field}
-																		value={defaultSelect}
 																		className="react-select-container"
 																		classNamePrefix="react-select"
 																		onChange={(e: any) => {
-																			form.setValue(
-																				"selected_tags",
-																				defaultSelect as any,
-																			);
-																			setDefaultSelect(e);
+																			console.log("e:", e);
+
+																			// form.setValue(
+																			// 	"selected_tags",
+																			// 	defaultSelect as any,
+																			// );
+																			// setDefaultSelect(e);
+																			// if (e?.length > 0) {
+																			// 	form.clearErrors("selected_tags");
+																			// } else {
+																			// 	form.setError("selected_tags", {
+																			// 		type: "custom",
+																			// 		message:
+																			// 			"Vui lòng chọn ít nhất 1 nhãn",
+																			// 	});
+																			// }
 																		}}
 																	/>
 																</div>
