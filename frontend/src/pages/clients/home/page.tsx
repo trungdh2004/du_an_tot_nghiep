@@ -6,6 +6,7 @@ const HomePage = () => {
 		<div>
 			<Slider />
 			<Carousel />
+			<div className="h-[420px]"></div>
 		</div>
 	);
 };

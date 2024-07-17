@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 const Slider = () => {
 	return (
-		<div className="overflow-hidden h-screen flex items-start justify-between gap-5 pl-4 lg:pl-10 mb-10">
+		<div className="overflow-hidden h-auto md:h-screen flex items-start justify-between gap-5 pl-4 lg:pl-10 mb-10">
 			<div className="space-y-5 mt-10 md:mt-28">
 				<motion.div
 					initial={{ opacity: 0, scale: 0.5 }}

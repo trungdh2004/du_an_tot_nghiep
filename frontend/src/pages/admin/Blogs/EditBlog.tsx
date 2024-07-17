@@ -51,7 +51,6 @@ const EditBlog = () => {
 	const { isOpen, setOpen, setClose } = useProcessBarLoading();
 	const { id } = useParams();
 	const [tags, setTags] = useState();
-	const [defaultSelect, setDefaultSelect] = useState([]);
 	const [blogs, setBlogs] = useState<z.infer<typeof formSchema>>();
 	const [previewUrl, setPreviewUrl] = useState("");
 	const [content, setContent] = useState("");
@@ -64,11 +63,11 @@ const EditBlog = () => {
 			required_error: "Nội dung bài viết là bắt buộc",
 			invalid_type_error: "Nội dung bài viết là một chuỗi",
 		}),
-		published_at: z.date({
-			required_error: "Ngày đăng bài viết là bắt buộc",
+		published_at: z.string({
+			required_error: "Bạn chưa nhập ngày",
 		}),
 		selected_tags: z
-			.array(z.object({ value: z.string(), label: z.string() }))
+			.array(z.object({ _id: z.string(), name: z.string() }))
 			.nonempty({ message: "Bạn phải chọn ít nhất 1 nhãn" }),
 		thumbnail_url: z.string({
 			message: "Bạn cần phải chọn ảnh thu nhỏ cho bài viết",
@@ -84,26 +83,19 @@ const EditBlog = () => {
 				showBlogsEdit(id as string),
 				getAllTags(),
 			]);
-			const selectedTags =
-				blog?.data?.selected_tags?.map((tag: any) => ({
-					value: tag?._id,
-					label: tag?.name,
-				})) || [];
+
 			setContent(blog?.data?.content);
 			form.reset(blog?.data);
-			form.setValue("selected_tags", selectedTags as any);
 			setBlogs(blog?.data);
-			setDefaultSelect(selectedTags);
-			setTags(tags?.data);
 		})();
 	}, []);
 
 	const handleAutoSave = async () => {
 		const formData = form.getValues();
+
 		const { _id, ...rest } = formData as any;
 		const payload = {
 			...rest,
-			selected_tags: defaultSelect?.map((tag: any) => tag?.value),
 			thumbnail_url: previewUrl || formData?.thumbnail_url,
 		};
 		try {
@@ -123,7 +115,6 @@ const EditBlog = () => {
 			const formdata = new FormData();
 			formdata.append("image", file);
 			const { data } = await uploadFileService(formdata);
-			console.log(data);
 			setPreviewUrl(data.path);
 			return data.path;
 		} catch (error) {
@@ -140,12 +131,9 @@ const EditBlog = () => {
 			if (isOpen) {
 				toast.warning("Vui lòng chờ ảnh tải xong");
 			} else {
-				console.log("values:", values);
-
-				// const payload = {
-				// 	...values,
-				// 	selected_tags: defaultSelect?.map((select: any) => select.value),
-				// };
+				const payload = {
+					...values,
+				};
 
 				// setStatusLoading({ isSubmitted: true, isLoading: true });
 
@@ -248,6 +236,9 @@ const EditBlog = () => {
 										});
 									}
 								}}
+								props={{
+									heightMin: "400px",
+								}}
 							/>
 							{/*  */}
 							<FormField
@@ -309,7 +300,9 @@ const EditBlog = () => {
 																locale={vi}
 																mode="single"
 																selected={field.value as any}
-																onSelect={field.onChange}
+																onSelect={(e) => {
+																	field.onChange(e?.toISOString());
+																}}
 																disabled={(date) =>
 																	date < new Date() ||
 																	date < new Date("1900-01-01")
@@ -352,7 +345,9 @@ const EditBlog = () => {
 															className="border-none"
 														>
 															<AccordionTrigger className="pt-0 px-5 py-3 border-none">
-																<FormLabel>Nhãn</FormLabel>
+																<FormLabel className="cursor-pointer">
+																	Nhãn
+																</FormLabel>
 															</AccordionTrigger>
 															<AccordionContent className="px-5">
 																<div>
@@ -360,25 +355,12 @@ const EditBlog = () => {
 																		options={tags}
 																		isMulti
 																		{...field}
+																		getOptionLabel={(option) => option.name}
+																		getOptionValue={(option) => option._id}
 																		className="react-select-container"
 																		classNamePrefix="react-select"
 																		onChange={(e: any) => {
-																			console.log("e:", e);
-
-																			// form.setValue(
-																			// 	"selected_tags",
-																			// 	defaultSelect as any,
-																			// );
-																			// setDefaultSelect(e);
-																			// if (e?.length > 0) {
-																			// 	form.clearErrors("selected_tags");
-																			// } else {
-																			// 	form.setError("selected_tags", {
-																			// 		type: "custom",
-																			// 		message:
-																			// 			"Vui lòng chọn ít nhất 1 nhãn",
-																			// 	});
-																			// }
+																			field.onChange(e);
 																		}}
 																	/>
 																</div>
@@ -410,7 +392,9 @@ const EditBlog = () => {
 															className="border-none"
 														>
 															<AccordionTrigger className="pt-0 px-5 py-3 border-none">
-																<FormLabel>Hình ảnh thu nhỏ</FormLabel>
+																<FormLabel className="cursor-pointer">
+																	Hình ảnh thu nhỏ
+																</FormLabel>
 															</AccordionTrigger>
 															<AccordionContent className="px-5 ">
 																<div className="w-full ">

@@ -8,10 +8,52 @@ import "swiper/css";
 import { Link } from "react-router-dom";
 const Carousel = () => {
 	const swiperRef = useRef<SwiperType>();
+	const slides = [
+		{
+			tag: "Khám phá mới",
+			title: "Mua sắm mới nhất tại shop chúng tôi",
+			img: "image 11.png",
+		},
+		{
+			tag: "Khám phá mới",
+			title: "Mua sắm mới nhất tại shop chúng tôi",
+			img: "image 11.png",
+		},
+		{
+			tag: "Khám phá mới",
+			title: "Mua sắm mới nhất tại shop chúng tôi",
+			img: "image 11.png",
+		},
+		{
+			tag: "Khám phá mới",
+			title: "Mua sắm mới nhất tại shop chúng tôi",
+			img: "image 11.png",
+		},
+		{
+			tag: "Khám phá mới",
+			title: "Mua sắm mới nhất tại shop chúng tôi",
+			img: "image 11.png",
+		},
+		{
+			tag: "Khám phá mới",
+			title: "Mua sắm mới nhất tại shop chúng tôi",
+			img: "image 11.png",
+		},
+		{
+			tag: "Khám phá mới",
+			title: "Mua sắm mới nhất tại shop chúng tôi",
+			img: "image 11.png",
+		},
+		{
+			tag: "Khám phá mới",
+			title: "Mua sắm mới nhất tại shop chúng tôi",
+			img: "image 11.png",
+		},
+	];
 	return (
 		<div>
-			<div className="padding flex items-center justify-between">
-				<h2 className="text-4xl font-bold">
+			<div className="padding flex flex-col sm:flex-row items-end sm:items-center justify-between">
+				<h2 className="text-2xl font-semibold sm:text-4xl sm:font-bold">
 					Discover more. Good things are waiting for you
 				</h2>
 				<div className="flex items-center gap-7 *:flex *:items-center *:justify-center *:size-10 *:max-w-10 *:max-h-10 *:rounded-full *:border *:border-gray-200">
@@ -23,93 +65,49 @@ const Carousel = () => {
 					</button>
 				</div>
 			</div>
-			<div className="pl-[50px] mt-14">
+			<div className="pl-4 md:pl-[50px] mt-6 md:mt-14">
 				<Swiper
+					className="swiper-container"
 					// install Swiper modules
 					modules={[Navigation]}
-					spaceBetween={50}
+					spaceBetween={24}
 					loop={true}
-					slidesPerView={2.5}
+					slidesPerView={1.5}
 					onBeforeInit={(swiper) => {
 						swiperRef.current = swiper;
 					}}
+					breakpoints={{
+						640: {
+							slidesPerView: 2.5,
+							spaceBetween: 30,
+						},
+						1024: {
+							slidesPerView: 2.5,
+							spaceBetween: 66,
+						},
+					}}
 				>
-					<SwiperSlide className="">
-						<div className="flex items-start bg-[#FFEAEA] p-9 pt-3 rounded-lg">
-							<div className="">
-								<p className="text-sm font-medium">Khám phá mới</p>
-								<h3 className="text-xl font-semibold max-w-[190px] mt-7 mb-11">
-									Mua sắm mới nhất tại shop chúng tôi
-								</h3>
-								<Link
-									to={"/shop"}
-									className="text-sm font-medium py-2 px-5 bg-white rounded-3xl"
-								>
-									Mua ngay
-								</Link>
+					{slides?.map((slide) => (
+						<SwiperSlide className="min-w-[298px]">
+							<div className="flex items-start justify-between bg-[#FFEAEA] p-4 pb-6 md:p-9 md:pt-3 rounded-lg">
+								<div className="">
+									<p className="text-sm font-medium">{slide.tag}</p>
+									<h3 className="text-base md:text-xl font-semibold max-w-[190px] my-4 sm:mt-5 sm:mb-8 md:mt-7 md:mb-11">
+										{slide?.title}
+									</h3>
+									<Link
+										to={"/shop"}
+										className="text-sm font-medium py-1.5 px-3 md:py-2 md:px-5 bg-white rounded-3xl"
+									>
+										Mua ngay
+									</Link>
+								</div>
+								<div className="max-w-[99px] max-h-[111px] md:w-[193px] md:h-[209px]">
+									<img src={slide?.img} alt="" className="w-full h-full" />
+								</div>
 							</div>
-							<div className="w-[193px] h-[209px]">
-								<img src="image 11.png" alt="" className="w-full h-full" />
-							</div>
-						</div>
-					</SwiperSlide>
-					<SwiperSlide className="">
-						<div className="flex items-start bg-[#FFEAEA] p-9 pt-3 rounded-lg">
-							<div className="">
-								<p className="text-sm font-medium">Khám phá mới</p>
-								<h3 className="text-xl font-semibold max-w-[190px] mt-7 mb-11">
-									Mua sắm mới nhất tại shop chúng tôi
-								</h3>
-								<Link
-									to={"/shop"}
-									className="text-sm font-medium py-2 px-5 bg-white rounded-3xl"
-								>
-									Mua ngay
-								</Link>
-							</div>
-							<div className="w-[193px] h-[209px]">
-								<img src="image 11.png" alt="" className="w-full h-full" />
-							</div>
-						</div>
-					</SwiperSlide>
-					<SwiperSlide className="">
-						<div className="flex items-start bg-[#FFEAEA] p-9 pt-3 rounded-lg">
-							<div className="">
-								<p className="text-sm font-medium">Khám phá mới</p>
-								<h3 className="text-xl font-semibold max-w-[190px] mt-7 mb-11">
-									Mua sắm mới nhất tại shop chúng tôi
-								</h3>
-								<Link
-									to={"/shop"}
-									className="text-sm font-medium py-2 px-5 bg-white rounded-3xl"
-								>
-									Mua ngay
-								</Link>
-							</div>
-							<div className="w-[193px] h-[209px]">
-								<img src="image 11.png" alt="" className="w-full h-full" />
-							</div>
-						</div>
-					</SwiperSlide>
-					<SwiperSlide className="">
-						<div className="flex items-start bg-[#FFEAEA] p-9 pt-3 rounded-lg">
-							<div className="">
-								<p className="text-sm font-medium">Khám phá mới</p>
-								<h3 className="text-xl font-semibold max-w-[190px] mt-7 mb-11">
-									Mua sắm mới nhất tại shop chúng tôi
-								</h3>
-								<Link
-									to={"/shop"}
-									className="text-sm font-medium py-2 px-5 bg-white rounded-3xl"
-								>
-									Mua ngay
-								</Link>
-							</div>
-							<div className="w-[193px] h-[209px]">
-								<img src="image 11.png" alt="" className="w-full h-full" />
-							</div>
-						</div>
-					</SwiperSlide>
+						</SwiperSlide>
+					))}
 				</Swiper>
 			</div>
 		</div>

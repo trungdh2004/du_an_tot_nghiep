@@ -168,6 +168,6 @@ const sidebarConfig: any[] = [
 		icon: LuLayoutDashboard,
 		isVisible: true,
 		label: "Thống kê",
-	},
+	}
 ];
 export default sidebarConfig;
