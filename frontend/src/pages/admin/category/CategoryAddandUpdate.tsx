@@ -31,7 +31,7 @@ interface FormDialog {
 	title?: "Thêm danh mục" | "Cập nhật";
 	labelConfirm?: string;
 	handleClose: () => void;
-  handlePaging: () => void;
+	handlePaging: () => void;
 }
 const formSchema = z.object({
 	name: z
@@ -61,17 +61,17 @@ const CategoryAdd = ({
 			name: "",
 			description: "",
 		},
-  });
-  console.log(open);
-  
+	});
+	console.log(open);
+
 	const onHandleUpdate = async (dataForm: any) => {
 		try {
 			const { data } = await instance.put(
 				`/category/updateCate/${open}`,
 				dataForm,
 			);
-      handleClose();
-      handlePaging();
+			handleClose();
+			handlePaging();
 			toast.success("Bạn cập nhật danh mục thành công");
 		} catch (error) {
 			console.error("Error:", error);
@@ -81,8 +81,8 @@ const CategoryAdd = ({
 		try {
 			const { data } = await instance.post(`/category/addCate`, dataForm);
 			form.reset();
-      handleClose();
-      handlePaging();
+			handleClose();
+			handlePaging();
 			toast.success("Bạn thêm danh mục thành công");
 		} catch (error) {
 			console.error("Error:", error);
