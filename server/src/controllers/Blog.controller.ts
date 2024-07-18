@@ -262,6 +262,8 @@ class BlogController {
           published_at: 1, // Trường email
           comments_count: 1, // Trường email
           countLike: 1, // Trường email
+          createdAt: 1,
+          updatedAt:1,
           selected_tags: 1,
           'user._id': 1,
           'user.full_name': 1,
