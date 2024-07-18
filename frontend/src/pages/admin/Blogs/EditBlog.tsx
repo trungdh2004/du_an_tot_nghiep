@@ -43,6 +43,7 @@ import { useParams } from "react-router-dom";
 import Select from "react-select";
 import { toast } from "sonner";
 import { z } from "zod";
+
 const EditBlog = () => {
 	const [statusLoading, setStatusLoading] = useState({
 		isSubmitted: false,
@@ -52,7 +53,10 @@ const EditBlog = () => {
 	const { id } = useParams();
 	const [tags, setTags] = useState();
 	const [blogs, setBlogs] = useState<z.infer<typeof formSchema>>();
-	const [previewUrl, setPreviewUrl] = useState("");
+	const [previewUrl, setPreviewUrl] = useState({
+		url: "",
+		isLoading: false,
+	});
 	const [content, setContent] = useState("");
 	const formSchema = z.object({
 		title: z.string({
@@ -63,7 +67,7 @@ const EditBlog = () => {
 			required_error: "Nội dung bài viết là bắt buộc",
 			invalid_type_error: "Nội dung bài viết là một chuỗi",
 		}),
-		published_at:z.string({
+		published_at: z.string({
 			required_error: "Bạn chưa nhập ngày",
 		}),
 		selected_tags: z
@@ -83,23 +87,21 @@ const EditBlog = () => {
 				showBlogsEdit(id as string),
 				getAllTags(),
 			]);
-			
+
 			setContent(blog?.data?.content);
 			form.reset(blog?.data);
 			setBlogs(blog?.data);
-			setTags(
-				tags?.data
-			);
+			setTags(tags?.data);
 		})();
 	}, []);
 
 	const handleAutoSave = async () => {
 		const formData = form.getValues();
-		
+
 		const { _id, ...rest } = formData as any;
 		const payload = {
 			...rest,
-			thumbnail_url: previewUrl || formData?.thumbnail_url,
+			thumbnail_url:formData?.thumbnail_url,
 		};
 		try {
 			setStatusLoading({ isSubmitted: true, isLoading: true });
@@ -118,7 +120,11 @@ const EditBlog = () => {
 			const formdata = new FormData();
 			formdata.append("image", file);
 			const { data } = await uploadFileService(formdata);
-			setPreviewUrl(data.path);
+			URL.revokeObjectURL(previewUrl.url);
+			setPreviewUrl({
+				url: data.path,
+				isLoading: false,
+			});
 			return data.path;
 		} catch (error) {
 			console.error(error);
@@ -131,7 +137,6 @@ const EditBlog = () => {
 	}, 5000);
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
-			
 			if (isOpen) {
 				toast.warning("Vui lòng chờ ảnh tải xong");
 			} else {
@@ -241,9 +246,8 @@ const EditBlog = () => {
 									}
 								}}
 								props={{
-									heightMin:"400px"
+									heightMin: "400px",
 								}}
-
 							/>
 							{/*  */}
 							<FormField
@@ -306,8 +310,8 @@ const EditBlog = () => {
 																mode="single"
 																selected={field.value as any}
 																onSelect={(e) => {
-																	field.onChange(e?.toISOString())
-																} }
+																	field.onChange(e?.toISOString());
+																}}
 																disabled={(date) =>
 																	date < new Date() ||
 																	date < new Date("1900-01-01")
@@ -350,7 +354,9 @@ const EditBlog = () => {
 															className="border-none"
 														>
 															<AccordionTrigger className="pt-0 px-5 py-3 border-none">
-																<FormLabel className="cursor-pointer">Nhãn</FormLabel>
+																<FormLabel className="cursor-pointer">
+																	Nhãn
+																</FormLabel>
 															</AccordionTrigger>
 															<AccordionContent className="px-5">
 																<div>
@@ -359,11 +365,11 @@ const EditBlog = () => {
 																		isMulti
 																		{...field}
 																		getOptionLabel={(option) => option.name}
-																		getOptionValue={option => option._id}
+																		getOptionValue={(option) => option._id}
 																		className="react-select-container"
 																		classNamePrefix="react-select"
 																		onChange={(e: any) => {
-																			field.onChange(e)
+																			field.onChange(e);
 																		}}
 																	/>
 																</div>
@@ -395,21 +401,24 @@ const EditBlog = () => {
 															className="border-none"
 														>
 															<AccordionTrigger className="pt-0 px-5 py-3 border-none">
-																<FormLabel className="cursor-pointer">Hình ảnh thu nhỏ</FormLabel>
+																<FormLabel className="cursor-pointer">
+																	Hình ảnh thu nhỏ
+																</FormLabel>
 															</AccordionTrigger>
 															<AccordionContent className="px-5 ">
 																<div className="w-full ">
 																	<label
 																		htmlFor="file-upload"
 																		className={cn(
-																			"w-full relative cursor-pointer  rounded-lg p-6",
+																			"w-full relative cursor-pointer  rounded-lg p-6 ",
 																		)}
 																		id=""
 																	>
 																		<div
 																			className={cn(
 																				"flex flex-col justify-center items-center ",
-																				(previewUrl || blogs?.thumbnail_url) &&
+																				(previewUrl.url ||
+																					blogs?.thumbnail_url) &&
 																					"hidden",
 																			)}
 																		>
@@ -424,16 +433,30 @@ const EditBlog = () => {
 																				PNG, JPG, GIF.
 																			</p>
 																		</div>
-																		<img
-																			src={previewUrl || blogs?.thumbnail_url}
-																			className={cn(
-																				"w-full relative max-h-[180px] object-cover",
-																				previewUrl || blogs?.thumbnail_url
-																					? ""
-																					: "hidden",
+																		<div className="max-h-[180px] relative">
+																			<img
+																				src={
+																					previewUrl?.url ||
+																					blogs?.thumbnail_url
+																				}
+																				className={cn(
+																					"w-full relative max-h-[180px] object-cover",
+																					previewUrl.url || blogs?.thumbnail_url
+																						? ""
+																						: "hidden",
+																				)}
+																				id="preview"
+																			/>
+																			{previewUrl.isLoading && (
+																				<div className="absolute bg-slate-50/50 inset-0 flex items-center justify-center">
+																					<AiOutlineLoading3Quarters
+																						size={20}
+																						strokeWidth="4px"
+																						className="animate-spin "
+																					/>
+																				</div>
 																			)}
-																			id="preview"
-																		/>
+																		</div>
 																	</label>
 																	<input
 																		type="file"
@@ -441,24 +464,19 @@ const EditBlog = () => {
 																		id="file-upload"
 																		onChange={(event) =>
 																			field.onChange(async () => {
-																				setPreviewUrl(
-																					URL.createObjectURL(
+																				setPreviewUrl({
+																					url: URL.createObjectURL(
 																						(event?.target as HTMLInputElement)
 																							?.files?.[0] as File,
 																					),
-																				);
-																				form.setValue(
-																					"thumbnail_url",
-																					previewUrl,
-																				);
+																					isLoading: true,
+																				});
 																				form.clearErrors("thumbnail_url");
 																				const url = await handleUploadFile(
 																					(event?.target as HTMLInputElement)
 																						?.files?.[0] as File,
 																				);
 																				form.setValue("thumbnail_url", url);
-
-																				URL.revokeObjectURL(previewUrl);
 																			})
 																		}
 																		hidden
