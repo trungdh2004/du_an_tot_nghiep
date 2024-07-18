@@ -59,6 +59,7 @@
     "react-router-dom": "^6.23.1",
     "react-select": "^5.8.0",
     "recharts": "^2.12.7",
+    "remarkable": "^2.0.1",
     "shadcn-ui": "^0.8.0",
     "sonner": "^1.4.41",
     "swiper": "^11.1.3",

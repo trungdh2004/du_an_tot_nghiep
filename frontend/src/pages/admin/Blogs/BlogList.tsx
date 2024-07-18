@@ -20,20 +20,24 @@ import PaginatedItems from '@/components/Pagination';
 import Paginations from '@/components/common/Pagination';
 import { SearchObjectType } from '@/types/searchObjecTypes';
 import { Link } from 'react-router-dom';
+import { it } from 'node:test';
+import { parseISO } from 'date-fns';
+import { format } from 'date-fns';
 
 type IBlog = {
     _id?: string,
     title: string,
     content: string,
     isDeleted: string,
+    createdAt: string,
     published_at: string,
     user: {
         avatarUrl?: string,
         email: string,
         _id: string,
         full_name: string,
-
     },
+    thumbnail_url?: string,
     meta_description: string,
 }
 
@@ -55,6 +59,8 @@ const BlogList = () => {
     const handleBlog = async () => {
         try {
             const { data } = await instance.post(`/blogs/pagingBlog`, searchObject);
+            console.log(data.content)
+
             setBlogs(data.content);
             setResponse({
                 pageCount: data.totalPage,
@@ -124,7 +130,7 @@ const BlogList = () => {
                                     </DropdownMenu>
                                 </div>
                                 <div className="h1/2">
-                                    <img src="https://minimal-kit-react.vercel.app/assets/images/covers/cover_1.jpg" className='w-full h-full object-cover' alt="" />
+                                    <img src={item.thumbnail_url} className='w-full h-full object-cover' alt="" />
                                     {/* <div className="-mt-5 pl-5">
                                         <img src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_1.jpg" className='w-[40px] h-[40px] border-[3px] border-white rounded-full' alt="" />
                                     </div> */}
@@ -135,7 +141,7 @@ const BlogList = () => {
                                 </div>
                                 {/* card-content */}
                                 <div className="h1/2 p-5">
-                                    <p className="text-xs text-[#212B36] opacity-50 pt-1 pb-2">02 Apr 2024</p>
+                                    <p className="text-xs text-[#212B36] opacity-50 pt-1 pb-2">{format(item.published_at || item.createdAt || "", "dd-MM-yyyy")}</p>
                                     <p className=" line-clamp-1 text-[#212B36] text-base font-semibold hover:underline transition-all duration-300">{item.title}</p>
                                     <p className="text-xs pt-2 text-gray-400 line-clamp-2">{item.meta_description}</p>
                                     <div className="flex space-x-4 min-[900px]:space-x-1 xl:space-x-4 absolute bottom-5 right-4">
