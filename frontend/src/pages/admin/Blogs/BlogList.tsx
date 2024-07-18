@@ -27,7 +27,13 @@ type IBlog = {
     content: string,
     isDeleted: string,
     published_at: string,
-    user: string,
+    user: {
+        avatarUrl?: string,
+        email: string,
+        _id: string,
+        full_name: string,
+
+    },
     meta_description: string,
 }
 
@@ -40,7 +46,7 @@ const BlogList = () => {
     })
     const [searchObject, setSearchObject] = useState<SearchObjectType>({
         pageIndex: 1,
-        pageSize: 6,
+        pageSize: 9,
         keyword: "",
         fieldSort: "",
         sort: 1,
@@ -80,6 +86,7 @@ const BlogList = () => {
     }
     // handleChangePag()
     console.log(blogs)
+
     return (
         <>
             <div className="">
@@ -118,11 +125,12 @@ const BlogList = () => {
                                 </div>
                                 <div className="h1/2">
                                     <img src="https://minimal-kit-react.vercel.app/assets/images/covers/cover_1.jpg" className='w-full h-full object-cover' alt="" />
-                                    <div className="-mt-5 pl-5">
+                                    {/* <div className="-mt-5 pl-5">
                                         <img src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_1.jpg" className='w-[40px] h-[40px] border-[3px] border-white rounded-full' alt="" />
-                                    </div>
+                                    </div> */}
                                     <div className="-mt-5 pl-5">
-                                        {/* <img src={ } className='w-[40px] h-[40px] border-[3px] border-white rounded-full' alt="" /> */}
+                                        <img src={item.user.avatarUrl} className='w-[40px] h-[40px] border-[3px] border-white rounded-full' alt="" />
+
                                     </div>
                                 </div>
                                 {/* card-content */}
@@ -141,7 +149,7 @@ const BlogList = () => {
                 ))}
 
             </div >
-            <div className="">
+            <div className="flex justify-center mt-5">
                 <Paginations pageCount={response.pageCount} handlePageClick={handleChangePag} />
             </div>
         </>

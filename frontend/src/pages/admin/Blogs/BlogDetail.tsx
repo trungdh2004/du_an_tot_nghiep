@@ -1,26 +1,24 @@
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import instance from "@/config/instance";
+import { TooltipComponent } from "@/components/common/TooltipComponent";
 import { showBlogsEdit } from "@/service/blog";
-import { parseISO } from "date-fns";
-import { da } from "date-fns/locale";
-import { format } from "path";
 import { useEffect, useState } from "react";
-import { SlOptions } from "react-icons/sl";
+import { LuFileEdit } from "react-icons/lu";
 import { useParams } from "react-router-dom";
 type IBlog = {
-    _id: string,
+    _id?: string,
     title: string,
-    user: string,
     content: string,
     isDeleted: string,
     published_at: string,
+    user: {
+        avatarUrl?: string,
+        email: string,
+        _id: string,
+        full_name: string,
+
+    },
     meta_description: string,
 }
+
 const BlogDetail = () => {
     const [blog, setBlog] = useState<IBlog>();
     const [user, setUser] = useState();
@@ -38,33 +36,26 @@ const BlogDetail = () => {
     // const formattedDate = format(pareDate, "dd/MM/yyyy");
     return (
         <>
-            <div className="w-[700px] mx-auto">
+            <div className="w-[900px] mx-auto">
                 {/* title */}
                 <h3 className="text-3xl font-bold text-[#222222] mt-5">{blog?.title}</h3>
                 {/* user-information */}
                 <div className="flex my-[30px] justify-between items-center">
                     {/*  */}
                     <div className="flex items-center gap-5">
-                        <div className="">
-                            <img src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_1.jpg"
-                                className='w-[50px] h-[50px]   rounded-full' alt="" />
+                        <div className="border border-slate-900 w-[50px] h-[50px] rounded-full overflow-hidden">
+                            <img src={blog?.user?.avatarUrl}
+                                className='w-full h-full object-cover  ' alt="" />
                         </div>
                         <div className="flex-row">
-                            <h3 className="text-[#292929] text-base font-medium ">Nguyễn Tuấn Đức</h3>
+                            <h3 className="text-[#292929] text-base font-medium ">{blog?.user?.full_name}</h3>
                             <p className='text-[#757575] text-sm'>{blog?.published_at}</p>
                         </div>
                     </div>
                     <div className="">
-
-                        <DropdownMenu >
-                            <DropdownMenuTrigger><SlOptions /></DropdownMenuTrigger>
-                            <DropdownMenuContent align='end'>
-                                {/* <DropdownMenuLabel>Xóa</DropdownMenuLabel>
-                                    <DropdownMenuSeparator /> */}
-                                <DropdownMenuItem >Xóa</DropdownMenuItem>
-                                <DropdownMenuItem>Sửa</DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <TooltipComponent label="Chỉnh sửa bài viết" >
+                            <div className=" cursor-pointer"><LuFileEdit size={20} /></div>
+                        </TooltipComponent>
                     </div>
                 </div>
                 {/* blog-content */}
