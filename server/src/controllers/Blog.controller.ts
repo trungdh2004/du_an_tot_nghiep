@@ -55,6 +55,8 @@ class BlogController {
           message: "Không có bài blog nào",
         });
       }
+      const meta_title = truncateSentence(title, 30) || "";
+      const meta_description = truncateSentence(content, 50) || "";
       const newPos = await BlogsModel.findByIdAndUpdate(
         existingBlog?._id,
         {
@@ -63,6 +65,8 @@ class BlogController {
           thumbnail_url,
           selected_tags,
           published_at,
+          meta_title,
+          meta_description
         },
         { new: true }
       );
@@ -263,7 +267,8 @@ class BlogController {
           comments_count: 1, // Trường email
           countLike: 1, // Trường email
           createdAt: 1,
-          updatedAt:1,
+          updatedAt: 1,
+          thumbnail_url:1,
           selected_tags: 1,
           'user._id': 1,
           'user.full_name': 1,
