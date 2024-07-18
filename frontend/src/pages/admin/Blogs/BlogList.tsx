@@ -1,28 +1,19 @@
-import React, { useEffect, useState } from 'react'
-import { FaCommentDots, FaEye, FaShareAlt } from 'react-icons/fa';
-import { SlOptionsVertical } from "react-icons/sl";
+import Paginations from '@/components/common/Pagination';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Button } from '@/components/ui/button';
-import { AspectRatio } from '@radix-ui/react-aspect-ratio';
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 import { Input } from '@/components/ui/input';
 import instance from '@/config/instance';
-import { da } from 'date-fns/locale';
-import useDebounce from '@/hooks/shared';
-import { typeResponse } from '@/types/typeReponse';
-import PaginatedItems from '@/components/Pagination';
-import Paginations from '@/components/common/Pagination';
 import { SearchObjectType } from '@/types/searchObjecTypes';
-import { Link } from 'react-router-dom';
-import { it } from 'node:test';
-import { parseISO } from 'date-fns';
+import { typeResponse } from '@/types/typeReponse';
 import { format } from 'date-fns';
+import { useEffect, useState } from 'react';
+import { FaCommentDots, FaEye } from 'react-icons/fa';
+import { SlOptionsVertical } from "react-icons/sl";
+import { Link } from 'react-router-dom';
 
 type IBlog = {
     _id?: string,
@@ -37,6 +28,8 @@ type IBlog = {
         _id: string,
         full_name: string,
     },
+    views_count: number,
+    comments_count: number,
     thumbnail_url?: string,
     meta_description: string,
 }
@@ -136,17 +129,16 @@ const BlogList = () => {
                                     </div> */}
                                     <div className="-mt-5 pl-5">
                                         <img src={item.user.avatarUrl} className='w-[40px] h-[40px] border-[3px] border-white rounded-full' alt="" />
-
                                     </div>
                                 </div>
                                 {/* card-content */}
                                 <div className="h1/2 p-5">
                                     <p className="text-xs text-[#212B36] opacity-50 pt-1 pb-2">{format(item.published_at || item.createdAt || "", "dd-MM-yyyy")}</p>
-                                    <p className=" line-clamp-1 text-[#212B36] text-base font-semibold hover:underline transition-all duration-300">{item.title}</p>
+                                    <Link to={`/admin/blogs/${item._id}`} className=" line-clamp-1 text-[#212B36] text-base font-semibold hover:underline transition-all duration-300">{item.title}</Link>
                                     <p className="text-xs pt-2 text-gray-400 line-clamp-2">{item.meta_description}</p>
                                     <div className="flex space-x-4 min-[900px]:space-x-1 xl:space-x-4 absolute bottom-5 right-4">
-                                        <span className="text-[#212B36] text-xs flex items-center gap-1"><FaCommentDots />94.34k</span>
-                                        <span className="text-[#212B36] text-xs flex items-center gap-1"> <FaEye />24.34k</span>
+                                        <span className="text-[#212B36] text-xs flex items-center gap-1"><FaCommentDots />{item.comments_count}</span>
+                                        <span className="text-[#212B36] text-xs flex items-center gap-1"> <FaEye />{item.views_count}</span>
                                     </div>
                                 </div>
                             </div>
