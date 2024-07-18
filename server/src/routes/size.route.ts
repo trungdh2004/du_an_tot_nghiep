@@ -4,6 +4,7 @@ import SizeController from "../controllers/product/size.controller";
 const routerSize = Router();
 
 routerSize.post("/paging", SizeController.pagingSize);
+routerSize.post("/getAll", SizeController.getAllSize);
 routerSize.post("/addSize", SizeController.addSize);
 routerSize.delete("/deleteSize/:id", SizeController.deleteById);
 routerSize.put("/updateSize/:id", SizeController.updateSize);

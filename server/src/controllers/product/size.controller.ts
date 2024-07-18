@@ -120,6 +120,24 @@ class SizeController {
     }
   }
 
+  async getAllSize(req: RequestModel, res: Response) {
+    try {
+      const {tab = 1} = req.body 
+
+      const allSize = await SizeModel.find({
+        deleted:tab === 1 ? false : true
+      });
+      return res.status(STATUS.OK).json({
+        message: "Lấy giá trị thành công",
+        data: allSize,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
   async getSizeById(req: RequestModel, res: Response) {
 try {
       const { id } = req.params;
