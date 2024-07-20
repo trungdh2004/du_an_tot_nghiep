@@ -3,12 +3,7 @@ import { IAttribute } from "../../interface/product";
 
 const AttributeSchema = new mongoose.Schema(
   {
-    product: {
-      type: mongoose.Types.ObjectId,
-      required: true,
-      ref: "Product",
-      index: true,
-    },
+    
     color: {
       ref: "Color",
       type: mongoose.Types.ObjectId,

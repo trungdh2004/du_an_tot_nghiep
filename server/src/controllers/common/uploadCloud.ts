@@ -1,22 +1,20 @@
 import { Request, Response } from "express";
+import STATUS from "../../utils/status";
 
 class UploadController {
   uploadSingleFileCloudinary = async (req: Request, res: Response) => {
     try {
-      console.log(req.file);
-
       const file = req.file;
-
       if (!file) {
         return res.status(401).json({
           message: "Message not found",
         });
       }
-      return res.status(200).json(file);
+      return res.status(STATUS.OK).json(file);
     } catch (error: any) {
       // handle error here
       console.error(error);
-      return res.status(500).json({
+      return res.status(STATUS.INTERNAL).json({
         message: error.message,
       });
     }
@@ -25,8 +23,12 @@ class UploadController {
   uploadMultipleFileCloudinary = async (req: Request, res: Response) => {
     try {
       const files = req.files;
-      return res.status(200).json(files);
-    } catch (error) {}
+      return res.status(STATUS.OK).json(files);
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      })
+    }
   };
 }
 
