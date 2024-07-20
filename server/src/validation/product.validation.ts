@@ -18,6 +18,7 @@ export const categoryValidation = Joi.object({
 });
 
 export const productValidations = Joi.object({
+  _id: Joi.string().optional(),
   name: Joi.string().required().messages({}),
   price: Joi.number().required().messages({}),
   discount: Joi.number().required().messages({}),
@@ -27,7 +28,36 @@ export const productValidations = Joi.object({
   images: Joi.array().items(
     Joi.object({
       url: Joi.string().required().messages({}),
+      _id:Joi.string().optional()
     })
   ),
-  attributes: Joi.array().items(Joi.string().required().messages({})),
+  attributes: Joi.array().items(
+    Joi.object({
+      color: Joi.string().required().messages({}),
+      size: Joi.string().required().messages({}),
+      price: Joi.number().required().messages({}),
+      quantity: Joi.number().required().messages({}),
+      discount: Joi.number().required().messages({}),
+      createdAt: Joi.date().optional(),
+      _id: Joi.string().optional(),
+      updatedAt: Joi.date().optional(),
+      __v: Joi.number().optional(),
+    })
+  ),
+  quantitySold:Joi.number().optional(),
+  quantity:Joi.number().optional()
 });
+
+
+export const productSliderValidation = Joi.object({
+  title: Joi.string().required().messages({}),
+  label: Joi.string().required().messages({}),
+  index: Joi.number().required().messages({}),
+  product: Joi.string().required().messages({}),
+  colorCode: Joi.string().required().messages({})
+})
+
+export const categoryActiveValidation = Joi.object({
+  index: Joi.number().required().messages({}),
+  category: Joi.string().required().messages({}),
+})

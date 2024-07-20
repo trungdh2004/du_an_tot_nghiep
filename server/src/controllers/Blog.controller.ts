@@ -3,7 +3,7 @@ import { RequestModel } from "../interface/models";
 import STATUS from "../utils/status";
 import BlogsModel from "../models/Blogs.schema";
 import { BlogValidation } from "../validation/blog.validation";
-import { truncateSentence } from "../utils/cutText";
+import { truncateSentence, trunTextHtmlConvers } from "../utils/cutText";
 import { formatDataPaging } from "../common/pagingData";
 
 class BlogController {
@@ -56,7 +56,7 @@ class BlogController {
         });
       }
       const meta_title = truncateSentence(title, 30) || "";
-      const meta_description = truncateSentence(content, 50) || "";
+      const meta_description = trunTextHtmlConvers(content, 70) || "";
       const newPos = await BlogsModel.findByIdAndUpdate(
         existingBlog?._id,
         {
