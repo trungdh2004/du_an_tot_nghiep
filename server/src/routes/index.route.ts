@@ -10,14 +10,18 @@ import routerTags from "./tags.route";
 import routerBlogs from "./blog.route";
 import routerSize from "./product/size.route";
 import routerColor from "./product/color.route";
+import routerCategoryActive from "./product/categoryActive.route";
+import routerProductSlider from "./product/productSlider.route";
 
 const router = Router();
 
 router.use("/auth", routerAuth);
 router.use("/address", authentication, routerAddress);
 router.use("/category", routerCategory);
+router.use("/categoryActive", routerCategoryActive);
 router.use("/color", routerColor);
 router.use("/product", routerProduct);
+router.use("/productSlider", routerProductSlider);
 router.use("/admin", routerAdmin);
 router.use("/upload", routerUpload);
 router.use("/tags", routerTags);

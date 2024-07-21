@@ -3,7 +3,7 @@ import { RequestModel } from "../interface/models";
 import STATUS from "../utils/status";
 import BlogsModel from "../models/Blogs.schema";
 import { BlogValidation } from "../validation/blog.validation";
-import { truncateSentence } from "../utils/cutText";
+import { truncateSentence, trunTextHtmlConvers } from "../utils/cutText";
 import { formatDataPaging } from "../common/pagingData";
 
 class BlogController {
@@ -55,6 +55,8 @@ class BlogController {
           message: "Không có bài blog nào",
         });
       }
+      const meta_title = truncateSentence(title, 30) || "";
+      const meta_description = trunTextHtmlConvers(content, 70) || "";
       const newPos = await BlogsModel.findByIdAndUpdate(
         existingBlog?._id,
         {
@@ -63,6 +65,8 @@ class BlogController {
           thumbnail_url,
           selected_tags,
           published_at,
+          meta_title,
+          meta_description
         },
         { new: true }
       );
@@ -190,7 +194,6 @@ class BlogController {
         pageIndex,
         tab=1,
       } = req.body;
-      console.log("hehe");
       
       const user = req.user;
       let limit = pageSize || 10;
@@ -263,7 +266,8 @@ class BlogController {
           comments_count: 1, // Trường email
           countLike: 1, // Trường email
           createdAt: 1,
-          updatedAt:1,
+          updatedAt: 1,
+          thumbnail_url:1,
           selected_tags: 1,
           'user._id': 1,
           'user.full_name': 1,

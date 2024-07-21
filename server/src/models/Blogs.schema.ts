@@ -24,12 +24,15 @@ const BlogsSchema = new mongoose.Schema(
     // },
     meta_title: {
       type: String,
+      default:""
     },
     meta_description: {
       type: String,
+      default:""
     },
     content: {
       type: String,
+      default:""
     },
     views_count: {
       type: Number,

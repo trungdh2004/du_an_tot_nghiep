@@ -30,7 +30,6 @@ const ProductSchema = new mongoose.Schema({
   ],
   slug: {
     type: String,
-    required: true,
     unique: true,
     index: true,
   },
@@ -39,7 +38,7 @@ const ProductSchema = new mongoose.Schema({
     default: false,
   },
   category: {
-    ref: "BrandModel",
+    ref: "Category",
     type: mongoose.Types.ObjectId,
     required: true,
   },
@@ -51,12 +50,18 @@ const ProductSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  isSpecial: {
+    type: Boolean,
+    default: false,
+  },
   attributes: [
     {
       type: mongoose.Types.ObjectId,
       ref: "Attribute",
     },
   ],
+}, {
+  timestamps:true
 });
 
 ProductSchema.pre<IProduct>("save", async function (next) {
