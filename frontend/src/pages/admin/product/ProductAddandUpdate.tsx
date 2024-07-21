@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -34,6 +34,8 @@ import ImageUploading, { ImageListType } from "react-images-uploading";
 import { CiCircleMinus, CiCirclePlus } from "react-icons/ci";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
+import { getAllCategory } from "@/service/category-admin";
+import { getAllSize } from "@/service/size-admin";
 const formSchema = z.object({
 	name: z.string().min(1, {
 		message: "Bạn phải nhập tên sản phẩm",
@@ -80,22 +82,32 @@ const ProductAddandUpdate = () => {
 	const [images, setImages] = useState<ImageListType>([]);
 	const maxNumber = 8; // Số lượng ảnh tối đa có thể tải lên
 
-	const category = [
-		{ _id: 1, name: "Danh mục 1" },
-		{ _id: 2, name: "Danh mục 2" },
-		{ _id: 3, name: "Danh mục 3" },
-		{ _id: 4, name: "Danh mục 4" },
-		{ _id: 5, name: "Danh mục 5" },
-		{ _id: 6, name: "Danh mục 6" },
-	];
-	const size = [
-		{ _id: 1, name: "size 1" },
-		{ _id: 2, name: "size 2" },
-		{ _id: 3, name: "size 3" },
-		{ _id: 4, name: "size 4" },
-		{ _id: 5, name: "size 5" },
-		{ _id: 6, name: "size 6" },
-	];
+	const [category, setCategory] = useState([]);
+	const [size, setSize] = useState([]);
+	useEffect(() => {
+		(async () => {
+			try {
+				const { data } = await getAllCategory();
+				console.log(data);
+				setCategory(data.data);
+			} catch (error) {
+				console.log(error);
+			}
+		})();
+	}, []);
+
+	useEffect(() => {
+		(async () => {
+			try {
+				const { data } = await getAllSize();
+				console.log(data);
+				setSize(data.data);
+			} catch (error) {
+				console.log(error);
+			}
+		})();
+	}, []);
+
 	const color = [
 		{ _id: 1, name: "color 1" },
 		{ _id: 2, name: "color 2" },
@@ -349,7 +361,7 @@ const ProductAddandUpdate = () => {
 												onChange={async (imageList: ImageListType) => {
 													try {
 														setOpen();
-														setImages(imageList);
+
 														const formData = new FormData();
 														for (let i = 0; i < imageList.length; i++) {
 															formData.append(
@@ -363,6 +375,11 @@ const ProductAddandUpdate = () => {
 															return image?.path;
 														});
 														console.log(arrImg);
+														const dataImage = arrImg?.map((image: any) => {
+															return { data_url: image };
+														});
+														console.log(dataImage);
+														setImages(imageList);
 
 														form.setValue("array_image", arrImg);
 													} catch (error) {
@@ -412,25 +429,28 @@ const ProductAddandUpdate = () => {
 																/>
 															</div>
 															<div className="grid grid-cols-4 gap-3 p-3">
-																{imageList.map((image, index) => (
-																	<div
-																		key={index}
-																		className="image-item relative"
-																	>
-																		<img
-																			src={image["data_url"]}
-																			alt=""
-																			width="100"
-																			onClick={() => onImageUpdate(index)}
-																			className="cursor-pointer w-full h-[100px]"
-																		/>
-																		<AiFillCloseCircle
-																			className="absolute top-2 right-2 cursor-pointer"
-																			size={20}
-																			onClick={() => onImageRemove(index)}
-																		/>
-																	</div>
-																))}
+                                {imageList.map((image, index) => {
+                                  console.log(image);
+																	return (
+																		<div
+																			key={index}
+																			className="image-item relative"
+																		>
+																			<img
+																				src={image["data_url"]}
+																				alt=""
+																				width="100"
+																				onClick={() => onImageUpdate(index)}
+																				className="cursor-pointer w-full h-[100px]"
+																			/>
+																			<AiFillCloseCircle
+																				className="absolute top-2 right-2 cursor-pointer"
+																				size={20}
+																				onClick={() => onImageRemove(index)}
+																			/>
+																		</div>
+																	);
+																})}
 															</div>
 														</div>
 													);

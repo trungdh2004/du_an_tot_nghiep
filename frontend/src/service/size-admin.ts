@@ -29,3 +29,9 @@ export const unhiddenListSize = async (listId: any) => {
 	});
 	return data;
 };
+
+
+export const getAllSize = async () => {
+  const data = await instance.get(`size/getAll`);
+  return data;
+}
