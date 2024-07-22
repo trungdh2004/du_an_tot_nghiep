@@ -8,6 +8,7 @@ import UserDetail from "@/pages/admin/users/UserDetail";
 import UserIndex from "@/pages/admin/users/UserIndex";
 import PrivateRouter from "./PrivateRouter";
 import BlogDetail from "@/pages/admin/Blogs/BlogDetail";
+import TagIndex from "@/pages/admin/tags/TagIndex";
 
 const AdminRouter = [
 	{
@@ -37,6 +38,10 @@ const AdminRouter = [
 			{
 				path: "category",
 				element: <CategoryIndex />,
+			},
+			{
+				path: "tags",
+				element: <TagIndex />,
 			},
 			{
 				path: "blogs",
