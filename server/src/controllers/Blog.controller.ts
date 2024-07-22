@@ -3,7 +3,7 @@ import { RequestModel } from "../interface/models";
 import STATUS from "../utils/status";
 import BlogsModel from "../models/Blogs.schema";
 import { BlogValidation } from "../validation/blog.validation";
-import { truncateSentence } from "../utils/cutText";
+import { truncateSentence, trunTextHtmlConvers } from "../utils/cutText";
 import { formatDataPaging } from "../common/pagingData";
 
 class BlogController {
@@ -55,6 +55,8 @@ class BlogController {
           message: "Không có bài blog nào",
         });
       }
+      const meta_title = truncateSentence(title, 30) || "";
+      const meta_description = trunTextHtmlConvers(content, 70) || "";
       const newPos = await BlogsModel.findByIdAndUpdate(
         existingBlog?._id,
         {
@@ -63,6 +65,8 @@ class BlogController {
           thumbnail_url,
           selected_tags,
           published_at,
+          meta_title,
+          meta_description
         },
         { new: true }
       );
@@ -190,7 +194,6 @@ class BlogController {
         pageIndex,
         tab=1,
       } = req.body;
-      console.log("hehe");
       
       const user = req.user;
       let limit = pageSize || 10;
@@ -210,8 +213,8 @@ class BlogController {
         $lookup: {
           from: 'users',           // Collection to join
           localField: 'user_id',    // Field from the input documents
-          foreignField: '_id',         // Field from the documents of the "from" collection
-          as: 'user'               // Output array field
+          foreignField: '_id',
+          as:'user'// Field from the documents of the "from" collection
         }
       })
 
@@ -262,6 +265,9 @@ class BlogController {
           published_at: 1, // Trường email
           comments_count: 1, // Trường email
           countLike: 1, // Trường email
+          createdAt: 1,
+          updatedAt: 1,
+          thumbnail_url:1,
           selected_tags: 1,
           'user._id': 1,
           'user.full_name': 1,
@@ -271,14 +277,22 @@ class BlogController {
       });
 
       const countDocuments = await BlogsModel.aggregate([
-        
         ...pipeline,
+        
         {
           $count: "total",
         },
       ]);
 
-      const listBlogs = await BlogsModel.aggregate(pipeline)
+      const listBlogs = await BlogsModel.aggregate([
+        ...pipeline,
+        {
+          $unwind: {
+            path: '$user',
+            preserveNullAndEmptyArrays: true 
+          }
+        }
+      ])
         .collation({
           locale: "en_US",
           strength: 1,
@@ -296,6 +310,47 @@ class BlogController {
       return res.status(STATUS.OK).json(data);
     } catch (error) {
       return res.status(STATUS.INTERNAL).json({ error: error });
+    }
+  }
+
+  async getBlogById(req: RequestModel, res: Response) {
+    try {
+      const {id} = req.params
+
+      
+      if (!id) return res.status(STATUS.BAD_REQUEST).json({
+        message:"Bạn chưa chọn bài viết"
+      })
+
+      const existingBlog = await BlogsModel.findById(id).populate([
+        {
+          path: "user_id",
+          model: "User",
+          select: {
+            "_id": 1,
+            "full_name": 1,
+            "email": 1,
+            "avatarUrl":1
+          }
+        },
+        {
+          path: "selected_tags",
+          model:"Tags"
+        }
+      ])
+
+      if (!existingBlog) return res.status(STATUS.BAD_REQUEST).json({
+        message:"Không có bài viết nào"
+      })
+
+      return res.status(STATUS.OK).json({
+        message: "Lấy thành công",
+        data:existingBlog
+      })
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error?.message,
+      });
     }
   }
 }

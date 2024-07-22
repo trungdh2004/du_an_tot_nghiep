@@ -1,27 +1,24 @@
+import DialogConfirm from "@/components/common/DialogConfirm";
 import TableComponent from "@/components/common/TableComponent";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import instance from "@/config/instance";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { format, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
 import { HiOutlineDotsVertical } from "react-icons/hi";
-import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Input } from "@/components/ui/input";
 import { useDebounceCallback } from "usehooks-ts";
 import ColorForm from "./ColorForm";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import DialogConfirm from "@/components/common/DialogConfirm";
-import { object } from "zod";
+import { hiddenListColor, unHiddenListColor } from "@/service/color";
 interface IData {
     _id: string;
     name: string;
@@ -45,16 +42,17 @@ export const unhiddencolor = async (id: string | boolean) => {
 
 const ColorList = () => {
     const [openId, setOpenId] = useState<string | boolean>(false);
-    const [openUnhiddenCategory, setopenUnhiddenCategory] = useState<string | boolean>(false);
     const [data, setData] = useState<IData[]>([])
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({}); // xử lí selected
-    const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
-    const [openUnhiddenColor, setopenUnhiddenColor] = useState<
-        string | boolean
-    >(false);
+    const [listRowSelected, setListRowSelected] = useState<IData[]>([]);
     const [openHiddenColor, setOpenHiddenColor] = useState<
         string | boolean
     >(false);
+    const [openUnhiddenColor, setopenUnhiddenColor] = useState<
+        string | boolean
+    >(false);
+    const [openHiddenListColors, setOpenHiddenListColors] = useState<string | boolean>(false);
+    const [openUnHiddenListColors, setOpenUnHiddenListColors] = useState<string | boolean>(false);
 
     const [searchObject, setSearchObject] = useState<any>({
         pageIndex: 1,
@@ -65,6 +63,9 @@ const ColorList = () => {
         tab: 1,
     });
     // console.log(searchObject);
+    const listIdColor = listRowSelected.map((color: any) => {
+        return color._id
+    });
     const [response, setResponse] = useState<any>({
         pageCount: 0,
         totalElement: 0, //tổng số phần tử
@@ -96,17 +97,63 @@ const ColorList = () => {
             toast.error("Ẩn danh mục thất bại");
         }
     };
-
     const handleUnhiddenColor = async (id: string | boolean) => {
         try {
             const { data } = await unhiddencolor(id);
             setopenUnhiddenColor(false);
             handleColor();
-            toast.success("Bỏ ẩn danh mục thành công");
+            toast.success("Ẩn màu sắc thành công");
         } catch (error) {
-            toast.error("Bỏ ẩn danh mục thất bại");
+            toast.error("Ẩn màu sắc thất bại");
         }
     };
+    const handleHiddenListColors = async (listId: any) => {
+        try {
+            const { data } = await hiddenListColor(listId);
+            console.log(data)
+            setOpenHiddenListColors(false);
+            handleColor();
+            setRowSelection({});
+            setListRowSelected([])
+            toast.success("Ẩn màu sắc thành công")
+        } catch (error) {
+            toast.error("Ẩn  màu sắc thất bại");
+        }
+    }
+    const handleUnhiddenListColors = async (listId: any) => {
+        try {
+            const { data } = await unHiddenListColor(listId);
+            setOpenUnHiddenListColors(false);
+            handleColor();
+            setRowSelection({});
+            setListRowSelected([])
+            toast.success("Bỏ ẩn thành công");
+        } catch (error) {
+            toast.error("Bỏ ấn mục màu sắc thất bại");
+        }
+    }
+    const handleChangePageSize = (value: number) => {
+        setSearchObject((prev: any) => ({
+            ...prev,
+            pageSize: value,
+            pageIndex: 1,
+        }));
+    };
+    const handleChangePage = (value: any) => {
+        setRowSelection({});
+        setListRowSelected([])
+        setSearchObject((prev: any) => ({
+            ...prev,
+            pageIndex: value.selected + 1,
+        }));
+    };
+    const debounced = useDebounceCallback((inputValue: string) => {
+        setSearchObject((prev: any) => ({
+            ...prev,
+            pageIndex: 1,
+            keyword: inputValue,
+        }));
+    }, 300);
     const columns: ColumnDef<IData>[] = [
         {
             id: "select",
@@ -233,46 +280,44 @@ const ColorList = () => {
             },
         },
     ];
-    const handleChangePageSize = (value: number) => {
-        setSearchObject((prev: any) => ({
-            ...prev,
-            pageSize: value,
-            pageIndex: 1,
-        }));
-    };
-    const handleChangePage = (value: any) => {
-        console.log("value change page", value);
-        setSearchObject((prev: any) => ({
-            ...prev,
-            pageIndex: value.selected + 1,
-        }));
-    };
-    const debounced = useDebounceCallback((inputValue: string) => {
-        setSearchObject((prev: any) => ({
-            ...prev,
-            pageIndex: 1,
-            keyword: inputValue,
-        }));
-    }, 300);
     return (
         <>
             <div className="flex flex-col gap-3 mb-5">
-                <div className="flex flex-col gap-3">
-                    <h4 className="font-medium md:text-xl text-base">Danh sách danh mục</h4>
-                    <div className="flex justify-between">
-                        <Input
-                            placeholder="Tìm kiếm danh mục"
-                            className="w-[40%] md:text-base text-xs"
-                            onChange={(event) => debounced(event.target.value)}
-                        />
-                        <div className="flex items-center gap-4">
-                            <Button
-                                onClick={() => setOpenId(true)}
-                                className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
+
+                <h4 className="font-medium md:text-xl text-base">Danh sách danh mục</h4>
+                <div className="flex justify-between">
+                    <Input
+                        placeholder="Tìm kiếm danh mục"
+                        className="w-[40%] md:text-base text-xs"
+                        onChange={(event) => debounced(event.target.value)}
+                    />
+                    <div className="flex items-center gap-4">
+                        {listIdColor.length !== 0 && searchObject.tab === 1 ? (
+                            <Button variant="danger"
+                                onClick={() => setOpenHiddenListColors(true)}
+
                             >
-                                Thêm danh mục
+                                Ẩn nhiều
                             </Button>
-                        </div>
+                        ) : (
+                            ""
+                        )}
+                        {listIdColor.length !== 0 && searchObject.tab === 2 ? (
+                            <Button
+                                onClick={() => setOpenUnHiddenListColors(true)}
+                                variant="success"
+                            >
+                                Khôi phục
+                            </Button>
+                        ) : (
+                            ""
+                        )}
+                        <Button
+                            onClick={() => setOpenId(true)}
+                            className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
+                        >
+                            Thêm màu sắc
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -280,17 +325,25 @@ const ColorList = () => {
                 <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger
                         value="1"
-                        onClick={() => setSearchObject((prev: any) => ({ ...prev, tab: 1 }))}
+                        onClick={() => {
+                            setSearchObject((prev: any) => ({ ...prev, tab: 1 }))
+                            setRowSelection({})
+                            setListRowSelected([])
+                        }}
                         className="md:text-base text-sm"
                     >
-                        Danh mục
+                        Màu sắc
                     </TabsTrigger>
                     <TabsTrigger
                         value="2"
-                        onClick={() => setSearchObject((prev: any) => ({ ...prev, tab: 2 }))}
+                        onClick={() => {
+                            setSearchObject((prev: any) => ({ ...prev, tab: 2 }))
+                            setRowSelection({});
+                            setListRowSelected([])
+                        }}
                         className="md:text-base text-sm"
                     >
-                        Danh mục ẩn
+                        Màu sắc ẩn
                     </TabsTrigger>
                 </TabsList>
             </Tabs>}
@@ -308,15 +361,15 @@ const ColorList = () => {
                 pageCount={response.pageCount}
                 totalElement={response.totalElement}
                 handleChangePageSize={handleChangePageSize}
-                dataPageSize={[1, 3, 5, 10]}
+
             />
             {!!openHiddenColor && (
                 <DialogConfirm
                     open={!!openHiddenColor}
-                    title="Xác nhận ẩn danh mục"
-                    handleClose={() => setopenUnhiddenColor(false)}
+                    title="Xác nhận ẩn màu sắc"
+                    handleClose={() => setOpenHiddenColor(false)}
                     handleSubmit={() => handleHiddenColor(openHiddenColor)}
-                    content="Bạn có chắc muốn ẩn danh mục này?"
+                    content="Bạn có chắc muốn ẩn màu sắc này không?"
                     labelConfirm="Ẩn"
                 />
             )}
@@ -336,6 +389,27 @@ const ColorList = () => {
                     title="Cập nhật"
                     handleClose={() => setOpenId(false)}
                     handlePaging={() => handleColor()}
+                />
+            )}
+
+            {!!openHiddenListColors && (
+                <DialogConfirm
+                    open={!!openHiddenListColors}
+                    title="Xác nhận ẩn mục màu sắc"
+                    handleClose={() => setOpenHiddenListColors(false)}
+                    handleSubmit={() => handleHiddenListColors(listIdColor)}
+                    content="Bạn có chắc muốn ẩn mục này?"
+                    labelConfirm="Ẩn"
+                />
+            )}
+            {!!openUnHiddenListColors && (
+                <DialogConfirm
+                    open={!!openUnHiddenListColors}
+                    title="Xác nhận khôi phục mục màu sắc"
+                    handleClose={() => setOpenUnHiddenListColors(false)}
+                    handleSubmit={() => handleUnhiddenListColors(listIdColor)}
+                    content="Bạn có chắc muốn bỏ ẩn mục này?"
+                    labelConfirm="Khôi phục"
                 />
             )}
         </>

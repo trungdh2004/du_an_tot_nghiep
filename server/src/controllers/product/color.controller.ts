@@ -256,7 +256,7 @@ class ColorController {
 
       await ColorModel.updateMany(
         { _id: { $in: listId } },
-        { $set: { blocked: true } }, { new: true }
+        { $set: { deleted: true } }, { new: true }
       );
 
 
@@ -288,9 +288,8 @@ class ColorController {
 
       await ColorModel.updateMany(
         { _id: { $in: listId } },
-        { $set: { blocked_at: false } }, { new: true }
+        { $set: { deleted: false } }, { new: true }
       );
-
 
       return res.status(STATUS.OK).json({
         message: "Khôi phục thành công",

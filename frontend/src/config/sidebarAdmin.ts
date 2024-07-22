@@ -2,6 +2,8 @@ import { LuLayoutDashboard } from "react-icons/lu";
 import { FaUsers } from "react-icons/fa";
 import { FaUsersCog } from "react-icons/fa";
 import { MdOutlinePostAdd } from "react-icons/md";
+import { truncate } from "fs";
+import { Label } from "recharts";
 
 const sidebarConfig: any[] = [
 	{
@@ -145,6 +147,11 @@ const sidebarConfig: any[] = [
 		],
 	},
 	{
+		path: "/color",
+		isVisible: true,
+		label: "Màu sắc",
+	},
+	{
 		path: "/blogs",
 		isVisible: true,
 		label: "Bài viết",
@@ -168,25 +175,6 @@ const sidebarConfig: any[] = [
 		icon: LuLayoutDashboard,
 		isVisible: true,
 		label: "Thống kê",
-	},
-	{
-		path: "/blog",
-		isVisible: true,
-		label: "Bài viết",
-		children: [
-			{
-				path: "",
-				icon: FaUsers,
-				isVisible: true,
-				label: "Danh sách bài viết",
-			},
-			{
-				path: "/staff",
-				icon: FaUsersCog,
-				isVisible: true,
-				label: "Danh sách nhân viên",
-			},
-		],
-	},
+	}
 ];
 export default sidebarConfig;
