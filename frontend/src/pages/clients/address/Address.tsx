@@ -93,19 +93,9 @@ const Address = (props: Props) => {
 		staleTime: Infinity,
 	});
 	const { mutate } = useMutation({
-		mutationFn: async (dataNew: any) => {
-			return addAddress(dataNew);
-		},
+		mutationFn: async (dataNew: any) => addAddress(dataNew),
 		onSuccess: () => {
-			form.reset({
-				username: null,
-				phone: null,
-				address: null,
-				city: null,
-				district: null,
-				commune: null,
-				detailAddress: null,
-			});
+			form.reset();
 			queryClient.invalidateQueries({
 				queryKey: ["address"],
 			});

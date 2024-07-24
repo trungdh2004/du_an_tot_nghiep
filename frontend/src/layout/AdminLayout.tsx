@@ -19,7 +19,7 @@ const AdminLayout = () => {
 	return (
 		<div className="scroll-custom flex bg-main min-h-[100vh] overflow-y-auto">
 			<Sheet open={isOpen} onOpenChange={setClose}>
-				<SheetContent className="p-0 !max-w-[300px]" side={"left"}>
+				<SheetContent className="p-0 !max-w-[300px] z-[101]" side={"left"}>
 					<Sidebar />
 				</SheetContent>
 			</Sheet>

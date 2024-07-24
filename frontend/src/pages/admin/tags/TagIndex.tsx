@@ -103,8 +103,6 @@ const TagIndex = () => {
 		}
 	};
 	const handleChangePageSize = (value: number) => {
-		console.log(value);
-
 		setSearchObject((prev) => ({
 			...prev,
 			pageSize: value,
@@ -112,8 +110,6 @@ const TagIndex = () => {
 		}));
 	};
 	const handleChangePage = (value: any) => {
-		console.log("value change page", value);
-
 		setSearchObject((prev) => ({
 			...prev,
 			pageIndex: value.selected + 1,
@@ -257,14 +253,12 @@ const TagIndex = () => {
 					<TabsTrigger
 						value="1"
 						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 1 }))}
-						className="md:text-base text-sm"
 					>
 						Thẻ tag
 					</TabsTrigger>
 					<TabsTrigger
 						value="2"
 						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 2 }))}
-						className="md:text-base text-sm"
 					>
 						Thẻ tag ẩn
 					</TabsTrigger>
