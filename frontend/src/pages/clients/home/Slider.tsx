@@ -10,7 +10,7 @@ const Slider = () => {
 					transition={{ duration: 1.5 }}
 				>
 					<h2 className="text-3xl md:text-6xl font-bold max-w-[280px] md:max-w-[650px] text-blue-800">
-						We’re changing the way people connect
+						Chúng tôi đang thay đổi cách mọi người kết nối
 					</h2>
 				</motion.div>
 				<motion.div

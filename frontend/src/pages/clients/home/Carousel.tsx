@@ -3,9 +3,12 @@ import { Navigation } from "swiper/modules";
 import { useRef } from "react";
 import { Swiper as SwiperType } from "swiper/types";
 import { GrFormNextLink, GrFormPreviousLink } from "react-icons/gr";
+import { HiArrowSmallRight } from "react-icons/hi2";
+import { PiArrowLeftThin, PiArrowRightThin } from "react-icons/pi";
 import "swiper/css/navigation";
 import "swiper/css";
 import { Link } from "react-router-dom";
+import { BsArrowRight } from "react-icons/bs";
 const Carousel = () => {
 	const swiperRef = useRef<SwiperType>();
 	const slides = [
@@ -54,55 +57,74 @@ const Carousel = () => {
 		<div>
 			<div className="padding flex flex-col sm:flex-row items-end sm:items-center justify-between">
 				<h2 className="text-2xl font-semibold sm:text-4xl sm:font-bold">
-					Discover more. Good things are waiting for you
+					Khám phá nhiều hơn. <span>Những điều tốt đẹp đang chờ đợi bạn</span>
 				</h2>
 				<div className="flex items-center gap-7 *:flex *:items-center *:justify-center *:size-10 *:max-w-10 *:max-h-10 *:rounded-full *:border *:border-gray-200">
 					<button onClick={() => swiperRef.current?.slidePrev()}>
-						<GrFormPreviousLink size={32} />
+						<PiArrowLeftThin size={32} className="text-slate-700" />
 					</button>
 					<button onClick={() => swiperRef.current?.slideNext()}>
-						<GrFormNextLink size={32} />
+						<PiArrowRightThin size={32} className="text-slate-700" />
 					</button>
 				</div>
 			</div>
 			<div className="pl-4 md:pl-[50px] mt-6 md:mt-14">
 				<Swiper
-					className="swiper-container"
+					className="h-[250px]"
 					// install Swiper modules
+					height={250}
 					modules={[Navigation]}
-					spaceBetween={24}
+					spaceBetween={0}
 					loop={true}
-					slidesPerView={1.5}
+					slidesPerView={1}
 					onBeforeInit={(swiper) => {
 						swiperRef.current = swiper;
 					}}
 					breakpoints={{
-						640: {
-							slidesPerView: 2.5,
+						320: {
+							slidesPerView: 1,
+							spaceBetween: 20,
+							height: 250,
+						},
+						// when window width is >= 480px
+						480: {
+							slidesPerView: 1.5,
 							spaceBetween: 30,
+							height: 250,
+						},
+						640: {
+							slidesPerView: 2,
+							spaceBetween: 30,
+							height: 250,
 						},
 						1024: {
 							slidesPerView: 2.5,
 							spaceBetween: 66,
+							height: 250,
 						},
 					}}
 				>
-					{slides?.map((slide) => (
-						<SwiperSlide className="min-w-[298px]">
-							<div className="flex items-start justify-between bg-[#FFEAEA] p-4 pb-6 md:p-9 md:pt-3 rounded-lg">
-								<div className="">
-									<p className="text-sm font-medium">{slide.tag}</p>
-									<h3 className="text-base md:text-xl font-semibold max-w-[190px] my-4 sm:mt-5 sm:mb-8 md:mt-7 md:mb-11">
-										{slide?.title}
-									</h3>
-									<Link
-										to={"/shop"}
-										className="text-sm font-medium py-1.5 px-3 md:py-2 md:px-5 bg-white rounded-3xl"
-									>
-										Mua ngay
-									</Link>
+					{slides?.map((slide, index) => (
+						<SwiperSlide className="h-full " key={slide?.tag + index}>
+							<div className="h-full flex items-center justify-between bg-[#FFEAEA] rounded-lg p-5">
+								<div className="absolute flex flex-col h-4/5 justify-between">
+									<div className="max-w-xs">
+										<span className="block mb-2 text-sm text-slate-700">
+											{slide.tag}
+										</span>
+										<h2 className="max-w-[177px] text-xl md:text-2xl text-slate-900 font-semibold text-wrap">
+											{slide?.title}
+										</h2>
+									</div>
+									<div className="mt-auto">
+										<button className="relative h-auto inline-flex items-center justify-center rounded-full transition-colors text-sm font-medium py-3 px-4 sm:py-3.5 sm:px-6   bg-white text-slate-700 dark:bg-slate-900 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-6000 dark:focus:ring-offset-0">
+											Mua ngay
+										</button>
+									</div>
 								</div>
-								<div className="max-w-[99px] max-h-[111px] md:w-[193px] md:h-[209px]">
+								<div className="flex-1" />
+
+								<div className="max-sm:w-[150px] md:w-[193px] md:h-[209px]">
 									<img src={slide?.img} alt="" className="w-full h-full" />
 								</div>
 							</div>

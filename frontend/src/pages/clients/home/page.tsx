@@ -1,12 +1,15 @@
 import Carousel from "./Carousel";
+import DealOfTheDays from "./DealOfTheDays";
+import ProductByCategory from "./ProductByCategory";
 import Slider from "./Slider";
 
 const HomePage = () => {
 	return (
-		<div>
+		<div className="bg-[#f9fafb]">
 			<Slider />
 			<Carousel />
-			<div className="h-[420px]"></div>
+			<ProductByCategory />
+			<DealOfTheDays />
 		</div>
 	);
 };

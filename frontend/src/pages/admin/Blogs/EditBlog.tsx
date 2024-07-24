@@ -144,14 +144,14 @@ const EditBlog = () => {
 					...values,
 				};
 
-				// setStatusLoading({ isSubmitted: true, isLoading: true });
+				setStatusLoading({ isSubmitted: true, isLoading: true });
 
-				// const reponse = await updateBlogs(id as string, payload);
-				// if (reponse.status === 200) {
-				// 	toast.success("Cập nhập bài viết thành công");
-				// } else {
-				// 	throw new Error("Cập nhập bài viết thất bại");
-				// }
+				const reponse = await updateBlogs(id as string, payload);
+				if (reponse.status === 200) {
+					toast.success("Cập nhập bài viết thành công");
+				} else {
+					throw new Error("Cập nhập bài viết thất bại");
+				}
 			}
 		} catch (error) {
 			if (error instanceof AxiosError) {
