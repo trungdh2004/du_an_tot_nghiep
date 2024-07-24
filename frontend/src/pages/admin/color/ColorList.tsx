@@ -34,7 +34,6 @@ export const hiddencolor = async (id: string | boolean) => {
     return data;
 };
 
-
 export const unhiddencolor = async (id: string | boolean) => {
     const data = await instance.put(`color/unDelete/${id}`);
     return data;
@@ -42,17 +41,21 @@ export const unhiddencolor = async (id: string | boolean) => {
 
 const ColorList = () => {
     const [openId, setOpenId] = useState<string | boolean>(false);
-    const [data, setData] = useState<IData[]>([])
+    const [data, setData] = useState<IData[]>([]);
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({}); // xử lí selected
     const [listRowSelected, setListRowSelected] = useState<IData[]>([]);
-    const [openHiddenColor, setOpenHiddenColor] = useState<
+    const [openHiddenColor, setOpenHiddenColor] = useState<string | boolean>(
+        false,
+    );
+    const [openUnhiddenColor, setopenUnhiddenColor] = useState<string | boolean>(
+        false,
+    );
+    const [openHiddenListColors, setOpenHiddenListColors] = useState<
         string | boolean
     >(false);
-    const [openUnhiddenColor, setopenUnhiddenColor] = useState<
+    const [openUnHiddenListColors, setOpenUnHiddenListColors] = useState<
         string | boolean
     >(false);
-    const [openHiddenListColors, setOpenHiddenListColors] = useState<string | boolean>(false);
-    const [openUnHiddenListColors, setOpenUnHiddenListColors] = useState<string | boolean>(false);
 
     const [searchObject, setSearchObject] = useState<any>({
         pageIndex: 1,
@@ -64,7 +67,7 @@ const ColorList = () => {
     });
     // console.log(searchObject);
     const listIdColor = listRowSelected.map((color: any) => {
-        return color._id
+        return color._id;
     });
     const [response, setResponse] = useState<any>({
         pageCount: 0,
@@ -73,7 +76,7 @@ const ColorList = () => {
     });
     const handleColor = async () => {
         try {
-            const { data } = await instance.post('/color/paging', searchObject);
+            const { data } = await instance.post("/color/paging", searchObject);
             setData(data.content);
             setResponse({
                 pageCount: data.totalPage,
@@ -81,12 +84,12 @@ const ColorList = () => {
                 totalOptionPage: data.totalOptionPage,
             });
         } catch (error) {
-            console.error(`color`, error)
+            console.error(`color`, error);
         }
-    }
+    };
     useEffect(() => {
-        handleColor()
-    }, [searchObject])
+        handleColor();
+    }, [searchObject]);
     const handleHiddenColor = async (id: string | boolean) => {
         try {
             const { data } = await hiddencolor(id);
@@ -110,28 +113,27 @@ const ColorList = () => {
     const handleHiddenListColors = async (listId: any) => {
         try {
             const { data } = await hiddenListColor(listId);
-            console.log(data)
             setOpenHiddenListColors(false);
             handleColor();
             setRowSelection({});
-            setListRowSelected([])
-            toast.success("Ẩn màu sắc thành công")
+            setListRowSelected([]);
+            toast.success("Ẩn màu sắc thành công");
         } catch (error) {
             toast.error("Ẩn  màu sắc thất bại");
         }
-    }
+    };
     const handleUnhiddenListColors = async (listId: any) => {
         try {
             const { data } = await unHiddenListColor(listId);
             setOpenUnHiddenListColors(false);
             handleColor();
             setRowSelection({});
-            setListRowSelected([])
+            setListRowSelected([]);
             toast.success("Bỏ ẩn thành công");
         } catch (error) {
             toast.error("Bỏ ấn mục màu sắc thất bại");
         }
-    }
+    };
     const handleChangePageSize = (value: number) => {
         setSearchObject((prev: any) => ({
             ...prev,
@@ -141,7 +143,7 @@ const ColorList = () => {
     };
     const handleChangePage = (value: any) => {
         setRowSelection({});
-        setListRowSelected([])
+        setListRowSelected([]);
         setSearchObject((prev: any) => ({
             ...prev,
             pageIndex: value.selected + 1,
@@ -205,9 +207,7 @@ const ColorList = () => {
             },
             cell: ({ row }) => {
                 return (
-                    <div className="md:text-base text-xs">
-                        {row?.original?.code}
-                    </div>
+                    <div className="md:text-base text-xs">{row?.original?.code}</div>
                 );
             },
         },
@@ -218,9 +218,10 @@ const ColorList = () => {
             },
             cell: ({ row }) => {
                 return (
-                    <div className="md:text-base text-xs w-8 h-8 border rounded-full" style={{ backgroundColor: `${row.original.code}` }}>
-
-                    </div>
+                    <div
+                        className="md:text-base text-xs w-8 h-8 border rounded-full"
+                        style={{ backgroundColor: `${row.original.code}` }}
+                    ></div>
                 );
             },
         },
@@ -252,7 +253,6 @@ const ColorList = () => {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-
                             <Button
                                 onClick={() => setOpenId(row?.original?._id)}
                                 className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full"
@@ -283,7 +283,6 @@ const ColorList = () => {
     return (
         <>
             <div className="flex flex-col gap-3 mb-5">
-
                 <h4 className="font-medium md:text-xl text-base">Danh sách danh mục</h4>
                 <div className="flex justify-between">
                     <Input
@@ -293,9 +292,9 @@ const ColorList = () => {
                     />
                     <div className="flex items-center gap-4">
                         {listIdColor.length !== 0 && searchObject.tab === 1 ? (
-                            <Button variant="danger"
+                            <Button
+                                variant="danger"
                                 onClick={() => setOpenHiddenListColors(true)}
-
                             >
                                 Ẩn nhiều
                             </Button>
@@ -321,32 +320,32 @@ const ColorList = () => {
                     </div>
                 </div>
             </div>
-            {<Tabs value={`${searchObject.tab}`} className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger
-                        value="1"
-                        onClick={() => {
-                            setSearchObject((prev: any) => ({ ...prev, tab: 1 }))
-                            setRowSelection({})
-                            setListRowSelected([])
-                        }}
-                        className="md:text-base text-sm"
-                    >
-                        Màu sắc
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="2"
-                        onClick={() => {
-                            setSearchObject((prev: any) => ({ ...prev, tab: 2 }))
-                            setRowSelection({});
-                            setListRowSelected([])
-                        }}
-                        className="md:text-base text-sm"
-                    >
-                        Màu sắc ẩn
-                    </TabsTrigger>
-                </TabsList>
-            </Tabs>}
+            {
+                <Tabs value={`${searchObject.tab}`} className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger
+                            value="1"
+                            onClick={() => {
+                                setSearchObject((prev: any) => ({ ...prev, tab: 1 }));
+                                setRowSelection({});
+                                setListRowSelected([]);
+                            }}
+                        >
+                            Màu sắc
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="2"
+                            onClick={() => {
+                                setSearchObject((prev: any) => ({ ...prev, tab: 2 }));
+                                setRowSelection({});
+                                setListRowSelected([]);
+                            }}
+                        >
+                            Màu sắc ẩn
+                        </TabsTrigger>
+                    </TabsList>
+                </Tabs>
+            }
 
             <TableComponent
                 data={data}
@@ -361,7 +360,6 @@ const ColorList = () => {
                 pageCount={response.pageCount}
                 totalElement={response.totalElement}
                 handleChangePageSize={handleChangePageSize}
-
             />
             {!!openHiddenColor && (
                 <DialogConfirm
@@ -413,7 +411,7 @@ const ColorList = () => {
                 />
             )}
         </>
-    )
-}
+    );
+};
 
-export default ColorList
+export default ColorList;
