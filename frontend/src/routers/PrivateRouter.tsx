@@ -5,6 +5,7 @@ type PrivateRouterType = {
 	children: ReactNode;
 };
 const PrivateRouter = ({ children }: PrivateRouterType) => {
+	//
 	const { authUser, isLoggedIn } = useAuth();
 	if (!isLoggedIn) {
 		return <Navigate to={"/auth/login"} />;
