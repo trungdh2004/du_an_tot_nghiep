@@ -193,7 +193,6 @@ class BlogController {
         pageIndex,
         tab = 1,
       } = req.body;
-      console.log("hehe");
 
       const user = req.user;
       let limit = pageSize || 10;

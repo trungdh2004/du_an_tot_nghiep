@@ -23,6 +23,9 @@ import { SlOptionsVertical } from "react-icons/sl";
 import { Link } from 'react-router-dom';
 import { useDebounceCallback } from 'usehooks-ts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { publishBlog } from '@/service/blog';
+import DialogConfirm from '@/components/common/DialogConfirm';
+import { toast } from 'sonner';
 
 type IBlog = {
     _id?: string,
@@ -51,7 +54,6 @@ const BlogList = () => {
         totalElement: 0,
         totalOptionPage: 0,
     })
-
     const [searchObject, setSearchObject] = useState<SearchObjectType>({
         pageIndex: 1,
         pageSize: 9,
@@ -59,7 +61,7 @@ const BlogList = () => {
         fieldSort: "",
         sort: 1,
         tab: 1,
-    })
+    });
     const handleBlog = async () => {
         try {
             const { data } = await instance.post(`/blogs/pagingBlog`, searchObject);
@@ -78,13 +80,25 @@ const BlogList = () => {
             handleBlog()
         })()
     }, [searchObject])
-    const handleChangePageSize = (value: number) => {
-        setSearchObject((prev) => ({
-            ...prev,
-            pageSize: value,
-            pageIndex: 1,
-        }));
-    };
+    // const handleChangePageSize = (value: number) => {
+    //     setSearchObject((prev) => ({
+    //         ...prev,
+    //         pageSize: value,
+    //         pageIndex: 1,
+    //     }));
+    // };
+    const [isPublish, setIsPublish] = useState<string | boolean>(false);
+    const handlePublishBlog = async (id: string | boolean) => {
+        try {
+            const { data } = await publishBlog(id);
+            handleBlog();
+            console.log('publish', data);
+            setIsPublish(false);
+            toast.success("Ẩn bài viết thành công")
+        } catch (error) {
+            console.log(error)
+        }
+    }
     const handleChangePag = (value: any) => {
         console.log("value change page", value);
         setSearchObject((prev) => ({
@@ -92,8 +106,6 @@ const BlogList = () => {
             pageIndex: value.selected + 1,
         }));
     }
-    // handleChangePag()
-    // console.log(blogs)
     const debounced = useDebounceCallback((inputValue: string) => {
         setSearchObject((prev) => ({
             ...prev,
@@ -153,12 +165,7 @@ const BlogList = () => {
                                         >
                                             Bài viết chưa hiển thị
                                         </DropdownMenuRadioItem>
-                                        {/* <DropdownMenuRadioItem
-                                            value=""
-                                            className="cursor-pointer"
-                                        >
-                                            Bài viết đã xóa
-                                        </DropdownMenuRadioItem> */}
+
                                         <DropdownMenuRadioItem
                                             value=""
                                             className="cursor-pointer"
@@ -208,7 +215,11 @@ const BlogList = () => {
                                             </div>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent className='min-w-[10px] cursor-pointer' align='end'>
-                                            <DropdownMenuItem className='cursor-pointer' >Xóa</DropdownMenuItem>
+                                            {item.isPublish ? (<DropdownMenuItem className='cursor-pointer' onClick={() => setIsPublish(item._id || "")} >
+                                                Hiển thị
+                                            </DropdownMenuItem>) : ("")}
+
+
                                             <DropdownMenuItem className='cursor-pointer'><Link className='w-full' to={`/admin/blogs/${item._id}/edit`}>Sửa</Link></DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
@@ -243,6 +254,14 @@ const BlogList = () => {
             <div className="flex justify-center mt-5">
                 <Paginations pageCount={response.pageCount} handlePageClick={handleChangePag} />
             </div>
+            {!!setIsPublish && (<DialogConfirm
+                open={!!setIsPublish}
+                title='Ẩn bài viết'
+                handleClose={() => setIsPublish(false)}
+                handleSubmit={() => handlePublishBlog(setIsPublish)}
+                content='Bạn có chắc chắn muốn ẩn bài viết này không?'
+                labelConfirm='Ẩn'
+            />)}
         </>
     )
 }

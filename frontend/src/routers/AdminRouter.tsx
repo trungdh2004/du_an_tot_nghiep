@@ -9,6 +9,7 @@ import UserIndex from "@/pages/admin/users/UserIndex";
 import PrivateRouter from "./PrivateRouter";
 import BlogDetail from "@/pages/admin/Blogs/BlogDetail";
 import TagIndex from "@/pages/admin/tags/TagIndex";
+import ColorList from "@/pages/admin/color/ColorList";
 
 const AdminRouter = [
 	{
@@ -59,6 +60,10 @@ const AdminRouter = [
 			{
 				path: "blogs/:id/edit",
 				element: <EditBlog />,
+			},
+			{
+				path: "color",
+				element: <ColorList />
 			},
 
 		],
