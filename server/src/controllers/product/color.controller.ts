@@ -66,7 +66,7 @@ class ColorController {
       const dataColor = await ColorModel.aggregate(pipeline).collation({
         locale: "en_US",
         strength: 1,
-      }).skip(skip).limit(limit)
+      }).sort({createdAt:1}).skip(skip).limit(limit)
 
       const countColor = await ColorModel.aggregate([
         ...pipeline,
@@ -256,7 +256,7 @@ class ColorController {
 
       await ColorModel.updateMany(
         { _id: { $in: listId } },
-        { $set: { deleted: true } }, { new: true }
+        { $set: { deleted: true  } },{new:true}
       );
 
 
@@ -288,7 +288,7 @@ class ColorController {
 
       await ColorModel.updateMany(
         { _id: { $in: listId } },
-        { $set: { deleted: false } }, { new: true }
+        { $set: { deleted: false  } },{new:true}
       );
 
       return res.status(STATUS.OK).json({
