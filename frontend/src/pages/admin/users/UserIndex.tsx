@@ -414,14 +414,12 @@ const UserIndex = () => {
 					<TabsTrigger
 						value="1"
 						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 1 }))}
-						className="md:text-base text-sm"
 					>
 						Người dùng
 					</TabsTrigger>
 					<TabsTrigger
 						value="2"
 						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 2 }))}
-						className="md:text-base text-sm"
 					>
 						Người dùng bị cấm
 					</TabsTrigger>
