@@ -9,14 +9,14 @@ export interface IAddress {
   };
   district: {
     name: string;
-    idProvince: string;
     idDistrict: String;
   };
   commune: {
     name: string;
     idCommune: string;
-    idDistrict: String;
   };
   user: IUser;
   address: string;
+  detailAddress: string;
+  location: number[];
 }
