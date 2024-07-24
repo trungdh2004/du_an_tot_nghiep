@@ -48,13 +48,13 @@ const authentication = async (
         );
 
         if (!existingUser) {
-          return res.status(STATUS.AUTHORIZED).json({
+          return res.status(STATUS.BAD_REQUEST).json({
             message: "Tài khoản không thỏa mãn",
           });
         }
 
         if (existingUser?.blocked_at === true) {
-          return res.status(STATUS.AUTHORIZED).json({
+          return res.status(STATUS.BAD_REQUEST).json({
             message: "Tài khoản của bạn đã bị khóa",
           });
         }
