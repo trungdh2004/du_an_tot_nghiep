@@ -2,6 +2,8 @@ import { LuLayoutDashboard } from "react-icons/lu";
 import { FaUsers } from "react-icons/fa";
 import { FaUsersCog } from "react-icons/fa";
 import { MdOutlinePostAdd } from "react-icons/md";
+import { truncate } from "fs";
+import { Label } from "recharts";
 
 const sidebarConfig: any[] = [
 	{
@@ -143,6 +145,11 @@ const sidebarConfig: any[] = [
 				label: "Thêm sản phẩm",
 			},
 		],
+	},
+	{
+		path: "/color",
+		isVisible: true,
+		label: "Màu sắc",
 	},
 	{
 		path: "/blogs",
