@@ -480,6 +480,35 @@ class BlogController {
       return res.status(STATUS.INTERNAL).json({ error: error });
     }
   }
+
+  async deleteGetById(req: RequestModel, res: Response) {
+    try {
+      const { id } = req.params;
+
+      if (!id)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn bài viết",
+        });
+
+      const existingBlog = await BlogsModel.findById(id);
+
+      if (!existingBlog)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có bài viết nào",
+        });
+
+      await BlogsModel.findByIdAndDelete(id);
+
+      return res.status(STATUS.OK).json({
+        message: "Xóa thành công",
+        data: existingBlog,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error?.message,
+      });
+    }
+  }
 }
 
 export default new BlogController();
