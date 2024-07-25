@@ -19,3 +19,7 @@ export const publishBlog = (id: string | boolean) => {
 	const url = `/blogs/publish/${id}`;
 	return instance.put(url);
 }
+export const deleteBlogBYId = (id: string | boolean) => {
+	const url = `/blogs/delete/${id}`;
+	return instance.delete(url);
+}

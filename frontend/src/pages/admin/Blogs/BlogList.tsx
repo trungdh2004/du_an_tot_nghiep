@@ -16,16 +16,16 @@ import { typeResponse } from '@/types/typeReponse';
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 
+import DialogConfirm from '@/components/common/DialogConfirm';
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { deleteBlogBYId } from '@/service/blog';
 import { FaCommentDots, FaEye } from 'react-icons/fa';
 import { IoFilter } from 'react-icons/io5';
 import { MdOutlinePublic, MdOutlinePublicOff } from 'react-icons/md';
 import { SlOptionsVertical } from "react-icons/sl";
 import { Link } from 'react-router-dom';
-import { useDebounceCallback } from 'usehooks-ts';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { publishBlog } from '@/service/blog';
-import DialogConfirm from '@/components/common/DialogConfirm';
 import { toast } from 'sonner';
+import { useDebounceCallback } from 'usehooks-ts';
 
 type IBlog = {
     _id?: string,
@@ -88,19 +88,8 @@ const BlogList = () => {
     //     }));
     // };
     const [isPublish, setIsPublish] = useState<string | boolean>(false);
-    const handlePublishBlog = async (id: string | boolean) => {
-        try {
-            const { data } = await publishBlog(id);
-            handleBlog();
-            console.log('publish', data);
-            setIsPublish(false);
-            toast.success("Ẩn bài viết thành công")
-        } catch (error) {
-            console.log(error)
-        }
-    }
+
     const handleChangePag = (value: any) => {
-        console.log("value change page", value);
         setSearchObject((prev) => ({
             ...prev,
             pageIndex: value.selected + 1,
@@ -113,6 +102,20 @@ const BlogList = () => {
             keyword: inputValue,
         }));
     }, 300);
+    const [openDeleteBlog, setOpenDeleteBlog] = useState<string | boolean>(
+        false,
+    );
+    const handleDeleteBlog = async (req: string | boolean) => {
+        try {
+            const { data } = await deleteBlogBYId(req);
+            handleBlog();
+            setOpenDeleteBlog(false);
+            toast.success("Xóa bài viết thành công")
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    console.log('openDelete', openDeleteBlog)
     return (
         <>
             <div className="">
@@ -215,7 +218,7 @@ const BlogList = () => {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent className='min-w-[10px] cursor-pointer' align='end'>
                                             <DropdownMenuItem className='cursor-pointer'><Link className='w-full' to={`/admin/blogs/${item._id}/edit`}>Sửa</Link></DropdownMenuItem>
-                                            <DropdownMenuItem className='cursor-pointer ' >Xóa</DropdownMenuItem>
+                                            <DropdownMenuItem className='cursor-pointer ' onClick={() => setOpenDeleteBlog(item?._id as any)} >Xóa</DropdownMenuItem>
 
                                         </DropdownMenuContent>
                                     </DropdownMenu>
@@ -238,19 +241,33 @@ const BlogList = () => {
                                     </div>
                                     <p className="text-xs pt-1 text-gray-400 line-clamp-2">{item.meta_description}</p>
                                     <div className="flex space-x-4 min-[900px]:space-x-1 xl:space-x-4 absolute bottom-4 right-4">
-                                        <span className="text-[#212B36] text-xs flex items-center gap-1"><FaCommentDots />{item.comments_count}</span>
-                                        <span className="text-[#212B36] text-xs flex items-center gap-1"> <FaEye />{item.views_count}</span>
+                                        <div className="flex">
+
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <span className="text-[#212B36] text-xs flex items-center gap-1"><FaCommentDots />{item.comments_count}</span>
+                                            <span className="text-[#212B36] text-xs flex items-center gap-1"> <FaEye />{item.views_count}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </>
                 ))}
-
             </div >
             <div className="flex justify-center mt-5">
                 <Paginations pageCount={response.pageCount} handlePageClick={handleChangePag} />
             </div>
+            {!!openDeleteBlog && (
+                <DialogConfirm
+                    open={!!openDeleteBlog}
+                    title='Xóa bài viết'
+                    handleClose={() => setOpenDeleteBlog(false)}
+                    handleSubmit={() => handleDeleteBlog(openDeleteBlog)}
+                    content='Bạn có chắc chắn muốn xóa bài viết này không?'
+                    labelConfirm='Xóa'
+                />
+            )}
         </>
     )
 }
