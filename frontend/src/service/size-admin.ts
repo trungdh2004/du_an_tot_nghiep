@@ -1,31 +1,39 @@
 import instance from "@/config/instance";
 import { SearchObjectType } from "@/types/searchObjecTypes";
+import { SizeTypes } from "@/types/typeSize";
 
-export const paddingCate = async (SearchObjectType: SearchObjectType) => {
-	const data = await instance.post(`/category/paddingCate`, SearchObjectType);
-	return data;
+export const paddingSize = async (SearchObjectType: SearchObjectType) => {
+	return await instance.post(`/size/paging`, SearchObjectType);
 };
 
+export const addSize = async (dataForm: SizeTypes) => {
+	return await instance.post(`/size/addSize`, dataForm);
+};
+
+export const updateSize = async (id: string | boolean, dataForm: SizeTypes) => {
+  return await instance.put(`/size/updateSize/${id}`, dataForm);
+};
+
+export const getSizeId = async (id: string | boolean ) => {
+  return await instance.get(`/size/size/${id}`);
+}
+
 export const hiddenSize = async (id: string | boolean) => {
-	const data = await instance.delete(`size/deleteSize/${id}`);
-	return data;
+	return await instance.delete(`size/deleteSize/${id}`);
 };
 
 export const unhiddenSize = async (id: string | boolean) => {
-	const data = await instance.put(`size/unDelete/${id}`);
-	return data;
+	return await instance.put(`size/unDelete/${id}`);
 };
 
 export const hiddenListSize = async (listId: any) => {
-  const data = await instance.put(`size/deleteMany`, {
+	return await instance.put(`size/deleteMany`, {
 		listId,
 	});
-	return data;
 };
 
 export const unhiddenListSize = async (listId: any) => {
-	const data = await instance.put(`size/unDeleteMany`, {
+	return await instance.put(`size/unDeleteMany`, {
 		listId,
 	});
-	return data;
 };

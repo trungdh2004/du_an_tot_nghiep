@@ -20,14 +20,24 @@ import { Button } from "@/components/ui/button";
 import { typeResponse } from "@/types/typeReponse";
 import SizeAddandUpdate from "./SizeAddandUpdate";
 import { useDebounceCallback } from "usehooks-ts";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 // import { hiddenListSize, hiddenSize, unhiddenListSize, unhiddenSize } from "@/service/size-admin";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import DialogConfirm from "@/components/common/DialogConfirm";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { hiddenListSize, hiddenSize, unhiddenListSize, unhiddenSize } from "@/service/size-admin";
+import {
+	hiddenListSize,
+	hiddenSize,
+	paddingSize,
+	unhiddenListSize,
+	unhiddenSize,
+} from "@/service/size-admin";
 
 const SizeIndex = () => {
 	interface IData {
@@ -42,25 +52,34 @@ const SizeIndex = () => {
 		deleted: boolean;
 	}
 	const [rowSelection, setRowSelection] = useState<RowSelectionState>({}); // xử lí selected
-  const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
-  const [openHiddenIdSize, setOpenHiddenIdSize] = useState<string | boolean>(false)
-  const [openUnHiddenIdSize, setOpenUnHiddenIdSize] = useState<string | boolean>(false);
-  const [openHiddenManyIdSize, setOpenHiddenManyIdSize] = useState<string | boolean>(false);
-  const [openUnHiddenManyIdSize, setOpenUnHiddenManyIdSize] = useState<string | boolean>(false);
-  const listIdSize = listRowSeleted.map((size) => {
-    return size._id;
-  })
+	const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
+	const [openHiddenIdSize, setOpenHiddenIdSize] = useState<string | boolean>(
+		false,
+	);
+	const [openUnHiddenIdSize, setOpenUnHiddenIdSize] = useState<
+		string | boolean
+	>(false);
+	const [openHiddenManyIdSize, setOpenHiddenManyIdSize] = useState<
+		string | boolean
+	>(false);
+	const [openUnHiddenManyIdSize, setOpenUnHiddenManyIdSize] = useState<
+		string | boolean
+	>(false);
+	const listIdSize = listRowSeleted.map((size) => {
+		return size._id;
+	});
 	const [data, setData] = useState<IData[]>([]);
 	const [openId, setOpenId] = useState<string | boolean>(false);
+	const [heightSearch, setHeightSearch] = useState<number>(0);
+	const [weightSearch, setWeightSearch] = useState<number>(0);
 	const [searchObject, setSearchObject] = useState<SearchObjectType>({
 		pageIndex: 1,
 		pageSize: 5,
-    keyword: "",
-    height: 0,
-    weight: 0,
-    tab:1
+		keyword: "",
+		height: 0,
+		weight: 0,
+		tab: 1,
 	});
-	console.log(searchObject);
 	const [response, setResponse] = useState<typeResponse>({
 		pageCount: 0,
 		totalElement: 0, //tổng số phần tử
@@ -73,8 +92,7 @@ const SizeIndex = () => {
 
 	const handleSize = async () => {
 		try {
-			const { data } = await instance.post(`/size/paging`, searchObject);
-			console.log(data);
+			const { data } = await paddingSize(searchObject);
 			setData(data.content);
 			setResponse({
 				pageCount: data.totalPage,
@@ -86,8 +104,6 @@ const SizeIndex = () => {
 		}
 	};
 	const handleChangePageSize = (value: number) => {
-		console.log(value);
-
 		setSearchObject((prev) => ({
 			...prev,
 			pageSize: value,
@@ -95,7 +111,6 @@ const SizeIndex = () => {
 	};
 	const handleChangePage = (value: any) => {
 		console.log("value change page", value);
-
 		setSearchObject((prev) => ({
 			...prev,
 			pageIndex: value.selected + 1,
@@ -105,24 +120,10 @@ const SizeIndex = () => {
 		setSearchObject((prev) => ({
 			...prev,
 			pageIndex: 1,
-      keyword: inputValue,
+			keyword: inputValue,
 		}));
-  }, 300);
-  const searchWeight = useDebounceCallback((inputValue: number) => {
-		setSearchObject((prev) => ({
-			...prev,
-			pageIndex: 1,
-			weight: inputValue,
-		}));
-  }, 300);
-  const searchHeight = useDebounceCallback((inputValue: number) => {
-		setSearchObject((prev) => ({
-			...prev,
-			pageIndex: 1,
-			height: inputValue,
-		}));
-  }, 300);
-  const handleHiddenSize = async (id: string | boolean) => {
+	}, 300);
+	const handleHiddenSize = async (id: string | boolean) => {
 		try {
 			const { data } = await hiddenSize(id);
 			setOpenHiddenIdSize(false);
@@ -142,11 +143,13 @@ const SizeIndex = () => {
 		} catch (error) {
 			toast.error("Bỏ ẩn size thất bại");
 		}
-  };
-  const handleHiddenManySize = async (listId: any) => {
+	};
+	const handleHiddenManySize = async (listId: any) => {
 		try {
 			const { data } = await hiddenListSize(listId);
 			setOpenHiddenManyIdSize(false);
+			setListRowSelected([]);
+			setRowSelection({});
 			handleSize();
 			toast.success("Đã ẩn mục size thành công");
 		} catch (error) {
@@ -159,6 +162,8 @@ const SizeIndex = () => {
 			const { data } = await unhiddenListSize(listId);
 			setOpenUnHiddenManyIdSize(false);
 			handleSize();
+			setListRowSelected([]);
+			setRowSelection({});
 			toast.success("Bỏ ẩn mục size thành công");
 		} catch (error) {
 			toast.error("Bỏ ẩn mục size thất bại");
@@ -230,9 +235,7 @@ const SizeIndex = () => {
 		{
 			id: "actions",
 			enableHiding: false,
-      cell: ({ row }) => {
-        console.log(row.original);
-        
+			cell: ({ row }) => {
 				return (
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
@@ -242,7 +245,6 @@ const SizeIndex = () => {
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
-							<DropdownMenuSeparator />
 							<Button
 								onClick={() => setOpenId(row?.original?._id)}
 								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full cursor-pointer"
@@ -273,7 +275,7 @@ const SizeIndex = () => {
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex flex-col gap-3">
-				<h4 className="font-medium text-xl">Danh sách Size</h4>
+				<h4 className="font-medium text-xl">Danh sách Kích thước</h4>
 				<div className="flex justify-between">
 					<Input
 						placeholder="Tìm kiếm người dùng"
@@ -281,11 +283,35 @@ const SizeIndex = () => {
 						onChange={(e) => debounced(e.target.value)}
 					/>
 					<div className="flex items-center gap-4 pr-5">
+						{listIdSize.length !== 0 && searchObject.tab === 1 ? (
+							<Button
+								onClick={() => {
+									setOpenHiddenManyIdSize(true);
+								}}
+								className="bg-blue-500 text-[#ffffff] hover:bg-blue-400 w-full border"
+							>
+								Ẩn nhiều kích thước
+							</Button>
+						) : (
+							""
+						)}
+						{listIdSize.length !== 0 && searchObject.tab === 2 ? (
+							<Button
+								onClick={() => {
+									setOpenUnHiddenManyIdSize(true);
+								}}
+								className="bg-blue-500 text-[#ffffff] hover:bg-blue-400 w-full border"
+							>
+								Bỏ Ẩn nhiều kích thước
+							</Button>
+						) : (
+							""
+						)}
 						<Button
 							onClick={() => setOpenId(true)}
-							className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
+							className="bg-blue-500 text-[#ffffff] hover:bg-blue-400 w-full border"
 						>
-							Thêm size
+							Thêm kích thước
 						</Button>
 						<Popover>
 							<PopoverTrigger asChild>
@@ -303,44 +329,35 @@ const SizeIndex = () => {
 											<Label htmlFor="weight">Chiều cao</Label>
 											<Input
 												id="height"
-												defaultValue="0"
 												className="col-span-2 h-8"
-												onChange={(e) => searchHeight(+e.target.value)}
+												onChange={(e) => setHeightSearch(+e.target.value)}
+												type="number"
 											/>
 										</div>
 										<div className="grid grid-cols-3 items-center gap-4">
 											<Label htmlFor="height">Cân nặng</Label>
 											<Input
 												id="weight"
-												defaultValue="0"
 												className="col-span-2 h-8"
-												onChange={(e) => searchWeight(+e.target.value)}
+												onChange={(e) => setWeightSearch(+e.target.value)}
+												type="number"
 											/>
 										</div>
+										<Button
+											onClick={() => {
+												setSearchObject((prev) => ({
+													...prev,
+													height: heightSearch === 0 ? null : heightSearch,
+													weight: weightSearch === 0 ? null : weightSearch,
+												}));
+											}}
+										>
+											Tìm
+										</Button>
 									</div>
 								</div>
 							</PopoverContent>
 						</Popover>
-						{listIdSize.length !== 0 && searchObject.tab === 1 ? (
-							<Button
-								onClick={() => setOpenHiddenManyIdSize(true)}
-								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full"
-							>
-								Ẩn nhiều size
-							</Button>
-						) : (
-							""
-						)}
-						{listIdSize.length !== 0 && searchObject.tab === 2 ? (
-							<Button
-								onClick={() => setOpenUnHiddenManyIdSize(true)}
-								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full"
-							>
-								Bỏ Ẩn nhiều size
-							</Button>
-						) : (
-							""
-						)}
 					</div>
 				</div>
 			</div>
@@ -351,22 +368,34 @@ const SizeIndex = () => {
 						onClick={() => {
 							setListRowSelected([]);
 							setRowSelection({});
-							setSearchObject((prev) => ({ ...prev, tab: 1 }));
+							setSearchObject({
+								pageIndex: 1,
+								pageSize: 5,
+								keyword: "",
+								height: 0,
+								weight: 0,
+								tab: 1,
+							});
 						}}
-						className="md:text-base text-sm"
 					>
-						Size
+						Kích thước
 					</TabsTrigger>
 					<TabsTrigger
 						value="2"
 						onClick={() => {
 							setListRowSelected([]);
 							setRowSelection({});
-							setSearchObject((prev) => ({ ...prev, tab: 2 }));
+							setSearchObject({
+								pageIndex: 1,
+								pageSize: 5,
+								keyword: "",
+								height: 0,
+								weight: 0,
+								tab: 2,
+							});
 						}}
-						className="md:text-base text-sm"
 					>
-						Size ẩn
+						Kích thước ẩn
 					</TabsTrigger>
 				</TabsList>
 			</Tabs>
@@ -383,7 +412,6 @@ const SizeIndex = () => {
 				pageCount={response.pageCount}
 				totalElement={response.totalElement}
 				handleChangePageSize={handleChangePageSize}
-				dataPageSize={[1, 3, 5, 10]}
 			/>
 			{!!openId && (
 				<SizeAddandUpdate
@@ -406,11 +434,11 @@ const SizeIndex = () => {
 			{!!openUnHiddenIdSize && (
 				<DialogConfirm
 					open={!!openUnHiddenIdSize}
-					title="Xác nhận ẩn size"
+					title="Xác nhận bỏ ẩn size"
 					handleClose={() => setOpenUnHiddenIdSize(false)}
 					handleSubmit={() => handleUnhiddenSize(openUnHiddenIdSize)}
-					content="Bạn có chắc muốn ẩn size này?"
-					labelConfirm="Ẩn"
+					content="Bạn có chắc muốn bỏ ẩn size này?"
+					labelConfirm="Bỏ Ẩn"
 				/>
 			)}
 			{!!openUnHiddenManyIdSize && (

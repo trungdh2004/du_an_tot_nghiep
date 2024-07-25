@@ -25,6 +25,8 @@ import {
 import instance from "@/config/instance";
 import { toast } from "sonner";
 import { SearchObjectType } from "@/types/searchObjecTypes";
+import { addSize, getSizeId, updateSize } from "@/service/size-admin";
+import { SizeTypes } from "@/types/typeSize";
 
 interface FormDialog {
 	open: boolean | string;
@@ -36,15 +38,15 @@ interface FormDialog {
 const formSchema = z.object({
 	name: z
 		.string({
-			message: "Tên danh mục không được để trống",
-		})
-		.min(1, {
-			message: "Bạn nên tạo danh mục lớn hơn 1 ",
-		}),
+			message: "Tên kích thước không được để trống",
+    }).nonempty({
+      message: "Tên kích thước không được để trống"
+    }),
 	toWeight: z.number().min(1, "Phải lớn hơn 0"),
 	fromWeight: z.number().min(1, "Phải lớn hơn 0"),
   toHeight:z.number().min(1, "Phải lớn hơn 0"),
   fromHeight: z.number().min(1, "Phải lớn hơn 0"),
+
 });
 const SizeAddandUpdate = ({
 	title,
@@ -56,22 +58,15 @@ const SizeAddandUpdate = ({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: "",
-      toHeight: 0,
-      fromHeight: 0,
-      toWeight: 0,
-      fromWeight: 0,
+			toHeight: 0,
+			fromHeight: 0,
+			toWeight: 0,
+			fromWeight: 0,
 		},
 	});
-	const onHandleUpdate = async (dataForm: {
-		name: string;
-		toWeight: number;
-		fromHeight: number;
-		toHeight: number;
-		fromWeight: number;
-	}) => {
+	const onHandleUpdate = async (dataForm: SizeTypes) => {
 		try {
-			const { data } = await instance.put(`/size/updateSize/${open}`, dataForm);
-			console.log("Update size success");
+			const { data } = await updateSize(open,dataForm)
 			handleClose();
 			handlePaging();
 			toast.success("Bạn cập nhật size thành công");
@@ -79,17 +74,9 @@ const SizeAddandUpdate = ({
 			console.error("Error:", error);
 		}
 	};
-	const onHandleAdd = async (dataForm: {
-		name: string;
-		toWeight: number;
-		fromHeight: number;
-		toHeight: number;
-		fromWeight: number;
-	}) => {
+	const onHandleAdd = async (dataForm: SizeTypes) => {
 		try {
-			const { data } = await instance.post(`/size/addSize`, dataForm);
-			console.log(data);
-			console.log("Add size success");
+			const { data } = await addSize(dataForm)
 			form.reset();
 			handleClose();
 			handlePaging();
@@ -103,7 +90,7 @@ const SizeAddandUpdate = ({
 		if (typeof open === "string") {
 			(async () => {
 				try {
-					const { data } = await instance.get(`/size/size/${open}`);
+					const { data } = await getSizeId(open)
 					console.log(data);
 					form.reset(data.data);
 				} catch (error) {
@@ -141,7 +128,7 @@ const SizeAddandUpdate = ({
 								name="name"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Name</FormLabel>
+										<FormLabel>Tên kích thước</FormLabel>
 										<FormControl>
 											<Input placeholder="Name" {...field} />
 										</FormControl>
@@ -234,7 +221,7 @@ const SizeAddandUpdate = ({
 							</div>
 
 							<Button type="submit">
-								{typeof open === "string" ? "Cập nhật" : "Thêm size"}
+								{typeof open === "string" ? "Cập nhật" : "Thêm kích thước"}
 							</Button>
 						</form>
 					</Form>
