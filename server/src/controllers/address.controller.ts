@@ -18,6 +18,7 @@ class AddressController {
 
       const address = await AddressModel.find({
         user: user?.id,
+        deleted: false,
       })
         // .populate("user")
         .skip(skip)
@@ -25,6 +26,7 @@ class AddressController {
         .sort({ is_main: -1, createdAt: -1 });
       const addressLength = await AddressModel.countDocuments({
         user: user?.id,
+        deleted: false,
       });
 
       const totalPage =
@@ -55,10 +57,17 @@ class AddressController {
         });
       }
 
-      const { username, phone, city, district, commune, address }: IAddress =
-        req.body;
+      const {
+        username,
+        phone,
+        city,
+        district,
+        commune,
+        address,
+        detailAddress,
+        location,
+      }: IAddress = req.body;
 
-      const location = `${commune?.name},${district?.name},${city?.name}`;
       if (!req.user) {
         return res.status(STATUS.AUTHENTICATOR).json({
           message: "Mời bạn đăng nhập",
@@ -82,6 +91,7 @@ class AddressController {
         commune,
         address,
         location,
+        detailAddress,
       });
 
       return res.status(STATUS.OK).json({
@@ -120,16 +130,15 @@ class AddressController {
         });
       }
 
-      if (
-        existingAddress.user.toString() !== user.id.toString() ||
-        user.is_admin
-      ) {
+      if (existingAddress.user.toString() !== user.id.toString()) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn không có quyền xóa",
         });
       }
 
-      await AddressModel.findByIdAndDelete(existingAddress._id);
+      await AddressModel.findByIdAndUpdate(existingAddress._id, {
+        deleted: true,
+      });
 
       return res.status(STATUS.OK).json({
         message: "Xóa địa chỉ thành công",
@@ -145,7 +154,6 @@ class AddressController {
     try {
       const { id } = req.params;
       const user = req.user;
-      console.log(user);
 
       if (!user) {
         return res.status(STATUS.AUTHENTICATOR).json({
@@ -170,8 +178,6 @@ class AddressController {
       }
 
       const userID = existingAddress.user._id;
-      console.log(userID);
-      console.log(user?.id);
 
       if (!userID || userID.toString() !== user?.id.toString()) {
         return res.status(STATUS.OK).json({
@@ -247,8 +253,16 @@ class AddressController {
         });
       }
 
-      const { username, phone, city, district, commune, address }: IAddress =
-        req.body;
+      const {
+        username,
+        phone,
+        city,
+        district,
+        commune,
+        address,
+        detailAddress,
+        location,
+      }: IAddress = req.body;
       const { id } = req.params;
       if (!id) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -264,7 +278,6 @@ class AddressController {
         });
       }
 
-      const location = `${commune?.name},${district?.name},${city?.name}`;
       if (!req.user) {
         return res.status(STATUS.AUTHENTICATOR).json({
           message: "Mời bạn đăng nhập",
@@ -280,6 +293,7 @@ class AddressController {
           commune,
           address,
           location,
+          detailAddress,
         },
         { new: true }
       );

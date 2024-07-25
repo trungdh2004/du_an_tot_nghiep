@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
 	Form,
@@ -9,28 +9,29 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
 import { toast } from "sonner";
-import { callCity, callCommune, callDistrict, editAddress, getAddressById } from "@/service/address";
+import {
+	callCommune,
+	callDistrict,
+	editAddress,
+	getAddressById,
+} from "@/service/address";
 import { Button } from "@/components/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import AddressLocation from "./AddressLocation";
+import MapComponent from "@/components/map/Map";
+import MapSearchLocation from "@/components/map/MapSearchLocation";
 
 const formSchema = z.object({
 	username: z
 		.string({
 			message: "Bạn phải nhập họ tên",
 		})
-		.min(6, {
-			message: "Bạn phải nhập ít nhất 6 kí tự",
+		.min(0, {
+			message: "Bạn phải nhập họ tên",
 		}),
 	phone: z
 		.string({
@@ -49,15 +50,22 @@ const formSchema = z.object({
 	address: z.string({
 		message: "Bạn phải nhập địa chỉ",
 	}),
-	city: z.string({
-		message: "Bạn phải nhập tỉnh/thành phố",
+	city: z.object({
+		idProvince: z.string(),
+		name: z.string(),
 	}),
-	district: z.string({
-		message: "Bạn phải nhập quận/huyện",
+	district: z.object({
+		idDistrict: z.string(),
+		name: z.string(),
 	}),
-	commune: z.string({
-		message: "Bạn phải nhập xã/phường",
+	commune: z.object({
+		idCommune: z.string(),
+		name: z.string(),
 	}),
+	detailAddress: z.string({
+		message: "Bạn chưa nhập chi tiết",
+	}),
+	location: z.array(z.number()),
 });
 
 interface ICity {
@@ -66,112 +74,120 @@ interface ICity {
 }
 
 interface IDistrict extends ICity {
-	idDistrict: string | null;
+	idDistrict: string;
 }
 interface ICommune extends IDistrict {
-	idCommune: string | null;
+	idCommune: string;
 }
 
-const EditAddress = ({ open, handleClose, id }: any) => {
-	const [citys, setCitys] = useState<ICity[] | null>(null);
-	const [districts, setDistricts] = useState<IDistrict[] | null>(null);
-	const [commune, setCommune] = useState<ICommune[] | null>(null);
+interface IProps {
+	open: boolean;
+	id: string;
+	handleClose: () => void;
+}
+
+const EditAddress = ({ open, handleClose, id }: IProps) => {
 	const queryClient = useQueryClient();
-	const [dataValue, setDataValue] = useState<any | null>(null);
-	console.log(dataValue);
+	const { mutate } = useMutation({
+		mutationFn: async (dataNew: any) => editAddress({ id, dataNew }),
+		onSuccess: () => {
+			handleClose();
+			toast.success("Bạn cập nhật địa chỉ thành công");
+			queryClient.invalidateQueries({
+				queryKey: ["address"],
+			});
+		},
+		onError: () => {
+			handleClose();
+			toast.error("Bạn cập nhật địa chỉ thất bại");
+		},
+	});
+	const [citys, setCitys] = useState<ICity[]>(
+		queryClient.getQueryData<ICity[]>(["city"]) || [],
+	);
+	const [districts, setDistricts] = useState<IDistrict[]>([]);
+	const [commune, setCommune] = useState<ICommune[]>([]);
 	const form = useForm({
 		resolver: zodResolver(formSchema),
+	});
+	const [query, setQuery] = useState("");
+	const [initView, setInitView] = useState({
+		longitudeInit: null,
+		latitudeInit: null,
 	});
 
 	useEffect(() => {
 		const fetchAlldata = async () => {
 			const { data } = await getAddressById(id);
-			setDataValue(data);
 			form.reset({
 				username: data.data.username,
 				phone: data.data.phone,
 				address: data.data.address,
-				city: data.data.city.idProvince,
-				district: data.data.district.idDistrict,
-				commune: data.data.commune.idCommune,
+				city: data.data.city,
+				district: data.data.district,
+				commune: data.data.commune,
+				detailAddress: data.data.detailAddress,
+				location: data.data.location,
 			});
-			const { data: district } = await callDistrict(
-				data?.data?.city.idProvince,
-			);
+			if (Array.isArray(data.data.location)) {
+				setInitView({
+					longitudeInit: data.data.location[0],
+					latitudeInit: data.data.location[1],
+				});
+			}
+			const [{ data: district }, { data: commune }] = await Promise.all([
+				callDistrict(data?.data?.city.idProvince),
+				callCommune(data?.data?.district.idDistrict),
+			]);
 			setDistricts(district);
-			const { data: commune } = await callCommune(
-				data?.data?.district.idDistrict,
-			);
 			setCommune(commune);
 		};
 		fetchAlldata();
 	}, [id]);
 
-	useEffect(() => {
-		(async () => {
-			const { data } = await callCity();
-			setCitys(data);
-		})();
-	}, []);
-
 	const onSubmit = async (dataForm: any) => {
-		const city = citys?.find((city) => city.idProvince === dataForm.city);
-		const district = districts?.find(
-			(district) => district.idDistrict === dataForm.district,
-		);
-		const communes = commune?.find(
-			(commune) => commune.idCommune === dataForm.commune,
-		);
-		let dataNew = {
-			username: dataForm.username,
-			phone: dataForm.phone,
-			address: dataForm.address,
-			city: city,
-			district: district,
-			commune: communes,
-		};
-		mutate(dataNew);
+		mutate(dataForm);
 	};
-	const { mutate } = useMutation({
-		mutationFn: async (dataNew: any) => {
-				const { data } = await editAddress({id,dataNew})
-		},
-		onSuccess: () => {
-      handleClose(null);
-      toast.success("Bạn cập nhật địa chỉ thành công");
-			queryClient.invalidateQueries({
-				queryKey: ["address"],
-      });
-		},
-		onError: () => {
-			handleClose(null);
-			toast.error("Bạn cập nhật địa chỉ thất bại");
-		},
-  });
-  
-	const handleOnChangeCity = async (idProvince: string) => {
+
+	const handleOnChangeCity = async (value: ICity) => {
 		try {
-			const { data } = await callDistrict(idProvince);
+			form.setValue("city", value);
+			form.setValue("address", value.name);
+			setDistricts([]);
+			const { data } = await callDistrict(value.idProvince);
 			setDistricts(data);
+			setCommune([]);
 		} catch (error: any) {
 			toast.error(error.response!.data!.message);
 		}
 	};
 
-	const handleOnChangeDistrict = async (idDistrict: string) => {
+	const handleOnChangeDistrict = async (value: IDistrict) => {
 		try {
-			const { data } = await callCommune(idDistrict);
+			form.setValue("district", value);
+			form.setValue("commune", null);
+			const address = form.getValues("city")?.name;
+			form.setValue("address", `${value.name},${address}`);
+			const { data } = await callCommune(value.idDistrict);
 			setCommune(data);
 		} catch (error: any) {
 			toast.error(error.response!.data!.message);
 		}
 	};
+
+	const handleOnChangeCommune = (value: ICommune) => {
+		const address = `${value.name},${form.watch("district")?.name},${form.watch("city").name}`;
+		setQuery(address);
+		form.setValue("address", address);
+		form.setValue("commune", value);
+	};
+
 	return (
 		<Dialog open={open} onOpenChange={handleClose}>
-			<DialogContent className="sm:max-w-[660px] rounded-md">
+			<DialogContent className="w-[90%] sm:max-w-[660px] rounded-md max-h-[90vh] p-2 sm:p-4 overflow-y-auto">
 				<h2 className="text-xl font-bold mb-2">Cập nhật địa chỉ</h2>
 				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
 						<div className="flex flex-row gap-3 w-full">
 							<FormField
 								control={form.control}
@@ -208,9 +224,57 @@ const EditAddress = ({ open, handleClose, id }: any) => {
 								)}
 							/>
 						</div>
+
 						<FormField
 							control={form.control}
 							name="address"
+							render={({ field }) => {
+								return (
+									<FormItem className="">
+										<FormLabel className="">Xã, Huyện, Thành phố </FormLabel>
+										<AddressLocation
+											field={field}
+											citys={citys}
+											districts={districts}
+											commune={commune}
+											iCity={form.watch("city")}
+											idDistrict={form.watch("district")}
+											idCommune={form.watch("commune")}
+											handleOnChangeCity={handleOnChangeCity}
+											handleOnChangeDistrict={handleOnChangeDistrict}
+											handleOnChangeCommune={handleOnChangeCommune}
+											classContent={"max-[350px]:w-[260px]"}
+										/>
+										<FormMessage />
+									</FormItem>
+								);
+							}}
+						/>
+						<FormField
+							control={form.control}
+							name="location"
+							render={({ field }) => {
+								return (
+									<FormItem className="">
+										<div className="w-full h-[240px]">
+											<MapSearchLocation
+												height="240px"
+												query={query}
+												handleGetLocation={(value) => {
+													form.setValue("location", value);
+												}}
+												longitudeInit={initView.longitudeInit}
+												latitudeInit={initView.latitudeInit}
+											/>
+										</div>
+										<FormMessage />
+									</FormItem>
+								);
+							}}
+						/>
+						<FormField
+							control={form.control}
+							name="detailAddress"
 							render={({ field }) => (
 								<FormItem className="w-full">
 									<FormLabel className="">Địa chỉ chi tiết</FormLabel>
@@ -225,127 +289,7 @@ const EditAddress = ({ open, handleClose, id }: any) => {
 								</FormItem>
 							)}
 						/>
-						<div className="grid grid-cols-1 w-full gap-4 sm:grid-cols-3">
-							<FormField
-								control={form.control}
-								name="city"
-								render={({ field }) => {
-									return (
-										<FormItem className="">
-											<FormLabel className="">Thành phố</FormLabel>
-											<Select
-												onValueChange={(e) => {
-													setDistricts(null);
-													setCommune(null);
-													form.setValue("district", null);
-													form.setValue("commune", null);
-													handleOnChangeCity(e);
-													field.onChange(e);
-												}}
-												defaultValue={field.value}
-											>
-												<FormControl>
-													<SelectTrigger className="border">
-														<SelectValue placeholder="Lựa chọn thành phố" />
-													</SelectTrigger>
-												</FormControl>
-												<SelectContent className="">
-													{citys?.map((city: any) => {
-														return (
-															<SelectItem
-																value={city.idProvince}
-																className=""
-																key={city.idProvince}
-															>
-																<p>{city.name}</p>
-															</SelectItem>
-														);
-													})}
-												</SelectContent>
-											</Select>
-											<FormMessage />
-										</FormItem>
-									);
-								}}
-							/>
 
-							<FormField
-								control={form.control}
-								name="district"
-								render={({ field }) => {
-									return (
-										<FormItem className="">
-											<FormLabel className="">Quận Huyện</FormLabel>
-											<Select
-												onValueChange={(e) => {
-													field.onChange(e);
-													setCommune(null);
-													handleOnChangeDistrict(e);
-												}}
-												defaultValue={field.value}
-											>
-												<FormControl>
-													<SelectTrigger className="border">
-														<SelectValue placeholder="Lựa chọn quận huyện" />
-													</SelectTrigger>
-												</FormControl>
-												<SelectContent>
-													{districts?.map((district: any) => {
-														return (
-															<SelectItem
-																value={district.idDistrict}
-																className=""
-																key={district.idDistrict}
-															>
-																{district.name}
-															</SelectItem>
-														);
-													})}
-												</SelectContent>
-											</Select>
-											<FormMessage />
-										</FormItem>
-									);
-								}}
-							/>
-
-							<FormField
-								control={form.control}
-								name="commune"
-								render={({ field }) => (
-									<FormItem className="">
-										<FormLabel className="">Phường , Xã</FormLabel>
-										<Select
-											onValueChange={field.onChange}
-											defaultValue={field.value}
-										>
-											<FormControl>
-												<SelectTrigger className="">
-													<SelectValue placeholder="Lựa chọn phường xã" />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												{commune?.map((commune: any) => {
-													return (
-														<SelectItem
-															value={commune.idCommune}
-															className=""
-															key={commune.idCommune}
-														>
-															{commune.name}
-														</SelectItem>
-													);
-												})}
-											</SelectContent>
-										</Select>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						</div>
-						<h4 className="text-sm">
-							<strong>Địa chỉ</strong> : {dataValue?.data?.location}
-						</h4>
 						<Button
 							type="submit"
 							className="border rounded-full w-[170px] bg-slate-950"

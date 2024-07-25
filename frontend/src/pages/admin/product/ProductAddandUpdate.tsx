@@ -91,8 +91,7 @@ const ProductAddandUpdate = () => {
 		isLoading: false,
 		url: [],
 	});
-	const [name, setName] = useState<string | null>(null);
-	const [price, setPrice] = useState<string | null>(null);
+	const [color,setColor] = useState([]);
 	const [isPending, setIsPending] = useState(false);
 	useEffect(() => {
 		(async () => {
@@ -115,25 +114,18 @@ const ProductAddandUpdate = () => {
 			}
 		})();
 	}, []);
-	// useEffect(() => {
-	// 	(async () => {
-	// 		try {
-	// 			const { data } = await instance.get("/color/getAll");
-	// 			console.log(data);
-	// 			setColor(data.data);
-	// 		} catch (error) {
-	// 			console.log(error);
-	// 		}
-	// 	})();
-	// }, []);
-	const color = [
-		{ _id: 1, name: "Đỏ" },
-		{ _id: 2, name: "Vàng" },
-		{ _id: 3, name: "Xanh lá" },
-		{ _id: 4, name: "Trắng" },
-		{ _id: 5, name: "Đen" },
-		{ _id: 6, name: "Tím" },
-	];
+	useEffect(() => {
+		(async () => {
+			try {
+				const { data } = await instance.get("/color/getAll");
+				console.log(data);
+				setColor(data.data);
+			} catch (error) {
+				console.log(error);
+			}
+		})();
+	}, []);
+	
 	const control = form.control;
 	const { fields, append, remove } = useFieldArray({
 		control,

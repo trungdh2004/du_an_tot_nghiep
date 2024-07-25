@@ -21,6 +21,7 @@ import { BsCircle } from "react-icons/bs";
 import { CiCircleRemove } from "react-icons/ci";
 import { TooltipComponent } from "@/components/common/TooltipComponent";
 import DialogConfirm from "@/components/common/DialogConfirm";
+import { FaLocationDot } from "react-icons/fa6";
 const AddressInformation = () => {
 	const [openEditById, setOpenEditById] = useState<string | null>(null);
 	const [openDeleteById, setopenDeleteById] = useState<string | null>(null);
@@ -32,21 +33,17 @@ const AddressInformation = () => {
 	};
 	const handleEdit = (id: string) => {
 		setOpenEditById(id);
-  };
-  
-  const handleDelete = () => {
-    mutate(openDeleteById as string);
-  }
+	};
+
+	const handleDelete = () => {
+		mutate(openDeleteById as string);
+	};
 
 	const { mutate } = useMutation({
-		mutationFn: async (id: string | number) => {
-			const { data } = await deleteAddress(id);
-
-			return data;
-		},
+		mutationFn: async (id: string) => await deleteAddress(id),
 		onSuccess: () => {
-      toast.success("Bạn xóa địa chỉ thành công");
-      setopenDeleteById(null)
+			toast.success("Bạn xóa địa chỉ thành công");
+			setopenDeleteById(null);
 			queryClient.invalidateQueries({
 				queryKey: ["address", pageIndex],
 			});
@@ -95,20 +92,23 @@ const AddressInformation = () => {
 
 			<div className="flex flex-col gap-5 w-full">
 				{data.content.length === 0 ? (
-					<div>Không có địa chỉ nào </div>
+					<div className="w-full min-h-[100px] rounded-xl border flex flex-col justify-center items-center">
+						<FaLocationDot size={20} className="mb-2" />
+						Không có địa chỉ nào
+					</div>
 				) : (
 					data.content?.map((address: any, index: number) => {
 						return (
 							<div
-								className={`w-full p-5 bg-slate-100 rounded-xl grid grid-cols-1 gap-10 sm:grid-cols-3 ${address.is_main === true ? `border-2 border-green-500` : ` `}`}
+								className={`w-full p-2 sm:p-5 bg-slate-100 rounded-xl grid grid-cols-1 gap-4 sm:gap-10 sm:grid-cols-3 ${address.is_main === true ? `border-2 border-green-500` : ` `}`}
 								key={index}
 							>
-								<div className="flex flex-col gap-2 sm:w-20px col-span-2">
-									<h2 className="text-[14px]">{address.location}</h2>
+								<div className="flex flex-col gap-2 sm:w-20px sm:col-span-2">
 									<p className="text-[14px]">
 										{address.username} , {address.phone}
 									</p>
 									<p className="text-[14px]">{address.address}</p>
+									<p className="text-[14px]">{address.detailAddress}</p>
 								</div>
 								<div className="flex justify-center items-center gap-2">
 									<TooltipComponent label="Chọn mặc định">
@@ -157,8 +157,8 @@ const AddressInformation = () => {
 					open={!!openDeleteById}
 					handleClose={() => setopenDeleteById(null)}
 					content={"Bạn có chắc chắn muốn xóa địa chỉ này không?"}
-          handleSubmit={() => handleDelete()}
-          title="Xóa địa chỉ"
+					handleSubmit={() => handleDelete()}
+					title="Xóa địa chỉ"
 				/>
 			)}
 		</div>

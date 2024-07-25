@@ -62,7 +62,6 @@ const CategoryIndex = () => {
 		sort: 1,
 		tab: 1,
 	});
-	console.log(searchObject);
 	const [response, setResponse] = useState<typeResponse>({
 		pageCount: 0,
 		totalElement: 0, //tổng số phần tử
@@ -79,7 +78,6 @@ const CategoryIndex = () => {
 				`/category/paddingCate`,
 				searchObject,
 			);
-			console.log(data);
 			setData(data.content);
 
 			setResponse({
@@ -213,7 +211,6 @@ const CategoryIndex = () => {
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
-							
 							<DropdownMenuItem
 								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full text-start cursor-pointer"
 								onClick={() => setOpenId(row?.original?._id)}
@@ -266,14 +263,12 @@ const CategoryIndex = () => {
 					<TabsTrigger
 						value="1"
 						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 1 }))}
-						className="md:text-base text-sm"
 					>
 						Danh mục
 					</TabsTrigger>
 					<TabsTrigger
 						value="2"
 						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 2 }))}
-						className="md:text-base text-sm"
 					>
 						Danh mục ẩn
 					</TabsTrigger>
