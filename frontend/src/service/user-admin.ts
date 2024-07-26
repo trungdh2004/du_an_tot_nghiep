@@ -1,5 +1,10 @@
 import instance from "@/config/instance";
+import { SearchObjectType } from "@/types/searchObjecTypes";
 
+export const pagingUser = async (searchObject:SearchObjectType) => {
+	const data = await instance.post("/admin/list-user", searchObject);
+	return data;
+};
 
 export const banUser = async (openBanId : string) =>{
   const data = await instance.put(

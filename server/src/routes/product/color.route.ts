@@ -10,5 +10,7 @@ routerColor.delete("/delete/:id", colorController.deleteById);
 routerColor.put("/update/:id", colorController.updateColor);
 routerColor.get("/byId/:id", colorController.getColorById);
 routerColor.put("/unDelete/:id", colorController.unDeleteColor);
+routerColor.put("/deleteMany", colorController.blockedMany);
+routerColor.put("/unDeleteMany", colorController.unBlockedMany);
 
 export default routerColor;

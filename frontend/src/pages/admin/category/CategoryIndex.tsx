@@ -12,17 +12,12 @@ import { SearchObjectType } from "@/types/searchObjecTypes";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import React, { useEffect, useState } from "react";
 import { parseISO, format } from "date-fns";
-import { IoFilter } from "react-icons/io5";
-import instance from "@/config/instance";
 import CategoryAdd from "./CategoryAddandUpdate";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
 	DropdownMenu,
-	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { HiOutlineDotsVertical } from "react-icons/hi";
@@ -43,14 +38,10 @@ const CategoryIndex = () => {
 		slug: string;
 	}
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({}); // xử lí selected
-  console.log(rowSelection);
-  
   const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
-  console.log(listRowSeleted);
   const listId = listRowSeleted.map((data: any) => {
     return data._id;
   })
-  console.log(listId);
 	const [data, setData] = useState<IData[]>([]);
   const [openId, setOpenId] = useState<string | boolean>(false);
 	const [openUnhiddenCategory, setopenUnhiddenCategory] = useState<string | boolean>(false);
@@ -72,7 +63,6 @@ const CategoryIndex = () => {
 		sort: 1,
 		tab: 1,
 	});
-	console.log(searchObject);
 	const [response, setResponse] = useState<typeResponse>({
 		pageCount: 0,
 		totalElement: 0, //tổng số phần tử
@@ -85,13 +75,8 @@ const CategoryIndex = () => {
 
 	const handleCategory = async () => {
 		try {
-			const { data } = await instance.post(
-				`/category/paddingCate`,
-				searchObject,
-			);
-			console.log(data);
+			const { data } = await paddingCate(searchObject);
 			setData(data.content);
-
 			setResponse({
 				pageCount: data.totalPage,
 				totalElement: data.totalAllOptions,
@@ -157,12 +142,12 @@ const CategoryIndex = () => {
 		}));
 	};
 	const handleChangePage = (value: any) => {
-		console.log("value change page", value);
-
 		setSearchObject((prev) => ({
 			...prev,
 			pageIndex: value.selected + 1,
-		}));
+    }));
+    setRowSelection({});
+		setListRowSelected([]);
 	};
 	const columns: ColumnDef<IData>[] = [
 		{
@@ -250,13 +235,12 @@ const CategoryIndex = () => {
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
-							<DropdownMenuSeparator />
-							<Button
+							<DropdownMenuItem
+								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full text-start cursor-pointer"
 								onClick={() => setOpenId(row?.original?._id)}
-								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full"
 							>
-								Sửa danh mục
-							</Button>
+								Sửa thẻ tag
+							</DropdownMenuItem>
 							{row?.original?.deleted ? (
 								<DropdownMenuItem
 									className="text-green-400 text-center"
@@ -321,9 +305,8 @@ const CategoryIndex = () => {
 						onClick={() => {
 							setRowSelection({});
 							setListRowSelected([]);
-							setSearchObject((prev) => ({ ...prev, tab: 1 }));
+							setSearchObject((prev) => ({ ...prev, tab: 1 , pageIndex:1 }));
 						}}
-						className="md:text-base text-sm"
 					>
 						Danh mục
 					</TabsTrigger>
@@ -332,9 +315,8 @@ const CategoryIndex = () => {
 						onClick={() => {
 							setRowSelection({});
 							setListRowSelected([]);
-							setSearchObject((prev) => ({ ...prev, tab: 2 }));
+							setSearchObject((prev) => ({ ...prev, tab: 2,pageIndex:1 }));
 						}}
-						className="md:text-base text-sm"
 					>
 						Danh mục ẩn
 					</TabsTrigger>
@@ -353,7 +335,6 @@ const CategoryIndex = () => {
 				pageCount={response.pageCount}
 				totalElement={response.totalElement}
 				handleChangePageSize={handleChangePageSize}
-				dataPageSize={[1, 3, 5, 10]}
 			/>
 			{!!openHiddenCategory && (
 				<DialogConfirm

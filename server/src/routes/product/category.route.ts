@@ -13,5 +13,6 @@ routerCategory.get("/cateSlug/:slug", categoryController.getCategoryBySlug);
 routerCategory.put("/unDelete/:id", categoryController.unDeleteCategory);
 routerCategory.put("/deleteMany", categoryController.deleteMany);
 routerCategory.put("/unDeleteMany", categoryController.unDeleteMany);
+routerCategory.get("/getProductByCategory/:id", categoryController.getProductByCategory);
 
 export default routerCategory;

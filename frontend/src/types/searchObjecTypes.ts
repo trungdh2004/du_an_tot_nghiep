@@ -8,4 +8,7 @@ export interface SearchObjectType {
   totalOptionPage?: number;
   tab?: number
   provider?: string;
+  height?: number;
+  weight?: number;
+
 }

@@ -4,8 +4,6 @@ import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import TableComponent from "@/components/common/TableComponent";
-import instance from "@/config/instance";
-import { Link } from "react-router-dom";
 import { useDebounceCallback } from "usehooks-ts";
 import { parseISO, format } from "date-fns";
 import {
@@ -23,7 +21,7 @@ import { HiOutlineDotsVertical } from "react-icons/hi";
 import { Badge } from "@/components/ui/badge";
 import DialogConfirm from "@/components/common/DialogConfirm";
 import { toast } from "sonner";
-import { BanManyUser, banUser, unBanManyUser, unBanUser } from "@/service/user-admin";
+import { BanManyUser, banUser, pagingUser, unBanManyUser, unBanUser } from "@/service/user-admin";
 import { Input } from "@/components/ui/input";
 import { IoFilter } from "react-icons/io5";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -85,9 +83,7 @@ const UserIndex = () => {
 
 	const handlePagingUser = async () => {
 		try {
-			const { data } = await instance.post("/admin/list-user", searchObject);
-			console.log(data);
-
+			const { data } = await pagingUser(searchObject)
 			setData(data.content);
 			setResponse({
 				pageIndex: data.pageIndex,
@@ -127,7 +123,9 @@ const UserIndex = () => {
 		try {
 			const { data } = await BanManyUser(id);
 			setopenBanManyId(null);
-			handlePagingUser();
+      handlePagingUser();
+      setListRowSelected([]);
+			setRowSelection({});
 			toast.success("Cấm mục người dùng thành công");
 		} catch (error) {
 			toast.error("Cấm mục người dùng thất bại");
@@ -137,7 +135,9 @@ const UserIndex = () => {
   const handleUnBanMany = async (id: string) => {
 		try {
 			const { data } = await unBanManyUser(id);
-			setopenUnbanManyId(null);
+      setopenUnbanManyId(null);
+      setListRowSelected([])
+      setRowSelection({})
 			handlePagingUser();
 			toast.success("Bỏ cấm mục người dùng thành công");
 		} catch (error) {
@@ -145,13 +145,12 @@ const UserIndex = () => {
 		}
 	};
 	const handleChangePageSize = (value: number) => {
-		console.log(value);
-
 		setSearchObject((prev) => ({
 			...prev,
-      pageSize: value,
-      pageIndex: 1,
-		}));
+			pageSize: value,
+			pageIndex: 1,
+    }));
+    
 	};
 	const columns: ColumnDef<IData>[] = [
 		{
@@ -185,7 +184,7 @@ const UserIndex = () => {
 				/>
 			),
 			size: 100,
-    },
+		},
 		{
 			accessorKey: "full_name",
 			header: () => {
@@ -228,8 +227,6 @@ const UserIndex = () => {
 				return <div className="md:text-base text-xs">Phương thức</div>;
 			},
 			cell: ({ row }) => {
-				console.log(row);
-
 				const value = `${row.getValue("provider") === "google.com" ? "Google" : "Đăng ký"}`;
 				return <div className="font-medium md:text-base text-xs">{value}</div>;
 			},
@@ -258,7 +255,7 @@ const UserIndex = () => {
 				const status = row.original.blocked_at ? "Bị cấm" : "Hoạt động";
 				return (
 					<Badge
-						className={`font-medium ${row.original.blocked_at ? "bg-[#cf4040]" : "bg-green-500"} text-center items-center md:text-base text-xs`}
+						className={`font-medium ${row.original.blocked_at ? "bg-[#cf4040]" : "bg-green-500"} text-center items-center text-xs text-nowrap leading-[14px]`}
 					>
 						{status}
 					</Badge>
@@ -278,9 +275,6 @@ const UserIndex = () => {
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
-							<DropdownMenuLabel>Actions</DropdownMenuLabel>
-							<DropdownMenuSeparator />
-
 							<DropdownMenuItem>Xem chi tiết</DropdownMenuItem>
 							{row?.original?.blocked_at ? (
 								<DropdownMenuItem
@@ -305,16 +299,12 @@ const UserIndex = () => {
 	];
 
 	const handleChangePage = (value: any) => {
-		console.log("value change page", value);
-
 		setSearchObject((prev) => ({
 			...prev,
 			pageIndex: value.selected + 1,
-		}));
-	};
-
-	const handleSubmit = () => {
-		console.log("rowSelection:", listRowSeleted);
+    }));
+    setRowSelection({});
+		setListRowSelected([]);
 	};
 
 	return (
@@ -332,7 +322,9 @@ const UserIndex = () => {
 					<div className="flex gap-3 justify-center items-center">
 						{listIdUser.length !== 0 && searchObject.tab == 1 ? (
 							<Button
-								onClick={() => setopenBanManyId(true)}
+                onClick={() => {
+                  setopenBanManyId(true) 
+                }}
 								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
 							>
 								Ẩn nhiều
@@ -342,7 +334,9 @@ const UserIndex = () => {
 						)}
 						{listIdUser.length !== 0 && searchObject.tab == 2 && (
 							<Button
-								onClick={() => setopenUnbanManyId(true)}
+                onClick={() => {
+                  setopenUnbanManyId(true) 
+                }}
 								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
 							>
 								Bỏ Ẩn nhiều
@@ -355,7 +349,7 @@ const UserIndex = () => {
 										<IoFilter size={20} />
 									</div>
 								</DropdownMenuTrigger>
-								<DropdownMenuContent className="w-[150px]">
+								<DropdownMenuContent className="w-[150px]" align="end">
 									<DropdownMenuLabel>Sắp xếp theo</DropdownMenuLabel>
 									<DropdownMenuSeparator />
 									<DropdownMenuRadioGroup
@@ -468,9 +462,8 @@ const UserIndex = () => {
 						onClick={() => {
 							setRowSelection({});
 							setListRowSelected([]);
-							setSearchObject((prev) => ({ ...prev, tab: 1 }));
+							setSearchObject((prev) => ({ ...prev, tab: 1,pageIndex:1 }));
 						}}
-						className="md:text-base text-sm"
 					>
 						Người dùng
 					</TabsTrigger>
@@ -479,9 +472,8 @@ const UserIndex = () => {
 						onClick={() => {
 							setRowSelection({});
 							setListRowSelected([]);
-							setSearchObject((prev) => ({ ...prev, tab: 2 }));
+							setSearchObject((prev) => ({ ...prev, tab: 2,pageIndex:1 }));
 						}}
-						className="md:text-base text-sm"
 					>
 						Người dùng bị cấm
 					</TabsTrigger>
@@ -500,7 +492,6 @@ const UserIndex = () => {
 				pageCount={response.pageCount}
 				totalElement={response.totalElement}
 				handleChangePageSize={handleChangePageSize}
-				dataPageSize={[1, 2, 3, 5]}
 			/>
 			{!!openBanId && (
 				<DialogConfirm

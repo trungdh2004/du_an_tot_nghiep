@@ -34,7 +34,7 @@ class ColorController {
 
   async pagingColor(req: RequestModel, res: Response) {
     try {
-      const { pageIndex = 1, pageSize,keyword ,tab=1} = req.body;
+      const { pageIndex = 1, pageSize, keyword, tab = 1 } = req.body;
 
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
@@ -63,15 +63,20 @@ class ColorController {
         });
       }
 
-      const dataColor = await ColorModel.aggregate(pipeline).collation({
-        locale: "en_US",
-        strength: 1,
-      }).skip(skip).limit(limit)
+      const dataColor = await ColorModel.aggregate(pipeline)
+        .collation({
+          locale: "en_US",
+          strength: 1,
+        })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit);
+
       const countColor = await ColorModel.aggregate([
         ...pipeline,
         {
-          $count:"total"
-        }
+          $count: "total",
+        },
       ]);
 
       const result = formatDataPaging({
@@ -91,10 +96,10 @@ class ColorController {
 
   async getAllColor(req: RequestModel, res: Response) {
     try {
-      const {tab = 1} = req.body 
+      const { tab = 1 } = req.body;
 
       const allCategory = await ColorModel.find({
-        deleted:tab === 1 ? false : true
+        deleted: tab === 1 ? false : true,
       });
       return res.status(STATUS.OK).json({
         message: "Lấy giá trị thành công",
@@ -154,9 +159,13 @@ class ColorController {
         });
       }
 
-      await ColorModel.findByIdAndUpdate(id, {
-        deleted:true
-      },{new : true});
+      await ColorModel.findByIdAndUpdate(
+        id,
+        {
+          deleted: true,
+        },
+        { new: true }
+      );
 
       return res.status(STATUS.OK).json({
         message: "Xóa thành công",
@@ -225,15 +234,19 @@ class ColorController {
         });
       }
 
-      const newCate = await ColorModel.findByIdAndUpdate(id, {
-        deleted:false
-      },{new:true});
+      const newCate = await ColorModel.findByIdAndUpdate(
+        id,
+        {
+          deleted: false,
+        },
+        { new: true }
+      );
 
       return res.status(STATUS.OK).json({
         message: "Khôi phục thành công",
-        data:newCate
+        data: newCate,
       });
-    } catch (error:any) {
+    } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
       });
@@ -242,7 +255,7 @@ class ColorController {
 
   async blockedMany(req: RequestModel, res: Response) {
     try {
-      const { listId  } = req.body;
+      const { listId } = req.body;
 
       if (!listId || listId.length === 0) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -254,9 +267,9 @@ class ColorController {
 
       await ColorModel.updateMany(
         { _id: { $in: listId } },
-        { $set: { blocked: true  } },{new:true}
+        { $set: { deleted: true } },
+        { new: true }
       );
-
 
       return res.status(STATUS.OK).json({
         message: "Xóa màu thành công",
@@ -274,7 +287,7 @@ class ColorController {
 
   async unBlockedMany(req: RequestModel, res: Response) {
     try {
-      const { listId  } = req.body;
+      const { listId } = req.body;
 
       if (!listId || listId.length === 0) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -286,9 +299,9 @@ class ColorController {
 
       await ColorModel.updateMany(
         { _id: { $in: listId } },
-        { $set: { blocked_at: false  } },{new:true}
+        { $set: { deleted: false } },
+        { new: true }
       );
-
 
       return res.status(STATUS.OK).json({
         message: "Khôi phục thành công",
