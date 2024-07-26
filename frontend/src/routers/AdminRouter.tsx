@@ -44,11 +44,11 @@ const AdminRouter = [
 			{
 				path: "product",
 				element: <ProductIndex />,
-      },
-      {
-        path: "product/add",
-        element: <ProductAddandUpdate />,
-      },
+			},
+			{
+				path: "product/add",
+				element: <ProductAddandUpdate />,
+			},
 			{
 				path: "tags",
 				element: <TagIndex />,
@@ -64,7 +64,7 @@ const AdminRouter = [
 			},
 			{
 				path: "color",
-				element: <ColorList />
+				element: <ColorList />,
 			},
 		],
 	},
