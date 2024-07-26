@@ -8,7 +8,7 @@ dotenv.config();
 export default defineConfig({
 	plugins: [react()],
 	server: {
-		port: 4000,
+		port: 3000,
 	},
 	css: {
 		devSourcemap: true,
@@ -20,5 +20,8 @@ export default defineConfig({
 	},
 	define: {
 		"process.env": process.env, // wrapping in "" since it's a string
+	},
+	optimizeDeps: {
+		include: ["quill-image-resize-module-react"],
 	},
 });

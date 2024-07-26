@@ -23,7 +23,13 @@ import { useDebounceCallback } from "usehooks-ts";
 import { toast } from "sonner";
 import DialogConfirm from "@/components/common/DialogConfirm";
 import TagAdd from "./TagAddandUpdate";
-import { hiddentag, unhiddentag } from "@/service/tags-admin";
+import {
+	hiddenListTag,
+	hiddentag,
+	pagingTags,
+	unhiddenListTag,
+	unhiddentag,
+} from "@/service/tags-admin";
 
 const TagIndex = () => {
 	interface IData {
@@ -37,10 +43,17 @@ const TagIndex = () => {
 	}
 	const [rowSelection, setRowSelection] = useState<RowSelectionState>({}); // xử lí selected
 	const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
+	const listId = listRowSeleted.map((data: any) => {
+		return data._id;
+	});
 	const [data, setData] = useState<IData[]>([]);
 	const [openId, setOpenId] = useState<string | boolean>(false);
-	const [openUnhiddenTag, setopenUnhiddenTag] = useState<string | boolean>(false);
+	const [openUnhiddenTag, setopenUnhiddenTag] = useState<string | boolean>(
+		false,
+	);
 	const [openHiddenTag, setOpenHiddenTag] = useState<string | boolean>(false);
+	const [openManyTag, setOpenManyTag] = useState<string | boolean>(false);
+	const [openUnManyTag, setOpenUnManyTag] = useState<string | boolean>(false);
 	const debounced = useDebounceCallback((inputValue: string) => {
 		setSearchObject((prev) => ({
 			...prev,
@@ -68,7 +81,7 @@ const TagIndex = () => {
 
 	const handleTags = async () => {
 		try {
-			const { data } = await instance.post(`/tags/paging`, searchObject);
+			const { data } = await pagingTags(searchObject);
 			setData(data.content);
 			setResponse({
 				pageCount: data.totalPage,
@@ -100,22 +113,45 @@ const TagIndex = () => {
 			toast.error("Bỏ ẩn thẻ tag thất bại");
 		}
 	};
-	const handleChangePageSize = (value: number) => {
-		console.log(value);
+	const handleManyTag = async (listId: any) => {
+		try {
+			const { data } = await hiddenListTag(listId);
+			setOpenManyTag(false);
+			handleTags();
+			setRowSelection({});
+			setListRowSelected([]);
+			toast.success("Ẩn nhiều danh mục danh mục nhiều thành công");
+		} catch (error) {
+			toast.error("Ẩn danh mục nhiều thất bại");
+		}
+	};
 
+	const handleUnManyTag = async (listId: any) => {
+		try {
+			const { data } = await unhiddenListTag(listId);
+			setOpenUnManyTag(false);
+			handleTags();
+			setRowSelection({});
+			setListRowSelected([]);
+			toast.success("Bỏ ẩn nhiều danh mục danh mục nhiều thành công");
+		} catch (error) {
+			toast.error("Bỏ ẩn danh mục nhiều thất bại");
+		}
+	};
+	const handleChangePageSize = (value: number) => {
 		setSearchObject((prev) => ({
 			...prev,
-      pageSize: value,
-      pageIndex: 1,
+			pageSize: value,
+			pageIndex: 1,
 		}));
 	};
 	const handleChangePage = (value: any) => {
-		console.log("value change page", value);
-
 		setSearchObject((prev) => ({
 			...prev,
 			pageIndex: value.selected + 1,
 		}));
+		setListRowSelected([]);
+		setRowSelection({});
 	};
 	const columns: ColumnDef<IData>[] = [
 		{
@@ -203,23 +239,22 @@ const TagIndex = () => {
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
-							<DropdownMenuSeparator />
-							<Button
+							<DropdownMenuItem
+								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full text-start cursor-pointer"
 								onClick={() => setOpenId(row?.original?._id)}
-								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full"
 							>
 								Sửa thẻ tag
-							</Button>
+							</DropdownMenuItem>
 							{row?.original?.deleted ? (
 								<DropdownMenuItem
-									className="text-green-400 text-center"
+									className="text-green-400"
 									onClick={() => setopenUnhiddenTag(row?.original?._id)}
 								>
 									Bỏ ẩn
 								</DropdownMenuItem>
 							) : (
 								<DropdownMenuItem
-									className="text-red-400 text-center"
+									className="text-red-400"
 									onClick={() => setOpenHiddenTag(row?.original?._id)}
 								>
 									Ẩn
@@ -234,7 +269,7 @@ const TagIndex = () => {
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex flex-col gap-3">
-				<h4 className="font-medium md:text-xl text-base">Danh sách thẻ tag</h4>
+				<h4 className="font-medium md:text-xl text-base">Danh sách thẻ nhãn</h4>
 				<div className="flex justify-between">
 					<Input
 						placeholder="Tìm kiếm thẻ tag"
@@ -242,11 +277,29 @@ const TagIndex = () => {
 						onChange={(event) => debounced(event.target.value)}
 					/>
 					<div className="flex items-center gap-4">
+						{listId.length !== 0 && searchObject.tab == 1 ? (
+							<Button
+								onClick={() => setOpenManyTag(true)}
+								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
+							>
+								Ẩn nhiều
+							</Button>
+						) : (
+							""
+						)}
+						{listId.length !== 0 && searchObject.tab == 2 && (
+							<Button
+								onClick={() => setOpenUnManyTag(true)}
+								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
+							>
+								Bỏ Ẩn nhiều
+							</Button>
+						)}
 						<Button
 							onClick={() => setOpenId(true)}
 							className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
 						>
-							Thêm thẻ tag
+							Thêm nhãn
 						</Button>
 					</div>
 				</div>
@@ -255,17 +308,15 @@ const TagIndex = () => {
 				<TabsList className="grid w-full grid-cols-2">
 					<TabsTrigger
 						value="1"
-						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 1 }))}
-						className="md:text-base text-sm"
+						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 1,pageIndex:1 }))}
 					>
-						Thẻ tag
+						Nhãn
 					</TabsTrigger>
 					<TabsTrigger
 						value="2"
-						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 2 }))}
-						className="md:text-base text-sm"
+						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 2 ,pageIndex:1}))}
 					>
-						Thẻ tag ẩn
+						Nhãn ẩn
 					</TabsTrigger>
 				</TabsList>
 			</Tabs>
@@ -301,6 +352,27 @@ const TagIndex = () => {
 					handleClose={() => setopenUnhiddenTag(false)}
 					handleSubmit={() => handleUnhiddenCate(openUnhiddenTag)}
 					content="Bạn có chắc muốn bỏ ẩn thẻ tag này?"
+					labelConfirm="Bỏ ẩn"
+				/>
+			)}
+			{!!openManyTag && (
+				<DialogConfirm
+					open={!!openManyTag}
+					title="Xác nhận ẩn nhiều thẻ tag"
+					handleClose={() => setOpenManyTag(false)}
+					handleSubmit={() => handleManyTag(listId)}
+					content="Bạn có chắc muốn ẩn các thẻ tag này?"
+					labelConfirm="Ẩn"
+				/>
+			)}
+
+			{!!openUnManyTag && (
+				<DialogConfirm
+					open={!!openUnManyTag}
+					title="Xác nhận bỏ ẩn nhiều thẻ tag"
+					handleClose={() => setOpenUnManyTag(false)}
+					handleSubmit={() => handleUnManyTag(listId)}
+					content="Bạn có chắc muốn bỏ ẩn các thẻ tag này?"
 					labelConfirm="Bỏ ẩn"
 				/>
 			)}

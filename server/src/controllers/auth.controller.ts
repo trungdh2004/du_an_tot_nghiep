@@ -33,6 +33,7 @@ class AuthController {
       expiresIn: "1h",
     });
   }
+  
   async generateRefreshToken(value: PayloadToken | object | string) {
     return jwt.sign(value, process.env.SECRET_REFRESHTOKEN!, {
       expiresIn: "60d",
@@ -80,8 +81,8 @@ class AuthController {
 
       if (existingEmail?.blocked_at) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Tài khoản của bạn đã bị khóa"
-        })
+          message: "Tài khoản của bạn đã bị khóa",
+        });
       }
 
       const accessToken = await this.generateAccessToken({
@@ -94,25 +95,25 @@ class AuthController {
         email: existingEmail.email,
         is_admin: existingEmail.is_admin,
       });
-      const existingRefreshToken = await RefreshTokenModel.findOne({
-        userId: existingEmail._id,
-      });
+      // const existingRefreshToken = await RefreshTokenModel.findOne({
+      //   userId: existingEmail._id,
+      // });
 
-      if (!existingRefreshToken) {
-        await RefreshTokenModel.create({
-          userId: existingEmail._id,
-          token: refreshToken,
-        });
-      } else {
-        await RefreshTokenModel.findOneAndUpdate(
-          {
-            userId: existingEmail._id,
-          },
-          {
-            token: refreshToken,
-          }
-        );
-      }
+      // if (!existingRefreshToken) {
+      //   await RefreshTokenModel.create({
+      //     userId: existingEmail._id,
+      //     token: refreshToken,
+      //   });
+      // } else {
+      //   await RefreshTokenModel.findOneAndUpdate(
+      //     {
+      //       userId: existingEmail._id,
+      //     },
+      //     {
+      //       token: refreshToken,
+      //     }
+      //   );
+      // }
 
       res.cookie("token", refreshToken, {
         maxAge: 1000 * 60 * 24 * 60 * 60,
@@ -214,25 +215,25 @@ class AuthController {
           is_admin: existingEmail.is_admin,
         });
 
-        const existingRefreshToken = await RefreshTokenModel.findOne({
-          userId: existingEmail._id,
-        });
+        // const existingRefreshToken = await RefreshTokenModel.findOne({
+        //   userId: existingEmail._id,
+        // });
 
-        if (!existingRefreshToken) {
-          await RefreshTokenModel.create({
-            userId: existingEmail._id,
-            token: refreshToken,
-          });
-        } else {
-          await RefreshTokenModel.findOneAndUpdate(
-            {
-              userId: existingEmail._id,
-            },
-            {
-              token: refreshToken,
-            }
-          );
-        }
+        // if (!existingRefreshToken) {
+        //   await RefreshTokenModel.create({
+        //     userId: existingEmail._id,
+        //     token: refreshToken,
+        //   });
+        // } else {
+        //   await RefreshTokenModel.findOneAndUpdate(
+        //     {
+        //       userId: existingEmail._id,
+        //     },
+        //     {
+        //       token: refreshToken,
+        //     }
+        //   );
+        // }
 
         res.cookie("token", refreshToken, {
           maxAge: 1000 * 60 * 24 * 60,
@@ -312,16 +313,11 @@ class AuthController {
           message: "Bạn chưa đăng nhập ",
         });
       }
-      console.log(process.env.SECRET_REFRESHTOKEN);
-      console.log(refreshToken);
-
       jwt.verify(
         refreshToken,
         process.env.SECRET_REFRESHTOKEN!,
         async (err: VerifyErrors | null, data?: object | string) => {
           if (err) {
-            console.log("err:", err);
-
             return res.status(STATUS.AUTHENTICATOR).json({
               message: "Token đã hết hạn mời bạn đăng nhập lại",
             });
@@ -330,16 +326,16 @@ class AuthController {
             return;
           }
 
-          const refreshTokenDb = await RefreshTokenModel.findOne({
-            userId: (data as PayloadToken).id as ObjectId,
-            token: refreshToken,
-          });
+          // const refreshTokenDb = await RefreshTokenModel.findOne({
+          //   userId: (data as PayloadToken).id as ObjectId,
+          //   token: refreshToken,
+          // });
 
-          if (!refreshTokenDb) {
-            return res.status(STATUS.AUTHENTICATOR).json({
-              message: "Mời bạn đăng nhập lại",
-            });
-          }
+          // if (!refreshTokenDb) {
+          //   return res.status(STATUS.AUTHENTICATOR).json({
+          //     message: "Mời bạn đăng nhập lại",
+          //   });
+          // }
           const payload = {
             id: (data as PayloadToken).id,
             email: (data as PayloadToken).email,
@@ -348,9 +344,9 @@ class AuthController {
 
           const newAccessToken = await this.generateAccessToken(payload);
           const newRefreshToken = await this.generateRefreshToken(payload);
-          await RefreshTokenModel.findByIdAndUpdate(refreshTokenDb._id, {
-            token: newRefreshToken,
-          });
+          // await RefreshTokenModel.findByIdAndUpdate(refreshTokenDb._id, {
+          //   token: newRefreshToken,
+          // });
           res.cookie("token", newRefreshToken, {
             maxAge: 24 * 60 * 60 * 1000 * 60,
             httpOnly: true,
@@ -393,10 +389,6 @@ class AuthController {
               message: "Đăng xuất thành công",
             });
           }
-
-          await RefreshTokenModel.findOneAndDelete({
-            userId: (data as PayloadToken).id as ObjectId,
-          });
 
           res.cookie("token", "", {
             maxAge: 0,
@@ -702,6 +694,69 @@ class AuthController {
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
+      });
+    }
+  }
+
+
+  async blockedMany(req: RequestModel, res: Response) {
+    try {
+      const { listId  } = req.body;
+
+      if (!listId || listId.length === 0) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn người dùng",
+        });
+      }
+
+      await UserModel.find({ _id: { $in: listId } }).select("_id");
+
+      await UserModel.updateMany(
+        { _id: { $in: listId } },
+        { $set: { blocked_at: true  } },{new:true}
+      );
+
+
+      return res.status(STATUS.OK).json({
+        message: "Chặn người dùng thành công",
+      });
+    } catch (error: any) {
+
+      return res.status(STATUS.INTERNAL).json({
+        message: error.kind
+          ? "Có một người dùng không có trong dữ liệu"
+          : error.message,
+      });
+    }
+  }
+
+  async unBlockedMany(req: RequestModel, res: Response) {
+    try {
+      const { listId  } = req.body;
+
+      if (!listId || listId.length === 0) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn người dùng",
+        });
+      }
+
+      await UserModel.find({ _id: { $in: listId } }).select("_id");
+
+      await UserModel.updateMany(
+        { _id: { $in: listId } },
+        { $set: { blocked_at: false  } },{new:true}
+      );
+
+
+      return res.status(STATUS.OK).json({
+        message: "Bỏ chặn người dùng thành công",
+      });
+    } catch (error: any) {
+
+      return res.status(STATUS.INTERNAL).json({
+        message: error.kind
+          ? "Có một người dùng không có trong dữ liệu"
+          : error.message,
       });
     }
   }

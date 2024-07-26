@@ -8,6 +8,7 @@ import {
 	GoogleAuthProvider,
 	getAdditionalUserInfo,
 	getAuth,
+	getRedirectResult,
 	signInWithPopup,
 } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
@@ -38,14 +39,7 @@ const SignInWithFacebookOrGoogle = () => {
 
 		signInWithPopup(auth, provider)
 			.then(async (result) => {
-				console.log(result?.user);
-
-				const credential = GoogleAuthProvider.credentialFromResult(result);
-				// The signed-in user info.
 				const user = getAdditionalUserInfo(result);
-				console.log("user:", user);
-				console.log("credential:", credential);
-
 				const payload = {
 					email: user?.profile?.email,
 					first_name: user?.profile?.given_name,

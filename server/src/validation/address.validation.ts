@@ -13,13 +13,13 @@ export const addressValidation = Joi.object({
   }),
   district: Joi.object({
     name: Joi.string().required(),
-    idProvince: Joi.string().required(),
     idDistrict: Joi.string().required(),
   }),
   commune: Joi.object({
     name: Joi.string().required(),
     idCommune: Joi.string().required(),
-    idDistrict: Joi.string().required(),
   }),
   address: Joi.string().required(),
+  detailAddress: Joi.string().required(),
+  location: Joi.array().items(Joi.number()),
 });
