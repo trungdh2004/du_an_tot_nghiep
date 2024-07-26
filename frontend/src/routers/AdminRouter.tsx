@@ -9,7 +9,9 @@ import Dashboard from "@/pages/admin/Dashboard";
 
 import UserDetail from "@/pages/admin/users/UserDetail";
 import UserIndex from "@/pages/admin/users/UserIndex";
-import PrivateRouter from "./PrivateRouter";
+import ColorList from "@/pages/admin/color/ColorList";
+import ProductIndex from "@/pages/admin/product/ProductIndex";
+import ProductAddandUpdate from "@/pages/admin/product/ProductAddandUpdate";
 import TagIndex from "@/pages/admin/tags/TagIndex";
 import MyBlogs from "@/pages/admin/Blogs/MyBlog";
 
@@ -41,6 +43,14 @@ const AdminRouter = [
 			{
 				path: "category",
 				element: <CategoryIndex />,
+			},
+			{
+				path: "product",
+				element: <ProductIndex />,
+			},
+			{
+				path: "product/add",
+				element: <ProductAddandUpdate />,
 			},
 			{
 				path: "tags",

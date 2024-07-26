@@ -1,5 +1,5 @@
 import { Router } from "express";
-import SizeController from "../controllers/product/size.controller";
+import SizeController from "../../controllers/product/size.controller";
 
 const routerSize = Router();
 
