@@ -5,9 +5,10 @@ export interface SearchObjectType {
 	fieldSort?: string;
 	sort?: 1 | -1;
 	totalElement?: number;
-	totalOptionPage?: number;
-	tab?: number;
-	provider?: string;
-	height?: number;
-	weight?: number;
+  totalOptionPage?: number;
+  tab?: number
+  provider?: string;
+  height?: number;
+  weight?: number;
+
 }

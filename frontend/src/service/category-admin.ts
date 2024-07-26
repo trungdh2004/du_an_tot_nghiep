@@ -17,3 +17,9 @@ export const unhiddencate = async (id: string | boolean) => {
 	const data = await instance.put(`category/unDelete/${id}`);
 	return data;
 };
+
+
+export const getAllCategory = async () => {
+  const data = await instance.get(`/category/getAllCate`);
+  return data;
+}

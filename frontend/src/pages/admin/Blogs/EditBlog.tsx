@@ -24,7 +24,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import useDebounce from "@/hooks/shared";
 import { cn } from "@/lib/utils";
-import { showBlogsEdit, updateBlogs } from "@/service/blog";
+import { publishBlog, showBlogsEdit, updateBlogs } from "@/service/blog";
 import { getAllTags } from "@/service/tags-admin";
 import { uploadFileService } from "@/service/upload";
 import { useProcessBarLoading } from "@/store/useSidebarAdmin";
@@ -101,7 +101,7 @@ const EditBlog = () => {
 		const { _id, ...rest } = formData as any;
 		const payload = {
 			...rest,
-			thumbnail_url:formData?.thumbnail_url,
+			thumbnail_url: formData?.thumbnail_url,
 		};
 		try {
 			setStatusLoading({ isSubmitted: true, isLoading: true });
@@ -146,7 +146,7 @@ const EditBlog = () => {
 
 				setStatusLoading({ isSubmitted: true, isLoading: true });
 
-				const reponse = await updateBlogs(id as string, payload);
+				const reponse = await publishBlog(id as string, payload);
 				if (reponse.status === 200) {
 					toast.success("Cập nhập bài viết thành công");
 				} else {
