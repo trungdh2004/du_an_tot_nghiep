@@ -11,10 +11,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from '@/components/ui/input';
 import instance from '@/config/instance';
-import { SearchObjectType } from '@/types/searchObjecTypes';
+import { SearchObjectBlog } from '@/types/searchObjecTypes';
 import { typeResponse } from '@/types/typeReponse';
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
+import { FaRegHeart } from "react-icons/fa";
 
 import DialogConfirm from '@/components/common/DialogConfirm';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -42,6 +43,7 @@ type IBlog = {
         full_name: string,
     },
     views_count: number,
+    countLike: number,
     comments_count: number,
     thumbnail_url?: string,
     meta_description: string,
@@ -54,7 +56,7 @@ const BlogList = () => {
         totalElement: 0,
         totalOptionPage: 0,
     })
-    const [searchObject, setSearchObject] = useState<SearchObjectType>({
+    const [searchObject, setSearchObject] = useState<SearchObjectBlog>({
         pageIndex: 1,
         pageSize: 9,
         keyword: "",
@@ -80,14 +82,6 @@ const BlogList = () => {
             handleBlog()
         })()
     }, [searchObject])
-    // const handleChangePageSize = (value: number) => {
-    //     setSearchObject((prev) => ({
-    //         ...prev,
-    //         pageSize: value,
-    //         pageIndex: 1,
-    //     }));
-    // };
-    const [isPublish, setIsPublish] = useState<string | boolean>(false);
 
     const handleChangePag = (value: any) => {
         setSearchObject((prev) => ({
@@ -241,12 +235,11 @@ const BlogList = () => {
                                     </div>
                                     <p className="text-xs pt-1 text-gray-400 line-clamp-2">{item.meta_description}</p>
                                     <div className="flex space-x-4 min-[900px]:space-x-1 xl:space-x-4 absolute bottom-4 right-4">
-                                        <div className="flex">
 
-                                        </div>
                                         <div className="flex gap-3">
-                                            <span className="text-[#212B36] text-xs flex items-center gap-1"><FaCommentDots />{item.comments_count}</span>
-                                            <span className="text-[#212B36] text-xs flex items-center gap-1"> <FaEye />{item.views_count}</span>
+                                            <span className="text-[#212B36] text-xs flex items-center gap-1"><FaRegHeart size={16} />{item.countLike}</span>
+                                            <span className="text-[#212B36] text-xs flex items-center gap-1"><FaCommentDots size={16} />{item.comments_count}</span>
+                                            <span className="text-[#212B36] text-xs flex items-center gap-1"> <FaEye size={16} />{item.views_count}</span>
                                         </div>
                                     </div>
                                 </div>

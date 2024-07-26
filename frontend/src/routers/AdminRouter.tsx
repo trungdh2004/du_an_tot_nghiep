@@ -10,7 +10,7 @@ import Dashboard from "@/pages/admin/Dashboard";
 import UserDetail from "@/pages/admin/users/UserDetail";
 import UserIndex from "@/pages/admin/users/UserIndex";
 import PrivateRouter from "./PrivateRouter";
-import TagIndex from "@/pages/clients/tags/TagIndex";
+import TagIndex from "@/pages/admin/tags/TagIndex";
 import MyBlogs from "@/pages/admin/Blogs/MyBlog";
 
 const AdminRouter = [

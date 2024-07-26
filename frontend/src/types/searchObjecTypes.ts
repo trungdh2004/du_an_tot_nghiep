@@ -4,6 +4,9 @@ export interface SearchObjectType {
 	keyword?: string;
 	fieldSort?: string;
 	sort?: 1 | -1;
+
+}
+export interface SearchObjectBlog extends SearchObjectType {
 	totalElement?: number;
 	totalOptionPage?: number;
 	tab?: number
