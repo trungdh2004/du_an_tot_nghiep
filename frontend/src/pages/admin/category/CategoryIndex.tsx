@@ -41,15 +41,12 @@ const CategoryIndex = () => {
 		slug: string;
 	}
 	const [rowSelection, setRowSelection] = useState<RowSelectionState>({}); // xử lí selected
-	const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
+  const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
+  
 	const [data, setData] = useState<IData[]>([]);
 	const [openId, setOpenId] = useState<string | boolean>(false);
-	const [openUnhiddenCategory, setopenUnhiddenCategory] = useState<
-		string | boolean
-	>(false);
-	const [openHiddenCategory, setOpenHiddenCategory] = useState<
-		string | boolean
-	>(false);
+	const [openUnhiddenCategory, setopenUnhiddenCategory] = useState<string | boolean>(false);
+	const [openHiddenCategory, setOpenHiddenCategory] = useState<string | boolean>(false);
 	const debounced = useDebounceCallback((inputValue: string) => {
 		setSearchObject((prev) => ({
 			...prev,

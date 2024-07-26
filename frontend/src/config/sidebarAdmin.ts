@@ -90,25 +90,6 @@ const sidebarConfig: any[] = [
 		],
 	},
 	{
-		path: "/product",
-		isVisible: true,
-		label: "Sản phẩm",
-		children: [
-			{
-				path: "/",
-				icon: LuLayoutDashboard,
-				isVisible: true,
-				label: "Danh sách sản phẩm",
-			},
-			{
-				path: "/add",
-				icon: LuLayoutDashboard,
-				isVisible: true,
-				label: "Thêm sản phẩm",
-			},
-		],
-	},
-	{
 		path: "/user",
 		isVisible: true,
 		label: "Người dùng",
@@ -177,4 +158,6 @@ const sidebarConfig: any[] = [
 		label: "Thống kê",
 	}
 ];
+
+
 export default sidebarConfig;
