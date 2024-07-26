@@ -141,7 +141,6 @@ class BlogController {
 
       const meta_title = truncateSentence(title, 30);
       const meta_description = truncateSentence(content, 50);
-      console.log("id:", id);
 
       const existingBlog = await BlogsModel.findById(id);
 

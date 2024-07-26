@@ -58,7 +58,7 @@ const AddressLocation = ({
 					<Input
 						{...field}
 						readOnly
-						placeholder="Thạch thất"
+						placeholder="Nhập vị trí"
 						className="w-full"
 					/>
 				</div>

@@ -23,7 +23,6 @@ const authentication = async (
         message: "Bạn chưa đăng nhập",
       });
     }
-    console.log("token:", token);
 
     jwt.verify(
       token,
