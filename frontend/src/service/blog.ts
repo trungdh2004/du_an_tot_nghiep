@@ -12,7 +12,7 @@ export const updateBlogs = (id: string, data: any) => {
 	return instance.put(uri, data);
 };
 
-export const publishBlog = (id: string, data: any) => {
+export const publishBlogs = (id: string, data: any) => {
 	const uri = `/blogs/publish/${id}`;
 	return instance.put(uri, data);
 };

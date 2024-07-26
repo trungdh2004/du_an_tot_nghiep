@@ -24,7 +24,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import useDebounce from "@/hooks/shared";
 import { cn } from "@/lib/utils";
-import { publishBlog, showBlogsEdit, updateBlogs } from "@/service/blog";
+import { publishBlogs, showBlogsEdit, updateBlogs } from "@/service/blog";
 import { getAllTags } from "@/service/tags-admin";
 import { uploadFileService } from "@/service/upload";
 import { useProcessBarLoading } from "@/store/useSidebarAdmin";
@@ -146,7 +146,7 @@ const EditBlog = () => {
 
 				setStatusLoading({ isSubmitted: true, isLoading: true });
 
-				const reponse = await publishBlog(id as string, payload);
+				const reponse = await publishBlogs(id as string, payload);
 				if (reponse.status === 200) {
 					toast.success("Cập nhập bài viết thành công");
 				} else {

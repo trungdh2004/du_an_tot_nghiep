@@ -255,6 +255,7 @@ const ProductAddandUpdate = () => {
 										)}
 									/>
 								</div>
+								{/* category */}
 								<div className="col-span-2 sm:col-span-1">
 									<FormField
 										disabled={isPending}
@@ -500,7 +501,7 @@ const ProductAddandUpdate = () => {
 										)}
 									/>
 								</div>
-
+								{/* attribute */}
 								<div className="col-span-2 space-y-2">
 									<FormLabel
 										className={cn(
