@@ -42,10 +42,10 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 	const [isLoading, setIsLoading] = useState(true);
 	const value = { authUser, setAuthUser, isLoggedIn, setIsLoggedIn };
 	useEffect(() => {
+		setIsLoggedIn(true);
 		(async () => {
 			try {
 				const { data } = await currentAccount();
-				setIsLoggedIn(true);
 				setAuthUser(data?.data);
 				toast.success(data?.message);
 			} catch (error) {
