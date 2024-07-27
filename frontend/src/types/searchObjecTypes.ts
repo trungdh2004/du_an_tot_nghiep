@@ -3,7 +3,7 @@ export interface SearchObjectType {
 	pageSize: number;
 	keyword?: string;
 	fieldSort?: string;
-  sort?: 1 | -1 ;
+	sort?: 1 | -1;
 	totalElement?: number;
   totalOptionPage?: number;
   tab?: number
