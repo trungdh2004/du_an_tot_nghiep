@@ -35,9 +35,7 @@ class TagsController {
 
   async pagingTags(req: RequestModel, res: Response) {
     try {
-
       const { pageIndex = 1, pageSize, keyword, tab = 1 } = req.body;
-
 
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
@@ -66,7 +64,6 @@ class TagsController {
         });
       }
 
-
       const dataTags = await TagsModel.aggregate(pipeline)
         .collation({
           locale: "en_US",
@@ -79,7 +76,6 @@ class TagsController {
         {
           $count: "total",
         },
-
       ]);
 
       const result = formatDataPaging({
@@ -87,7 +83,6 @@ class TagsController {
         pageIndex,
         data: dataTags,
         count: countTags[0]?.total || 0,
-
       });
 
       return res.status(STATUS.OK).json(result);
@@ -252,6 +247,70 @@ class TagsController {
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
+      });
+    }
+  }
+
+  async deleteMany(req: RequestModel, res: Response) {
+    try {
+      const { listId, type } = req.body;
+
+      if (!listId || listId.length === 0) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn thẻ tag sản phẩm",
+        });
+      }
+
+      await TagsModel.find({ _id: { $in: listId } }).select("_id");
+
+      const CategoryData = await TagsModel.updateMany(
+        { _id: { $in: listId } },
+        { $set: { deleted: true } },
+        { new: true }
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Xóa thành công",
+      });
+    } catch (error: any) {
+      console.log("error", error.kind);
+
+      return res.status(STATUS.INTERNAL).json({
+        message: error.kind
+          ? "Có một thẻ tag không có trong dữ liệu"
+          : error.message,
+      });
+    }
+  }
+
+  async unDeleteMany(req: RequestModel, res: Response) {
+    try {
+      const { listId } = req.body;
+
+      if (!listId || listId.length === 0) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn size sản phẩm",
+        });
+      }
+
+      await TagsModel.find({ _id: { $in: listId } }).select("_id");
+
+      const CategoryData = await TagsModel.updateMany(
+        { _id: { $in: listId } },
+        { $set: { deleted: false } },
+        { new: true }
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Khôi phục thành công",
+      });
+    } catch (error: any) {
+      console.log("error", error.kind);
+
+      return res.status(STATUS.INTERNAL).json({
+        message: error.kind
+          ? "Có một thẻ tag không có trong dữ liệu"
+          : error.message,
       });
     }
   }
