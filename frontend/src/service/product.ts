@@ -8,3 +8,5 @@ export const addProduct = (value: IProduct) =>
 
 export const getProductById = (id: string) =>
 	instance.get(`${url}/findById/${id}`);
+
+export const updateProductById = (id: string, value: IProduct) => instance.put(`${url}/updateById/${id}`,value);

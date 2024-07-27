@@ -2,15 +2,7 @@ import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { array, z } from "zod";
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectLabel,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
+
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -30,29 +22,64 @@ import { cn } from "@/lib/utils";
 import { uploadFileService, uploadMultipleFileService } from "@/service/upload";
 import { useProcessBarLoading } from "@/store/useSidebarAdmin";
 import ImageUploading, { ImageListType } from "react-images-uploading";
-import { CiCircleMinus, CiCirclePlus } from "react-icons/ci";
-import { Textarea } from "@/components/ui/textarea";
+import { CiCirclePlus } from "react-icons/ci";
 import { getAllCategory } from "@/service/category-admin";
 import { getAllSize } from "@/service/size-admin";
 import instance from "@/config/instance";
-import { IColor, IProduct } from "@/types/typeProduct";
+import { IAttribute, IColor, IProduct } from "@/types/typeProduct";
 import { MdDeleteForever } from "react-icons/md";
 import FroalaEditor from "@/components/common/Froala";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { addProduct } from "@/service/product";
 import { useNavigate } from "react-router-dom";
+import Select from "react-select";
+import { customStyles } from "@/styles/customStyle";
+
 const formSchema = z.object({
 	name: z.string().nonempty("Nhập tên sản phẩm"),
 	price: z.number().min(1, "Phải lớn hơn 0"),
 	description: z.string().nonempty("Nhập mô tả sản phẩm"),
 	discount: z.number().min(1, "Phải lớn hơn 0"),
-	category: z.string().nonempty("Chọn loại sản phẩm"),
+	category: z
+		.object({
+			_id: z.string(),
+			name: z.string(),
+		})
+		.refine((data) => {
+			if(!data?._id ) return false
+			return true
+			
+		}, {
+			message: "Bạn chưa nhập loại sản phẩm",
+		}),
 	attributes: z
 		.array(
 			z.object({
-				color: z.string().nonempty("Mời bạn chọn color"),
-				size: z.string().nonempty("Mời bạn chọn size"),
+				color: z
+					.object({
+						_id: z.string().nonempty("Bạn chưa nhập loại sản phẩm"),
+						name: z.string(),
+					})
+					.refine((data) => {
+						if(!data?._id ) return false
+						return true
+						
+					}, {
+						message: "Màu",
+					}),
+				size: z
+					.object({
+						_id: z.string().nonempty("Bạn chưa nhập loại sản phẩm"),
+						name: z.string(),
+					})
+					.refine((data) => {
+						if(!data?._id ) return false
+						return true
+						
+					}, {
+						message: "Kích thước",
+					}),
 				price: z.number().min(1, "Phải lớn hơn 0"),
 				quantity: z.number().min(1, "Phải lớn hơn 0"),
 				discount: z.number().min(1, "Phải lớn hơn 0"),
@@ -61,7 +88,7 @@ const formSchema = z.object({
 		.refine(
 			(arr) => {
 				// const prices = arr.map((item) => item.price);
-				const combinations = arr.map((item) => `${item.color}-${item.size}`);
+				const combinations = arr.map((item) => `${item.color._id}-${item.size._id}`);
 				return new Set(combinations).size === combinations.length;
 			},
 			{
@@ -90,19 +117,37 @@ const formSchema = z.object({
 		),
 });
 
+
 const ProductAddandUpdate = () => {
 	const router = useNavigate();
 	const form = useForm({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: "",
-			category: "",
+			category: {
+				_id: "",
+				name: "",
+			},
 			// 	price: 0,
 			// 	discount: 0,
 			featured: false,
 			description: "",
 			thumbnail: "",
-			attributes: [{ size: "", color: "", price: 0, quantity: 0, discount: 0 }],
+			attributes: [
+				{
+					size: {
+						_id: "",
+						name: "",
+					},
+					color: {
+						_id: "",
+						name: "",
+					},
+					price: 0,
+					quantity: 0,
+					discount: 0,
+				},
+			],
 			images: [],
 		},
 	});
@@ -167,7 +212,12 @@ const ProductAddandUpdate = () => {
 				}));
 			}
 			const images = [...listImageNotFile, ...listImage];
-			const data: IProduct = { ...values, images };
+			const attribute = values.attributes?.map((attribute) => ({
+				...attribute,
+				color:attribute.color._id,
+				size:attribute.size._id
+			}))
+			const data = { ...values, images,category:values.category._id,attributes:attribute };
 			mutate(data);
 		} catch (error) {
 			toast.error("Tạo sản phẩm xảy ra lỗi");
@@ -192,16 +242,31 @@ const ProductAddandUpdate = () => {
 		}
 	};
 
+	const listColor = form.watch("attributes") ? form.watch("attributes")?.reduce(
+		(acc:IColor[], item) => {
+
+			if(!item.color._id) return acc
+			let group = acc.find((g) => g._id === (item.color as IColor)?._id);
+
+			// Nếu nhóm không tồn tại, tạo nhóm mới
+			if (!group) {
+				group = {
+					_id: (item.color as IColor)._id as string,
+					name: (item.color as IColor).name as string,
+					code: (item.color as IColor).code as string,
+				};
+				acc.push(group);
+				return acc;
+			}
+			return acc;
+		},
+		[],
+	) : []
+
 	return (
 		<div>
-			<h4 className="font-medium md:text-xl text-base">Thêm mới sản phẩm</h4>
-			<button
-				onClick={() => {
-					console.log("values", form.getValues());
-				}}
-			>
-				click
-			</button>
+			<h4 className="font-medium text-xl">Thêm mới sản phẩm</h4>
+			
 			<div className="w-full gap-5 grid lg:grid-cols-12 mt-4">
 				<Form {...form}>
 					<form
@@ -263,28 +328,21 @@ const ProductAddandUpdate = () => {
 										name="category"
 										render={({ field }) => (
 											<FormItem>
-												<FormLabel>Danh mục</FormLabel>
+												
+												<FormLabel >Danh mục</FormLabel>
 												<FormControl>
 													<Select
-														onValueChange={field.onChange}
-														defaultValue={field.value ? field.value : ""}
-													>
-														<SelectTrigger className="w-full">
-															<SelectValue placeholder="Lựa chọn danh mục" />
-														</SelectTrigger>
-														<SelectContent>
-															{category.map((category: any) => (
-																<SelectItem
-																	key={category._id}
-																	value={category._id}
-																>
-																	{category.name}
-																</SelectItem>
-															))}
-														</SelectContent>
-													</Select>
+														options={category}
+														{...field}
+														classNamePrefix="react-select"
+														getOptionLabel={(option) => option.name}
+														getOptionValue={(option) => option._id}
+														onChange={(values: any) => {
+															field.onChange(values)
+															form.clearErrors("category")
+														}}
+													/>
 												</FormControl>
-
 												<FormMessage className="text-xs" />
 											</FormItem>
 										)}
@@ -393,7 +451,7 @@ const ProductAddandUpdate = () => {
 																		(event?.target as HTMLInputElement)
 																			?.files?.[0] as File,
 																	);
-																	form.setValue("thumbnail", url);
+																	field.onChange(url)
 																})
 															}
 															hidden
@@ -424,6 +482,10 @@ const ProductAddandUpdate = () => {
 																try {
 																	setImages(imageList);
 																	form.setValue("images", imageList || []);
+																	if(imageList.length > 0) { 
+																		form.clearErrors("images")
+																	}
+
 																} catch (error) {
 																	console.log(error);
 																} finally {
@@ -444,9 +506,7 @@ const ProductAddandUpdate = () => {
 																	// Khu vực kéo và thả hoặc nhấp để tải ảnh
 																	<div
 																		className={cn(
-																			"w-full relative h-[160px] rounded-sm border grid grid-cols-4 grid-rows-2 gap-1 p-1 bg-white",
-																			form.formState.errors.images &&
-																				"border-red-500",
+																			"w-full relative h-[160px] rounded-sm border grid grid-cols-4 grid-rows-2 gap-1 p-1 bg-white"
 																		)}
 																	>
 																		{imageList?.map(
@@ -478,6 +538,7 @@ const ProductAddandUpdate = () => {
 																			},
 																		)}
 																		<button
+																			type="button"
 																			onClick={onImageUpload}
 																			{...dragProps}
 																			className={cn(
@@ -530,24 +591,18 @@ const ProductAddandUpdate = () => {
 														render={({ field }) => (
 															<FormItem className="flex w-full flex-col">
 																<FormLabel>Kích thước</FormLabel>
-																<FormControl>
-																	<Select onValueChange={field.onChange}>
-																		<SelectTrigger className="w-full">
-																			<SelectValue placeholder="Lựa chọn Size" />
-																		</SelectTrigger>
-																		<SelectContent>
-																			{size.map((size: any) => (
-																				<SelectItem
-																					key={size._id}
-																					value={size._id}
-																					className="cursor-pointer"
-																				>
-																					{size.name}
-																				</SelectItem>
-																			))}
-																		</SelectContent>
-																	</Select>
-																</FormControl>
+																<Select
+																	options={size}
+																	{...field}
+																	styles={customStyles}
+																	classNamePrefix="react-select"
+																	getOptionLabel={(option) => option.name}
+																	getOptionValue={(option) => option._id}
+																	onChange={(values: any) => {
+																		field.onChange(values);
+																		form.clearErrors(`attributes.${index}.size`)
+																	}}
+																/>
 																<FormMessage className="text-xs" />
 															</FormItem>
 														)}
@@ -560,30 +615,31 @@ const ProductAddandUpdate = () => {
 															render={({ field }) => (
 																<FormItem className="flex w-full flex-col">
 																	<FormLabel>Màu</FormLabel>
-																	<FormControl>
-																		<Select onValueChange={field.onChange}>
-																			<SelectTrigger className="w-full">
-																				<SelectValue placeholder="Lựa chọn color" />
-																			</SelectTrigger>
-																			<SelectContent>
-																				{color?.map((item: IColor) => (
-																					<SelectItem
-																						value={item?._id.toString()}
-																						className="flex justify-between w-full cursor-pointer"
-																						key={item?._id}
-																					>
-																						{item.name}
-																						<div
-																							className="w-2 h-2 inline-block rounded-full ml-1"
-																							style={{
-																								backgroundColor: item.code,
-																							}}
-																						></div>
-																					</SelectItem>
-																				))}
-																			</SelectContent>
-																		</Select>
-																	</FormControl>
+																	<Select
+																		options={color}
+																		{...field}
+																		styles={customStyles}
+																		classNamePrefix="react-select"
+																		getOptionLabel={(option) => {
+																			return (
+																				<div className="w-full flex items-center justify-between">
+																					{option.name}{" "}
+																					<p
+																						className="w-2 h-2 rounded-full"
+																						style={{
+																							backgroundColor: option.code,
+																						}}
+																					></p>
+																				</div>
+																			);
+																		}}
+																		getOptionValue={(option) => option._id}
+																		onChange={(values: any) => {
+																			field.onChange(values);
+																			form.clearErrors(`attributes.${index}.color`)
+
+																		}}
+																	/>
 																	<FormMessage className="text-xs" />
 																</FormItem>
 															)}
@@ -719,7 +775,7 @@ const ProductAddandUpdate = () => {
 								</div>
 							</div>
 
-							<Button type="submit" disabled={isPending} className="mt-4">
+							<Button type="submit" disabled={isPending || previewUrl.isLoading} className="mt-4">
 								Thêm sản phẩm
 							</Button>
 						</div>
@@ -740,14 +796,22 @@ const ProductAddandUpdate = () => {
 							<p className="font-medium line-clamp-1">
 								{form.watch("name") || "Chưa có tên"}
 							</p>
-
+							<div className="flex items-center justify-start -space-x-1 *:size-3 *:inline-block  *:rounded-full my-1.5">
+								{listColor?.map((item) => (
+									<span
+									style={{ background: item.code }}
+									className="box-shadow border border-black/40"
+								></span>
+								))}
+								
+							</div>
 							<div className="flex items-center justify-between">
 								<span className="text-sm font-medium text-red-500">
 									{form.watch("price") || 0} đ
 								</span>
-								{/* <span className="text-xs">
-								Đã bán {formatQuantitySort(151551)}
-							</span> */}
+								<span className="text-xs">
+									Đã bán : 0
+								</span>
 							</div>
 						</div>
 					</div>

@@ -70,27 +70,86 @@ header .sub-menu::after {
 	}
 }
 /* CSS React Select */
+.react-select-container {
+	height: 40px;
+	box-shadow: none;
+	cursor: pointer;
+	border-color: #e2e8f0;
+}
+
+.react-select__control {
+	height: 40px;
+}
+
 .css-t3ipsp-control:hover {
 	border: none !important;
 }
+
+.css-13cymwt-control {
+	border-color: #e2e8f0;
+	border-radius: 6px;
+}
+
+.css-t3ipsp-control {
+	border-color: #e2e8f0 !important;
+	border-radius: 6px;
+	box-shadow: 0px 0px 0px 1px #000 !important;
+}
+
+.css-tr4s17-option {
+	background-color: #f4f4f5 !important;
+	color: #000 !important;
+}
+
 .react-select__value-container
+	.react-select__multi-value.css-1p3m7a8-multiValue {
+	background-color: #f4f4f5 !important;
+	color: #000000 !important;
+}
+.react-select__multi-value__label {
+	color: #000000 !important;
+}
+.react-select__multi-value__remove.css-12a83d4-MultiValueRemove {
+	background-color: transparent !important;
+	color: #000000 !important;
+}
+.react-select__multi-value__remove.css-12a83d4-MultiValueRemove:hover {
+	background-color: #f4f4f5 !important;
+	color: #000000 !important;
+	outline: none !important;
+}
+.react-select__option.react-select__option--is-focused {
+	background-color: #f4f4f5 !important;
+	color: #000000 !important;
+	cursor: pointer;
+}
+
+.react-select-container .css-13cymwt-control {
+}
+.react-select-container .css-t3ipsp-control {
+}
+
+.react-select-container
+	.react-select__value-container
 	.react-select__multi-value.css-1p3m7a8-multiValue {
 	background-color: #3b83f638 !important;
 	color: #3b82f6 !important;
 }
-.react-select__multi-value__label {
+.react-select-container .react-select__multi-value__label {
 	color: #3b82f6 !important;
 }
-.react-select__multi-value__remove.css-12a83d4-MultiValueRemove {
+.react-select-container
+	.react-select__multi-value__remove.css-12a83d4-MultiValueRemove {
 	background-color: transparent !important;
 	color: #3b82f6 !important;
 }
-.react-select__multi-value__remove.css-12a83d4-MultiValueRemove:hover {
+.react-select-container
+	.react-select__multi-value__remove.css-12a83d4-MultiValueRemove:hover {
 	background-color: #f1f1f1 !important;
 	color: #333 !important;
 	outline: none !important;
 }
-.react-select__option.react-select__option--is-focused {
+.react-select-container .react-select__option.react-select__option--is-focused {
 	background-color: #3b83f638 !important;
 	color: #3b82f6 !important;
 	cursor: pointer;
