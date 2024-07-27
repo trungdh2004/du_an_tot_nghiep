@@ -152,6 +152,11 @@ const sidebarConfig: any[] = [
 		],
 	},
 	{
+		path: "/size",
+		isVisible: true,
+		label: "Size",
+	},
+	{
 		path: "",
 		icon: LuLayoutDashboard,
 		isVisible: true,
