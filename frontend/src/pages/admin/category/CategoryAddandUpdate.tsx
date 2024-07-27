@@ -3,13 +3,10 @@ import { Button } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
-	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -22,9 +19,8 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import instance from "@/config/instance";
 import { toast } from "sonner";
-import { SearchObjectType } from "@/types/searchObjecTypes";
+import { addCategory, getCategory, updateCategory } from "@/service/category-admin";
 
 interface FormDialog {
 	open: boolean | string;
@@ -38,15 +34,15 @@ const formSchema = z.object({
 		.string({
 			message: "Tên danh mục không được để trống",
 		})
-		.min(6, {
-			message: "Bạn nên tạo danh mục lớn hơn 6",
+		.min(1, {
+			message: "Tên danh mục không được để trống",
 		}),
 	description: z
 		.string({
 			message: "Mô tả danh mục không được để trống",
 		})
-		.min(6, {
-			message: "Bạn nên tạo chi tiết danh mục lớn hơn 6",
+		.min(1, {
+			message: "Mô tả danh mục không được để trống",
 		}),
 });
 const CategoryAdd = ({
@@ -66,10 +62,7 @@ const CategoryAdd = ({
   
 	const onHandleUpdate = async (dataForm: any) => {
 		try {
-			const { data } = await instance.put(
-				`/category/updateCate/${open}`,
-				dataForm,
-			);
+      const { data } = await updateCategory(open, dataForm)
       handleClose();
       handlePaging();
 			toast.success("Bạn cập nhật danh mục thành công");
@@ -79,7 +72,7 @@ const CategoryAdd = ({
 	};
 	const onHandleAdd = async (dataForm: any) => {
 		try {
-			const { data } = await instance.post(`/category/addCate`, dataForm);
+			const { data } = await addCategory(dataForm)
 			form.reset();
       handleClose();
       handlePaging();
@@ -93,7 +86,7 @@ const CategoryAdd = ({
 		if (typeof open === "string") {
 			(async () => {
 				try {
-					const { data } = await instance.get(`/category/cate/${open}`);
+					const { data } = await getCategory(open)
 					form.reset(data.data);
 				} catch (error) {
 					console.error("Error:", error);
@@ -116,7 +109,7 @@ const CategoryAdd = ({
 				<DialogTrigger asChild>
 					<Button variant="outline">{title}</Button>
 				</DialogTrigger>
-				<DialogContent className="sm:max-w-[425px]">
+				<DialogContent className="w-[90%] sm:max-w-[660px] rounded-md max-h-[90vh] p-2 sm:p-4 overflow-y-auto">
 					<DialogHeader>
 						<DialogTitle>
 							{typeof open === "string" ? "Cập nhật" : "Thêm danh mục"}

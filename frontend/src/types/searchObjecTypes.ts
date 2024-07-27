@@ -11,3 +11,4 @@ export interface SearchObjectType {
   height?: number | null;
   weight?: number | null;
 }
+

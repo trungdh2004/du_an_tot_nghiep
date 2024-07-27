@@ -4,6 +4,13 @@ import STATUS from "../../utils/status";
 import { categoryValidation } from "../../validation/product.validation";
 import { formatDataPaging } from "../../common/pagingData";
 import CategoryModel from "../../models/products/Category.schema";
+import ProductModel from "../../models/products/Product.schema";
+import { IAttribute, IColor, IProduct } from "../../interface/product";
+
+interface RowIColor {
+  colorId: string;
+  colorName: string;
+}
 
 class categoryController {
   async addCategory(req: RequestModel, res: Response) {
@@ -282,7 +289,7 @@ class categoryController {
 
   async deleteMany(req: RequestModel, res: Response) {
     try {
-      const { listId , type } = req.body;
+      const { listId, type } = req.body;
 
       if (!listId || listId.length === 0) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -294,9 +301,9 @@ class categoryController {
 
       const CategoryData = await CategoryModel.updateMany(
         { _id: { $in: listId } },
-        { $set: { deleted: true  } },{new:true}
+        { $set: { deleted: true } },
+        { new: true }
       );
-
 
       return res.status(STATUS.OK).json({
         message: "Xóa thành công",
@@ -326,9 +333,9 @@ class categoryController {
 
       const CategoryData = await CategoryModel.updateMany(
         { _id: { $in: listId } },
-        { $set: { deleted: false  } },{new:true}
+        { $set: { deleted: false } },
+        { new: true }
       );
-
 
       return res.status(STATUS.OK).json({
         message: "Khôi phục thành công",
@@ -340,6 +347,81 @@ class categoryController {
         message: error.kind
           ? "Có một sản phẩm không có trong dữ liệu"
           : error.message,
+      });
+    }
+  }
+
+  async getProductByCategory(req: RequestModel, res: Response) {
+    try {
+      const { id } = req.params;
+      const { size = 4 } = req.body;
+
+      if (!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn loại sản phẩm",
+        });
+      }
+
+      const existingCategory = await CategoryModel.findById(id);
+
+      if (!existingCategory)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có loại sản phẩm",
+        });
+
+      const listProduct = await ProductModel.find<IProduct>({
+        category: id,
+      })
+        .sort({ quantitySold: -1 })
+        .limit(size)
+        .populate({
+          path: "attributes",
+          populate: [
+            {
+              path: "color",
+              model: "Color",
+            },
+            {
+              path: "size",
+              model: "Size",
+            },
+          ],
+        }).lean()
+
+      const listProductAndColor = listProduct?.map((product) => {
+        const listColor = (product?.attributes as IAttribute[])?.reduce(
+          (acc: RowIColor[], item) => {
+            let group = acc.find(
+              (g) => g.colorId === (item.color as IColor)?._id
+            );
+
+            // Nếu nhóm không tồn tại, tạo nhóm mới
+            if (!group) {
+              group = {
+                colorId: (item.color as IColor)._id as string,
+                colorName: (item.color as IColor).name as string,
+              };
+              acc.push(group);
+              return acc;
+            }
+            return acc;
+          },
+          []
+        );
+
+        return {
+          ...product,
+          listColor,
+        };
+      });
+
+      return res.status(STATUS.OK).json({
+        message: "Lấy thành công",
+        data: listProductAndColor,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
       });
     }
   }

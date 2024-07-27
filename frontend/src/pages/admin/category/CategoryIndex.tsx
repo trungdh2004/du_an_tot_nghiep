@@ -3,24 +3,21 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
 	hiddencate,
+	hiddenManyCate,
 	paddingCate,
 	unhiddencate,
+  unhiddenManyCate,
 } from "@/service/category-admin";
 import { SearchObjectType } from "@/types/searchObjecTypes";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import React, { useEffect, useState } from "react";
 import { parseISO, format } from "date-fns";
-import { IoFilter } from "react-icons/io5";
-import instance from "@/config/instance";
 import CategoryAdd from "./CategoryAddandUpdate";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
 	DropdownMenu,
-	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { HiOutlineDotsVertical } from "react-icons/hi";
@@ -40,16 +37,17 @@ const CategoryIndex = () => {
 		updatedAt: string;
 		slug: string;
 	}
-	const [rowSelection, setRowSelection] = useState<RowSelectionState>({}); // xử lí selected
-	const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({}); // xử lí selected
+  const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
+  const listId = listRowSeleted.map((data: any) => {
+    return data._id;
+  })
 	const [data, setData] = useState<IData[]>([]);
-	const [openId, setOpenId] = useState<string | boolean>(false);
-	const [openUnhiddenCategory, setopenUnhiddenCategory] = useState<
-		string | boolean
-	>(false);
-	const [openHiddenCategory, setOpenHiddenCategory] = useState<
-		string | boolean
-	>(false);
+  const [openId, setOpenId] = useState<string | boolean>(false);
+	const [openUnhiddenCategory, setopenUnhiddenCategory] = useState<string | boolean>(false);
+  const [openHiddenCategory, setOpenHiddenCategory] = useState<string | boolean>(false);
+  const [openManyCate, setOpenManyCate] = useState<string | boolean>(false);
+   const [openUnManyCate, setOpenUnManyCate] = useState<string | boolean>(false);
 	const debounced = useDebounceCallback((inputValue: string) => {
 		setSearchObject((prev) => ({
 			...prev,
@@ -65,7 +63,6 @@ const CategoryIndex = () => {
 		sort: 1,
 		tab: 1,
 	});
-	console.log(searchObject);
 	const [response, setResponse] = useState<typeResponse>({
 		pageCount: 0,
 		totalElement: 0, //tổng số phần tử
@@ -78,13 +75,8 @@ const CategoryIndex = () => {
 
 	const handleCategory = async () => {
 		try {
-			const { data } = await instance.post(
-				`/category/paddingCate`,
-				searchObject,
-			);
-			console.log(data);
+			const { data } = await paddingCate(searchObject);
 			setData(data.content);
-
 			setResponse({
 				pageCount: data.totalPage,
 				totalElement: data.totalAllOptions,
@@ -93,7 +85,8 @@ const CategoryIndex = () => {
 		} catch (error) {
 			console.error("Error fetching data", error);
 		}
-	};
+  };
+  
 	const handleHiddenCate = async (id: string | boolean) => {
 		try {
 			const { data } = await hiddencate(id);
@@ -102,6 +95,32 @@ const CategoryIndex = () => {
 			toast.success("Đã ẩn danh mục thành công");
 		} catch (error) {
 			toast.error("Ẩn danh mục thất bại");
+		}
+	};
+
+  const handleManyCate = async (listId:any) => {
+    try {
+      const { data } = await hiddenManyCate(listId);
+      setOpenManyCate(false);
+      handleCategory();
+      setRowSelection({})
+      setListRowSelected([])
+      toast.success("Ẩn nhiều danh mục danh mục nhiều thành công");
+    } catch (error) {
+      toast.error("Ẩn danh mục nhiều thất bại");
+    }
+  };
+
+  const handleUnManyCate = async (listId: any) => {
+		try {
+			const { data } = await unhiddenManyCate(listId);
+			setOpenUnManyCate(false);
+			handleCategory();
+			setRowSelection({});
+			setListRowSelected([]);
+			toast.success("Bỏ ẩn nhiều danh mục danh mục nhiều thành công");
+		} catch (error) {
+			toast.error("Bỏ ẩn danh mục nhiều thất bại");
 		}
 	};
 
@@ -123,12 +142,12 @@ const CategoryIndex = () => {
 		}));
 	};
 	const handleChangePage = (value: any) => {
-		console.log("value change page", value);
-
 		setSearchObject((prev) => ({
 			...prev,
 			pageIndex: value.selected + 1,
-		}));
+    }));
+    setRowSelection({});
+		setListRowSelected([]);
 	};
 	const columns: ColumnDef<IData>[] = [
 		{
@@ -216,7 +235,6 @@ const CategoryIndex = () => {
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
-							
 							<DropdownMenuItem
 								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full text-start cursor-pointer"
 								onClick={() => setOpenId(row?.original?._id)}
@@ -261,6 +279,22 @@ const CategoryIndex = () => {
 						>
 							Thêm danh mục
 						</Button>
+						{listId.length !== 0 && searchObject.tab == 1 ? (
+							<Button
+								onClick={() => setOpenManyCate(true)}
+								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
+							>
+								Ẩn nhiều
+							</Button>
+						):''}
+						{listId.length !== 0 && searchObject.tab == 2 && (
+							<Button
+								onClick={() => setOpenUnManyCate(true)}
+								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
+							>
+								Bỏ Ẩn nhiều
+							</Button>
+						)}
 					</div>
 				</div>
 			</div>
@@ -268,15 +302,21 @@ const CategoryIndex = () => {
 				<TabsList className="grid w-full grid-cols-2">
 					<TabsTrigger
 						value="1"
-						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 1 }))}
-						className="md:text-base text-sm"
+						onClick={() => {
+							setRowSelection({});
+							setListRowSelected([]);
+							setSearchObject((prev) => ({ ...prev, tab: 1 , pageIndex:1 }));
+						}}
 					>
 						Danh mục
 					</TabsTrigger>
 					<TabsTrigger
 						value="2"
-						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 2 }))}
-						className="md:text-base text-sm"
+						onClick={() => {
+							setRowSelection({});
+							setListRowSelected([]);
+							setSearchObject((prev) => ({ ...prev, tab: 2,pageIndex:1 }));
+						}}
 					>
 						Danh mục ẩn
 					</TabsTrigger>
@@ -295,7 +335,6 @@ const CategoryIndex = () => {
 				pageCount={response.pageCount}
 				totalElement={response.totalElement}
 				handleChangePageSize={handleChangePageSize}
-				dataPageSize={[1, 3, 5, 10]}
 			/>
 			{!!openHiddenCategory && (
 				<DialogConfirm
@@ -314,6 +353,27 @@ const CategoryIndex = () => {
 					handleClose={() => setopenUnhiddenCategory(false)}
 					handleSubmit={() => handleUnhiddenCate(openUnhiddenCategory)}
 					content="Bạn có chắc muốn bỏ ẩn danh mục này?"
+					labelConfirm="Bỏ ẩn"
+				/>
+			)}
+			{!!openManyCate && (
+				<DialogConfirm
+					open={!!openManyCate}
+					title="Xác nhận ẩn nhiều  danh mục"
+					handleClose={() => setOpenManyCate(false)}
+					handleSubmit={() => handleManyCate(listId)}
+					content="Bạn có chắc muốn ẩn các danh mục này?"
+					labelConfirm="Ẩn"
+				/>
+			)}
+
+			{!!openUnManyCate && (
+				<DialogConfirm
+					open={!!openUnManyCate}
+					title="Xác nhận bỏ ẩn nhiều  danh mục"
+					handleClose={() => setOpenUnManyCate(false)}
+					handleSubmit={() => handleUnManyCate(listId)}
+					content="Bạn có chắc muốn bỏ ẩn các danh mục này?"
 					labelConfirm="Bỏ ẩn"
 				/>
 			)}

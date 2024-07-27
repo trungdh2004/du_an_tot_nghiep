@@ -50,9 +50,17 @@ const AddressSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    location: {
+    detailAddress: {
       type: String,
       required: true,
+    },
+    location: {
+      type: Array,
+      required: true,
+    },
+    deleted: {
+      type: Boolean,
+      default: false,
     },
   },
   {

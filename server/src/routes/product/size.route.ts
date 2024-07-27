@@ -1,9 +1,10 @@
 import { Router } from "express";
-import SizeController from "../controllers/product/size.controller";
+import SizeController from "../../controllers/product/size.controller";
 
 const routerSize = Router();
 
 routerSize.post("/paging", SizeController.pagingSize);
+routerSize.get("/getAll", SizeController.getAllSize);
 routerSize.post("/addSize", SizeController.addSize);
 routerSize.delete("/deleteSize/:id", SizeController.deleteById);
 routerSize.put("/updateSize/:id", SizeController.updateSize);
