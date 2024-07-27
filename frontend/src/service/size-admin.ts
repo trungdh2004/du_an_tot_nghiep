@@ -31,6 +31,9 @@ export const hiddenListSize = async (listId: any) => {
 		listId,
 	});
 };
+export const getAllSize =  () => {
+	return  instance.get(`size/getAll`);
+};
 
 export const unhiddenListSize = async (listId: any) => {
 	return await instance.put(`size/unDeleteMany`, {

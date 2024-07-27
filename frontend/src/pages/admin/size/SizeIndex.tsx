@@ -2,17 +2,14 @@ import TableComponent from "@/components/common/TableComponent";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { paddingCate } from "@/service/category-admin";
-import { SearchObjectType } from "@/types/searchObjecTypes";
+import {  SearchObjectTypeSize } from "@/types/searchObjecTypes";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import React, { useEffect, useState } from "react";
 import { parseISO, format } from "date-fns";
 import { IoFilter } from "react-icons/io5";
-import instance from "@/config/instance";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { HiOutlineDotsVertical } from "react-icons/hi";
@@ -72,7 +69,7 @@ const SizeIndex = () => {
 	const [openId, setOpenId] = useState<string | boolean>(false);
 	const [heightSearch, setHeightSearch] = useState<number>(0);
 	const [weightSearch, setWeightSearch] = useState<number>(0);
-	const [searchObject, setSearchObject] = useState<SearchObjectType>({
+	const [searchObject, setSearchObject] = useState<SearchObjectTypeSize>({
 		pageIndex: 1,
 		pageSize: 5,
 		keyword: "",
@@ -275,7 +272,7 @@ const SizeIndex = () => {
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex flex-col gap-3">
-				<h4 className="font-medium text-xl">Danh sách Kích thước</h4>
+				<h4 className="font-medium text-xl">Danh sách kích thước</h4>
 				<div className="flex justify-between">
 					<Input
 						placeholder="Tìm kiếm người dùng"
