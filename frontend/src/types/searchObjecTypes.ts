@@ -5,6 +5,7 @@ export interface SearchObjectType {
 	fieldSort?: string;
 	sort?: 1 | -1;
 
+
 }
 export interface SearchObjectBlog extends SearchObjectType {
 	tab?: number

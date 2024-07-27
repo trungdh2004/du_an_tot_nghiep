@@ -28,7 +28,7 @@ export const productValidations = Joi.object({
   images: Joi.array().items(
     Joi.object({
       url: Joi.string().required().messages({}),
-      _id:Joi.string().optional()
+      _id: Joi.string().optional(),
     })
   ),
   attributes: Joi.array().items(
@@ -44,20 +44,20 @@ export const productValidations = Joi.object({
       __v: Joi.number().optional(),
     })
   ),
-  quantitySold:Joi.number().optional(),
-  quantity:Joi.number().optional()
+  quantitySold: Joi.number().optional(),
+  quantity: Joi.number().optional(),
+  featured: Joi.boolean().optional(),
 });
-
 
 export const productSliderValidation = Joi.object({
   title: Joi.string().required().messages({}),
   label: Joi.string().required().messages({}),
   index: Joi.number().required().messages({}),
   product: Joi.string().required().messages({}),
-  colorCode: Joi.string().required().messages({})
-})
+  colorCode: Joi.string().required().messages({}),
+});
 
 export const categoryActiveValidation = Joi.object({
   index: Joi.number().required().messages({}),
   category: Joi.string().required().messages({}),
-})
+});

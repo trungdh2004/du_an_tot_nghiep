@@ -6,32 +6,35 @@ import {
 	SelectItem,
 	SelectLabel,
 	SelectTrigger,
-  SelectValue,
-  SelectScrollDownButton,
-  SelectScrollUpButton
+	SelectValue,
+	SelectScrollDownButton,
+	SelectScrollUpButton,
 } from "@/components/ui/select";
 
 const TestComponent = () => {
 	return (
 		<div className="min-h-screen w-full flex items-center justify-center">
 			<Select>
-        <SelectTrigger className="w-[280px]">
+				<SelectTrigger className="w-[280px]">
 					<SelectValue placeholder="Select a timezone" />
 				</SelectTrigger>
-        <SelectContent onScrollCapture={(e: UIEvent<HTMLDivElement>) => {
-          const target = e.target as HTMLInputElement;
-          if (target.scrollHeight - target.scrollTop < target.clientHeight + 50) {
-            console.log('Scrolled to the bottom!');
+				<SelectContent
+					onScrollCapture={(e: UIEvent<HTMLDivElement>) => {
+						const target = e.target as HTMLInputElement;
+						if (
+							target.scrollHeight - target.scrollTop <
+							target.clientHeight + 50
+						) {
+							console.log("Scrolled to the bottom!");
 
-            return
-          }
-          // console.log("scrollHeight:",e.target.scrollHeight - e.target.scrollTop);
-          // console.log("scroll:",e.target.clientHeight - 50);
-       
-                    
-        }}>
-        <SelectScrollUpButton>hehe</SelectScrollUpButton>
-          
+							return;
+						}
+						// console.log("scrollHeight:",e.target.scrollHeight - e.target.scrollTop);
+						// console.log("scroll:",e.target.clientHeight - 50);
+					}}
+				>
+					<SelectScrollUpButton>hehe</SelectScrollUpButton>
+
 					<SelectGroup>
 						<SelectLabel>North America</SelectLabel>
 						<SelectItem value="est">Eastern Standard Time (EST)</SelectItem>
@@ -85,10 +88,8 @@ const TestComponent = () => {
 						<SelectItem value="bot">Bolivia Time (BOT)</SelectItem>
 						<SelectItem value="brt">Brasilia Time (BRT)</SelectItem>
 						<SelectItem value="clt">Chile Standard Time (CLT)</SelectItem>
-          </SelectGroup>
-          <SelectScrollDownButton asChild>
-            hihi
-          </SelectScrollDownButton>
+					</SelectGroup>
+					<SelectScrollDownButton asChild>hihi</SelectScrollDownButton>
 				</SelectContent>
 			</Select>
 		</div>
