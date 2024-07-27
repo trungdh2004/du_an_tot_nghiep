@@ -137,23 +137,16 @@ class BlogController {
         });
       }
 
-      const { title, content, thumbnail, tags } = req.body;
+      const { title, content, thumbnail_url, tags } = req.body;
 
       const meta_title = truncateSentence(title, 30);
       const meta_description = truncateSentence(content, 50);
-      console.log("id:", id);
 
       const existingBlog = await BlogsModel.findById(id);
 
       if (!existingBlog) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có bài blog nào",
-        });
-      }
-
-      if (existingBlog?.user_id?.toString() !== user?.id.toString()) {
-        return res.status(STATUS.BAD_REQUEST).json({
-          message: "Bạn không có quyền đăng tải",
         });
       }
 
@@ -166,7 +159,7 @@ class BlogController {
           title,
           meta_title,
           meta_description,
-          thumbnail_url: thumbnail,
+          thumbnail_url: thumbnail_url,
           selected_tags: tags || [],
         },
         { new: true }

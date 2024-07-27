@@ -20,10 +20,10 @@ export const updateBlogs = (id: string, data: any) => {
 	const uri = `/blogs/put-blogs/${id}`;
 	return instance.put(uri, data);
 };
-export const publishBlog = (id: string | boolean) => {
-	const url = `/blogs/publish/${id}`;
-	return instance.put(url);
-}
+export const publishBlogs = (id: string, data: any) => {
+	const uri = `/blogs/publish/${id}`;
+	return instance.put(uri, data);
+};
 export const deleteBlogBYId = (id: string | boolean) => {
 	const url = `/blogs/delete/${id}`;
 	return instance.delete(url);

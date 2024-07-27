@@ -346,7 +346,6 @@ const ColorList = () => {
                     </TabsList>
                 </Tabs>
             }
-
             <TableComponent
                 data={data}
                 columns={columns}

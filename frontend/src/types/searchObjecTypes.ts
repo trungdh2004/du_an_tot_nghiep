@@ -7,6 +7,10 @@ export interface SearchObjectType {
 
 }
 export interface SearchObjectBlog extends SearchObjectType {
+	tab?: number
+	tags?: string
+}
+export interface SearchObjectTag extends SearchObjectType {
 	totalElement?: number;
 	totalOptionPage?: number;
 	tab?: number

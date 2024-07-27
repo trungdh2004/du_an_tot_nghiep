@@ -4,7 +4,7 @@ import Home from "@/pages/clients/Home";
 import NotFound from "@/pages/NotFound";
 import UserIndex from "@/pages/admin/users/UserIndex";
 import TestComponent from "@/pages/clients/Test";
-import BlogPage from "@/pages/clients/blogs/BlogPage";
+import BlogPage from "@/pages/clients/blogs/BLogPage";
 
 const MainRouter = [
 	{

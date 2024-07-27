@@ -12,7 +12,14 @@ export const BlogValidation = Joi.object({
   content: Joi.string().required().messages({
     "any.required": "Bạn chưa nhập nội dung bài viết",
   }),
-  thumbnail: Joi.string().required().messages({
+  thumbnail_url: Joi.string().required().messages({
     "any.required": "Bạn chưa chọn ảnh bài viết",
   }),
+  published_at: Joi.string().optional(),
+  selected_tags: Joi.array().items(
+    Joi.object({
+      name: Joi.string(),
+      _id: Joi.string(),
+    })
+  ),
 });
