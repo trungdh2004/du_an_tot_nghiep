@@ -46,6 +46,7 @@ export const productValidations = Joi.object({
   ),
   quantitySold: Joi.number().optional(),
   quantity: Joi.number().optional(),
+  featured: Joi.boolean().optional(),
 });
 
 export const productSliderValidation = Joi.object({
@@ -54,7 +55,6 @@ export const productSliderValidation = Joi.object({
   index: Joi.number().required().messages({}),
   product: Joi.string().required().messages({}),
   colorCode: Joi.string().required().messages({}),
-  thumbnail: Joi.string().optional(),
 });
 
 export const categoryActiveValidation = Joi.object({

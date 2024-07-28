@@ -113,14 +113,12 @@ const NewBlog = () => {
 		const formdata = new FormData();
 		formdata.append("image", file);
 		const { data } = await uploadFileService(formdata);
-		console.log(data);
 		setPreviewUrl(data.path);
 		return data.path;
 	};
 	const debouncedChangeHandler = useDebounce(() => {
 		handleAutoSave();
 	}, 1000);
-	console.log(tags);
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {

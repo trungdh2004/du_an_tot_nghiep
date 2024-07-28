@@ -11,3 +11,8 @@ export const updateBlogs = (id: string, data: any) => {
 	const uri = `/blogs/put-blogs/${id}`;
 	return instance.put(uri, data);
 };
+
+export const publishBlogs = (id: string, data: any) => {
+	const uri = `/blogs/publish/${id}`;
+	return instance.put(uri, data);
+};
