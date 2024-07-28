@@ -49,7 +49,7 @@ const DealOfTheDays = () => {
 
 	return (
 		<div className="bg-white relative mt-20 flex items-center justify-center">
-			<div className="flex flex-wrap items-center justify-around p-8 flex-1 gap-10 mt-24 ">
+			<div className="flex flex-wrap items-center justify-around p-8 flex-1 gap-10 md:mt-24 bg-white">
 				<div className="">
 					<div
 						className="flex items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 size-[250px] md:size-[400px]"
@@ -62,9 +62,9 @@ const DealOfTheDays = () => {
 						/>
 					</div>
 				</div>
-				<div className="space-y-7 md:space-y-14">
+				<div className="space-y-5 md:space-y-14 padding">
 					<h2 className="text-xl md:text-3xl font-semibold">Deal của ngày</h2>
-					<ul className="flex items-center gap-8 font-semibold text-black/65  text-lg">
+					<ul className="flex items-center gap-5 md:gap-8 font-semibold text-black/65  text-lg">
 						{[
 							{ en: "days", vi: "Ngày" },
 							{ en: "hours", vi: "Giờ" },
@@ -84,8 +84,8 @@ const DealOfTheDays = () => {
 					</Button>
 				</div>
 			</div>
-			<div className="absolute -translate-x-1/2 left-1/2 -top-16 rounded-2xl bg-white inline-block py-8 px-14 box-shadow">
-				<ul className="flex items-center justify-center gap-14">
+			<div className="hidden  md:inline-block absolute -translate-x-1/2 left-1/2 -top-16 rounded-2xl bg-white  py-8 px-14 box-shadow">
+				<ul className="flex  items-center justify-center gap-14">
 					{commits?.map((commit) => (
 						<li key={commit.id} className="space-y-3">
 							<div className="flex items-center gap-4">

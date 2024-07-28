@@ -1,58 +1,20 @@
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
-import { useRef } from "react";
-import { Swiper as SwiperType } from "swiper/types";
-import { GrFormNextLink, GrFormPreviousLink } from "react-icons/gr";
-import { HiArrowSmallRight } from "react-icons/hi2";
+import { getAllProductSlide } from "@/service/product-slide";
+import { useEffect, useRef, useState } from "react";
 import { PiArrowLeftThin, PiArrowRightThin } from "react-icons/pi";
-import "swiper/css/navigation";
 import "swiper/css";
-import { Link } from "react-router-dom";
-import { BsArrowRight } from "react-icons/bs";
+import "swiper/css/navigation";
+import { Navigation } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper as SwiperType } from "swiper/types";
 const Carousel = () => {
+	const [productSlide, setProductSlide] = useState<IProductSlider[]>([]);
+	useEffect(() => {
+		(async () => {
+			const { data } = await getAllProductSlide();
+			setProductSlide(data?.data);
+		})();
+	}, []);
 	const swiperRef = useRef<SwiperType>();
-	const slides = [
-		{
-			tag: "Khám phá mới",
-			title: "Mua sắm mới nhất tại shop chúng tôi",
-			img: "image 11.png",
-		},
-		{
-			tag: "Khám phá mới",
-			title: "Mua sắm mới nhất tại shop chúng tôi",
-			img: "image 11.png",
-		},
-		{
-			tag: "Khám phá mới",
-			title: "Mua sắm mới nhất tại shop chúng tôi",
-			img: "image 11.png",
-		},
-		{
-			tag: "Khám phá mới",
-			title: "Mua sắm mới nhất tại shop chúng tôi",
-			img: "image 11.png",
-		},
-		{
-			tag: "Khám phá mới",
-			title: "Mua sắm mới nhất tại shop chúng tôi",
-			img: "image 11.png",
-		},
-		{
-			tag: "Khám phá mới",
-			title: "Mua sắm mới nhất tại shop chúng tôi",
-			img: "image 11.png",
-		},
-		{
-			tag: "Khám phá mới",
-			title: "Mua sắm mới nhất tại shop chúng tôi",
-			img: "image 11.png",
-		},
-		{
-			tag: "Khám phá mới",
-			title: "Mua sắm mới nhất tại shop chúng tôi",
-			img: "image 11.png",
-		},
-	];
 	return (
 		<div>
 			<div className="padding flex flex-col sm:flex-row items-end sm:items-center justify-between">
@@ -104,13 +66,13 @@ const Carousel = () => {
 						},
 					}}
 				>
-					{slides?.map((slide, index) => (
-						<SwiperSlide className="h-full " key={slide?.tag + index}>
+					{productSlide?.map((slide) => (
+						<SwiperSlide className="h-full " key={slide?._id}>
 							<div className="h-full flex items-center justify-between bg-[#FFEAEA] rounded-lg p-5">
 								<div className="absolute flex flex-col h-4/5 justify-between">
 									<div className="max-w-xs">
 										<span className="block mb-2 text-sm text-slate-700">
-											{slide.tag}
+											{slide?.label}
 										</span>
 										<h2 className="max-w-[177px] text-xl md:text-2xl text-slate-900 font-semibold text-wrap">
 											{slide?.title}
@@ -125,7 +87,11 @@ const Carousel = () => {
 								<div className="flex-1" />
 
 								<div className="max-sm:w-[150px] md:w-[193px] md:h-[209px]">
-									<img src={slide?.img} alt="" className="w-full h-full" />
+									<img
+										src={slide?.thumbnail}
+										alt=""
+										className="w-full h-full"
+									/>
 								</div>
 							</div>
 						</SwiperSlide>

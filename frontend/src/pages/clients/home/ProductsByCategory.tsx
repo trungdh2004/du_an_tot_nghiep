@@ -1,31 +1,26 @@
 import { formatCurrency, formatQuantitySort } from "@/common/func";
-import { FreeMode, Pagination } from "swiper/modules";
+import { FreeMode } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 // Import Swiper styles
+import { getCateById } from "@/service/category-admin";
+import { useEffect, useState } from "react";
 import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
-const ProductsByCategory = () => {
-	const products = [
-		{
-			id: 1,
-		},
-		{
-			id: 2,
-		},
-		{
-			id: 3,
-		},
-		{
-			id: 4,
-		},
-		{
-			id: 5,
-		},
-		{
-			id: 6,
-		},
-	];
+import { IProduct } from "@/types/product";
+const ProductsByCategory = ({ id }: { id: string }) => {
+	const [products, setProducts] = useState<IProduct[]>();
+	useEffect(() => {
+		(async () => {
+			if (id) {
+				const { data } = await getCateById(id);
+				console.log(data);
+				setProducts(data?.data);
+			}
+		})();
+	}, [id]);
+	console.log(products);
+
 	return (
 		<Swiper
 			slidesPerView={2}
@@ -53,39 +48,33 @@ const ProductsByCategory = () => {
 		>
 			{products?.map((product) => (
 				<SwiperSlide
-					key={product.id}
+					key={product?._id}
 					className="max-w-[230px] min-w-[230px] box-shadow rounded-lg overflow-hidden  bg-white"
 				>
 					<div className="">
 						<div className="w-full">
 							<img
-								src="https://i.pinimg.com/564x/d0/b9/b1/d0b9b19b4275a5d9c56331494e878cbc.jpg"
+								src={product?.thumbnail}
 								alt=""
 								className="w-full h-full object-cover"
 							/>
 						</div>
 						<div className="p-3">
-							<p>Nike blazer low 77 vintage</p>
+							<p>{product?.name}</p>
 							<div className="flex items-center justify-start -space-x-1 *:size-3 *:inline-block  *:rounded-full my-1.5">
-								<span
-									style={{ background: "#fff" }}
-									className="box-shadow border border-black/40"
-								></span>
-								<span
-									style={{ background: "#333" }}
-									className="box-shadow border border-black/40"
-								></span>
-								<span
-									style={{ background: "#FF8A4A" }}
-									className="box-shadow border border-black/40"
-								></span>
+								{product?.listColor?.map((color) => (
+									<span
+										style={{ background: `${color?.colorCode}` }}
+										className="box-shadow border border-black/40"
+									/>
+								))}
 							</div>
 							<div className="flex items-center justify-between">
 								<span className="text-sm font-medium text-red-500">
-									{formatCurrency(1551516)}
+									{formatCurrency(product?.price || 0)}
 								</span>
 								<span className="text-xs">
-									Đã bán {formatQuantitySort(151551)}
+									Đã bán {formatQuantitySort(product?.quantitySold || 0)}
 								</span>
 							</div>
 						</div>
