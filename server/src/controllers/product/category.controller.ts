@@ -103,6 +103,7 @@ class categoryController {
   async getAllCategory(req: RequestModel, res: Response) {
     try {
       const { tab = 1 } = req.body;
+      // console.log("call api :",new Date().toLocaleString("vi-VN"));
 
       const allCategory = await CategoryModel.find({
         deleted: tab === 1 ? false : true,

@@ -1,6 +1,20 @@
+import { pagingBlogs } from "@/service/blog";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const LatestNewsBlog = () => {
+	useEffect(() => {
+		(async () => {
+			console.log("Đã chạy blog");
+			const { data } = await pagingBlogs({
+				pageSize: 4,
+				pageIndex: 1,
+				fieldSort: "published_at",
+				sort: -1,
+			});
+			console.log(data);
+		})();
+	}, []);
 	return (
 		<div className="padding my-20">
 			<div className=" relative flex flex-col sm:flex-row sm:items-end justify-between mb-12 lg:mb-14 text-neutral-900 dark:text-neutral-50">

@@ -24,3 +24,43 @@ export const unhiddencate = async (id: string | boolean) => {
 	const data = await instance.put(`${urlConfig}/unDelete/${id}`);
 	return data;
 };
+export const getAllCategory = async () => {
+	const data = await instance.get(`${urlConfig}/getAllCate`);
+	return data;
+};
+
+export const hiddenManyCate = async (listId: any) => {
+	const data = await instance.put(`${urlConfig}/deleteMany`, {
+		listId,
+	});
+	return data;
+};
+
+export const unhiddenManyCate = async (listId: any) => {
+	const data = await instance.put(`${urlConfig}/unDeleteMany`, {
+		listId,
+	});
+	return data;
+};
+
+export const updateCategory = async (
+	open: string | boolean,
+	dataForm: TypeObjectCategory,
+) => {
+	const data = await instance.put(`${urlConfig}/updateCate/${open}`, dataForm);
+	return data;
+};
+
+export const addCategory = async (dataForm: TypeObjectCategory) => {
+	const data = await instance.post(`${urlConfig}/addCate`, dataForm);
+	return data;
+};
+
+export const getCategory = async (open: string | boolean) => {
+	const data = instance.get(`${urlConfig}/cate/${open}`);
+	return data;
+};
+export const getCateById = async (id: string | number) => {
+	const data = await instance.get(`${urlConfig}/getProductByCategory/${id}`);
+	return data;
+};
