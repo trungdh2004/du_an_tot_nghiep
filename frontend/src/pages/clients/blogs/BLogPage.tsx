@@ -1,14 +1,13 @@
 import Paginations from '@/components/common/Pagination';
 import { Button } from '@/components/ui/button';
 import { getBlogPaging } from '@/service/blog';
-import { getAllTags, getPagingTags } from '@/service/tags-admin';
-import { SearchObjectBlog, SearchObjectTag } from '@/types/searchObjecTypes';
+import { getAllTags } from '@/service/tags-admin';
+import { SearchObjectBlog } from '@/types/searchObjecTypes';
 import { typeResponse } from '@/types/typeReponse';
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { FaCommentDots, FaEye, FaRegHeart } from 'react-icons/fa';
-import { MdOutlinePublic, MdOutlinePublicOff } from 'react-icons/md';
-import { Link, NavLink, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 type IBlog = {
     _id?: string,
     title: string,
@@ -64,11 +63,12 @@ const BlogPage = () => {
         placeholderData: keepPreviousData,
     });
     const { data: tags } = useQuery({
-        queryKey: ['tags', searchObject],
+        queryKey: ['tags'],
         queryFn: async () => {
             try {
-                const { data } = await getPagingTags(searchObject);
-                return data.content;
+                const { data } = await getAllTags();
+                console.log(data)
+                return data.data;
             } catch (error) {
                 console.log(error);
             }

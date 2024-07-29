@@ -6,3 +6,4 @@ export interface TypeObjectCategory {
   deleted?: boolean;
 
 }
+

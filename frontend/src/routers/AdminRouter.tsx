@@ -9,6 +9,10 @@ import Dashboard from "@/pages/admin/Dashboard";
 
 import UserDetail from "@/pages/admin/users/UserDetail";
 import UserIndex from "@/pages/admin/users/UserIndex";
+import SizeIndex from "@/pages/admin/size/SizeIndex";
+import ProductIndex from "@/pages/admin/product/ProductIndex";
+import ProductAddandUpdate from "@/pages/admin/product/ProductAdd";
+import ProductUpdate from "@/pages/admin/product/ProductUpdate";
 import PrivateRouter from "./PrivateRouter";
 import TagIndex from "@/pages/admin/tags/TagIndex";
 import MyBlogs from "@/pages/admin/Blogs/MyBlog";
@@ -51,8 +55,16 @@ const AdminRouter = [
 				element: <BlogList />
 			},
 			{
-				path: "blogs/:id/",
-				element: <BlogDetail />,
+				path: "product/update/:id",
+				element: <ProductUpdate />,
+			},
+			{
+				path: "tags",
+				element: <TagIndex />,
+			},
+			{
+				path: "size",
+				element: <SizeIndex />,
 			},
 			// Blogs
 			{

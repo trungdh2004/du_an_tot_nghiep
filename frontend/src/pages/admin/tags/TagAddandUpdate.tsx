@@ -22,9 +22,9 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import instance from "@/config/instance";
+
 import { toast } from "sonner";
-import { SearchObjectType } from "@/types/searchObjecTypes";
+import { addTag, getTag, updateTag } from "@/service/tags-admin";
 
 interface FormDialog {
 	open: boolean | string;
@@ -36,17 +36,20 @@ interface FormDialog {
 const formSchema = z.object({
 	name: z
 		.string({
-			message: "Tên danh mục không được để trống",
+			required_error: "Tên tag là bắt buộc",
+			invalid_type_error: "Tên là một chuỗi",
 		})
-		.min(6, {
-			message: "Bạn nên tạo danh mục lớn hơn 6",
+		.min(1, {
+			message: "Tên bắt buộc phải nhập",
 		}),
+
 	description: z
 		.string({
-			message: "Mô tả danh mục không được để trống",
+			required_error: "Description là bắt buộc",
+			invalid_type_error: "Description là một chuỗi",
 		})
-		.min(6, {
-			message: "Bạn nên tạo chi tiết danh mục lớn hơn 6",
+		.min(1, {
+			message: "Mô tả bắt buộc phải nhập",
 		}),
 });
 const TagAdd = ({
@@ -64,7 +67,7 @@ const TagAdd = ({
 	});
 	const onHandleUpdate = async (dataForm: any) => {
 		try {
-			const { data } = await instance.put(`/tags/update/${open}`, dataForm);
+			const { data } = await updateTag(open,dataForm)
 			console.log("Update tag success");
 			handleClose();
 			handlePaging();
@@ -75,7 +78,7 @@ const TagAdd = ({
 	};
 	const onHandleAdd = async (dataForm: any) => {
 		try {
-			const { data } = await instance.post(`/tags/add`, dataForm);
+			const { data } = await addTag(dataForm)
 			console.log(data);
 			console.log("Add tag success");
 			form.reset();
@@ -91,8 +94,7 @@ const TagAdd = ({
 		if (typeof open === "string") {
 			(async () => {
 				try {
-					const { data } = await instance.get(`/tags/tag/${open}`);
-					console.log(data);
+					const { data } = await getTag(open)
 					form.reset(data.data);
 				} catch (error) {
 					console.error("Error:", error);
@@ -115,7 +117,7 @@ const TagAdd = ({
 				<DialogTrigger asChild>
 					<Button variant="outline">{title}</Button>
 				</DialogTrigger>
-				<DialogContent className="sm:max-w-[425px]">
+				<DialogContent className="w-[90%] sm:max-w-[425px] rounded-md max-h-[90vh] p-2 sm:p-4 overflow-y-auto">
 					<DialogHeader>
 						<DialogTitle>
 							{typeof open === "string" ? "Cập nhật" : "Thêm thẻ tag"}

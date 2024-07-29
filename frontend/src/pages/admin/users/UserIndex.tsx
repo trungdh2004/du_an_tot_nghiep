@@ -149,9 +149,9 @@ const UserIndex = () => {
 			...prev,
 			pageSize: value,
 			pageIndex: 1,
-    }));
-    
-	};
+    })); 
+  };
+  
 	const columns: ColumnDef<IData>[] = [
 		{
 			id: "select",

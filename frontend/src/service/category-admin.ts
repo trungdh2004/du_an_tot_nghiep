@@ -46,7 +46,7 @@ export const addCategory = async (dataForm: TypeObjectCategory) => {
 	return data;
 };
 
-export const getCategory = async (open:string |boolean) => {
+export const getCategory = async (open:string | boolean) => {
   const data = instance.get(`/category/cate/${open}`);
   return data;
 }

@@ -37,7 +37,6 @@ const SignInWithFacebookOrGoogle = () => {
 		const provider = new GoogleAuthProvider();
 		provider.addScope("https://www.googleapis.com/auth/userinfo.email");
 
-
 		signInWithPopup(auth, provider)
 			.then(async (result) => {
 				const user = getAdditionalUserInfo(result);
