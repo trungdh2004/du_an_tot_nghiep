@@ -522,19 +522,21 @@ class ProductController {
         .sort(querySort)
         .skip(skip)
         .limit(limit)
-        .populate({
-          path: "attributes",
-          populate: [
-            {
-              path: "color",
-              model: "Color",
-            },
-            {
-              path: "size",
-              model: "Size",
-            },
-          ],
-        })
+        .populate([
+          {
+            path: "attributes",
+            populate: [
+              {
+                path: "color",
+                model: "Color",
+              },
+              {
+                path: "size",
+                model: "Size",
+              },
+            ],
+          },"category"
+        ])
         .exec();
 
       const countProduct = await ProductModel.countDocuments({
