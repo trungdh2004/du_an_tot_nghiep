@@ -203,7 +203,7 @@ class BlogController {
 
       if(tab === 2) {
         queryTab = {
-          isPublish:true
+          isPublish:false
         }
 
         querySort= {
@@ -211,7 +211,7 @@ class BlogController {
         }
       }else {
         queryTab = {
-          isPublish:false
+          isPublish:true
         }
         querySort = {
           published_at:sort
