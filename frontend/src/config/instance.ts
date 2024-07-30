@@ -15,7 +15,7 @@ const refreshToken = async () => {
 			withCredentials: true,
 		},
 	);
-	return response.data.accessToken;
+	return response?.data?.accessToken;
 };
 
 instance.interceptors.request.use(

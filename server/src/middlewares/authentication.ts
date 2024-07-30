@@ -46,7 +46,7 @@ const authentication = async (
         const existingUser = await UserModel.findById(
           (data as PayloadToken).id
         );
-
+        
         if (!existingUser) {
           return res.status(STATUS.BAD_REQUEST).json({
             message: "Tài khoản không thỏa mãn",

@@ -36,7 +36,7 @@ type IBlog = {
     createdAt: string,
     published_at: string,
     isPublish: boolean,
-    user: {
+    user_id: {
         avatarUrl?: string,
         email: string,
         _id: string,
@@ -223,9 +223,9 @@ const BlogList = () => {
                                 {/* card-content */}
                                 <div className="px-4 pt-2">
                                     <div className="flex items-center gap-1 pb-2">
-                                        <img src={item.user.avatarUrl} className='w-[40px] h-[40px] border-[3px] border-white rounded-full' alt="" />
+                                        <img src={item.user_id?.avatarUrl} className='w-[40px] h-[40px] border-[3px] border-white rounded-full' alt="" />
                                         <div className="">
-                                            <h3 className="text-sm font-medium">{item.user.full_name}</h3>
+                                            <h3 className="text-sm font-medium">{item.user_id?.full_name}</h3>
                                             <p className="text-xs text-[#212B36] opacity-50 ">{format(item.published_at || item.createdAt || "", "dd-MM-yyyy")}</p>
                                         </div>
                                     </div>

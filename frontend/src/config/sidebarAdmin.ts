@@ -2,8 +2,6 @@ import { LuLayoutDashboard } from "react-icons/lu";
 import { FaUsers } from "react-icons/fa";
 import { FaUsersCog } from "react-icons/fa";
 import { MdOutlinePostAdd } from "react-icons/md";
-import { truncate } from "fs";
-import { Label } from "recharts";
 
 const sidebarConfig: any[] = [
 	{
@@ -16,20 +14,6 @@ const sidebarConfig: any[] = [
 		path: "/category",
 		isVisible: true,
 		label: "Danh mục",
-		children: [
-			{
-				path: "",
-				icon: LuLayoutDashboard,
-				isVisible: true,
-				label: "Danh sách danh mục",
-			},
-			{
-				path: "/overview",
-				icon: LuLayoutDashboard,
-				isVisible: true,
-				label: "Danh",
-			},
-		],
 	},
 	{
 		path: "/users",
@@ -54,59 +38,7 @@ const sidebarConfig: any[] = [
 	{
 		path: "/tags",
 		isVisible: true,
-		label: "Tags",
-		children: [
-			{
-				path: "",
-				icon: FaUsers,
-				isVisible: true,
-				label: "Danh sách",
-			},
-			{
-				path: "/staff",
-				icon: FaUsersCog,
-				isVisible: true,
-				label: "Danh sách nhân viên",
-			},
-		],
-	},
-	{
-		path: "/product",
-		isVisible: true,
-		label: "Sản phẩm",
-		children: [
-			{
-				path: "/",
-				icon: LuLayoutDashboard,
-				isVisible: true,
-				label: "Danh sách sản phẩm",
-			},
-			{
-				path: "/add",
-				icon: LuLayoutDashboard,
-				isVisible: true,
-				label: "Thêm sản phẩm",
-			},
-		],
-	},
-	{
-		path: "/user",
-		isVisible: true,
-		label: "Người dùng",
-		children: [
-			{
-				path: "",
-				icon: FaUsers,
-				isVisible: true,
-				label: "Danh sách",
-			},
-			{
-				path: "/staff",
-				icon: FaUsersCog,
-				isVisible: true,
-				label: "Danh sách nhân viên",
-			},
-		],
+		label: "Nhãn",
 	},
 	{
 		path: "/product",
@@ -191,10 +123,17 @@ const sidebarConfig: any[] = [
 		],
 	},
 	{
+		path: "/size",
+		isVisible: true,
+		label: "Kích thước",
+	},
+	{
 		path: "",
 		icon: LuLayoutDashboard,
 		isVisible: true,
 		label: "Thống kê",
 	}
 ];
+
+
 export default sidebarConfig;

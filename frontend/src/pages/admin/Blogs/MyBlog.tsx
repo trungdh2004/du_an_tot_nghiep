@@ -23,9 +23,10 @@ import { SlOptionsVertical } from "react-icons/sl";
 import { Link } from 'react-router-dom';
 import { useDebounceCallback } from 'usehooks-ts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { publishBlog } from '@/service/blog';
+
 import DialogConfirm from '@/components/common/DialogConfirm';
 import { toast } from 'sonner';
+import { getMyBlog } from '@/service/blog';
 
 type IBlog = {
     _id?: string,
@@ -88,17 +89,6 @@ const MyBlogs = () => {
     //     }));
     // };
     const [isPublish, setIsPublish] = useState<string | boolean>(false);
-    const handlePublishBlog = async (id: string | boolean) => {
-        try {
-            const { data } = await publishBlog(id);
-            handleBlog();
-            console.log('publish', data);
-            setIsPublish(false);
-            toast.success("Ẩn bài viết thành công")
-        } catch (error) {
-            console.log(error)
-        }
-    }
     const handleChangePag = (value: any) => {
         console.log("value change page", value);
         setSearchObject((prev) => ({

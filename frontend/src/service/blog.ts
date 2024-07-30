@@ -4,6 +4,10 @@ export const getBlogPaging = (searchObject: SearchObjectType) => {
 	const uri = "/blogs/pagingBlog";
 	return instance.post(uri, searchObject);
 }
+export const getMyBlog = (searchObject: SearchObjectType) => {
+	const uri = "/blogs/pagingBlogUser";
+	return instance.post(uri, searchObject);
+}
 export const newBlogs = (data: any) => {
 	const uri = "/blogs/new-blogs";
 	return instance.post(uri, data);
@@ -20,10 +24,10 @@ export const updateBlogs = (id: string, data: any) => {
 	const uri = `/blogs/put-blogs/${id}`;
 	return instance.put(uri, data);
 };
-export const publishBlog = (id: string | boolean) => {
-	const url = `/blogs/publish/${id}`;
-	return instance.put(url);
-}
+export const publishBlogs = (id: string, data: any) => {
+	const uri = `/blogs/publish/${id}`;
+	return instance.put(uri, data);
+};
 export const deleteBlogBYId = (id: string | boolean) => {
 	const url = `/blogs/delete/${id}`;
 	return instance.delete(url);
