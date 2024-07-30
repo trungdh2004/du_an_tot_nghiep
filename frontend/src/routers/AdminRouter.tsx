@@ -91,6 +91,10 @@ const AdminRouter = [
 				path: "blogs/:id/",
 				element: <BlogDetail />,
 			},
+			{
+				path: "blogs/my-blogs",
+				element: <MyBlogs />,
+			},
 		],
 	},
 ];

@@ -81,14 +81,14 @@ const MyBlogs = () => {
             handleBlog()
         })()
     }, [searchObject])
-    // const handleChangePageSize = (value: number) => {
-    //     setSearchObject((prev) => ({
-    //         ...prev,
-    //         pageSize: value,
-    //         pageIndex: 1,
-    //     }));
-    // };
     const [isPublish, setIsPublish] = useState<string | boolean>(false);
+    const handlePublishBlog = async (id: string, data: any) => {
+        try {
+
+        } catch (error) {
+
+        }
+    }
     const handleChangePag = (value: any) => {
         console.log("value change page", value);
         setSearchObject((prev) => ({
@@ -220,6 +220,8 @@ const MyBlogs = () => {
                                 {/* card-content */}
                                 <div className="h1/2 p-5">
                                     <div className="flex justify-between items-center">
+                                        <h3 className="text-sm font-medium">{item.user?.full_name}</h3>
+
                                         <p className="text-xs text-[#212B36] opacity-50 pt-1 pb-2">{format(item.published_at || item.createdAt || "", "dd-MM-yyyy")}</p>
                                         <div className="" >
                                             <span className=""> {item.isPublish ? <MdOutlinePublic size={22} className='text-blue-500' /> : <MdOutlinePublicOff size={22} />}</span>

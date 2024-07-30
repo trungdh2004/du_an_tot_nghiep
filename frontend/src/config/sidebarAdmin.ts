@@ -119,6 +119,12 @@ const sidebarConfig: any[] = [
 				isVisible: true,
 				label: "Tạo bài viết",
 			},
+			{
+				path: "/my-blogs",
+				icon: MdOutlinePostAdd,
+				isVisible: true,
+				label: "Bài viết của tôi",
+			},
 
 		],
 	},
