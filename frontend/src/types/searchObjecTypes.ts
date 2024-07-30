@@ -21,3 +21,12 @@ export interface SearchObjectTag extends SearchObjectType {
 	tab?: number
 	provider?: string;
 }
+
+
+export interface SearchObjectTypeProduct extends SearchObjectType {
+	min: number | null;
+	max: number | null;
+	category: string | null;
+	color:string[];
+	size:string[]
+}

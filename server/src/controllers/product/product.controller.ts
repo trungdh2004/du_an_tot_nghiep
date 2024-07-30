@@ -413,22 +413,34 @@ class ProductController {
         category,
         min,
         max,
+        tab
       } = req.body;
 
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
       let queryKeyword = keyword
         ? {
-            name: {
-              $regex: keyword,
-              $options: "i",
-            },
-          }
+          name: {
+            $regex: keyword,
+            $options: "i",
+          },
+        }
         : {};
       let queryAttribute = {};
       let querySort = {};
       let queryCategory = {};
       let queryPrice = {};
+      let queryTab = {}
+
+      if (tab === 2) {
+        queryTab = {
+          is_deleted: true
+        }
+      } else {
+        queryTab = {
+          is_deleted: false
+        }
+      }
 
       // attribute
       if (color.length > 0 || size.length > 0) {
@@ -455,7 +467,6 @@ class ProductController {
           conditions = { size: size };
         }
         const listAttributeColor = await AttributeModel.find(conditions);
-        console.log("listAttributeColor:", listAttributeColor.length);
 
         const colorAttributeIds = listAttributeColor?.map((attr) => attr._id);
         queryAttribute = {
@@ -518,6 +529,7 @@ class ProductController {
         ...queryAttribute,
         ...queryCategory,
         ...queryPrice,
+        ...queryTab
       })
         .sort(querySort)
         .skip(skip)
@@ -535,7 +547,8 @@ class ProductController {
                 model: "Size",
               },
             ],
-          },"category"
+          },
+          "category"
         ])
         .exec();
 
@@ -544,6 +557,7 @@ class ProductController {
         ...queryAttribute,
         ...queryCategory,
         ...queryPrice,
+        ...queryTab
       });
 
       const result = formatDataPaging({

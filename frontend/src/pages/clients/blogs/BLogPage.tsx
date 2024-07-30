@@ -5,7 +5,7 @@ import { getAllTags } from '@/service/tags-admin';
 import { SearchObjectBlog } from '@/types/searchObjecTypes';
 import { typeResponse } from '@/types/typeReponse';
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaCommentDots, FaEye, FaRegHeart } from 'react-icons/fa';
 import { Link, useSearchParams } from 'react-router-dom';
 type IBlog = {
@@ -33,22 +33,15 @@ const BlogPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const paramsObject = Object.fromEntries(searchParams.entries())
     console.log(paramsObject)
-
     const [searchObject, setSearchObject] = useState<SearchObjectBlog>({
         pageIndex: 1,
-        pageSize: 6,
+        pageSize: 8,
         keyword: "",
         fieldSort: "",
         sort: 1,
         tab: 1,
         tags: searchParams.get("tags") || ""
     });
-
-    const [response, setResponse] = useState<typeResponse>({
-        pageCount: 0,
-        totalElement: 0,
-        totalOptionPage: 0,
-    })
     const queryClient = useQueryClient();
     const { data: blogs, isLoading, isError } = useQuery({
         queryKey: ['blogs', searchObject],
@@ -67,14 +60,20 @@ const BlogPage = () => {
         queryFn: async () => {
             try {
                 const { data } = await getAllTags();
-                console.log(data)
                 return data.data;
             } catch (error) {
                 console.log(error);
             }
         }
     })
-
+    useEffect(() => {
+        const newTags = searchParams.get("tags") || "";
+        setSearchObject((prev) => ({
+            ...prev,
+            tags: newTags,
+            pageIndex: 1 // Reset page index to 1 when tag changes
+        }));
+    }, [searchParams]);
     const handleChangePag = async (value: any) => {
         console.log("value", value);
         try {
@@ -86,7 +85,14 @@ const BlogPage = () => {
             console.log(error);
         }
     }
+    const handleParams = async (tagSlug: string) => {
+        try {
+            // searchParams.set("tags", tagSlug)
+            setSearchParams({ tags: tagSlug })
+        } catch (error) {
 
+        }
+    }
     return (
         <>
             {/* {isLoading && (
@@ -99,11 +105,9 @@ const BlogPage = () => {
                 <div className="">
                     <div className="space-x-2">
                         {tags && tags.map((tag: any, index: number) => {
+                            // console.log(tag)
                             return (
-                                <Button onClick={() => {
-                                    searchParams.set("tags", tag.slug)
-                                    setSearchParams(searchParams)
-                                }} variant="outline" className="">{tag.name}</Button>
+                                <Button onClick={() => handleParams(tag.slug)} variant="outline" className="">{tag.name}</Button>
                             )
                         })}
                     </div>
@@ -149,7 +153,7 @@ const BlogPage = () => {
                 <div className="flex justify-center mt-5">
                     <Paginations pageCount={blogs?.totalPage} handlePageClick={handleChangePag} />
                 </div>
-            </div>
+            </div >
             {/* tags-;íst */}
 
 
