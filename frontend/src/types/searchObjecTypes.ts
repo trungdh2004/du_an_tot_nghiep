@@ -11,3 +11,12 @@ export interface SearchObjectTypeSize extends SearchObjectType {
 	height:number | null;
 	weight:number | null;
 }
+
+
+export interface SearchObjectTypeProduct extends SearchObjectType {
+	min: number | null;
+	max: number | null;
+	category: string | null;
+	color:string[];
+	size:string[]
+}

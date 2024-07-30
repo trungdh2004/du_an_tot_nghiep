@@ -10,6 +10,7 @@ import { IAttribute, IColor, IProduct } from "../../interface/product";
 interface RowIColor {
   colorId: string;
   colorName: string;
+  colorCode:string
 }
 
 class categoryController {
@@ -400,6 +401,7 @@ class categoryController {
               group = {
                 colorId: (item.color as IColor)._id as string,
                 colorName: (item.color as IColor).name as string,
+                colorCode: (item.color as IColor).code as string
               };
               acc.push(group);
               return acc;
