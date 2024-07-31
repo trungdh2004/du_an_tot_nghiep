@@ -138,7 +138,7 @@ class BlogController {
         });
       }
 
-      const { title, content, thumbnail_url, tags } = req.body;
+      const { title, content, thumbnail_url, selected_tags } = req.body;
 
       const meta_title = truncateSentence(title, 30);
       const meta_description = truncateSentence(content, 50);
@@ -161,7 +161,7 @@ class BlogController {
           meta_title,
           meta_description,
           thumbnail_url: thumbnail_url,
-          selected_tags: tags || [],
+          selected_tags,
         },
         { new: true }
       );

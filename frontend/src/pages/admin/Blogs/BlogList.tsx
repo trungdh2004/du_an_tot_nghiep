@@ -1,32 +1,31 @@
+import DialogConfirm from '@/components/common/DialogConfirm';
 import Paginations from '@/components/common/Pagination';
+import { TooltipComponent } from '@/components/common/TooltipComponent';
+import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
-    DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Input } from '@/components/ui/input';
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import instance from '@/config/instance';
+import { deleteBlogBYId } from '@/service/blog';
+import { getAllTags } from '@/service/tags-admin';
 import { SearchObjectBlog } from '@/types/searchObjecTypes';
 import { typeResponse } from '@/types/typeReponse';
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
-import { FaRegHeart } from "react-icons/fa";
-
-import DialogConfirm from '@/components/common/DialogConfirm';
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { deleteBlogBYId } from '@/service/blog';
-import { FaCommentDots, FaEye } from 'react-icons/fa';
-import { IoFilter } from 'react-icons/io5';
+import { FaCommentDots, FaEye, FaRegHeart } from "react-icons/fa";
+import { GrPowerReset } from "react-icons/gr";
 import { MdOutlinePublic, MdOutlinePublicOff } from 'react-icons/md';
 import { SlOptionsVertical } from "react-icons/sl";
 import { Link } from 'react-router-dom';
+import Select from 'react-select';
 import { toast } from 'sonner';
 import { useDebounceCallback } from 'usehooks-ts';
+
 
 type IBlog = {
     _id?: string,
@@ -47,8 +46,17 @@ type IBlog = {
     comments_count: number,
     thumbnail_url?: string,
     meta_description: string,
+    tags: string,
 }
-
+interface ITag {
+    _id: string;
+    name: string;
+    description: string;
+    deleted: boolean;
+    createdAt: string;
+    updatedAt: string;
+    slug: string;
+}
 const BlogList = () => {
     const [blogs, setBlogs] = useState<IBlog[]>([]);
     const [response, setResponse] = useState<typeResponse>({
@@ -63,6 +71,7 @@ const BlogList = () => {
         fieldSort: "",
         sort: 1,
         tab: 1,
+        tags: ""
     });
     const handleBlog = async () => {
         try {
@@ -82,7 +91,14 @@ const BlogList = () => {
             handleBlog()
         })()
     }, [searchObject])
-
+    const [tags, setTags] = useState<ITag[]>([]);
+    useEffect(() => {
+        (async () => {
+            const { data } = await getAllTags();
+            console.log(data)
+            setTags(data.data)
+        })()
+    }, [])
     const handleChangePag = (value: any) => {
         setSearchObject((prev) => ({
             ...prev,
@@ -109,7 +125,7 @@ const BlogList = () => {
             console.log(error)
         }
     }
-    console.log('openDelete', openDeleteBlog)
+    // console.log('openDelete', openDeleteBlog)
     return (
         <>
             <div className="">
@@ -129,51 +145,27 @@ const BlogList = () => {
                                 onChange={(event) => debounced(event.target.value)}
                             />
                         </div>
-                        <div className="">
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <div className="cursor-pointer">
-                                        <IoFilter size={20} />
-                                    </div>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-[180px]" align="end">
-                                    <DropdownMenuLabel>Phân loại bài viết</DropdownMenuLabel>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuRadioGroup
-                                        className="cursor-pointer"
-                                        value={`${searchObject.fieldSort}`}
-                                        onValueChange={(e) => {
-                                            setSearchObject((prev) => ({
-                                                ...prev,
-                                                pageIndex: 1,
-                                                fieldSort: e,
-                                            }));
-                                        }}
-                                    >
-                                        <DropdownMenuRadioItem
-                                            value=""
-                                            className="cursor-pointer"
-                                        >
-                                            Bài viết đã hiển thị
-                                        </DropdownMenuRadioItem>
-                                        <DropdownMenuRadioItem
-                                            value=""
-                                            className="cursor-pointer"
-                                        >
-                                            Bài viết chưa hiển thị
-                                        </DropdownMenuRadioItem>
-
-                                        <DropdownMenuRadioItem
-                                            value=""
-                                            className="cursor-pointer"
-                                        >
-                                            Bài viết của tôi
-                                        </DropdownMenuRadioItem>
-                                    </DropdownMenuRadioGroup>
-
-
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                        <div className="flex items-center gap-2">
+                            <Select
+                                options={tags}
+                                classNamePrefix="react-select"
+                                getOptionLabel={(option: ITag) => option.name}
+                                getOptionValue={(option: ITag) => option.slug}
+                                onChange={(values: ITag | null) => {
+                                    setSearchObject((prev) => ({ ...prev, tags: values ? values.slug : "" }))
+                                }}
+                            />
+                            <TooltipComponent label='Mặc định'>
+                                <div> <Button onClick={() => setSearchObject({
+                                    pageIndex: 1,
+                                    pageSize: 9,
+                                    keyword: "",
+                                    fieldSort: "",
+                                    sort: 1,
+                                    tab: 1,
+                                    tags: ""
+                                })} className='' variant="ghost"><GrPowerReset size={20} /></Button></div>
+                            </TooltipComponent>
                         </div>
                     </div>
                 </div>

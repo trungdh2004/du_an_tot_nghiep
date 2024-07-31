@@ -28,6 +28,10 @@ export const publishBlogs = (id: string, data: any) => {
 	const uri = `/blogs/publish/${id}`;
 	return instance.put(uri, data);
 };
+export const pagingBlogs = (searchObj: SearchObjectType) => {
+	const uri = `/blogs/pagingBlog`;
+	return instance.post(uri, searchObj);
+};
 export const deleteBlogBYId = (id: string | boolean) => {
 	const url = `/blogs/delete/${id}`;
 	return instance.delete(url);

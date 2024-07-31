@@ -21,8 +21,6 @@ export interface SearchObjectTypeProduct extends SearchObjectType {
 	size: string[]
 }
 export interface SearchObjectBlog extends SearchObjectType {
-	totalElement?: number;
-	totalOptionPage?: number;
 	tab?: number
-	provider?: string;
+	tags: string
 }
