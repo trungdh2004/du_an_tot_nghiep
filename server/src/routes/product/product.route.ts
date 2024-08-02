@@ -8,6 +8,8 @@ routerProduct.get("/findById/:id", productController.getProductById);
 routerProduct.put("/updateById/:id", productController.updateById);
 routerProduct.put("/deletedById/:id", productController.deletedProductById);
 routerProduct.put("/unDeletedById/:id", productController.unDeletedProductById);
+routerProduct.put("/deletedMany", productController.deleteMany);
+routerProduct.put("/unDeletedMany", productController.unDeleteMany);
 routerProduct.post("/paging", productController.pagingProduct);
 
 

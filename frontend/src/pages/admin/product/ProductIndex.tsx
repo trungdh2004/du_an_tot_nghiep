@@ -1,9 +1,515 @@
-import React from 'react'
+import TableComponent from "@/components/common/TableComponent";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
+import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
+import { useEffect, useState } from "react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { HiOutlineDotsVertical } from "react-icons/hi";
+import { Button } from "@/components/ui/button";
+import { IColor, IProduct } from "@/types/typeProduct";
+import {
+	keepPreviousData,
+	useQuery,
+	useQueryClient,
+} from "@tanstack/react-query";
+import {
+	deletedById,
+	deleteMany,
+	pagingProduct,
+	unDeletedById,
+	unDeleteMany,
+} from "@/service/product";
+import { formatQuantity } from "@/common/localFunction";
+import { SizeTypes } from "@/types/typeSize";
+import { Link } from "react-router-dom";
+import useDebounceV2 from "@/hooks/debounce";
+
+import ProductFilter from "./ProductFilter";
+import { IFilterProduct } from "@/types/product";
+import DialogConfirm from "@/components/common/DialogConfirm";
+import { toast } from "sonner";
 
 const ProductIndex = () => {
-  return (
-    <div>ProductIndex</div>
-  )
-}
+	const queryClient = useQueryClient();
+	const [searchObject, setSearchObject] = useState<SearchObjectTypeProduct>({
+		pageIndex: 1,
+		pageSize: 5,
+		keyword: "",
+		fieldSort: "",
+		sort: 1,
+		tab: 1,
+		category: "",
+		min: null,
+		max: null,
+		color: [],
+		size: [],
+	});
+	const { data, isLoading } = useQuery({
+		queryKey: ["paging", searchObject],
+		queryFn: async () => {
+			const { data } = await pagingProduct(searchObject);
+			return data;
+		},
+		placeholderData: keepPreviousData,
+	});
+	const [rowSelection, setRowSelection] = useState<string[]>([]); // xử lí selected
+	const [key, setKey] = useState("");
+	const keyDebounce = useDebounceV2(key);
+	const [openConfirm, setOpenConfirm] = useState<string | null>("");
+	const [openConfirmMany, setOpenConfirmMany] = useState<boolean>(false);
 
-export default ProductIndex
+	useEffect(() => {
+		setSearchObject((prev) => ({
+			...prev,
+			keyword: keyDebounce,
+		}));
+	}, [keyDebounce]);
+
+	const handleChangePageSize = (value: number) => {
+		setSearchObject((prev) => ({
+			...prev,
+			pageSize: value,
+			pageIndex: 1,
+		}));
+	};
+	const handleChangePage = (value: any) => {
+		setSearchObject((prev) => ({
+			...prev,
+			pageIndex: value.selected + 1,
+		}));
+	};
+
+	const handleDeleteProduct = async () => {
+		try {
+			await deletedById(openConfirm as string);
+			queryClient.invalidateQueries({
+				queryKey: ["paging", searchObject],
+			});
+			toast.success("Ẩn thành công");
+		} catch (error) {
+			toast.error("Ẩn thất bại");
+		} finally {
+			setOpenConfirm(null);
+		}
+	};
+
+	const handleDeleteManyProduct = async () => {
+		try {
+			await deleteMany({ listId: rowSelection });
+			queryClient.invalidateQueries({
+				queryKey: ["paging", searchObject],
+			});
+			setRowSelection([]);
+			toast.success("Ẩn toàn bộ thành công");
+		} catch (error) {
+			toast.error("Ẩn toàn bộ thất bại");
+		} finally {
+			setOpenConfirmMany(false);
+		}
+	};
+
+	const handleUnDeleteProduct = async (id: string) => {
+		try {
+			await unDeletedById(id);
+			queryClient.invalidateQueries({
+				queryKey: ["paging", searchObject],
+			});
+			toast.success("Bỏ ẩn thành công");
+		} catch (error) {
+			toast.error("Bỏ ẩn thất bại");
+		} finally {
+			setOpenConfirm(null);
+		}
+	};
+	const handleUnDeleteManyProduct = async () => {
+		try {
+			await unDeleteMany({ listId: rowSelection });
+			queryClient.invalidateQueries({
+				queryKey: ["paging", searchObject],
+			});
+			toast.success("Bỏ ẩn thành công");
+		} catch (error) {
+			toast.error("Bỏ ẩn thất bại");
+		} finally {
+			setOpenConfirm(null);
+		}
+	};
+
+	const columns: ColumnDef<IProduct>[] = [
+		{
+			id: "select",
+			header: ({ table }) => "",
+			cell: ({ row }) => (
+				<Checkbox
+					checked={rowSelection.some((item) => item === row.original._id)}
+					onCheckedChange={(value) => {
+						if (value) {
+							setRowSelection((prev) => [
+								...prev,
+								row?.original?._id as string,
+							]);
+						} else {
+							setRowSelection((prev) => {
+								const newList = prev.filter(
+									(item) => item !== row.original._id,
+								);
+								return newList;
+							});
+						}
+					}}
+					aria-label="Select row"
+				/>
+			),
+			size: 100,
+		},
+		{
+			accessorKey: "name",
+			header: () => {
+				return <div className="md:text-base text-xs">Ảnh</div>;
+			},
+			cell: ({ row }) => {
+				return (
+					<div className="w-10 h-10 border">
+						<img
+							src={row.original.thumbnail}
+							alt=""
+							className="w-full h-full object-cover"
+						/>
+					</div>
+				);
+			},
+		},
+		{
+			accessorKey: "name",
+			header: () => {
+				return (
+					<div className="md:text-base text-xs min-w-[140px] md:min-w-[200px]">
+						Tên
+					</div>
+				);
+			},
+			cell: ({ row }) => {
+				return (
+					<div className="md:text-base text-xs font-medium">
+						{row?.original?.name}
+					</div>
+				);
+			},
+		},
+		{
+			accessorKey: "category",
+			header: () => {
+				return <div className="md:text-base text-xs">Danh mục</div>;
+			},
+			cell: ({ row }) => {
+				return (
+					<div className="md:text-base text-xs ">
+						{row.original.category.name}
+					</div>
+				);
+			},
+		},
+		//price
+		{
+			accessorKey: "price",
+			header: () => {
+				return <div className="md:text-base text-xs">Giá</div>;
+			},
+			cell: ({ row }) => {
+				return (
+					<div className="md:text-base text-xs text-red-500">
+						{formatQuantity(row?.original?.price, "đ")}
+					</div>
+				);
+			},
+		},
+		//discount
+		{
+			accessorKey: "price",
+			header: () => {
+				return <div className="md:text-base text-xs">Giá KM</div>;
+			},
+			cell: ({ row }) => {
+				return (
+					<div className="md:text-base text-xs text-red-500">
+						{formatQuantity(row?.original?.discount, "đ")}
+					</div>
+				);
+			},
+		},
+		//SL
+		{
+			accessorKey: "quantity",
+			header: () => {
+				return <div className="md:text-base text-xs">SL</div>;
+			},
+			cell: ({ row }) => {
+				return (
+					<div className="md:text-base text-xs ">
+						{formatQuantity(row?.original?.quantity)}
+					</div>
+				);
+			},
+		},
+		//  SL bán
+		{
+			accessorKey: "quantitySold",
+			header: () => {
+				return <div className="md:text-base text-xs">SL bán</div>;
+			},
+			cell: ({ row }) => {
+				return (
+					<div className="md:text-base text-xs ">
+						{formatQuantity(row?.original?.quantitySold)}
+					</div>
+				);
+			},
+		},
+		// mầu
+		{
+			accessorKey: "color",
+			header: () => {
+				return <div className="md:text-base text-xs">Màu</div>;
+			},
+			cell: ({ row }) => {
+				const listColor = row.original.attributes.reduce(
+					(acc: IColor[], item) => {
+						if (!item.color._id) return acc;
+						let group = acc.find((g) => g._id === (item.color as IColor)?._id);
+
+						// Nếu nhóm không tồn tại, tạo nhóm mới
+						if (!group) {
+							group = {
+								_id: (item.color as IColor)._id as string,
+								name: (item.color as IColor).name as string,
+								code: (item.color as IColor).code as string,
+							};
+							acc.push(group);
+							return acc;
+						}
+						return acc;
+					},
+					[],
+				);
+				return (
+					<div className="flex flex-wrap md:gap-1">
+						{listColor?.map((item) => (
+							<div
+								className="w-2 h-2 md:w-4 md:h-4 rounded-full border"
+								key={item?._id}
+								style={{
+									backgroundColor: item?.code,
+								}}
+							></div>
+						))}
+					</div>
+				);
+			},
+		},
+		//size
+		{
+			accessorKey: "quantitySold",
+			header: () => {
+				return <div className="md:text-base text-xs">Kích thước</div>;
+			},
+			cell: ({ row }) => {
+				const listSize = row.original.attributes.reduce(
+					(acc: { _id: string; name: string }[], item) => {
+						if (!item.color._id) return acc;
+						let group = acc.find(
+							(g) => g._id === (item.size as SizeTypes)?._id,
+						);
+
+						// Nếu nhóm không tồn tại, tạo nhóm mới
+						if (!group) {
+							group = {
+								_id: (item.size as SizeTypes)._id as string,
+								name: (item.size as SizeTypes).name as string,
+							};
+							acc.push(group);
+							return acc;
+						}
+						return acc;
+					},
+					[],
+				);
+				return (
+					<div className="flex flex-wrap gap-1">
+						{listSize?.map((item) => item.name).join(", ")}
+					</div>
+				);
+			},
+		},
+		{
+			id: "actions",
+			enableHiding: false,
+			cell: ({ row }) => {
+				return (
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button variant="ghost" className="h-8 w-8 p-0">
+								<HiOutlineDotsVertical className="h-4 w-4" />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end" className="min-w-10">
+							<Link to={`/admin/product/update/${row.original._id}`}>
+								<DropdownMenuItem className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full text-start cursor-pointer">
+									Sửa
+								</DropdownMenuItem>
+							</Link>
+							{row?.original?.is_deleted ? (
+								<DropdownMenuItem
+									className="text-green-400 text-center cursor-pointer"
+									onClick={() => {
+										handleUnDeleteProduct(row.original._id as string);
+									}}
+								>
+									Bỏ ẩn
+								</DropdownMenuItem>
+							) : (
+								<DropdownMenuItem
+									className="text-red-400 text-center cursor-pointer"
+									onClick={() => {
+										setOpenConfirm(row.original._id as string);
+									}}
+								>
+									Ẩn
+								</DropdownMenuItem>
+							)}
+						</DropdownMenuContent>
+					</DropdownMenu>
+				);
+			},
+		},
+	];
+
+	return (
+		<div className="flex flex-col gap-3">
+			<div className="flex flex-col gap-3">
+				<h4 className="font-medium md:text-xl text-base">Danh sách danh mục</h4>
+				<div className="flex flex-wrap justify-between gap-2">
+					<Input
+						placeholder="Tìm kiếm danh mục"
+						className="w-full sm:w-[40%] md:text-base text-xs"
+						value={key}
+						onChange={(e) => setKey(e.target.value)}
+					/>
+					<div className="justify-between flex-1 sm:justify-end flex items-center gap-4">
+						{rowSelection.length > 0 && searchObject.tab === 1 && (
+							<Button
+								variant={"danger"}
+								onClick={() => setOpenConfirmMany(true)}
+							>
+								Ẩn tất cả
+							</Button>
+						)}
+
+						{rowSelection.length > 0 && searchObject.tab === 2 && (
+							<Button variant={"success"} onClick={handleUnDeleteManyProduct}>
+								Bỏ ẩn tất cả
+							</Button>
+						)}
+
+						<Link to={"/admin/product/add"}>
+							<Button variant={"add"}>Thêm sản phẩm</Button>
+						</Link>
+
+						<ProductFilter
+							onSubmit={(obj: IFilterProduct) => {
+								setSearchObject((prev) => ({
+									...prev,
+									...obj,
+								}));
+							}}
+						/>
+					</div>
+				</div>
+			</div>
+			<Tabs value={`${searchObject.tab}`} className="w-full">
+				<TabsList className="grid w-full grid-cols-2">
+					<TabsTrigger
+						value="1"
+						onClick={() => {
+							setSearchObject((prev) => ({ ...prev, tab: 1, pageIndex: 1 }));
+							setRowSelection([]);
+						}}
+					>
+						Danh sách
+					</TabsTrigger>
+					<TabsTrigger
+						value="2"
+						onClick={() => {
+							setSearchObject((prev) => ({ ...prev, tab: 2, pageIndex: 1 }));
+							setRowSelection([]);
+						}}
+					>
+						Danh sách ẩn
+					</TabsTrigger>
+				</TabsList>
+			</Tabs>
+			<TableComponent
+				data={data?.content || []}
+				columns={columns}
+				// phân trang
+				handleChangePage={handleChangePage}
+				pageIndex={searchObject.pageIndex}
+				pageSize={searchObject.pageSize}
+				pageCount={data?.totalPage}
+				totalElement={data?.totalAllOptions}
+				handleChangePageSize={handleChangePageSize}
+				isLoading={isLoading}
+				dataPageSize={[1, 2, 3, 4, 5]}
+			/>
+			{!!openConfirm && (
+				<DialogConfirm
+					open={!!openConfirm}
+					title="Xác nhận ẩn sản phẩm"
+					handleClose={() => setOpenConfirm(null)}
+					handleSubmit={handleDeleteProduct}
+					content="Bạn có chắc muốn ẩn sản phẩm này ?"
+					labelConfirm="Ẩn"
+				/>
+			)}
+			{openConfirmMany && (
+				<DialogConfirm
+					open={!!openConfirmMany}
+					title="Xác nhận ẩn sản phẩm"
+					handleClose={() => setOpenConfirmMany(false)}
+					handleSubmit={handleDeleteManyProduct}
+					content="Bạn có chắc muốn ẩn toàn bộ sản phẩm đã chọn?"
+					labelConfirm="Bỏ ẩn"
+				/>
+			)}
+			{/* {!!openManyCate && (
+				<DialogConfirm
+					open={!!openManyCate}
+					title="Xác nhận ẩn nhiều  danh mục"
+					handleClose={() => setOpenManyCate(false)}
+					handleSubmit={() => handleManyCate(listId)}
+					content="Bạn có chắc muốn ẩn các danh mục này?"
+					labelConfirm="Ẩn"
+				/>
+			)}
+
+			{!!openUnManyCate && (
+				<DialogConfirm
+					open={!!openUnManyCate}
+					title="Xác nhận bỏ ẩn nhiều  danh mục"
+					handleClose={() => setOpenUnManyCate(false)}
+					handleSubmit={() => handleUnManyCate(listId)}
+					content="Bạn có chắc muốn bỏ ẩn các danh mục này?"
+					labelConfirm="Bỏ ẩn"
+				/>
+			)}  */}
+		</div>
+	);
+};
+
+export default ProductIndex;
