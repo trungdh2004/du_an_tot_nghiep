@@ -26,37 +26,6 @@ import Select from 'react-select';
 import { toast } from 'sonner';
 import { useDebounceCallback } from 'usehooks-ts';
 
-
-type IBlog = {
-    _id?: string,
-    title: string,
-    content: string,
-    isDeleted: string,
-    createdAt: string,
-    published_at: string,
-    isPublish: boolean,
-    user_id: {
-        avatarUrl?: string,
-        email: string,
-        _id: string,
-        full_name: string,
-    },
-    views_count: number,
-    countLike: number,
-    comments_count: number,
-    thumbnail_url?: string,
-    meta_description: string,
-    tags: string,
-}
-interface ITag {
-    _id: string;
-    name: string;
-    description: string;
-    deleted: boolean;
-    createdAt: string;
-    updatedAt: string;
-    slug: string;
-}
 const BlogList = () => {
     const [blogs, setBlogs] = useState<IBlog[]>([]);
     const [response, setResponse] = useState<typeResponse>({
@@ -95,7 +64,6 @@ const BlogList = () => {
     useEffect(() => {
         (async () => {
             const { data } = await getAllTags();
-            console.log(data)
             setTags(data.data)
         })()
     }, [])
@@ -190,55 +158,61 @@ const BlogList = () => {
             </Tabs>
 
             <div className="grid grid-cols-12 gap-6 xl:gap-8 mt-10">
-                {blogs.map((item: IBlog, index: number) => (
-                    <>
-                        <div key={index} className="col-span-12 min-[600px]:col-span-6 min-[900px]:col-span-4 h-[360px] " >
-                            <div className="h-[350px] grid grid-rows-2 border rounded-xl overflow-hidden relative" >
-                                {/* card-head */}
-                                <div className="absolute z-10 top-4 right-2">
-                                    <DropdownMenu >
-                                        <DropdownMenuTrigger asChild>
-                                            <div className='cursor-pointer'>
-                                                <SlOptionsVertical size={20} color='white' />
+                {blogs.length ? (
+                    blogs.map((item: IBlog, index: number) => (
+                        <>
+                            <div key={index} className="col-span-12 min-[600px]:col-span-6 min-[900px]:col-span-4 h-[360px] " >
+                                <div className="h-[350px] grid grid-rows-2 border rounded-xl overflow-hidden relative" >
+                                    {/* card-head */}
+                                    <div className="absolute z-10 top-4 right-2">
+                                        <DropdownMenu >
+                                            <DropdownMenuTrigger asChild>
+                                                <div className='cursor-pointer'>
+                                                    <SlOptionsVertical size={20} color='white' />
+                                                </div>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent className='min-w-[10px] cursor-pointer' align='end'>
+                                                <DropdownMenuItem className='cursor-pointer'><Link className='w-full' to={`/admin/blogs/${item._id}/edit`}>Sửa</Link></DropdownMenuItem>
+                                                <DropdownMenuItem className='cursor-pointer ' onClick={() => setOpenDeleteBlog(item?._id as any)} >Xóa</DropdownMenuItem>
+
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
+                                    <div className=" bg-gray-200 border-b border-gray-300">
+                                        <img src={item.thumbnail_url || "/no-image.png"} className='w-full h-full object-cover' alt="" />
+                                    </div>
+                                    {/* card-content */}
+                                    <div className="px-4 pt-2">
+                                        <div className="flex items-center gap-1 pb-2">
+                                            <img src={item.user_id?.avatarUrl} className='w-[40px] h-[40px] border-[3px] border-white rounded-full' alt="" />
+                                            <div className="">
+                                                <h3 className="text-sm font-medium">{item.user_id?.full_name}</h3>
+                                                <p className="text-xs text-[#212B36] opacity-50 ">{format(item.published_at || item.createdAt || "", "dd-MM-yyyy")}</p>
                                             </div>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent className='min-w-[10px] cursor-pointer' align='end'>
-                                            <DropdownMenuItem className='cursor-pointer'><Link className='w-full' to={`/admin/blogs/${item._id}/edit`}>Sửa</Link></DropdownMenuItem>
-                                            <DropdownMenuItem className='cursor-pointer ' onClick={() => setOpenDeleteBlog(item?._id as any)} >Xóa</DropdownMenuItem>
-
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </div>
-                                <div className=" bg-gray-200 border-b border-gray-300">
-                                    <img src={item.thumbnail_url || "/no-image.png"} className='w-full h-full object-cover' alt="" />
-                                </div>
-                                {/* card-content */}
-                                <div className="px-4 pt-2">
-                                    <div className="flex items-center gap-1 pb-2">
-                                        <img src={item.user_id?.avatarUrl} className='w-[40px] h-[40px] border-[3px] border-white rounded-full' alt="" />
-                                        <div className="">
-                                            <h3 className="text-sm font-medium">{item.user_id?.full_name}</h3>
-                                            <p className="text-xs text-[#212B36] opacity-50 ">{format(item.published_at || item.createdAt || "", "dd-MM-yyyy")}</p>
                                         </div>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                        <Link to={`/admin/blogs/${item._id}`} className="line-clamp-1 text-[#212B36] text-[18px] font-semibold hover:underline transition-all duration-300">{item.title || "Bài viết chưa có tiêu đề"}</Link>
-                                        <span className=""> {item.isPublish ? <MdOutlinePublic size={22} className='text-blue-500' /> : <MdOutlinePublicOff size={22} />}</span>
-                                    </div>
-                                    <p className="text-xs pt-1 text-gray-400 line-clamp-2">{item.meta_description}</p>
-                                    <div className="flex space-x-4 min-[900px]:space-x-1 xl:space-x-4 absolute bottom-4 right-4">
+                                        <div className="flex justify-between items-center">
+                                            <Link to={`/admin/blogs/${item._id}`} className="line-clamp-1 text-[#212B36] text-[18px] font-semibold hover:underline transition-all duration-300">{item.title || "Bài viết chưa có tiêu đề"}</Link>
+                                            <span className=""> {item.isPublish ? <MdOutlinePublic size={22} className='text-blue-500' /> : <MdOutlinePublicOff size={22} />}</span>
+                                        </div>
+                                        <p className="text-xs pt-1 text-gray-400 line-clamp-2">{item.meta_description}</p>
+                                        <div className="flex space-x-4 min-[900px]:space-x-1 xl:space-x-4 absolute bottom-4 right-4">
 
-                                        <div className="flex gap-3">
-                                            <span className="text-[#212B36] text-xs flex items-center gap-1"><FaRegHeart size={16} />{item.countLike}</span>
-                                            <span className="text-[#212B36] text-xs flex items-center gap-1"><FaCommentDots size={16} />{item.comments_count}</span>
-                                            <span className="text-[#212B36] text-xs flex items-center gap-1"> <FaEye size={16} />{item.views_count}</span>
+                                            <div className="flex gap-3">
+                                                <span className="text-[#212B36] text-xs flex items-center gap-1"><FaRegHeart size={16} />{item.countLike}</span>
+                                                <span className="text-[#212B36] text-xs flex items-center gap-1"><FaCommentDots size={16} />{item.comments_count}</span>
+                                                <span className="text-[#212B36] text-xs flex items-center gap-1"> <FaEye size={16} />{item.views_count}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </>
-                ))}
+                        </>
+                    ))
+                ) : (
+                    <div className="col-span-12 min-h-[360px] flex justify-center items-center">
+                        <h3 className="text-lg">Không có bài viết!</h3>
+                    </div>
+                )}
             </div >
             <div className="flex justify-center mt-5">
                 <Paginations pageCount={response.pageCount} handlePageClick={handleChangePag} />
