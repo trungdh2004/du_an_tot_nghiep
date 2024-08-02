@@ -5,6 +5,7 @@ import UserIndex from "@/pages/admin/users/UserIndex";
 import TestComponent from "@/pages/clients/Test";
 import BlogPage from "@/pages/clients/blogs/BLogPage";
 import HomePage from "@/pages/clients/home/page";
+import BlogDetail from "@/pages/clients/blogs/BlogDetail";
 
 const MainRouter = [
 	{
@@ -14,6 +15,7 @@ const MainRouter = [
 			{ path: "", element: <HomePage /> },
 			{ path: "address", element: <Address /> },
 			{ path: "blogs", element: <BlogPage /> },
+			{ path: "blogDetail/:id", element: <BlogDetail /> },
 			{ path: "table", element: <UserIndex /> },
 			{ path: "testComponent", element: <TestComponent /> },
 			{ path: "*", element: <NotFound /> },

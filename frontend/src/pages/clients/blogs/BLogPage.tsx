@@ -38,7 +38,7 @@ const BlogPage = () => {
     // const paramsObject = Object.fromEntries(searchParams.entries())
     const [searchObject, setSearchObject] = useState<SearchObjectBlog>({
         pageIndex: 1,
-        pageSize: 8,
+        pageSize: 12,
         keyword: "",
         fieldSort: "",
         sort: 1,
@@ -141,7 +141,7 @@ const BlogPage = () => {
                                                 </div>
                                             </div>
                                             <div className="flex justify-between items-center">
-                                                <Link to={`/admin/blogs/${item._id}`} className="line-clamp-1 text-[#212B36] text-[18px] font-semibold hover:underline transition-all duration-300">{item.title || "Bài viết chưa có tiêu đề"}</Link>
+                                                <Link to={`/blogDetail/${item._id}`} className="line-clamp-1 text-[#212B36] text-[18px] font-semibold hover:underline transition-all duration-300">{item.title || "Bài viết chưa có tiêu đề"}</Link>
                                             </div>
                                             <p className="text-xs pt-1 text-gray-400 line-clamp-2">{item.meta_description}</p>
                                             <div className="flex space-x-4 min-[900px]:space-x-1 xl:space-x-4 absolute bottom-4 right-4">
@@ -159,7 +159,7 @@ const BlogPage = () => {
                         ))
                     ) : (
                         <div className="w-full h-full mt-0 col-span-12 mt-10 flex justify-center items-center">
-                            <h3 className=' text-xl text-[#1A1E26]'>Không có bài viết nào.</h3>
+                            <h3 className=' text-lg text-[#1A1E26]'>Chưa có bài viết nào.</h3>
                         </div>
                     )}
                 </div >
