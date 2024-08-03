@@ -196,7 +196,9 @@ const ProductAddandUpdate = () => {
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		try {
 			const listImageNotFile = values.images?.filter((image) => !image?.file);
-			const listImageFile = values.images?.filter((image) => image?.file);
+      const listImageFile = values.images?.filter((image) => image?.file);
+      console.log(listImageFile);
+      
 			let listImage;
 
 			if (listImageFile?.length > 0) {
