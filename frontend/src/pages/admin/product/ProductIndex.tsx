@@ -134,6 +134,7 @@ const ProductIndex = () => {
 			queryClient.invalidateQueries({
 				queryKey: ["paging", searchObject],
 			});
+			setRowSelection([])
 			toast.success("Bỏ ẩn thành công");
 		} catch (error) {
 			toast.error("Bỏ ẩn thất bại");

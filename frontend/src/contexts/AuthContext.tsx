@@ -21,6 +21,7 @@ export interface IUser {
 	full_name?: string;
 	is_admin?: boolean;
 	updatedAt?: string;
+	is_staff?: boolean;
 	_id?: string;
 }
 interface AuthContextType {
@@ -47,9 +48,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 			try {
 				const { data } = await currentAccount();
 				setAuthUser(data?.data);
-				toast.success(data?.message);
 			} catch (error) {
-				console.error(error);
 				setAuthUser(undefined);
 				setIsLoggedIn(false);
 			} finally {

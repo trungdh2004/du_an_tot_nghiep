@@ -15,6 +15,7 @@ export interface IUser extends MongooseDocument {
   last_name: string;
   full_name: string;
   is_admin: boolean;
+  is_staff:boolean;
   blocked_at: boolean;
   comment_blocked_at: boolean;
   phone: string;
@@ -29,5 +30,6 @@ export interface RequestModel extends Request {
     id: ObjectId;
     is_admin: boolean;
     email: string;
+    is_staff: boolean;
   };
 }
