@@ -400,6 +400,68 @@ class ProductController {
     }
   }
 
+  async deleteMany(req: RequestModel, res: Response) {
+    try {
+      const { listId, type } = req.body;
+
+      if (!listId || listId.length === 0) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn sản phẩm",
+        });
+      }
+
+      await ProductModel.find({ _id: { $in: listId } }).select("_id");
+
+      const CategoryData = await ProductModel.updateMany(
+        { _id: { $in: listId } },
+        { $set: { is_deleted: true } },
+        { new: true }
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Xóa thành công",
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.kind
+          ? "Có một sản phẩm không có trong dữ liệu"
+          : error.message,
+      });
+    }
+  }
+
+  async unDeleteMany(req: RequestModel, res: Response) {
+    try {
+      const { listId } = req.body;
+
+      if (!listId || listId.length === 0) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn loại sản phẩm",
+        });
+      }
+
+      await ProductModel.find({ _id: { $in: listId } }).select("_id");
+
+      const CategoryData = await ProductModel.updateMany(
+        { _id: { $in: listId } },
+        { $set: { is_deleted: false } },
+        { new: true }
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Khôi phục thành công",
+      });
+    } catch (error: any) {
+      console.log("error", error.kind);
+
+      return res.status(STATUS.INTERNAL).json({
+        message: error.kind
+          ? "Có một sản phẩm không có trong dữ liệu"
+          : error.message,
+      });
+    }
+  }
+
   async pagingProduct(req: RequestModel, res: Response) {
     try {
       const {
@@ -413,6 +475,7 @@ class ProductController {
         category,
         min,
         max,
+        tab
       } = req.body;
 
       let limit = pageSize || 10;
@@ -429,6 +492,17 @@ class ProductController {
       let querySort = {};
       let queryCategory = {};
       let queryPrice = {};
+      let queryTab = {}
+
+      if(tab === 2) {
+        queryTab = {
+          is_deleted:true
+        }
+      }else {
+        queryTab = {
+          is_deleted:false
+        }
+      }
 
       // attribute
       if (color.length > 0 || size.length > 0) {
@@ -455,7 +529,6 @@ class ProductController {
           conditions = { size: size };
         }
         const listAttributeColor = await AttributeModel.find(conditions);
-        console.log("listAttributeColor:", listAttributeColor.length);
 
         const colorAttributeIds = listAttributeColor?.map((attr) => attr._id);
         queryAttribute = {
@@ -518,6 +591,7 @@ class ProductController {
         ...queryAttribute,
         ...queryCategory,
         ...queryPrice,
+        ...queryTab
       })
         .sort(querySort)
         .skip(skip)
@@ -535,7 +609,8 @@ class ProductController {
                 model: "Size",
               },
             ],
-          },"category"
+          },
+          "category"
         ])
         .exec();
 
@@ -544,6 +619,7 @@ class ProductController {
         ...queryAttribute,
         ...queryCategory,
         ...queryPrice,
+        ...queryTab
       });
 
       const result = formatDataPaging({

@@ -70,7 +70,7 @@ header .sub-menu::after {
 	}
 }
 /* CSS React Select */
-.react-select-container {
+/* .react-select-container {
 	height: 40px;
 	box-shadow: none;
 	cursor: pointer;
@@ -78,7 +78,7 @@ header .sub-menu::after {
 }
 
 .react-select__control {
-	height: 40px;
+	min-height: 40px;
 }
 
 .css-t3ipsp-control:hover {
@@ -153,7 +153,7 @@ header .sub-menu::after {
 	background-color: #3b83f638 !important;
 	color: #3b82f6 !important;
 	cursor: pointer;
-}
+} */
 
 .mapboxgl-control-container {
 	display: none;
