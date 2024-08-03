@@ -8,6 +8,7 @@ interface PayloadToken {
   id: any;
   email: string;
   is_admin: boolean;
+  is_staff: boolean;
 }
 
 const authentication = async (
@@ -63,6 +64,7 @@ const authentication = async (
           id: existingUser._id,
           email: existingUser.email,
           is_admin: existingUser.is_admin,
+          is_staff: existingUser.is_staff
         };
 
         next();

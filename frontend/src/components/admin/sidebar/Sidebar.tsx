@@ -1,7 +1,10 @@
+import { useAuth } from "@/hooks/auth";
 import SidebarList from "./SidebarList";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Sidebar = () => {
+	const { authUser } = useAuth();
+
 	return (
 		<ScrollArea className="w-full lg:w-[280px] h-full overflow-y-auto lg:border-r border-dashed pb-4">
 			{/* user */}
@@ -9,12 +12,12 @@ const Sidebar = () => {
 				<div className="rounded-md bg-gray-current h-[60px] flex items-center px-5 ">
 					<div className="w-10 h-10 rounded-full mr-2 border">
 						<img
-							src="/avatar_25.jpg"
+							src={authUser?.avatarUrl || "/avatar_25.jpg"}
 							alt=""
 							className="rounded-full w-full h-full"
 						/>
 					</div>
-					<div className="text-sm font-semibold">Đỗ Hữu Trung</div>
+					<div className="text-sm font-semibold">{authUser?.full_name}</div>
 				</div>
 			</div>
 			{/* list */}
