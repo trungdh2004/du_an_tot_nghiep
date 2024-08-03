@@ -1,4 +1,5 @@
 import { getAllProductSlide } from "@/service/product-slide";
+import { IProductSlider } from "@/types/product";
 import { useEffect, useRef, useState } from "react";
 import { PiArrowLeftThin, PiArrowRightThin } from "react-icons/pi";
 import "swiper/css";

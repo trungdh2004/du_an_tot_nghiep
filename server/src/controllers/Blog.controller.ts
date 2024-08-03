@@ -5,6 +5,7 @@ import BlogsModel from "../models/Blogs.schema";
 import { BlogValidation } from "../validation/blog.validation";
 import { truncateSentence, trunTextHtmlConvers } from "../utils/cutText";
 import { formatDataPaging } from "../common/pagingData";
+import TagsModel from "../models/Tags.schema";
 
 class BlogController {
   async postBlogs(req: RequestModel, res: Response) {
@@ -179,125 +180,86 @@ class BlogController {
     try {
       const {
         keyword,
-        sort,
-        fieldSort,
-        published_at,
-        tags,
+        sort = -1,
         pageSize,
         pageIndex,
         tab = 1,
+        tags
       } = req.body;
 
-      const user = req.user;
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
+      let queryKeyword = keyword
+        ? {
+            name: {
+              $regex: keyword,
+              $options: "i",
+            },
+          }
+        : {};
+      let querySort = {};
+      let queryTab = {}
+      let queryTags = {}
 
-      let pipeline: any[] = [];
-      // search
-      if (keyword) {
-        pipeline.push({
-          $match: {
-            title: { $regex: keyword, $options: "i" },
-          },
-        });
+      if(tab === 2) {
+        queryTab = {
+          isPublish:false
+        }
+
+        querySort= {
+          createdAt:sort
+        }
+      }else {
+        queryTab = {
+          isPublish:true
+        }
+        querySort = {
+          published_at:sort
+        }
       }
-
-      pipeline.push({
-        $lookup: {
-          from: "users", // Collection to join
-          localField: "user_id", // Field from the input documents
-          foreignField: "_id",
-          as: "user", // Field from the documents of the "from" collection
-        },
-      });
-
-      pipeline.push({
-        $lookup: {
-          from: "tags", // Collection to join
-          localField: "selected_tags", // Field from the input documents
-          foreignField: "_id", // Field from the documents of the "from" collection
-          as: "selected_tags", // Output array field
-        },
-      });
-
-      // skip
-      // pipeline.push({ $skip: skip }, { $limit: limit });
-      // sắp xếp
-      // if (fieldSort) {
-      //   pipeline.push({
-      //     $sort: { [fieldSort]: sort },
-      //   });
-      // } else {
-      //   pipeline.push({
-      //     $sort: { published_at: sort },
-      //   });
-      // }
-
-      if (tab === 1) {
-        pipeline.push({
-          $match: {
-            isPublish: true,
-          },
-        });
-      } else if (tab === 2) {
-        pipeline.push({
-          $match: {
-            isPublish: false,
-          },
-        });
-      }
-
-      pipeline.push({
-        $project: {
-          _id: 1, // Loại bỏ trường _id
-          meta_title: 1, // Trường name
-          title: 1, // Trường name
-          meta_description: 1, // Trường age
-          views_count: 1, // Trường email
-          isPublish: 1,
-          published_at: 1, // Trường email
-          comments_count: 1, // Trường email
-          countLike: 1, // Trường email
-          createdAt: 1,
-          updatedAt: 1,
-          thumbnail_url: 1,
-          selected_tags: 1,
-          "user._id": 1,
-          "user.full_name": 1,
-          "user.email": 1,
-          "user.avatarUrl": 1,
-        },
-      });
-
-      const countDocuments = await BlogsModel.aggregate([
-        ...pipeline,
-
-        {
-          $count: "total",
-        },
-      ]);
-
-      const listBlogs = await BlogsModel.aggregate([
-        ...pipeline,
-        {
-          $unwind: {
-            path: "$user",
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-      ])
-        .collation({
-          locale: "en_US",
-          strength: 1,
+      console.log("tags:",tags);
+      
+      if(tags) {
+        const select = await TagsModel.findOne({
+          slug:tags
         })
+
+        queryTags = {
+          selected_tags:{
+           $in:select?._id
+          }
+        }
+      }
+
+      const listBlogs = await BlogsModel.find({
+        ...queryKeyword,
+        ...queryTab,
+        ...queryTags
+      })
+        .sort(querySort)
         .skip(skip)
-        .limit(limit);
+        .limit(limit)
+        .populate([
+          {
+            path:"user_id",
+            select:"_id full_name email avatarUrl"
+          },
+          "selected_tags"
+        ])
+        .exec();
+
+      const countBlogs = await BlogsModel.countDocuments({
+        ...queryKeyword,
+        ...queryTab,
+        ...queryTags
+      });
+
 
       const data = formatDataPaging({
         limit,
         pageIndex,
         data: listBlogs,
-        count: countDocuments[0]?.total || 0,
+        count: countBlogs,
       });
 
       return res.status(STATUS.OK).json(data);
@@ -352,120 +314,92 @@ class BlogController {
     try {
       const {
         keyword,
-        sort,
-        fieldSort,
-        published_at,
-        tags,
+        sort = -1,
         pageSize,
         pageIndex,
         tab = 1,
+        tags
       } = req.body;
+      const user = req.user
 
-      const user = req.user;
-      console.log(user?.id);
-
+      if(!user?.id) return res.status(STATUS.BAD_REQUEST).json({
+        message:"Bạn chưa đăng nhập"
+      }) 
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
+      let queryKeyword = keyword
+        ? {
+            name: {
+              $regex: keyword,
+              $options: "i",
+            },
+          }
+        : {};
+      let querySort = {};
+      let queryTab = {}
+      let queryTags = {}
 
-      let pipeline: any[] = [
-        {
-          $match: {
-            user_id: user?.id,
-          },
-        },
-      ];
-      // search
-      if (keyword) {
-        pipeline.push({
-          $match: {
-            title: { $regex: keyword, $options: "i" },
-          },
-        });
+      if(tab === 2) {
+        queryTab = {
+          isPublish:false
+        }
+
+        querySort= {
+          createdAt:sort
+        }
+      }else {
+        queryTab = {
+          isPublish:true
+        }
+        querySort = {
+          published_at:sort
+        }
       }
-
-      pipeline.push({
-        $lookup: {
-          from: "users", // Collection to join
-          localField: "user_id", // Field from the input documents
-          foreignField: "_id",
-          as: "user", // Field from the documents of the "from" collection
-        },
-      });
-
-      pipeline.push({
-        $lookup: {
-          from: "tags", // Collection to join
-          localField: "selected_tags", // Field from the input documents
-          foreignField: "_id", // Field from the documents of the "from" collection
-          as: "selected_tags", // Output array field
-        },
-      });
-
-      if (tab === 1) {
-        pipeline.push({
-          $match: {
-            isPublish: true,
-          },
-        });
-      } else if (tab === 2) {
-        pipeline.push({
-          $match: {
-            isPublish: false,
-          },
-        });
-      }
-
-      pipeline.push({
-        $project: {
-          _id: 1, // Loại bỏ trường _id
-          meta_title: 1, // Trường name
-          title: 1, // Trường name
-          meta_description: 1, // Trường age
-          views_count: 1, // Trường email
-          isPublish: 1,
-          published_at: 1, // Trường email
-          comments_count: 1, // Trường email
-          countLike: 1, // Trường email
-          createdAt: 1,
-          updatedAt: 1,
-          thumbnail_url: 1,
-          selected_tags: 1,
-          "user._id": 1,
-          "user.full_name": 1,
-          "user.email": 1,
-          "user.avatarUrl": 1,
-        },
-      });
-
-      const countDocuments = await BlogsModel.aggregate([
-        ...pipeline,
-
-        {
-          $count: "total",
-        },
-      ]);
-
-      const listBlogs = await BlogsModel.aggregate([
-        ...pipeline,
-        {
-          $unwind: {
-            path: "$user",
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-      ])
-        .collation({
-          locale: "en_US",
-          strength: 1,
+      console.log("tags:",tags);
+      
+      if(tags) {
+        const select = await TagsModel.findOne({
+          slug:tags
         })
+
+        queryTags = {
+          selected_tags:{
+           $in:select?._id
+          }
+        }
+      }
+
+      const listBlogs = await BlogsModel.find({
+        ...queryKeyword,
+        ...queryTab,
+        ...queryTags,
+        user_id:user.id
+      })
+        .sort(querySort)
         .skip(skip)
-        .limit(limit);
+        .limit(limit)
+        .populate([
+          {
+            path:"user_id",
+            select:"_id full_name email avatarUrl"
+          },
+          "selected_tags"
+        ])
+        .exec();
+
+      const countBlogs = await BlogsModel.countDocuments({
+        ...queryKeyword,
+        ...queryTab,
+        ...queryTags,
+        user_id:user.id
+      });
+
 
       const data = formatDataPaging({
         limit,
         pageIndex,
         data: listBlogs,
-        count: countDocuments[0]?.total || 0,
+        count: countBlogs,
       });
 
       return res.status(STATUS.OK).json(data);

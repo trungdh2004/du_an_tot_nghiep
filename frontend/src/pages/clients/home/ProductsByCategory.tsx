@@ -1,4 +1,3 @@
-import { formatCurrency, formatQuantitySort } from "@/common/func";
 import { FreeMode } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 // Import Swiper styles
@@ -8,6 +7,7 @@ import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
 import { IProduct } from "@/types/product";
+import { formatCurrency, formatQuantitySort } from "@/common/func";
 const ProductsByCategory = ({ id }: { id: string }) => {
 	const [products, setProducts] = useState<IProduct[]>();
 	useEffect(() => {
