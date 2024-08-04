@@ -47,6 +47,11 @@ class ProductController {
         attributes
       );
 
+
+      const quantity = dataAttributes.reduce((acc, item) => {
+        return acc + item.quantity
+      },0)
+
       const product = await ProductModel.create({
         name,
         price,
@@ -57,6 +62,7 @@ class ProductController {
         quantitySold,
         images,
         featured,
+        quantity,
         attributes: dataAttributes?.map((item) => item._id),
       });
 
@@ -74,13 +80,18 @@ class ProductController {
   // client
   async showProductById(req: RequestModel, res: Response) {
     try {
-      const { id } = req.params;
-      if (!id)
+      const { slug } = req.params;
+      if (!slug)
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn chưa chọn sản phẩm",
         });
 
-      const product = await ProductModel.findById(id)
+        console.log("slug:",slug);
+        
+
+      const product = await ProductModel.findOne({
+        slug:slug
+      })
         .populate([
           {
             path: "attributes",
@@ -134,11 +145,13 @@ class ProductController {
       );
 
       const listSize = (product?.attributes as IAttribute[])?.reduce(
-        (acc: string[], item) => {
-          const check = acc.find((row) => row === (item.size as ISize)._id);
+        (acc: {id:string,name:string}[], item) => {
+          const check = acc.find((row) => row.id === (item.size as ISize)._id);
           if (check) return acc;
-          acc.push((item.size as ISize)._id as string);
-
+          acc.push({
+            id:(item.size as ISize)._id as string,
+            name:(item.size as ISize).name
+          });
           return acc;
         },
         []
@@ -239,7 +252,11 @@ class ProductController {
           _id: { $in: listToIdDelete },
         });
       }
-
+      
+      const quantity = attributes.reduce((acc:number, item:IAttribute) => {
+        return acc + item.quantity
+      },0)
+      
       const newProduct = await ProductModel.findByIdAndUpdate(
         existingProduct?._id,
         {
@@ -250,6 +267,7 @@ class ProductController {
           thumbnail,
           category,
           quantitySold,
+          quantity,
           images,
           attributes: dataAttributes,
           slug: generateSlugs(name),
