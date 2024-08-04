@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 
 const Ablum = () => {
 	return (
-		<div className="w-full">
+		<div className="w-full p-5">
 			<Swiper
 				pagination={{
 					type: "fraction",
@@ -12,7 +12,7 @@ const Ablum = () => {
 				modules={[Pagination, Navigation]}
 				className="mySwiper"
 			>
-				<SwiperSlide>
+				<SwiperSlide className="">
 					<div className="">
 						<img
 							src="https://i.pinimg.com/736x/42/43/03/424303bef006eb35803ae00505248d7a.jpg"

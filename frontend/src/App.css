@@ -80,7 +80,7 @@ header .sub-menu::after {
 	}
 }
 /* CSS React Select */
-.react-select-container {
+/* .react-select-container {
 	height: 40px;
 	box-shadow: none;
 	cursor: pointer;
@@ -88,7 +88,7 @@ header .sub-menu::after {
 }
 
 .react-select__control {
-	height: 40px;
+	min-height: 40px;
 }
 
 .css-t3ipsp-control:hover {
@@ -163,8 +163,22 @@ header .sub-menu::after {
 	background-color: #3b83f638 !important;
 	color: #3b82f6 !important;
 	cursor: pointer;
-}
+} */
 
 .mapboxgl-control-container {
 	display: none;
+}
+.selection-box-tick::before {
+	border: 30px solid transparent;
+	border-bottom: 30px solid #3b82f6;
+	bottom: 0;
+	content: "";
+	position: absolute;
+	right: -40px;
+}
+[contenteditable="true"]:empty:before {
+	content: attr(data-placeholder);
+	pointer-events: none;
+	display: block; /* For Firefox */
+	color: #aaa;
 }

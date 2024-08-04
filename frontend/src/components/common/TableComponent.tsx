@@ -28,6 +28,7 @@ import {
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { DataTablePagination } from "./DataTablePagination";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[]; //!column các cột dùng
@@ -41,6 +42,7 @@ interface DataTableProps<TData, TValue> {
 	dataPageSize?: number[]; //! data mảng các size tùy chỉnh
 	pageSize: number; //! số lượng phàn tử trong trang
 	handleChangePageSize: (value: number) => void; //! thay đổi phần tử trang
+	isLoading?:boolean
 }
 
 const TableComponent = <TData, TValue>({
@@ -54,6 +56,7 @@ const TableComponent = <TData, TValue>({
 	setRowSelection,
 	handleChangePageSize,
 	dataPageSize,
+	isLoading = false
 }: DataTableProps<TData, TValue>) => {
 	const table = useReactTable({
 		data,
@@ -91,7 +94,13 @@ const TableComponent = <TData, TValue>({
 						})}
 					</TableHeader>
 
-					<TableBody className="scroll-custom">
+					<TableBody className="scroll-custom relative">
+
+						{isLoading && (
+							<div className="inset-0 absolute bg-gray-300/40 flex justify-center items-center">
+								<AiOutlineLoading3Quarters size={20} className="text-blue-500 animate-spin"/>
+							</div>
+						)}
 						{table.getRowModel().rows?.length ? (
 							table.getRowModel().rows.map((row) => (
 								<TableRow

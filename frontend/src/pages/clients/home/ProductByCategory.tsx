@@ -1,10 +1,10 @@
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { getAllCateActive } from "@/service/category-active";
 import { useEffect, useState } from "react";
 import { GrFormNextLink } from "react-icons/gr";
 import { Link } from "react-router-dom";
 import ProductsByCategory from "./ProductsByCategory";
+import { getAllCateActive } from "@/service/category-active";
 type CategoryType = {
 	_id: string;
 	index: number;

@@ -10,10 +10,10 @@ const PrivateRouter = ({ children }: PrivateRouterType) => {
 	if (!isLoggedIn) {
 		return <Navigate to={"/auth/login"} />;
 	}
-	if (!authUser?.is_admin) {
+	if (!authUser?.is_admin && !authUser?.is_staff) {
 		return <Navigate to={"/"} />;
 	}
-	return isLoggedIn && authUser?.is_admin && children;
+	return isLoggedIn && children;
 };
 
 export default PrivateRouter;

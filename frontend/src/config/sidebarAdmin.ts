@@ -8,17 +8,20 @@ const sidebarConfig: any[] = [
 		path: "",
 		icon: LuLayoutDashboard,
 		isVisible: true,
+		isAdmin: false,
 		label: "Thống kê",
 	},
 	{
 		path: "/category",
 		isVisible: true,
+		isAdmin: false,
 		label: "Danh mục",
 	},
 	{
 		path: "/users",
 		isVisible: true,
 		label: "Người dùng",
+		isAdmin: false,
 		children: [
 			{
 				path: "",
@@ -39,11 +42,14 @@ const sidebarConfig: any[] = [
 		path: "/tags",
 		isVisible: true,
 		label: "Nhãn",
+		isAdmin: false,
+
 	},
 	{
 		path: "/product",
 		isVisible: true,
 		label: "Sản phẩm",
+		isAdmin: false,
 		children: [
 			{
 				path: "/",
@@ -59,34 +65,19 @@ const sidebarConfig: any[] = [
 			},
 		],
 	},
-	{
-		path: "/product",
-		isVisible: true,
-		label: "Sản phẩm",
-		children: [
-			{
-				path: "/",
-				icon: LuLayoutDashboard,
-				isVisible: true,
-				label: "Danh sách sản phẩm",
-			},
-			{
-				path: "/add",
-				icon: LuLayoutDashboard,
-				isVisible: true,
-				label: "Thêm sản phẩm",
-			},
-		],
-	},
+	
 	{
 		path: "/color",
 		isVisible: true,
 		label: "Màu sắc",
+		isAdmin: false,
+
 	},
 	{
 		path: "/blogs",
 		isVisible: true,
 		label: "Bài viết",
+		isAdmin: false,
 		children: [
 			{
 				path: "/new-blog",
@@ -106,12 +97,15 @@ const sidebarConfig: any[] = [
 		path: "/size",
 		isVisible: true,
 		label: "Kích thước",
+		isAdmin: false,
 	},
 	{
-		path: "",
+		path: "/revenue",
 		icon: LuLayoutDashboard,
 		isVisible: true,
-		label: "Thống kê",
+		label: "Doanh thu",
+		isAdmin: true,
+
 	}
 ];
 

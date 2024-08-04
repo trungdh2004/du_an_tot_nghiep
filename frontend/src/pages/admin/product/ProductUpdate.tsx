@@ -827,7 +827,7 @@ const ProductUpdate = () => {
 									console.log("error:", form.formState.errors);
 								}}
 							>
-								Thêm sản phẩm
+								Chỉnh sửa sản phẩm
 							</Button>
 						</div>
 					</form>

@@ -1,33 +1,62 @@
 import { cn } from "@/lib/utils";
+import { ReactNode } from "react";
 import { IoIosCheckmark } from "react-icons/io";
 
 type Props = {
-	id?: string;
+	value: string | number;
+	title?: string;
+	haxColor?: string;
+	nameInput?: string;
+	disabled?: boolean;
+	defaultChecked?: boolean;
+	className?: string;
+	fontSize?: number;
+	children?: ReactNode | string;
+	[key: string]: any;
 };
-const LabelChecked = (props: Props) => {
+const LabelChecked = ({
+	value,
+	disabled = false,
+	defaultChecked = false,
+	children,
+	fontSize = 14,
+	nameInput,
+	haxColor,
+	className,
+	...props
+}: Props) => {
 	return (
 		<label
-			htmlFor={props?.id}
+			htmlFor={String(value)}
 			className={cn(
-				" relative  overflow-hidden flex items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-3 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d] has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]",
-				isVariantColors.includes(color._id) || "disabled",
+				" relative  overflow-hidden flex items-center justify-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-3 px-4 gap-2 rounded  bg-white hover:text-blue-500   hover:border-blue-500 has-[:checked]:text-blue-500   has-[:checked]:border-blue-500",
+				className,
+				disabled && "pointer-events-none opacity-70",
 			)}
 		>
 			<input
 				className="peer"
-				onChange={(event) => setColorId(event.target.value)}
+				{...props}
 				type="radio"
 				hidden
-				defaultChecked={color._id === defaultColor}
-				name="choose-color"
-				id={color._id}
-				value={color._id}
+				disabled={disabled}
+				defaultChecked={defaultChecked}
+				name={nameInput}
+				id={String(value)}
+				value={value}
 			/>
+			{haxColor && (
+				<span
+					style={{ backgroundColor: haxColor }}
+					className={`color shadow-md w-4 h-4 rounded-full min-w-4 min-h-4`}
+				/>
+			)}
+
 			<span
-				style={{ backgroundColor: color.hex }}
-				className={`color shadow-md w-5 h-5 rounded-full bg-orange-300`}
-			/>
-			<span className="caption1 capitalize">{color.name}</span>
+				className={`text-[${fontSize}px] capitalize text-nowrap text-center`}
+			>
+				{children}
+			</span>
 			<span className="selection-box-tick hidden absolute bottom-0 right-0 peer-checked:block">
 				<IoIosCheckmark
 					size={12}
