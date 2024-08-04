@@ -51,6 +51,7 @@
         "mapbox-gl": "^3.5.2",
         "next-themes": "^0.3.0",
         "npx": "^10.2.2",
+        "numeral": "^2.0.6",
         "postcss": "^8.4.38",
         "primereact": "^10.6.6",
         "react": "^18.2.0",
@@ -79,6 +80,7 @@
     },
     "devDependencies": {
         "@types/node": "^20.12.12",
+        "@types/numeral": "^2.0.5",
         "@types/react": "^18.2.15",
         "@types/react-dom": "^18.2.7",
         "@types/remarkable": "^2.0.8",

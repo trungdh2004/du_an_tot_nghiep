@@ -59,7 +59,7 @@ const ColorList = () => {
 
     const [searchObject, setSearchObject] = useState<any>({
         pageIndex: 1,
-        pageSize: 5,
+        pageSize: 3,
         keyword: "",
         fieldSort: "",
         sort: 1,
@@ -326,9 +326,10 @@ const ColorList = () => {
                         <TabsTrigger
                             value="1"
                             onClick={() => {
-                                setSearchObject((prev: any) => ({ ...prev, tab: 1 }));
+                                setSearchObject((prev: any) => ({ ...prev, tab: 1, pageIndex: 1 }));
                                 setRowSelection({});
                                 setListRowSelected([]);
+
                             }}
                         >
                             Màu sắc
@@ -336,7 +337,7 @@ const ColorList = () => {
                         <TabsTrigger
                             value="2"
                             onClick={() => {
-                                setSearchObject((prev: any) => ({ ...prev, tab: 2 }));
+                                setSearchObject((prev: any) => ({ ...prev, tab: 2, pageIndex: 1 }));
                                 setRowSelection({});
                                 setListRowSelected([]);
                             }}

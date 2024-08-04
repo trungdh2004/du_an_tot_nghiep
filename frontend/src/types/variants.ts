@@ -1,8 +1,8 @@
 export interface IColor {
-	code?: string;
+	code: string;
 	createdAt?: string;
 	deleted?: boolean;
-	name?: string;
+	name: string;
 	slug?: string;
 	updatedAt?: string;
 	__v?: number;
@@ -13,7 +13,7 @@ export interface ISize {
 	deleted?: boolean;
 	fromHeight?: number;
 	fromWeight?: number;
-	name?: string;
+	name: string;
 	slug?: string;
 	toHeight?: number;
 	toWeight?: number;

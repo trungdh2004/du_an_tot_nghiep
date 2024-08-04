@@ -1,4 +1,5 @@
 import FroalaEditor from "@/components/common/Froala";
+import SelectComponent from "@/components/common/SelectComponent";
 import {
 	Accordion,
 	AccordionContent,
@@ -50,7 +51,7 @@ const NewBlog = () => {
 	});
 	const [previewUrl, setPreviewUrl] = useState("");
 	const [content, setContent] = useState("");
-	const [tags, setTags] = useState();
+	const [tags, setTags] = useState([]);
 	const navigate = useNavigate();
 	const formSchema = z.object({
 		title: z.string({
@@ -68,8 +69,8 @@ const NewBlog = () => {
 		selected_tags: z
 			.array(
 				z.object({
-					value: z.string(),
-					label: z.string(),
+					_id: z.string(),
+					name: z.string(),
 				}),
 			)
 			.nonempty({
@@ -80,9 +81,7 @@ const NewBlog = () => {
 	useEffect(() => {
 		(async () => {
 			const { data } = await getAllTags();
-			setTags(
-				data?.data?.map((tag: any) => ({ value: tag?._id, label: tag?.name })),
-			);
+			setTags(data?.data);
 		})();
 	}, []);
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -92,7 +91,7 @@ const NewBlog = () => {
 		const data = form.getValues();
 		const payload = {
 			...data,
-			selected_tags: data?.selected_tags?.map((tag) => tag.value),
+			selected_tags: data?.selected_tags?.map((tag) => tag?._id),
 		};
 		console.log(payload);
 
@@ -125,7 +124,7 @@ const NewBlog = () => {
 		try {
 			const payload = {
 				...values,
-				selected_tags: values?.selected_tags?.map((tag) => tag.value),
+				selected_tags: values?.selected_tags?.map((tag) => tag?._id),
 			};
 			await newBlogs(payload);
 		} catch (error) {
@@ -329,15 +328,15 @@ const NewBlog = () => {
 															</AccordionTrigger>
 															<AccordionContent className="px-5">
 																<div>
-																	<Select
+																	<SelectComponent<ITag>
 																		options={tags}
-																		isMulti
-																		{...field}
-																		className="react-select-container"
-																		classNamePrefix="react-select"
+																		isMulti={true}
+																		value={field.value}
 																		onChange={(values: any) => {
 																			field.onChange(values);
 																		}}
+																		getOptionLabel={(option) => option.name}
+																		getOptionValue={option => option._id}
 																	/>
 																</div>
 																<FormMessage />
