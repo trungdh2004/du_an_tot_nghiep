@@ -117,9 +117,9 @@ const BlogList = () => {
                                 placeholder="Bài viết"
                                 classNamePrefix="react-select"
                                 getOptionLabel={(option: ITag) => option.name}
-                                getOptionValue={(option: ITag) => option.slug}
+                                getOptionValue={(option: ITag) => option.slug as string}
                                 onChange={(values: ITag | null) => {
-                                    setSearchObject((prev) => ({ ...prev, tags: values ? values.slug : "" }))
+                                    setSearchObject((prev: any) => ({ ...prev, tags: values ? values.slug : "" }))
                                 }}
                             />
                             <TooltipComponent label='Mặc định'>
