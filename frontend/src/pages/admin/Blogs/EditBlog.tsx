@@ -197,9 +197,9 @@ const EditBlog = () => {
 
 															form.setValue("title", title),
 																debouncedChangeHandler();
-														})
+														})2
 													}
-													className="bg-transparent py-5 border-none outline-none focus-visible:ring-0 text-2xl font-semibold text-black"
+												className="bg-transparent py-5 border-none outline-none focus-visible:ring-0 text-2xl font-semibold text-black"
 												/>
 											</div>
 										</FormControl>

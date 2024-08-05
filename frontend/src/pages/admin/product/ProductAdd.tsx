@@ -26,7 +26,7 @@ import { CiCirclePlus } from "react-icons/ci";
 import { getAllCategory } from "@/service/category-admin";
 import { getAllSize } from "@/service/size-admin";
 import instance from "@/config/instance";
-import { IAttribute, IColor, IProduct } from "@/types/typeProduct";
+import { IColor, IItemListColor, IProduct } from "@/types/typeProduct";
 import { MdDeleteForever } from "react-icons/md";
 import FroalaEditor from "@/components/common/Froala";
 import { useMutation } from "@tanstack/react-query";
@@ -34,25 +34,30 @@ import { toast } from "sonner";
 import { addProduct } from "@/service/product";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
-import { customStyles } from "@/styles/customStyle";
+import SelectComponent from "@/components/common/SelectComponent";
+import { ISize } from "@/types/variants";
+import { ICategory } from "@/types/category";
 
 const formSchema = z.object({
 	name: z.string().nonempty("Nhập tên sản phẩm"),
-	price: z.number().min(1, "Phải lớn hơn 0"),
+	price: z.string().min(1, "Phải lớn hơn 0"),
 	description: z.string().nonempty("Nhập mô tả sản phẩm"),
-	discount: z.number().min(1, "Phải lớn hơn 0"),
+	discount: z.string().min(1, "Phải lớn hơn 0"),
 	category: z
 		.object({
 			_id: z.string(),
 			name: z.string(),
 		})
-		.refine((data) => {
-			if(!data?._id ) return false
-			return true
-			
-		}, {
-			message: "Bạn chưa nhập loại sản phẩm",
-		}),
+		.nullable()
+		.refine(
+			(data) => {
+				if (!data?._id) return false;
+				return true;
+			},
+			{
+				message: "Bạn chưa nhập loại sản phẩm",
+			},
+		),
 	attributes: z
 		.array(
 			z.object({
@@ -60,26 +65,35 @@ const formSchema = z.object({
 					.object({
 						_id: z.string().nonempty("Bạn chưa nhập loại sản phẩm"),
 						name: z.string(),
+						code: z.string(),
 					})
-					.refine((data) => {
-						if(!data?._id ) return false
-						return true
-						
-					}, {
-						message: "Màu",
-					}),
+					.nullable()
+					.refine(
+						(data) => {
+							if (!data) return false;
+							if (!data?._id) return false;
+							return true;
+						},
+						{
+							message: "Màu",
+						},
+					),
 				size: z
 					.object({
 						_id: z.string().nonempty("Bạn chưa nhập loại sản phẩm"),
 						name: z.string(),
 					})
-					.refine((data) => {
-						if(!data?._id ) return false
-						return true
-						
-					}, {
-						message: "Kích thước",
-					}),
+					.nullable()
+					.refine(
+						(data) => {
+							if (!data) return false;
+							if (!data?._id) return false;
+							return true;
+						},
+						{
+							message: "Kích thước",
+						},
+					),
 				price: z.number().min(1, "Phải lớn hơn 0"),
 				quantity: z.number().min(1, "Phải lớn hơn 0"),
 				discount: z.number().min(1, "Phải lớn hơn 0"),
@@ -88,7 +102,9 @@ const formSchema = z.object({
 		.refine(
 			(arr) => {
 				// const prices = arr.map((item) => item.price);
-				const combinations = arr.map((item) => `${item.color._id}-${item.size._id}`);
+				const combinations = arr.map(
+					(item) => `${item?.color?._id}-${item?.size?._id}`,
+				);
 				return new Set(combinations).size === combinations.length;
 			},
 			{
@@ -117,32 +133,22 @@ const formSchema = z.object({
 		),
 });
 
-
 const ProductAddandUpdate = () => {
 	const router = useNavigate();
 	const form = useForm({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: "",
-			category: {
-				_id: "",
-				name: "",
-			},
-			// 	price: 0,
-			// 	discount: 0,
+			category: null,
+			price: "",
+			discount: "",
 			featured: false,
 			description: "",
 			thumbnail: "",
 			attributes: [
 				{
-					size: {
-						_id: "",
-						name: "",
-					},
-					color: {
-						_id: "",
-						name: "",
-					},
+					size: null,
+					color: null,
 					price: 0,
 					quantity: 0,
 					discount: 0,
@@ -159,8 +165,8 @@ const ProductAddandUpdate = () => {
 	const [images, setImages] = useState<ImageListType>([]);
 	const maxNumber = 8; // Số lượng ảnh tối đa có thể tải lên
 	const [category, setCategory] = useState([]);
-	const [size, setSize] = useState([]);
-	const [color, setColor] = useState([]);
+	const [size, setSize] = useState<ISize[]>([]);
+	const [color, setColor] = useState<IColor[]>([]);
 	const [isPending, setIsPending] = useState(false);
 	const { mutate } = useMutation({
 		mutationFn: (value: IProduct) => addProduct(value),
@@ -214,11 +220,18 @@ const ProductAddandUpdate = () => {
 			const images = [...listImageNotFile, ...listImage];
 			const attribute = values.attributes?.map((attribute) => ({
 				...attribute,
-				color:attribute.color._id,
-				size:attribute.size._id
-			}))
-			const data = { ...values, images,category:values.category._id,attributes:attribute };
-			mutate(data);
+				color: attribute.color?._id as string,
+				size: attribute.size?._id as string,
+			}));
+			const data = {
+				...values,
+				images,
+				category: values.category?._id,
+				attributes: attribute,
+				price: +values.price,
+				discount: +values.discount,
+			};
+			mutate(data as IProduct);
 		} catch (error) {
 			toast.error("Tạo sản phẩm xảy ra lỗi");
 		}
@@ -242,31 +255,33 @@ const ProductAddandUpdate = () => {
 		}
 	};
 
-	const listColor = form.watch("attributes") ? form.watch("attributes")?.reduce(
-		(acc:IColor[], item) => {
+	const listColor = form.watch("attributes")
+		? form
+			.watch("attributes")
+			?.reduce((acc: IColor[], item: IItemListColor) => {
+				if (!item.color) return acc;
 
-			if(!item.color._id) return acc
-			let group = acc.find((g) => g._id === (item.color as IColor)?._id);
+				let group = acc.find(
+					(g) => item.color && g._id === (item.color._id as string),
+				);
 
-			// Nếu nhóm không tồn tại, tạo nhóm mới
-			if (!group) {
-				group = {
-					_id: (item.color as IColor)._id as string,
-					name: (item.color as IColor).name as string,
-					code: (item.color as IColor).code as string,
-				};
-				acc.push(group);
+				if (!group) {
+					group = {
+						_id: item.color._id as string,
+						name: item.color.name as string,
+						code: item.color.code as string,
+					};
+					acc.push(group);
+					return acc;
+				}
 				return acc;
-			}
-			return acc;
-		},
-		[],
-	) : []
+			}, [])
+		: [];
 
 	return (
 		<div>
 			<h4 className="font-medium text-xl">Thêm mới sản phẩm</h4>
-			
+
 			<div className="w-full gap-5 grid lg:grid-cols-12 mt-4">
 				<Form {...form}>
 					<form
@@ -287,7 +302,7 @@ const ProductAddandUpdate = () => {
 													<Input
 														placeholder="Tên sản phẩm"
 														{...field}
-														// onChange={(e) => setName(e.target.value)}
+													// onChange={(e) => setName(e.target.value)}
 													/>
 												</FormControl>
 
@@ -307,10 +322,13 @@ const ProductAddandUpdate = () => {
 												<FormControl>
 													<Input
 														placeholder="Giá sản phẩm"
-														type="number"
 														{...field}
 														onChange={(event) => {
-															return field.onChange(+event.target.value);
+															const numericValue = event.target.value.replace(
+																/[^0-9]/g,
+																"",
+															);
+															return field.onChange(numericValue);
 														}}
 													/>
 												</FormControl>
@@ -328,19 +346,18 @@ const ProductAddandUpdate = () => {
 										name="category"
 										render={({ field }) => (
 											<FormItem>
-												
-												<FormLabel >Danh mục</FormLabel>
+												<FormLabel>Danh mục</FormLabel>
 												<FormControl>
-													<Select
-														options={category}
-														{...field}
-														classNamePrefix="react-select"
-														getOptionLabel={(option) => option.name}
-														getOptionValue={(option) => option._id}
-														onChange={(values: any) => {
-															field.onChange(values)
-															form.clearErrors("category")
+													<SelectComponent<ICategory>
+														value={field.value}
+														onChange={(newValue: ICategory, action) => {
+															field.onChange(newValue);
+															form.clearErrors(`category`);
 														}}
+														placeholder="Kích thước"
+														options={category}
+														getOptionLabel={(option) => option.name}
+														getOptionValue={(option) => option?._id as string}
 													/>
 												</FormControl>
 												<FormMessage className="text-xs" />
@@ -358,12 +375,15 @@ const ProductAddandUpdate = () => {
 												<FormLabel>Giảm giá</FormLabel>
 												<FormControl>
 													<Input
-														placeholder="Giảm giá sản phẩm"
-														type="number"
+														placeholder="Giá sản phẩm"
 														{...field}
-														onChange={(event) =>
-															field.onChange(+event.target.value)
-														}
+														onChange={(event) => {
+															const numericValue = event.target.value.replace(
+																/[^0-9]/g,
+																"",
+															);
+															return field.onChange(numericValue);
+														}}
 													/>
 												</FormControl>
 
@@ -451,7 +471,7 @@ const ProductAddandUpdate = () => {
 																		(event?.target as HTMLInputElement)
 																			?.files?.[0] as File,
 																	);
-																	field.onChange(url)
+																	field.onChange(url);
 																})
 															}
 															hidden
@@ -481,11 +501,10 @@ const ProductAddandUpdate = () => {
 															onChange={async (imageList: ImageListType) => {
 																try {
 																	setImages(imageList);
-																	form.setValue("images", imageList || []);
-																	if(imageList.length > 0) { 
-																		form.clearErrors("images")
+																	field.onChange(imageList);
+																	if (imageList.length > 0) {
+																		form.clearErrors("images");
 																	}
-
 																} catch (error) {
 																	console.log(error);
 																} finally {
@@ -506,7 +525,7 @@ const ProductAddandUpdate = () => {
 																	// Khu vực kéo và thả hoặc nhấp để tải ảnh
 																	<div
 																		className={cn(
-																			"w-full relative h-[160px] rounded-sm border grid grid-cols-4 grid-rows-2 gap-1 p-1 bg-white"
+																			"w-full relative h-[160px] rounded-sm border grid grid-cols-4 grid-rows-2 gap-1 p-1 bg-white",
 																		)}
 																	>
 																		{imageList?.map(
@@ -591,17 +610,20 @@ const ProductAddandUpdate = () => {
 														render={({ field }) => (
 															<FormItem className="flex w-full flex-col">
 																<FormLabel>Kích thước</FormLabel>
-																<Select
-																	options={size}
-																	{...field}
-																	styles={customStyles}
-																	classNamePrefix="react-select"
-																	getOptionLabel={(option) => option.name}
-																	getOptionValue={(option) => option._id}
-																	onChange={(values: any) => {
-																		field.onChange(values);
-																		form.clearErrors(`attributes.${index}.size`)
+																<SelectComponent<ISize>
+																	value={field.value}
+																	onChange={(newValue: ISize, action) => {
+																		field.onChange(newValue);
+																		form.clearErrors(
+																			`attributes.${index}.size`,
+																		);
 																	}}
+																	placeholder="Kích thước"
+																	options={size}
+																	getOptionLabel={(option) => option.name}
+																	getOptionValue={(option) =>
+																		option?._id as string
+																	}
 																/>
 																<FormMessage className="text-xs" />
 															</FormItem>
@@ -615,17 +637,22 @@ const ProductAddandUpdate = () => {
 															render={({ field }) => (
 																<FormItem className="flex w-full flex-col">
 																	<FormLabel>Màu</FormLabel>
-																	<Select
+																	<SelectComponent<IColor>
+																		value={field.value}
+																		onChange={(newValue: IColor, action) => {
+																			field.onChange(newValue);
+																			form.clearErrors(
+																				`attributes.${index}.color`,
+																			);
+																		}}
+																		placeholder="Màu"
 																		options={color}
-																		{...field}
-																		styles={customStyles}
-																		classNamePrefix="react-select"
 																		getOptionLabel={(option) => {
 																			return (
 																				<div className="w-full flex items-center justify-between">
 																					{option.name}{" "}
 																					<p
-																						className="w-2 h-2 rounded-full"
+																						className="w-2 h-2 rounded-full ml-1"
 																						style={{
 																							backgroundColor: option.code,
 																						}}
@@ -633,12 +660,9 @@ const ProductAddandUpdate = () => {
 																				</div>
 																			);
 																		}}
-																		getOptionValue={(option) => option._id}
-																		onChange={(values: any) => {
-																			field.onChange(values);
-																			form.clearErrors(`attributes.${index}.color`)
-
-																		}}
+																		getOptionValue={(option) =>
+																			option?._id as string
+																		}
 																	/>
 																	<FormMessage className="text-xs" />
 																</FormItem>
@@ -736,8 +760,8 @@ const ProductAddandUpdate = () => {
 											type="button"
 											onClick={() =>
 												append({
-													size: "",
-													color: "",
+													size: null,
+													color: null,
 													price: 0,
 													quantity: 0,
 													discount: 0,
@@ -775,7 +799,11 @@ const ProductAddandUpdate = () => {
 								</div>
 							</div>
 
-							<Button type="submit" disabled={isPending || previewUrl.isLoading} className="mt-4">
+							<Button
+								type="submit"
+								disabled={isPending || previewUrl.isLoading}
+								className="mt-4"
+							>
 								Thêm sản phẩm
 							</Button>
 						</div>
@@ -799,19 +827,16 @@ const ProductAddandUpdate = () => {
 							<div className="flex items-center justify-start -space-x-1 *:size-3 *:inline-block  *:rounded-full my-1.5">
 								{listColor?.map((item) => (
 									<span
-									style={{ background: item.code }}
-									className="box-shadow border border-black/40"
-								></span>
+										style={{ background: item.code }}
+										className="box-shadow border border-black/40"
+									></span>
 								))}
-								
 							</div>
 							<div className="flex items-center justify-between">
 								<span className="text-sm font-medium text-red-500">
 									{form.watch("price") || 0} đ
 								</span>
-								<span className="text-xs">
-									Đã bán : 0
-								</span>
+								<span className="text-xs">Đã bán : 0</span>
 							</div>
 						</div>
 					</div>
