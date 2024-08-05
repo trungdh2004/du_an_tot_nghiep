@@ -1,16 +1,17 @@
+import EmojiModal from "@/components/common/EmojiModal";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useRef, useState } from "react";
-import data from "@emoji-mart/data";
-import Picker from "@emoji-mart/react";
-import { BsEmojiWink } from "react-icons/bs";
-const SendComment = () => {
+type Props = {
+	sizeAvatar?: number;
+};
+const SendComment = ({ sizeAvatar = 40 }: Props) => {
+	const avatarSize = sizeAvatar + "px";
 	const [isOpen, setIsOpen] = useState({
 		actions: false,
 		focus: false,
 		sendComment: true,
 	});
-	const [isEmoji, setIsEmoji] = useState(false);
 	const elements = useRef<{
 		content: null | HTMLElement;
 		sendComment: null | HTMLButtonElement;
@@ -53,8 +54,10 @@ const SendComment = () => {
 		}
 	};
 	return (
-		<div className="flex items-start gap-3">
-			<div className="w-10 h-10 min-w-10 min-h-10 max-w-10 max-h-10">
+		<div className="flex items-start gap-3 my-1">
+			<div
+				className={`w-[${avatarSize}] h-[${avatarSize}] min-w-[${avatarSize}] min-h-[${avatarSize}] max-w-[${avatarSize}] max-h-[${avatarSize}]`}
+			>
 				<img
 					src="https://i.pinimg.com/564x/71/07/3d/71073d78daf2072dc0a785160a530439.jpg"
 					alt="User avatar"
@@ -81,23 +84,15 @@ const SendComment = () => {
 					)}
 				>
 					<div>
-						<button onClick={() => setIsEmoji((prev) => !prev)}>
-							<BsEmojiWink />
-						</button>
-						{isEmoji && (
-							<div className="absolute">
-								<Picker
-									data={data}
-									onEmojiSelect={(value: any) => {
-										const content = elements.current.content;
-										if (content) {
-											content.innerHTML = content.innerHTML + value.native;
-											handleFocusOrChange();
-										}
-									}}
-								/>
-							</div>
-						)}
+						<EmojiModal
+							getEmoji={(value) => {
+								const content = elements.current.content;
+								if (content) {
+									content.textContent += value?.native;
+									handleFocusOrChange();
+								}
+							}}
+						/>
 					</div>
 					<div>
 						<Button
