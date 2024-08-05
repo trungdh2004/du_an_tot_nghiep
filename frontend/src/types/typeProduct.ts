@@ -8,9 +8,17 @@ export interface IColor {
 }
 
 export interface IAttribute {
-	color: IColor;
-	size: SizeTypes;
-	price: string;
+	color: IColor | string;
+	size: SizeTypes | string;
+	price: number;
+	quantity: number;
+	discount: number;
+}
+
+export interface IItemListColor {
+	color: IColor | null;
+	size: IColor | null;
+	price: number;
 	quantity: number;
 	discount: number;
 }
@@ -21,14 +29,14 @@ export interface IProduct {
 	discount: number;
 	thumbnail: string;
 	images: { url: string }[];
-	category: TypeObjectCategory;
+	category: TypeObjectCategory | string;
 	description: string;
 	_id?: string;
-	featured: boolean;
+	featured?: boolean;
 	attributes: IAttribute[];
 	createdAt?:string;
 	updatedAt?:string;
-	is_deleted: boolean;
-	quantity: number;
-	quantitySold: number;
+	is_deleted?: boolean;
+	quantity?: number;
+	quantitySold?: number;
 }

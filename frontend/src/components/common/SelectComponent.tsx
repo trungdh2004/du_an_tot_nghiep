@@ -49,7 +49,7 @@ export const customStyles = {
   })
 };
 
-type GetOptionLabel<Option> = (option: Option) =>ReactNode | string 
+type GetOptionLabel<Option>  = (option: Option) =>ReactNode | string 
 
 type CommonProps<T> = {
     value:T | T[] | undefined | null,
@@ -63,24 +63,25 @@ type CommonProps<T> = {
     getOptionLabel?: GetOptionLabel<T> | undefined 
     getOptionValue?: GetOptionValue< T >  | undefined
     label?:string,
-    placeholder?:string
+    placeholder?:string,
+    isClearable?: boolean
   }
 
   
 
 
-const SelectComponent = <T,>({value,onChange,isMulti = false,label,getOptionLabel,getOptionValue,options,placeholder}:CommonProps<T>) => {
+const SelectComponent = <T,>({value,onChange,isMulti = false,label,getOptionLabel,getOptionValue,options,placeholder,isClearable=false}:CommonProps<T>) => {
 
   return (
     <div>
       {label && <Label>{label}</Label>}
       <Select 
-        isClearable
+        isClearable={isClearable}
         value={value}
         onChange={onChange}
         isMulti={isMulti}
         options={options}
-        getOptionLabel={getOptionLabel}
+        formatOptionLabel={getOptionLabel}
         getOptionValue={getOptionValue}
         classNamePrefix="react-select"
         styles={customStyles}
