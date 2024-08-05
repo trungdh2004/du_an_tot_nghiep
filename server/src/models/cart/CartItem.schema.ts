@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { ISize } from "../../interface/product";
 import { generateSlugs } from "../../middlewares/generateSlug";
+import { IProductCart } from "../../interface/cart";
 
 const CartItemSchema = new mongoose.Schema(
   {
@@ -8,7 +9,6 @@ const CartItemSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "Product",
       required: true,
-      unique: true,
     },
     quantity: {
       type: Number,
@@ -19,20 +19,19 @@ const CartItemSchema = new mongoose.Schema(
         type: mongoose.Types.ObjectId,
         ref: "Cart",
         required: true,
-        unique: true,
     },
     attribute:{
-        type: mongoose.Types.ObjectId,
-        ref: "Attribute",
-        required: true,
-        unique: true,
-    }
+      type: mongoose.Types.ObjectId,
+      ref: "Attribute",
+      required: true,
+      unique: true,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-const CartItemModel = mongoose.model("CartItem", CartItemSchema);
+const CartItemModel = mongoose.model<IProductCart>("CartItem", CartItemSchema);
 
 export default CartItemModel;

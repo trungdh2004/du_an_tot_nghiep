@@ -13,6 +13,10 @@ export const generateSlugs = (value: string) => {
   return slug;
 };
 
+export const generateOrderCode = () => {
+  return `${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+};
+
 // const slug = `${slugify(value, {
 //   lower: true,
 //   replacement: "-",
