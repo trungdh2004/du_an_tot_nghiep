@@ -1,7 +1,14 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-
-const Ablum = () => {
+type Props = {
+	images?: {
+		url: string;
+		_id?: string;
+	}[],
+	isLoading: boolean
+}
+const Ablum = ({images,isLoading}:Props) => {
 	return (
 		<div className="w-full p-5">
 			<Swiper
@@ -11,27 +18,24 @@ const Ablum = () => {
 				navigation={true}
 				modules={[Pagination, Navigation]}
 				className="mySwiper"
-			>
-				<SwiperSlide className="">
+			> 
+			{isLoading ? <SwiperSlide  className="">
+					<div className="">
+						<Skeleton className="w-[485px] h-[485px]"/>
+					</div>
+				</SwiperSlide> : images?.map((image) =><SwiperSlide key={image._id} className="">
 					<div className="">
 						<img
-							src="https://i.pinimg.com/736x/42/43/03/424303bef006eb35803ae00505248d7a.jpg"
+							src={image?.url}
 							alt=""
 							className="w-full h-full"
 							loading="lazy"
 						/>
 					</div>
-				</SwiperSlide>
-				<SwiperSlide>
-					<div className="">
-						<img
-							src="https://i.pinimg.com/736x/42/43/03/424303bef006eb35803ae00505248d7a.jpg"
-							alt=""
-							className="w-full h-full"
-							loading="lazy"
-						/>
-					</div>
-				</SwiperSlide>
+				</SwiperSlide>)}
+			
+				
+				
 			</Swiper>
 		</div>
 	);

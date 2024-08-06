@@ -5,17 +5,21 @@ import ListSize from "./ListSize";
 import InputQuantity from "@/components/common/InputQuantity";
 import { Button } from "@/components/ui/button";
 import { MdOutlineAddShoppingCart } from "react-icons/md";
-const InfoProduct = () => {
+import { IProduct } from "@/types/product";
+type Props = {
+	product?:IProduct,
+	isLoading?: boolean
+};
+const InfoProduct = ({product,isLoading}:Props) => {
 	return (
 		<div className="p-5">
 			<div className="space-y-5">
 				<div className="space-y-0.5">
 					<p className="uppercase text-xs">
-						Danh mục: <span>Áo phông</span>
+						Danh mục: <span>{product?.category?.name}</span>
 					</p>
 					<h2 className="uppercase text-xl">
-						[CÓ SIZE] Áo Croptop Ngắn Tay RANSHI Cổ Tròn Phối Khuy Bấm Form Dáng
-						Basic Chất Thun Tăm Co Giãn Dễ Phối Đồ - RA171
+						{product?.name}
 					</h2>
 					<div className="flex items-center capitalize text-sm text-[#767676] [&>p]:px-4  [&>*]:border-r [&>*]:border-[#00000024]">
 						<div className="flex items-end gap-1 pr-4">
@@ -37,7 +41,7 @@ const InfoProduct = () => {
 							Đánh giá
 						</p>
 						<p className="flex items-center gap-1 text-nowrap">
-							<span className="text-black font-medium ">7</span>
+							<span className="text-black font-medium ">{product?.quantitySold}</span>
 							Đã bán
 						</p>
 						<p className="flex items-center gap-1 border-none text-nowrap">
@@ -66,13 +70,13 @@ const InfoProduct = () => {
 						</h3>
 						<div className="flex items-center gap-3">
 							<InputQuantity
-								maxTotal={10}
+								maxTotal={product?.quantity}
 								getValue={(value) => {
 									console.log(value);
 								}}
 							/>
 							<span className="text-gray-600 text-sm md:text-base">
-								122 sản phẩm có sẵn
+							{product?.quantity} sản phẩm có sẵn
 							</span>
 						</div>
 					</div>
