@@ -6,6 +6,7 @@ import { BlogValidation } from "../validation/blog.validation";
 import { truncateSentence, trunTextHtmlConvers } from "../utils/cutText";
 import { formatDataPaging } from "../common/pagingData";
 import TagsModel from "../models/Tags.schema";
+import { generateSlugs } from "../middlewares/generateSlug";
 
 class BlogController {
   async postBlogs(req: RequestModel, res: Response) {
@@ -151,6 +152,8 @@ class BlogController {
         });
       }
 
+      const slug = generateSlugs(meta_title)
+
       const newBlog = await BlogsModel.findOneAndUpdate(
         existingBlog._id,
         {
@@ -162,6 +165,7 @@ class BlogController {
           meta_description,
           thumbnail_url: thumbnail_url,
           selected_tags,
+          slug
         },
         { new: true }
       );
@@ -217,7 +221,6 @@ class BlogController {
           published_at:sort
         }
       }
-      console.log("tags:",tags);
       
       if(tags) {
         const select = await TagsModel.findOne({
@@ -355,7 +358,6 @@ class BlogController {
           published_at:sort
         }
       }
-      console.log("tags:",tags);
       
       if(tags) {
         const select = await TagsModel.findOne({

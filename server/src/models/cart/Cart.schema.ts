@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { ISize } from "../../interface/product";
 import { generateSlugs } from "../../middlewares/generateSlug";
+import { ICart } from "../../interface/cart";
 
 const CartSchema = new mongoose.Schema(
   {
@@ -16,6 +17,6 @@ const CartSchema = new mongoose.Schema(
   }
 );
 
-const CartModel = mongoose.model("Cart", CartSchema);
+const CartModel = mongoose.model<ICart>("Cart", CartSchema);
 
 export default CartModel;
