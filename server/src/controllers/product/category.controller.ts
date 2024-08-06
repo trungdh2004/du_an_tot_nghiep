@@ -10,7 +10,7 @@ import { IAttribute, IColor, IProduct } from "../../interface/product";
 interface RowIColor {
   colorId: string;
   colorName: string;
-  colorCode:string
+  colorCode: string;
 }
 
 class categoryController {
@@ -103,6 +103,7 @@ class categoryController {
   async getAllCategory(req: RequestModel, res: Response) {
     try {
       const { tab = 1 } = req.body;
+      // console.log("call api :",new Date().toLocaleString("vi-VN"));
 
       const allCategory = await CategoryModel.find({
         deleted: tab === 1 ? false : true,
@@ -387,7 +388,8 @@ class categoryController {
               model: "Size",
             },
           ],
-        }).lean()
+        })
+        .lean();
 
       const listProductAndColor = listProduct?.map((product) => {
         const listColor = (product?.attributes as IAttribute[])?.reduce(
@@ -401,7 +403,7 @@ class categoryController {
               group = {
                 colorId: (item.color as IColor)._id as string,
                 colorName: (item.color as IColor).name as string,
-                colorCode: (item.color as IColor).code as string
+                colorCode: (item.color as IColor).code as string,
               };
               acc.push(group);
               return acc;
