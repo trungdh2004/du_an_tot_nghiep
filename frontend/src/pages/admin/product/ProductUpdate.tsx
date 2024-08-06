@@ -30,7 +30,7 @@ import { MdDeleteForever } from "react-icons/md";
 import FroalaEditor from "@/components/common/Froala";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import {  getProductById, updateProductById } from "@/service/product";
+import { getProductById, updateProductById } from "@/service/product";
 import { useNavigate, useParams } from "react-router-dom";
 import SelectComponent from "@/components/common/SelectComponent";
 import Select from "react-select";
@@ -172,7 +172,7 @@ const ProductUpdate = () => {
 	const [color, setColor] = useState([]);
 	const [isPending, setIsPending] = useState(false);
 	const { mutate } = useMutation({
-		mutationFn: (value: IProduct) => updateProductById(id as string,value),
+		mutationFn: (value: IProduct) => updateProductById(id as string, value),
 		onSuccess: () => {
 			toast.success("Chỉnh sửa sản phẩm thành công");
 			form.reset();
@@ -261,8 +261,8 @@ const ProductUpdate = () => {
 				images,
 				category: values.category?._id,
 				attributes: attribute,
-				price:+values.price,
-				discount:+values.discount,
+				price: +values.price,
+				discount: +values.discount,
 			};
 			mutate(data as IProduct);
 		} catch (error) {
@@ -289,24 +289,24 @@ const ProductUpdate = () => {
 	};
 
 	const listColor = form.watch("attributes")
-		? form.watch("attributes")?.reduce((acc: IColor[], item:IItemListColor) => {
-				if (!item.color) return acc;
+		? form.watch("attributes")?.reduce((acc: IColor[], item: IItemListColor) => {
+			if (!item.color) return acc;
 
-				let group = acc.find((g) => item.color && g._id === item.color._id as string);
+			let group = acc.find((g) => item.color && g._id === item.color._id as string);
 
-				if (!group) {
-					group = {
-						_id: item.color._id as string,
-						name: item.color.name as string,
-						code: item.color.code as string,
-					};
-					acc.push(group);
-					return acc;
-				}
+			if (!group) {
+				group = {
+					_id: item.color._id as string,
+					name: item.color.name as string,
+					code: item.color.code as string,
+				};
+				acc.push(group);
 				return acc;
-			}, [])
+			}
+			return acc;
+		}, [])
 		: [];
-	
+
 	return (
 		<div>
 			<h4 className="font-medium text-xl">Thêm mới sản phẩm</h4>
@@ -331,7 +331,7 @@ const ProductUpdate = () => {
 													<Input
 														placeholder="Tên sản phẩm"
 														{...field}
-														// onChange={(e) => setName(e.target.value)}
+													// onChange={(e) => setName(e.target.value)}
 													/>
 												</FormControl>
 
@@ -400,7 +400,7 @@ const ProductUpdate = () => {
 											<FormItem>
 												<FormLabel>Giảm giá</FormLabel>
 												<FormControl>
-												<Input
+													<Input
 														placeholder="Giá sản phẩm"
 														{...field}
 														onChange={(event) => {
@@ -781,7 +781,7 @@ const ProductUpdate = () => {
 											type="button"
 											onClick={() =>
 												append({
-													size:null,
+													size: null,
 													color: null,
 													price: 0,
 													quantity: 0,

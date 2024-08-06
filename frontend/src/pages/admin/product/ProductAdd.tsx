@@ -542,7 +542,7 @@ const ProductAddandUpdate = () => {
 																								onClick={() =>
 																									onImageUpdate(index)
 																								}
-																								className="cursor-pointer h-[90%] object-cover aspect-square"
+																								className="cursor-pointer h-[90%] object-cover 	"
 																							/>
 																							<AiFillCloseCircle
 																								className="absolute top-2 right right-0 cursor-pointer"
