@@ -35,6 +35,7 @@ import ProductFilter from "./ProductFilter";
 import { IFilterProduct } from "@/types/product";
 import DialogConfirm from "@/components/common/DialogConfirm";
 import { toast } from "sonner";
+import { ICategory } from "@/types/category";
 
 const ProductIndex = () => {
 	const queryClient = useQueryClient();
@@ -212,7 +213,7 @@ const ProductIndex = () => {
 			cell: ({ row }) => {
 				return (
 					<div className="md:text-base text-xs ">
-						{row.original.category.name}
+						{(row.original.category as ICategory).name}
 					</div>
 				);
 			},
@@ -254,7 +255,7 @@ const ProductIndex = () => {
 			cell: ({ row }) => {
 				return (
 					<div className="md:text-base text-xs ">
-						{formatQuantity(row?.original?.quantity)}
+						{formatQuantity(row?.original?.quantity as number)}
 					</div>
 				);
 			},
@@ -268,7 +269,7 @@ const ProductIndex = () => {
 			cell: ({ row }) => {
 				return (
 					<div className="md:text-base text-xs ">
-						{formatQuantity(row?.original?.quantitySold)}
+						{formatQuantity(row?.original?.quantitySold as number)}
 					</div>
 				);
 			},
@@ -282,7 +283,7 @@ const ProductIndex = () => {
 			cell: ({ row }) => {
 				const listColor = row.original.attributes.reduce(
 					(acc: IColor[], item) => {
-						if (!item.color._id) return acc;
+						if (!(item.color as IColor)._id) return acc;
 						let group = acc.find((g) => g._id === (item.color as IColor)?._id);
 
 						// Nếu nhóm không tồn tại, tạo nhóm mới
@@ -299,6 +300,8 @@ const ProductIndex = () => {
 					},
 					[],
 				);
+
+				
 				return (
 					<div className="flex flex-wrap md:gap-1">
 						{listColor?.map((item) => (
@@ -323,7 +326,7 @@ const ProductIndex = () => {
 			cell: ({ row }) => {
 				const listSize = row.original.attributes.reduce(
 					(acc: { _id: string; name: string }[], item) => {
-						if (!item.color._id) return acc;
+						if (!(item.color as IColor)._id) return acc;
 						let group = acc.find(
 							(g) => g._id === (item.size as SizeTypes)?._id,
 						);
