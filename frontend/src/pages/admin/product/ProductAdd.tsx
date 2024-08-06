@@ -203,7 +203,7 @@ const ProductAddandUpdate = () => {
 		try {
 			const listImageNotFile = values.images?.filter((image) => !image?.file);
 			const listImageFile = values.images?.filter((image) => image?.file);
-			let listImage;
+			let listImage = [];
 
 			if (listImageFile?.length > 0) {
 				const formData = new FormData();
