@@ -19,6 +19,12 @@ interface RowIColor {
   list: IAttribute[];
   quantity: number;
 }
+interface RowISize {
+  sizeId: string;
+  sizeName: string;
+  list: IAttribute[];
+  quantity: number;
+}
 
 class ProductController {
   async addProduct(req: Request, res: Response) {
@@ -143,13 +149,25 @@ class ProductController {
       );
 
       const listSize = (product?.attributes as IAttribute[])?.reduce(
-        (acc: {id:string,name:string}[], item) => {
-          const check = acc.find((row) => row.id === (item.size as ISize)._id);
-          if (check) return acc;
-          acc.push({
-            id:(item.size as ISize)._id as string,
-            name:(item.size as ISize).name
-          });
+        (acc: RowISize[], item) => {
+          let group = acc.find(
+            (g) => g.sizeId === (item.size as ISize)?._id
+          );
+          // Nếu nhóm không tồn tại, tạo nhóm mới
+          if (!group) {
+            group = {
+              sizeId: (item.size as ISize)._id as string,
+              sizeName: (item.size as ISize).name as string,
+              list: [item],
+              quantity: item.quantity,
+            };
+            acc.push(group);
+            return acc;
+          }
+
+          // Thêm đối tượng vào nhóm tương ứng
+          group.list.push(item);
+          group.quantity = group.quantity + item.quantity;
           return acc;
         },
         []

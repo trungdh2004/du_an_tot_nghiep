@@ -90,7 +90,10 @@ class AddressController {
         district,
         commune,
         address,
-        location,
+        location:{
+          type: 'Point',
+          coordinates:location
+        },
         detailAddress,
       });
 
@@ -303,6 +306,35 @@ class AddressController {
         data: newAddress,
       });
     } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+
+  async getAddressMeter(req:RequestModel,res:Response) {
+    try {
+      const {location,meter} = req.body;
+      const data = await AddressModel.find({
+        location:{
+          $geoWithin: {
+            $centerSphere: [
+              location, // Tọa độ của bạn
+              meter / 6378.1 // Khoảng cách tính bằng bán kính Trái Đất (6378.1 km)
+            ]
+          }
+        }
+      })
+
+
+      return res.status(STATUS.OK).json({
+        data,
+        message:"Lấy thành công"
+      })
+      
+
+    } catch (error:any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
       });
