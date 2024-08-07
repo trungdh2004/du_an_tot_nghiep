@@ -174,7 +174,7 @@ const ProductUpdate = () => {
 	const [color, setColor] = useState([]);
 	const [isPending, setIsPending] = useState(false);
 	const { mutate } = useMutation({
-		mutationFn: (value: IProduct) => updateProductById(id as string,value),
+		mutationFn: (value: IProduct) => updateProductById(id as string, value),
 		onSuccess: () => {
 			toast.success("Chỉnh sửa sản phẩm thành công");
 			form.reset();
@@ -289,8 +289,8 @@ const ProductUpdate = () => {
 	};
 
 	const listColor = form.watch("attributes") ? form.watch("attributes")?.reduce(
-		(acc:IColor[], item) => {
-			if(!item.color._id) return acc
+		(acc: IColor[], item) => {
+			if (!item.color._id) return acc
 			let group = acc.find((g) => g._id === (item.color as IColor)?._id);
 			if (!group) {
 				group = {
@@ -305,11 +305,11 @@ const ProductUpdate = () => {
 		},
 		[],
 	) : []
-	
+
 	return (
 		<div>
 			<h4 className="font-medium text-xl">Chỉnh sửa sản phẩm</h4>
-			
+
 			<div className="w-full gap-5 grid lg:grid-cols-12 mt-4">
 				<Form {...form}>
 					<form
@@ -330,7 +330,7 @@ const ProductUpdate = () => {
 													<Input
 														placeholder="Tên sản phẩm"
 														{...field}
-														// onChange={(e) => setName(e.target.value)}
+													// onChange={(e) => setName(e.target.value)}
 													/>
 												</FormControl>
 
@@ -850,11 +850,11 @@ const ProductUpdate = () => {
 							<div className="flex items-center justify-start -space-x-1 *:size-3 *:inline-block  *:rounded-full my-1.5">
 								{listColor?.map((item) => (
 									<span
-									style={{ background: item.code }}
-									className="box-shadow border border-black/40"
-								></span>
+										style={{ background: item.code }}
+										className="box-shadow border border-black/40"
+									></span>
 								))}
-								
+
 							</div>
 							<div className="flex items-center justify-between">
 								<span className="text-sm font-medium text-red-500">

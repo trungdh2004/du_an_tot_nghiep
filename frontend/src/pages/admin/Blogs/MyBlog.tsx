@@ -87,7 +87,6 @@ const MyBlogs = () => {
                 <div className="flex flex-col gap-3 mb-5">
                     <div className="flex justify-between items-center">
                         <h3 className="text-2xl font-semibold">Bài viết của tôi</h3>
-
                     </div>
                     <div className="flex justify-between items-center gap-3">
                         <div className=" w-[40%]">
@@ -104,21 +103,22 @@ const MyBlogs = () => {
                                 className='w-[150px]'
                                 classNamePrefix="react-select"
                                 getOptionLabel={(option: ITag) => option.name}
-                                getOptionValue={(option: ITag) => option.slug}
+                                getOptionValue={(option: ITag) => option.slug as string}
                                 onChange={(values: ITag | null) => {
-                                    setSearchObject((prev) => ({ ...prev, tags: values ? values.slug : "" }))
+                                    setSearchObject((prev: any) => ({ ...prev, tags: values ? values.slug : "" }))
                                 }}
                             />
                             <TooltipComponent label='Mặc định'>
-                                <div> <Button onClick={() => setSearchObject({
-                                    pageIndex: 1,
-                                    pageSize: 9,
-                                    keyword: "",
-                                    fieldSort: "",
-                                    sort: 1,
-                                    tab: 1,
-                                    tags: ""
-                                })} className='' variant="destructive"><GrPowerReset size={20} /></Button></div>
+                                <div>
+                                    <Button onClick={() => setSearchObject({
+                                        pageIndex: 1,
+                                        pageSize: 9,
+                                        keyword: "",
+                                        fieldSort: "",
+                                        sort: 1,
+                                        tab: 1,
+                                        tags: ""
+                                    })} className='' variant="destructive"><GrPowerReset size={20} /></Button></div>
                             </TooltipComponent>
                         </div>
                     </div>
@@ -129,14 +129,12 @@ const MyBlogs = () => {
                     <TabsTrigger
                         value="1"
                         onClick={() => setSearchObject((prev) => ({ ...prev, tab: 1, pageIndex: 1 }))}
-
                     >
                         Bài viết đã đăng tải
                     </TabsTrigger>
                     <TabsTrigger
                         value="2"
                         onClick={() => setSearchObject((prev) => ({ ...prev, tab: 2, pageIndex: 1 }))}
-
                     >
                         Bài viết chưa đăng tải
                     </TabsTrigger>
