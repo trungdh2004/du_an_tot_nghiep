@@ -27,18 +27,20 @@ const LabelChecked = ({
 	className,
 	...props
 }: Props) => {
-	const handleOneChecked = (e:MouseEvent<HTMLInputElement>)=>{
+	const handleOneChecked = (e: MouseEvent<HTMLInputElement>) => {
 		if (!isOneChecked) return;
-
 		const currentItem = e.currentTarget as HTMLInputElement;
-		const previouslyCheckedItem = document.querySelector(
-		  `input[name="${nameInput}"]:checked`
-		) as HTMLInputElement | null;
-	  
-		if (currentItem.checked && previouslyCheckedItem) {
-		  previouslyCheckedItem.checked = false;
+		const checkboxes = document.querySelectorAll(
+			`input[name="${nameInput}"]:checked`
+		) as NodeListOf<HTMLInputElement>;
+		if(checkboxes.length > 1){
+			checkboxes.forEach((checkbox) => {
+				checkbox.checked = false;
+			});
+			currentItem.checked = true;
 		}
-	}
+		
+	};
 	return (
 		<label
 			htmlFor={String(value)}
