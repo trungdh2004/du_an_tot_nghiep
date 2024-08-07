@@ -1,3 +1,4 @@
+import InputQuantity from '@/components/common/InputQuantity'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
@@ -83,7 +84,7 @@ const CartIndex = () => {
                             <span className="text-gray-400 line-through">1111</span>
                             <span className="">9000</span>
                         </div>
-                        <div className="w-[12%]"></div>
+                        <div className="w-[12%]"><InputQuantity /></div>
                         <div className="w-[12%] text-red-500">111</div>
                         <div className="w-[13%] ">Xóa</div>
                     </div>

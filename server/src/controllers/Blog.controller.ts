@@ -142,7 +142,7 @@ class BlogController {
       const { title, content, thumbnail_url, selected_tags } = req.body;
 
       const meta_title = truncateSentence(title, 30);
-      const meta_description = truncateSentence(content, 50);
+      const meta_description = trunTextHtmlConvers(content, 70) || "";
 
       const existingBlog = await BlogsModel.findById(id);
 

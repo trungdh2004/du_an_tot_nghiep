@@ -60,6 +60,18 @@ const ProductSchema = new mongoose.Schema({
       ref: "Attribute",
     },
   ],
+  rating:{
+    type:Number,
+    default: 0,
+  },
+  ratingCount:{
+    type: Number,
+    default: 0,
+  },
+  ratingQuantity:{
+    type: Number,
+    default: 0,
+  }
 }, {
   timestamps:true
 });

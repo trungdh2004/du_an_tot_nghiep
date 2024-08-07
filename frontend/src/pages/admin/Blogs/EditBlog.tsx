@@ -51,7 +51,7 @@ const EditBlog = () => {
 		isSubmitted: false,
 		isLoading: false,
 	});
-	const { isOpen, setOpen, setClose } = useProcessBarLoading();
+	const { setOpen, setClose } = useProcessBarLoading();
 	const { id } = useParams();
 	const [tags, setTags] = useState();
 	const [blogs, setBlogs] = useState<z.infer<typeof formSchema>>();
@@ -138,7 +138,7 @@ const EditBlog = () => {
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
-			if (isOpen) {
+			if (previewUrl.isLoading) {
 				toast.warning("Vui lòng chờ ảnh tải xong");
 			} else {
 				const payload = {
@@ -181,6 +181,9 @@ const EditBlog = () => {
 										<FormControl>
 											<div className="">
 												<Input
+													disabled={
+														previewUrl.isLoading || statusLoading.isLoading
+													}
 													placeholder="Tiêu đề"
 													{...field}
 													onChange={(event) =>
@@ -331,6 +334,7 @@ const EditBlog = () => {
 									</div>
 									<div className="flex items-center justify-end px-5 py-3">
 										<Button
+											disabled={previewUrl.isLoading || statusLoading.isLoading}
 											type="submit"
 											className="py-0.5 px-5 bg-blue-500 hover:bg-blue-500/80"
 										>

@@ -55,8 +55,8 @@ export interface IFilterProduct {
 	category: string | null;
 	min: number | null;
 	max: number | null;
-	color:string[];
-	size:string[];
-	fieldSort:string;
-	sort:1 | -1
+	color: string[];
+	size: string[];
+	fieldSort: string;
+	sort: 1 | -1;
 }
