@@ -23,6 +23,7 @@ const ListColor = () => {
 				<div className="flex flex-wrap items-center gap-2">
 					{listColor?.map((color) => (
 						<LabelChecked
+							isOneChecked
 							value={color._id as string}
 							key={color._id}
 							nameInput="chooseColor"

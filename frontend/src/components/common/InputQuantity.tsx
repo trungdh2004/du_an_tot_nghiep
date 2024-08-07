@@ -5,9 +5,10 @@ import { HiMiniMinus } from "react-icons/hi2";
 type Props = {
 	maxTotal?: number;
 	getValue?: (value: number) => void;
+	defaultValue?: number;
 };
 
-const InputQuantity = ({ maxTotal = Infinity, getValue }: Props) => {
+const InputQuantity = ({ maxTotal = Infinity, getValue,defaultValue=1 }: Props) => {
 	const elementRef = useRef<{
 		minus: HTMLElement | null;
 		plus: HTMLElement | null;
@@ -76,7 +77,7 @@ const InputQuantity = ({ maxTotal = Infinity, getValue }: Props) => {
 			</div>
 			<input
 				max={maxTotal}
-				defaultValue={1}
+				defaultValue={defaultValue}
 				ref={(e) => (elementRef.current.input = e)}
 				onChange={handleChangeInput}
 				type="number"
