@@ -52,7 +52,7 @@ const DetailProduct = () => {
 						<Ablum images={data?.images } isLoading={isLoading} />
 					</div>
 					<div className="col-span-5">
-						<InfoProduct />
+						<InfoProduct product={data} />
 					</div>
 				</div>
 				<div className="">

@@ -55,8 +55,8 @@ const AddressSchema = new mongoose.Schema(
       required: true,
     },
     location: {
-      type: Array,
-      required: true,
+      type: { type: String, enum: ['Point'], required: true },
+      coordinates: { type: [Number], required: true }
     },
     deleted: {
       type: Boolean,
@@ -67,6 +67,9 @@ const AddressSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+AddressSchema.index({ location: '2dsphere' });
+
 
 const AddressModel = mongoose.model("address", AddressSchema);
 
