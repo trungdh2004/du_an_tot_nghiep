@@ -9,6 +9,7 @@ import { RequestModel } from "../../interface/models";
 import { generateSlugs } from "../../middlewares/generateSlug";
 import { Types } from "mongoose";
 import { formatDataPaging } from "../../common/pagingData";
+import CartItemModel from "../../models/cart/CartItem.schema";
 
 const ObjectId = require("mongoose").Types.ObjectId;
 
@@ -85,9 +86,6 @@ class ProductController {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn chưa chọn sản phẩm",
         });
-
-        console.log("slug:",slug);
-        
 
       const product = await ProductModel.findOne({
         slug:slug
@@ -378,6 +376,10 @@ class ProductController {
         is_deleted: true,
       });
 
+      await CartItemModel.deleteOne({
+        product:existingProduct._id,
+      })
+
       return res.status(STATUS.OK).json({
         message: "Ẩn sản phẩm thành công",
       });
@@ -435,6 +437,12 @@ class ProductController {
         { $set: { is_deleted: true } },
         { new: true }
       );
+
+      await CartItemModel.deleteMany({
+        product:{
+          $in: listId
+        }
+      })
 
       return res.status(STATUS.OK).json({
         message: "Xóa thành công",

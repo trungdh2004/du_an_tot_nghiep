@@ -236,7 +236,7 @@ const ProductUpdate = () => {
 		try {
 			const listImageNotFile = values.images?.filter((image) => !image?.file);
 			const listImageFile = values.images?.filter((image) => image?.file);
-			let listImage;
+			let listImage = [];
 
 			if (listImageFile?.length > 0) {
 				const formData = new FormData();
@@ -266,7 +266,9 @@ const ProductUpdate = () => {
 			};
 			mutate(data as IProduct);
 		} catch (error) {
-			toast.error("Tạo sản phẩm xảy ra lỗi");
+			console.log("error", error);
+			
+			toast.error("Chỉnh sửa sản phẩm xảy ra lỗi");
 		}
 	};
 	const handleUploadFile = async (file: File) => {
@@ -825,7 +827,7 @@ const ProductUpdate = () => {
 								disabled={isPending || previewUrl.isLoading}
 								className="mt-4"
 							>
-								Thêm sản phẩm
+								Chỉnh sửa sản phẩm
 							</Button>
 						</div>
 					</form>
