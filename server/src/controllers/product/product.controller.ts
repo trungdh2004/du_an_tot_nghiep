@@ -501,7 +501,7 @@ class ProductController {
         category,
         min,
         max,
-        tab
+        tab,
       } = req.body;
 
       let limit = pageSize || 10;
@@ -518,16 +518,16 @@ class ProductController {
       let querySort = {};
       let queryCategory = {};
       let queryPrice = {};
-      let queryTab = {}
+      let queryTab = {};
 
-      if(tab === 2) {
+      if (tab === 2) {
         queryTab = {
-          is_deleted:true
-        }
-      }else {
+          is_deleted: true,
+        };
+      } else {
         queryTab = {
-          is_deleted:false
-        }
+          is_deleted: false,
+        };
       }
 
       // attribute
@@ -617,7 +617,7 @@ class ProductController {
         ...queryAttribute,
         ...queryCategory,
         ...queryPrice,
-        ...queryTab
+        ...queryTab,
       })
         .sort(querySort)
         .skip(skip)
@@ -636,7 +636,7 @@ class ProductController {
               },
             ],
           },
-          "category"
+          "category",
         ])
         .exec();
 
@@ -645,7 +645,7 @@ class ProductController {
         ...queryAttribute,
         ...queryCategory,
         ...queryPrice,
-        ...queryTab
+        ...queryTab,
       });
 
       const result = formatDataPaging({
