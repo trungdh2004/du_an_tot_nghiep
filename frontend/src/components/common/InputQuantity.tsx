@@ -67,11 +67,11 @@ const InputQuantity = ({ maxTotal = Infinity, getValue,defaultValue=1 }: Props) 
 	}, [maxTotal]);
 
 	return (
-		<div className="flex items-center border border-gray-200 rounded ">
+		<div className="flex items-center border border-gray-200 rounded w-full max-w-32">
 			<div
 				ref={(e) => (elementRef.current.minus = e)}
 				onClick={handleMinusClick}
-				className="p-2 border-r border-gray-200 cursor-pointer"
+				className="p-0.5 md:p-2 border-r border-gray-200 cursor-pointer"
 			>
 				<HiMiniMinus />
 			</div>
@@ -81,12 +81,12 @@ const InputQuantity = ({ maxTotal = Infinity, getValue,defaultValue=1 }: Props) 
 				ref={(e) => (elementRef.current.input = e)}
 				onChange={handleChangeInput}
 				type="number"
-				className="flex-1 h-full w-16 text-center outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+				className="flex-1 h-full w-10 md:w-16 text-center outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
 			/>
 			<div
 				ref={(e) => (elementRef.current.plus = e)}
 				onClick={handlePlusClick}
-				className="p-2 border-l border-gray-200 cursor-pointer"
+				className="p-0.5 md:p-2 border-l border-gray-200 cursor-pointer"
 			>
 				<GoPlus />
 			</div>
