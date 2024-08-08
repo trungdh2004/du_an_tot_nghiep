@@ -6,13 +6,14 @@ import { cartItemValidation } from "../../validation/cart.validation";
 import CartItemModel from "../../models/cart/CartItem.schema";
 import { formatDataPaging } from "../../common/pagingData";
 import ProductModel from "../../models/products/Product.schema";
+import mongoose from "mongoose";
 
 class CartController {
   async pagingCart(req: RequestModel, res: Response) {
     try {
       const user = req.user;
-      const { pageIndex = 1 } = req.body;
-      let skip = (pageIndex - 1) * 10 || 0;
+      const { pageSize = 10 } = req.body;
+      let skip = 0;
 
       let existingCart = await CartModel.findOne({
         user: user?.id,
@@ -24,69 +25,123 @@ class CartController {
         });
       }
 
-      // const listProduct = await CartItemModel.find({
-      //   cart:existingCart._id,
-      // }).sort({createdAt:-1}).skip(skip).limit(10).populate([{
-      //   path:"product",
-      //   select:"_id name price discount thumbnail"
-      // },"attribute"])
+      // const listId = ["66adf6c4aa73c85c89b14d05","66b20cd6d41de6f68cb242cf","66b20ce3d41de6f68cb242da"].map((item) =>new mongoose.Types.ObjectId(item))
+
+      // {
+      //   $match: {
+      //     _id: { $in: listId } // Lọc các cartItem có trong listId
+      //   }
+      // },
 
       const listProduct = await CartItemModel.aggregate([
         {
           $lookup: {
-            from: 'products', // Tên bộ sưu tập products
-            localField: 'product',
-            foreignField: '_id',
-            as: 'product'
-          }
-        },
-        {
-          $unwind: '$product' // Giải nén mảng productDetails
-        },
-        {
-          $lookup: {
-            from: 'attributes', // Tên bộ sưu tập products
-            localField: 'product.attributes',
-            foreignField: '_id',
-            as: 'attributesProduct'
-          }
-        },
-        {
-          $lookup: {
-            from: 'attributes', // Tên bộ sưu tập products
-            localField: 'attribute',
-            foreignField: '_id',
-            as: 'attribute'
-          }
-        },
-        {
-          $unwind: '$attribute' // Giải nén mảng productDetails
-        },
-        {
-          $sort: {
-            productId: 1, // Sắp xếp theo productId
-            createdAt: -1, // Sắp xếp theo ngày tạo, mới nhất trước
+            from: "products", // Tên bộ sưu tập products
+            localField: "product",
+            foreignField: "_id",
+            as: "product",
           },
+        },
+        {
+          $unwind: "$product", // Giải nén mảng productDetails
+        },
+        {
+          $lookup: {
+            from: "attributes", // Tên bộ sưu tập products
+            localField: "product.attributes",
+            foreignField: "_id",
+            as: "productAttributes",
+          },
+        },
+        {
+          $unwind: {
+            path:'$productAttributes',
+            preserveNullAndEmptyArrays: true
+          } // Chuyển đổi mảng customer thành tài liệu riêng lẻ
+        },
+        {
+          $lookup: {
+            from: "colors", // Tên bộ sưu tập products
+            localField: "productAttributes.color",
+            foreignField: "_id",
+            as: "productAttributes.color",
+          },
+        },
+        {
+          $unwind: '$productAttributes.color'
+        },
+        {
+          $lookup: {
+            from: "sizes", // Tên bộ sưu tập products
+            localField: "productAttributes.size",
+            foreignField: "_id",
+            as: "productAttributes.size",
+          },
+        },
+        {
+          $unwind: '$productAttributes.size'
+        },
+        {
+          $lookup: {
+            from: "attributes", // Tên bộ sưu tập products
+            localField: "attribute",
+            foreignField: "_id",
+            as: "attribute",
+          },
+        },
+        {
+          $unwind: "$attribute", // Giải nén mảng productDetails
+        },
+        {
+          $lookup: {
+            from: "colors", // Tên bộ sưu tập products
+            localField: "attribute.color",
+            foreignField: "_id",
+            as: "attribute.color",
+          },
+        },
+        {
+          $unwind: "$attribute.color", // Giải nén mảng productDetails
+        },
+        {
+          $lookup: {
+            from: "sizes", // Tên bộ sưu tập products
+            localField: "attribute.size",
+            foreignField: "_id",
+            as: "attribute.size",
+          },
+        },
+        {
+          $unwind: "$attribute.size", // Giải nén mảng productDetails
         },
         {
           $group: {
             _id: "$product",
-            createdAt: { $max: '$createdAt' },
+            createdAt: { $max: "$createdAt" },
             items: {
-              $push: {
+              $addToSet: {
                 quantity: "$quantity",
                 createdAt: "$createdAt",
                 _id: "$_id",
                 price: "$product.price",
-                name:"$product.name",
+                name: "$product.name",
                 productId: "$product._id",
-                quantitySold:"$product.quantitySold",
+                quantitySold: "$product.quantitySold",
                 discount: "$product.discount",
                 thumbnail: "$product.thumbnail",
-                attribute:"$attribute",
-                attributesProduct:"$attributesProduct"
+                attribute: "$attribute",
               },
             },
+            attributes : {
+              $addToSet: {
+                _id:"$productAttributes._id",
+                color:"$productAttributes.color",
+                size:"$productAttributes.size",
+                quantity:"$productAttributes.quantity",
+                discount:"$productAttributes.discount",
+                price:"$productAttributes.price",
+              }
+            }
           },
         },
         {
@@ -97,16 +152,17 @@ class CartController {
         {
           $project: {
             _id: 0,
-            product: '$_id',
+            product: "$_id",
             createdAt: 1,
             items: 1,
-          }
+            attributes:1
+          },
         },
         {
           $skip: skip, // Bỏ qua các bản ghi đã được xử lý
         },
         {
-          $limit: 3, // Giới hạn số lượng bản ghi
+          $limit: pageSize, // Giới hạn số lượng bản ghi
         },
       ]);
 
@@ -115,7 +171,7 @@ class CartController {
       });
       const data = formatDataPaging({
         limit: 10,
-        pageIndex: pageIndex,
+        pageIndex: 1,
         data: listProduct,
         count: countProduct,
       });
