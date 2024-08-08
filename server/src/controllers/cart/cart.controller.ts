@@ -13,6 +13,7 @@ import { IAttribute, IColor, ISize } from "../../interface/product";
 interface RowIColor {
   colorId: string;
   colorName: string;
+  colorCode:string;
   list: IAttribute[];
   quantity: number;
 }
@@ -38,14 +39,6 @@ class CartController {
           user: user?.id,
         });
       }
-
-      // const listId = ["66adf6c4aa73c85c89b14d05","66b20cd6d41de6f68cb242cf","66b20ce3d41de6f68cb242da"].map((item) =>new mongoose.Types.ObjectId(item))
-
-      // {
-      //   $match: {
-      //     _id: { $in: listId } // Lọc các cartItem có trong listId
-      //   }
-      // },
 
       const listProduct = await CartItemModel.aggregate([
         {
@@ -194,6 +187,7 @@ class CartController {
                 colorName: (item.color as IColor).name as string,
                 list: [item],
                 quantity: item.quantity,
+                colorCode:(item.color as IColor).code
               };
               acc.push(group);
               return acc;
@@ -239,8 +233,6 @@ class CartController {
         }
       })
 
-      
-
       const countProduct = await CartItemModel.countDocuments({
         cart: existingCart._id,
       });
@@ -261,6 +253,7 @@ class CartController {
       });
     }
   }
+
   async addProductToCart(req: RequestModel, res: Response) {
     try {
       const user = req.user;
