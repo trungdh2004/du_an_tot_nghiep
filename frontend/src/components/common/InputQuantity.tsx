@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { GoPlus } from "react-icons/go";
 import { HiMiniMinus } from "react-icons/hi2";
 
@@ -61,9 +61,10 @@ const InputQuantity = ({ maxTotal = Infinity, getValue, defaultValue = 1 }: Prop
 			handleChangeInput();
 		}
 	};
-	useMemo(() => { getValue?.(defaultValue); }, [])
+
 	useEffect(() => {
 		updateButtonStates(defaultValue);
+		getValue?.(defaultValue);
 	}, [defaultValue, getValue, maxTotal]);
 
 	return (
@@ -94,4 +95,4 @@ const InputQuantity = ({ maxTotal = Infinity, getValue, defaultValue = 1 }: Prop
 	);
 };
 
-export default memo(InputQuantity);
+export default InputQuantity;

@@ -55,8 +55,7 @@ const CartIndex = () => {
                                     <div className="flex  float-left flex-col lg:flex-row gap-x-10">
                                         <div className="line-clamp-2 text-left">{item.name}</div>
                                         <div className="w-full flex flex-col justify-start">
-                                            <Attribute data={item.attributesProduct} open={open} />
-                                            <div className="text-sm text-left text-gray-500">Đen,S</div>
+                                            <Attribute data={cart.attributes} open={open} />
                                         </div>
                                     </div>
                                 </div>
