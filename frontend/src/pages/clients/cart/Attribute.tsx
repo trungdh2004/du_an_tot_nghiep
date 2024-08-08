@@ -4,25 +4,18 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { pagingCart } from '@/service/cart'
 import { ICart } from '@/types/cart'
 import { useQuery } from '@tanstack/react-query'
+import { FaCaretDown, FaCaretUp } from 'react-icons/fa'
 type Props = {
     data: ICart[],
-
+    open?: boolean,
 }
-
-const Attribute = ({ data }: Props) => {
-    const { data: dataCart } = useQuery({
-        queryKey: ['cart'],
-        queryFn: async () => {
-            const { data } = await pagingCart();
-            // console.log(data.data.content);
-            return data.data.content;
-        }
-    });
+const Attribute = ({ data, open }: Props) => {
+    console.log("Attribute", data)
     return (
         <>
-            <Popover>
+            <Popover >
                 <PopoverTrigger asChild>
-                    <button className='flex'>Phân loại sản phẩm </button>
+                    <button className='text-sm text-left'>Phân loại sản phẩm  </button>
                 </PopoverTrigger>
                 <PopoverContent className='w-auto'>
                     <div className="grid gap-4">

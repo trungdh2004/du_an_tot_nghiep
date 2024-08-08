@@ -8,7 +8,7 @@ type Props = {
 	defaultValue?: number;
 };
 
-const InputQuantity = ({ maxTotal = Infinity, getValue,defaultValue=1 }: Props) => {
+const InputQuantity = ({ maxTotal = Infinity, getValue, defaultValue = 1 }: Props) => {
 	const elementRef = useRef<{
 		minus: HTMLElement | null;
 		plus: HTMLElement | null;
