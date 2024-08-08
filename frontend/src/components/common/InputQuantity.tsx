@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { memo, useEffect, useMemo, useRef } from "react";
 import { GoPlus } from "react-icons/go";
 import { HiMiniMinus } from "react-icons/hi2";
 
@@ -61,10 +61,10 @@ const InputQuantity = ({ maxTotal = Infinity, getValue, defaultValue = 1 }: Prop
 			handleChangeInput();
 		}
 	};
-
+	useMemo(() => { getValue?.(defaultValue); }, [])
 	useEffect(() => {
-		updateButtonStates(Number(elementRef.current.input?.value) || 1);
-	}, [maxTotal]);
+		updateButtonStates(defaultValue);
+	}, [defaultValue, getValue, maxTotal]);
 
 	return (
 		<div className="flex items-center border border-gray-200 rounded w-full max-w-32">
@@ -94,4 +94,4 @@ const InputQuantity = ({ maxTotal = Infinity, getValue, defaultValue = 1 }: Prop
 	);
 };
 
-export default InputQuantity;
+export default memo(InputQuantity);

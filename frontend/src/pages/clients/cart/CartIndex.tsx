@@ -20,7 +20,7 @@ const CartIndex = () => {
         },
         staleTime: 5 * 60 * 1000
     });
-
+    const [quantity, setQuantity] = useState(1)
     return (
         <>
             <div className="padding bg-main min-h-[100vh]">
@@ -50,12 +50,13 @@ const CartIndex = () => {
                                 <div className="min-w-[3%]   ">
                                     <Checkbox />
                                 </div>
-                                <div className="w-[45%] flex gap-3">
+                                <div className="w-[45%] flex ">
                                     <div className=""><img src={item.thumbnail} className='w-[100px] h-[100px] object-cover' alt="" /></div>
-                                    <div className="flex float-left flex-col lg:flex-row gap-x-2">
+                                    <div className="flex  float-left flex-col lg:flex-row gap-x-10">
                                         <div className="line-clamp-2 text-left">{item.name}</div>
-                                        <div className="w-full ">
+                                        <div className="w-full flex flex-col justify-start">
                                             <Attribute data={item.attributesProduct} open={open} />
+                                            <div className="text-sm text-left text-gray-500">Đen,S</div>
                                         </div>
                                     </div>
                                 </div>
@@ -63,8 +64,8 @@ const CartIndex = () => {
                                     <span className="text-gray-400 line-through">{formatQuantity(item.attribute.price, "₫")}</span>
                                     <span className=""> {formatQuantity(item.attribute.discount, "₫")}</span>
                                 </div>
-                                <div className="w-[12%]"><InputQuantity getValue={(value) => value} defaultValue={+item.quantity} /></div>
-                                <div className="w-[12%] text-red-500">{formatQuantity(item.quantity * item.discount, "₫")}</div>
+                                <div className="w-[12%]"><InputQuantity getValue={(value) => { console.log(value); setQuantity(value) }} defaultValue={+item.quantity} /></div>
+                                <div className="w-[12%] text-red-500">{formatQuantity(quantity * item.attribute.discount, "₫")}</div>
                                 <div className="w-[13%] ">Xóa</div>
                             </div>
                         ))}
