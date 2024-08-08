@@ -19,7 +19,7 @@ const DetailProduct = () => {
 	const {data,isLoading} = useQuery<IProduct>({
 		queryKey:['GET_PRODUCT_BY_SLUG'],
 		queryFn:async()=>{
-			const {data} = await getProductBySlug(slug as string);
+			const {data} = await getProductBySlug(encodeURIComponent(slug as string));
 			console.log(data.data);
 			
 			return data?.data
