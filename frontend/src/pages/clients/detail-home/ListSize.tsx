@@ -24,6 +24,7 @@ const ListSize = () => {
 				<div className="flex flex-wrap items-center gap-2">
 					{listSize?.map((size) => (
 						<LabelChecked
+							isOneChecked
 							value={size._id as string}
 							key={size._id}
 							nameInput="chooseSize"

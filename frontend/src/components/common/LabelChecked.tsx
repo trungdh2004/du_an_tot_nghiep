@@ -1,8 +1,9 @@
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
+import { ChangeEvent, MouseEvent, MouseEventHandler, ReactNode } from "react";
 import { IoIosCheckmark } from "react-icons/io";
 
 type Props = {
+	isOneChecked?: boolean;
 	value: string | number;
 	title?: string;
 	haxColor?: string;
@@ -16,6 +17,7 @@ type Props = {
 };
 const LabelChecked = ({
 	value,
+	isOneChecked= false,
 	disabled = false,
 	defaultChecked = false,
 	children,
@@ -25,6 +27,20 @@ const LabelChecked = ({
 	className,
 	...props
 }: Props) => {
+	const handleOneChecked = (e: MouseEvent<HTMLInputElement>) => {
+		if (!isOneChecked) return;
+		const currentItem = e.currentTarget as HTMLInputElement;
+		const checkboxes = document.querySelectorAll(
+			`input[name="${nameInput}"]:checked`
+		) as NodeListOf<HTMLInputElement>;
+		if(checkboxes.length > 1){
+			checkboxes.forEach((checkbox) => {
+				checkbox.checked = false;
+			});
+			currentItem.checked = true;
+		}
+		
+	};
 	return (
 		<label
 			htmlFor={String(value)}
@@ -35,15 +51,16 @@ const LabelChecked = ({
 			)}
 		>
 			<input
+				onClick={handleOneChecked}
 				className="peer"
-				{...props}
-				type="radio"
+				type="checkbox"
 				hidden
 				disabled={disabled}
 				defaultChecked={defaultChecked}
 				name={nameInput}
 				id={String(value)}
 				value={value}
+				{...props}
 			/>
 			{haxColor && (
 				<span

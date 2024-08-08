@@ -6,13 +6,15 @@ import InputQuantity from "@/components/common/InputQuantity";
 import { Button } from "@/components/ui/button";
 import { MdOutlineAddShoppingCart } from "react-icons/md";
 import { IProduct } from "@/types/product";
+import { useState } from "react";
 type Props = {
 	product?:IProduct,
 	isLoading?: boolean
 };
 const InfoProduct = ({product,isLoading}:Props) => {
+	const [totalQuanti] = useState();
 	return (
-		<div className="p-5">
+		<div className="p-5 pt-10">
 			<div className="space-y-5">
 				<div className="space-y-0.5">
 					<p className="uppercase text-xs">
@@ -70,6 +72,8 @@ const InfoProduct = ({product,isLoading}:Props) => {
 						</h3>
 						<div className="flex items-center gap-3">
 							<InputQuantity
+
+								defaultValue={4}
 								maxTotal={product?.quantity}
 								getValue={(value) => {
 									console.log(value);
