@@ -264,9 +264,9 @@ class ProductController {
       }
 
       if (listToIdDelete?.length > 0) {
-        await AttributeModel.deleteMany({
-          _id: { $in: listToIdDelete },
-        });
+        // await AttributeModel.deleteMany({
+        //   _id: { $in: listToIdDelete },
+        // });
       }
       
       const quantity = attributes.reduce((acc:number, item:IAttribute) => {
