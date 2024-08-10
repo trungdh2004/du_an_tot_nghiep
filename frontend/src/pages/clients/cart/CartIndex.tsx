@@ -31,7 +31,7 @@ const CartIndex = () => {
                     </div>
                     <div className="w-[45%] flex items-start">Sản phẩm</div>
                     <div className="w-[15%]">Đơn giá</div>
-                    <div className="w-[12%]">Số lượng</div>
+                    <div className="w-[12%]">Số lượng</div>x
                     <div className="w-[12%]">Số tiền</div>
                     <div className="w-[13%]">Thao tác</div>
                 </div>
@@ -55,7 +55,7 @@ const CartIndex = () => {
                                     <div className="flex  float-left flex-col lg:flex-row gap-x-10">
                                         <div className="line-clamp-2 text-left">{item.name}</div>
                                         <div className="w-full flex flex-col justify-start">
-                                            <Attribute data={cart.attributes} open={open} />
+                                            <Attribute dataColor={cart.listColor} dataSize={cart.listSize} open={open} />
                                         </div>
                                     </div>
                                 </div>

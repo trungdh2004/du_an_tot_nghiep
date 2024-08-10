@@ -17,7 +17,7 @@ type Props = {
 };
 const LabelChecked = ({
 	value,
-	isOneChecked= false,
+	isOneChecked = false,
 	disabled = false,
 	defaultChecked = false,
 	children,
@@ -33,13 +33,13 @@ const LabelChecked = ({
 		const checkboxes = document.querySelectorAll(
 			`input[name="${nameInput}"]:checked`
 		) as NodeListOf<HTMLInputElement>;
-		if(checkboxes.length > 1){
+		if (checkboxes.length > 1) {
 			checkboxes.forEach((checkbox) => {
 				checkbox.checked = false;
 			});
 			currentItem.checked = true;
 		}
-		
+
 	};
 	return (
 		<label
