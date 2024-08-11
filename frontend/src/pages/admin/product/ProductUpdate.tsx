@@ -178,7 +178,7 @@ const ProductUpdate = () => {
 		onSuccess: () => {
 			toast.success("Chỉnh sửa sản phẩm thành công");
 			form.reset();
-			router("/admin/product");
+			// router("/admin/product");
 		},
 		onError: () => {
 			toast.error("Chỉnh sửa sản phẩm thất bại");
