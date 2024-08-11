@@ -21,9 +21,15 @@ const storage = new CloudinaryStorage({
         {
           width: width ? +width : "",
           height: height ? +height : "",
-          crop: "scale",
-          quality:"good"
+          crop: "fill",
         },
+        { quality: 100 },
+        {
+          gravity: "center",
+        },
+        { effect: "sharpen" }, // Tăng cường độ sắc nét
+        { dpr: "2.0" }, // Tăng độ phân giải cho màn hình Retina
+        { fetch_format: "auto" },
       ];
     },
   },

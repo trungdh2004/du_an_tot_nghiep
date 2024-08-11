@@ -7,7 +7,22 @@ import CartItemModel from "../../models/cart/CartItem.schema";
 import { formatDataPaging } from "../../common/pagingData";
 import ProductModel from "../../models/products/Product.schema";
 import mongoose from "mongoose";
+import { IAttribute, IColor, ISize } from "../../interface/product";
 
+
+interface RowIColor {
+  colorId: string;
+  colorName: string;
+  colorCode:string;
+  list: IAttribute[];
+  quantity: number;
+}
+interface RowISize {
+  sizeId: string;
+  sizeName: string;
+  list: IAttribute[];
+  quantity: number;
+}
 class CartController {
   async pagingCart(req: RequestModel, res: Response) {
     try {
@@ -24,14 +39,6 @@ class CartController {
           user: user?.id,
         });
       }
-
-      // const listId = ["66adf6c4aa73c85c89b14d05","66b20cd6d41de6f68cb242cf","66b20ce3d41de6f68cb242da"].map((item) =>new mongoose.Types.ObjectId(item))
-
-      // {
-      //   $match: {
-      //     _id: { $in: listId } // Lọc các cartItem có trong listId
-      //   }
-      // },
 
       const listProduct = await CartItemModel.aggregate([
         {
@@ -166,13 +173,73 @@ class CartController {
         },
       ]);
 
+      const dataList = listProduct?.map((cartItem) => {
+        const listColor = (cartItem?.attributes as IAttribute[])?.reduce(
+          (acc: RowIColor[], item) => {
+            let group = acc.find(
+              (g) => g.colorId === (item.color as IColor)?._id
+            );
+  
+            // Nếu nhóm không tồn tại, tạo nhóm mới
+            if (!group) {
+              group = {
+                colorId: (item.color as IColor)._id as string,
+                colorName: (item.color as IColor).name as string,
+                list: [item],
+                quantity: item.quantity,
+                colorCode:(item.color as IColor).code
+              };
+              acc.push(group);
+              return acc;
+            }
+  
+            // Thêm đối tượng vào nhóm tương ứng
+            group.list.push(item);
+            group.quantity = group.quantity + item.quantity;
+            return acc;
+          },
+          []
+        );
+  
+        const listSize = (cartItem?.attributes as IAttribute[])?.reduce(
+          (acc: RowISize[], item) => {
+            let group = acc.find(
+              (g) => g.sizeId === (item.size as ISize)?._id
+            );
+            // Nếu nhóm không tồn tại, tạo nhóm mới
+            if (!group) {
+              group = {
+                sizeId: (item.size as ISize)._id as string,
+                sizeName: (item.size as ISize).name as string,
+                list: [item],
+                quantity: item.quantity,
+              };
+              acc.push(group);
+              return acc;
+            }
+  
+            // Thêm đối tượng vào nhóm tương ứng
+            group.list.push(item);
+            group.quantity = group.quantity + item.quantity;
+            return acc;
+          },
+          []
+        );
+
+        return {
+          ...cartItem,
+          listColor,
+          listSize
+        }
+      })
+
       const countProduct = await CartItemModel.countDocuments({
         cart: existingCart._id,
       });
       const data = formatDataPaging({
         limit: 10,
         pageIndex: 1,
-        data: listProduct,
+        data: dataList,
         count: countProduct,
       });
 
@@ -186,6 +253,7 @@ class CartController {
       });
     }
   }
+
   async addProductToCart(req: RequestModel, res: Response) {
     try {
       const user = req.user;

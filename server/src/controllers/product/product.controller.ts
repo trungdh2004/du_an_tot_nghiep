@@ -18,6 +18,7 @@ interface RowIColor {
   colorName: string;
   list: IAttribute[];
   quantity: number;
+  colorCode: string;
 }
 interface RowISize {
   sizeId: string;
@@ -135,6 +136,7 @@ class ProductController {
               colorName: (item.color as IColor).name as string,
               list: [item],
               quantity: item.quantity,
+              colorCode:(item.color as IColor).code as string,
             };
             acc.push(group);
             return acc;
@@ -520,6 +522,7 @@ class ProductController {
         min,
         max,
         tab,
+        rating
       } = req.body;
 
       let limit = pageSize || 10;
@@ -537,6 +540,7 @@ class ProductController {
       let queryCategory = {};
       let queryPrice = {};
       let queryTab = {};
+      let queryRating = {};
 
       if (tab === 2) {
         queryTab = {
@@ -628,6 +632,10 @@ class ProductController {
             },
           };
         }
+      }
+
+      if(rating) {
+
       }
 
       const listProduct = await ProductModel.find({

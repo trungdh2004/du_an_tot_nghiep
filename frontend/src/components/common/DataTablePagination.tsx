@@ -1,6 +1,5 @@
 import { Table } from "@tanstack/react-table";
 
-import { Button } from "../ui/button";
 import {
 	Select,
 	SelectContent,
@@ -8,7 +7,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../ui/select";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import Paginations from "./Pagination";
 
 interface DataTablePaginationProps<TData> {
@@ -19,6 +17,7 @@ interface DataTablePaginationProps<TData> {
 	dataPageSize?: number[];
 	handleChangePageSize: (value: number) => void;
 	pageSize: number;
+	pageIndex:number
 }
 
 export function DataTablePagination<TData>({
@@ -29,6 +28,7 @@ export function DataTablePagination<TData>({
 	handleChangePageSize,
 	dataPageSize,
 	pageSize,
+	pageIndex
 }: DataTablePaginationProps<TData>) {
 	const listSize = dataPageSize ? dataPageSize : [5, 10, 15, 20, 25];
 
@@ -63,6 +63,7 @@ export function DataTablePagination<TData>({
 				</div>
 				<div className="flex items-center space-x-2">
 					<Paginations
+						forcePage={pageIndex - 1}
 						size="sm"
 						pageCount={pageCount}
 						handlePageClick={handleChangePage}
