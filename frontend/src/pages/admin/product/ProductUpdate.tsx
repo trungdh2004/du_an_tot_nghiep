@@ -97,6 +97,7 @@ const formSchema = z.object({
 				price: z.number().min(1, "Phải lớn hơn 0"),
 				quantity: z.number().min(1, "Phải lớn hơn 0"),
 				discount: z.number().min(1, "Phải lớn hơn 0"),
+				_id:z.string().nullable()
 			}),
 		)
 		.refine(
@@ -156,6 +157,7 @@ const ProductUpdate = () => {
 					price: 0,
 					quantity: 0,
 					discount: 0,
+					_id:null
 				},
 			],
 			images: [],
@@ -177,7 +179,7 @@ const ProductUpdate = () => {
 		onSuccess: () => {
 			toast.success("Chỉnh sửa sản phẩm thành công");
 			form.reset();
-			router("/admin/product");
+			// router("/admin/product");
 		},
 		onError: () => {
 			toast.error("Chỉnh sửa sản phẩm thất bại");
@@ -789,6 +791,7 @@ const ProductUpdate = () => {
 													price: 0,
 													quantity: 0,
 													discount: 0,
+													_id:null
 												})
 											}
 										>

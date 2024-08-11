@@ -264,9 +264,9 @@ class ProductController {
       }
 
       if (listToIdDelete?.length > 0) {
-        // await AttributeModel.deleteMany({
-        //   _id: { $in: listToIdDelete },
-        // });
+        await AttributeModel.deleteMany({
+          _id: { $in: listToIdDelete },
+        });
       }
       
       const quantity = attributes.reduce((acc:number, item:IAttribute) => {
@@ -520,6 +520,7 @@ class ProductController {
         min,
         max,
         tab,
+        rating
       } = req.body;
 
       let limit = pageSize || 10;
@@ -537,6 +538,7 @@ class ProductController {
       let queryCategory = {};
       let queryPrice = {};
       let queryTab = {};
+      let queryRating = {};
 
       if (tab === 2) {
         queryTab = {
@@ -628,6 +630,10 @@ class ProductController {
             },
           };
         }
+      }
+
+      if(rating) {
+
       }
 
       const listProduct = await ProductModel.find({
