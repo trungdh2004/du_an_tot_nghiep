@@ -127,12 +127,12 @@ const EditAddress = ({ open, handleClose, id }: IProps) => {
 				district: data.data.district,
 				commune: data.data.commune,
 				detailAddress: data.data.detailAddress,
-				location: data.data.location,
+				location: data.data.location.coordinates,
 			});
-			if (Array.isArray(data.data.location)) {
+			if (Array.isArray(data.data.location.coordinates)) {
 				setInitView({
-					longitudeInit: data.data.location[0],
-					latitudeInit: data.data.location[1],
+					longitudeInit: data.data.location.coordinates[0],
+					latitudeInit: data.data.location.coordinates[1],
 				});
 			}
 			const [{ data: district }, { data: commune }] = await Promise.all([

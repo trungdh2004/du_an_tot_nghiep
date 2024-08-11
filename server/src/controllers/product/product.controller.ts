@@ -9,12 +9,19 @@ import { RequestModel } from "../../interface/models";
 import { generateSlugs } from "../../middlewares/generateSlug";
 import { Types } from "mongoose";
 import { formatDataPaging } from "../../common/pagingData";
+import CartItemModel from "../../models/cart/CartItem.schema";
 
 const ObjectId = require("mongoose").Types.ObjectId;
 
 interface RowIColor {
   colorId: string;
   colorName: string;
+  list: IAttribute[];
+  quantity: number;
+}
+interface RowISize {
+  sizeId: string;
+  sizeName: string;
   list: IAttribute[];
   quantity: number;
 }
@@ -86,9 +93,6 @@ class ProductController {
           message: "Bạn chưa chọn sản phẩm",
         });
 
-        console.log("slug:",slug);
-        
-
       const product = await ProductModel.findOne({
         slug:slug
       })
@@ -145,13 +149,25 @@ class ProductController {
       );
 
       const listSize = (product?.attributes as IAttribute[])?.reduce(
-        (acc: {id:string,name:string}[], item) => {
-          const check = acc.find((row) => row.id === (item.size as ISize)._id);
-          if (check) return acc;
-          acc.push({
-            id:(item.size as ISize)._id as string,
-            name:(item.size as ISize).name
-          });
+        (acc: RowISize[], item) => {
+          let group = acc.find(
+            (g) => g.sizeId === (item.size as ISize)?._id
+          );
+          // Nếu nhóm không tồn tại, tạo nhóm mới
+          if (!group) {
+            group = {
+              sizeId: (item.size as ISize)._id as string,
+              sizeName: (item.size as ISize).name as string,
+              list: [item],
+              quantity: item.quantity,
+            };
+            acc.push(group);
+            return acc;
+          }
+
+          // Thêm đối tượng vào nhóm tương ứng
+          group.list.push(item);
+          group.quantity = group.quantity + item.quantity;
           return acc;
         },
         []
@@ -248,9 +264,9 @@ class ProductController {
       }
 
       if (listToIdDelete?.length > 0) {
-        await AttributeModel.deleteMany({
-          _id: { $in: listToIdDelete },
-        });
+        // await AttributeModel.deleteMany({
+        //   _id: { $in: listToIdDelete },
+        // });
       }
       
       const quantity = attributes.reduce((acc:number, item:IAttribute) => {
@@ -378,6 +394,10 @@ class ProductController {
         is_deleted: true,
       });
 
+      await CartItemModel.deleteOne({
+        product:existingProduct._id,
+      })
+
       return res.status(STATUS.OK).json({
         message: "Ẩn sản phẩm thành công",
       });
@@ -436,6 +456,12 @@ class ProductController {
         { new: true }
       );
 
+      await CartItemModel.deleteMany({
+        product:{
+          $in: listId
+        }
+      })
+
       return res.status(STATUS.OK).json({
         message: "Xóa thành công",
       });
@@ -493,7 +519,7 @@ class ProductController {
         category,
         min,
         max,
-        tab
+        tab,
       } = req.body;
 
       let limit = pageSize || 10;
@@ -510,16 +536,16 @@ class ProductController {
       let querySort = {};
       let queryCategory = {};
       let queryPrice = {};
-      let queryTab = {}
+      let queryTab = {};
 
-      if(tab === 2) {
+      if (tab === 2) {
         queryTab = {
-          is_deleted:true
-        }
-      }else {
+          is_deleted: true,
+        };
+      } else {
         queryTab = {
-          is_deleted:false
-        }
+          is_deleted: false,
+        };
       }
 
       // attribute
@@ -609,7 +635,7 @@ class ProductController {
         ...queryAttribute,
         ...queryCategory,
         ...queryPrice,
-        ...queryTab
+        ...queryTab,
       })
         .sort(querySort)
         .skip(skip)
@@ -628,7 +654,7 @@ class ProductController {
               },
             ],
           },
-          "category"
+          "category",
         ])
         .exec();
 
@@ -637,7 +663,7 @@ class ProductController {
         ...queryAttribute,
         ...queryCategory,
         ...queryPrice,
-        ...queryTab
+        ...queryTab,
       });
 
       const result = formatDataPaging({

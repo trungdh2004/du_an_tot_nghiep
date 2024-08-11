@@ -48,6 +48,7 @@ interface DataTableProps<TData, TValue> {
 const TableComponent = <TData, TValue>({
 	columns,
 	data,
+	pageIndex,
 	handleChangePage,
 	pageSize = 10,
 	pageCount = 0,
@@ -139,6 +140,7 @@ const TableComponent = <TData, TValue>({
 				handleChangePageSize={handleChangePageSize}
 				dataPageSize={dataPageSize}
 				pageSize={pageSize}
+				pageIndex={pageIndex}
 			/>
 		</div>
 	);

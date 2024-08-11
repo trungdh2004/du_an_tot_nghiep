@@ -21,3 +21,5 @@ export const unDeletedById = (id: string) => instance.put(`${url}/unDeletedById/
 export const unDeleteMany = (value: {listId:string[]}) => instance.put(`${url}/unDeletedMany`,value)
 
 export const deleteMany = (value: {listId:string[]}) => instance.put(`${url}/deletedMany`,value)
+export const getProductBySlug = (slug: string) =>
+	instance.get(`${url}/findBySlug/${slug}`);
