@@ -5,8 +5,8 @@ import ListSize from "./ListSize";
 import InputQuantity from "@/components/common/InputQuantity";
 import { Button } from "@/components/ui/button";
 import { MdOutlineAddShoppingCart } from "react-icons/md";
-import { IProduct } from "@/types/product";
 import { useState } from "react";
+import { IProduct } from "@/types/typeProduct";
 type Props = {
 	product?:IProduct,
 	isLoading?: boolean
@@ -18,7 +18,7 @@ const InfoProduct = ({product,isLoading}:Props) => {
 			<div className="space-y-5">
 				<div className="space-y-0.5">
 					<p className="uppercase text-xs">
-						Danh mục: <span>{product?.category?.name}</span>
+						Danh mục: <span>{(product?.category as any)?.name}</span>
 					</p>
 					<h2 className="uppercase text-xl">
 						{product?.name}

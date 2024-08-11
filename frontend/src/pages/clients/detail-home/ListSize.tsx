@@ -33,6 +33,50 @@ const ListSize = () => {
 							{size.name}
 						</LabelChecked>
 					))}
+					{listSize?.map((size) => (
+						<LabelChecked
+							isOneChecked
+							value={size._id as string}
+							key={size._id}
+							nameInput="chooseSize"
+							className="min-w-28"
+						>
+							{size.name}
+						</LabelChecked>
+					))}
+					{listSize?.map((size) => (
+						<LabelChecked
+							isOneChecked
+							value={size._id as string}
+							key={size._id}
+							nameInput="chooseSize"
+							className="min-w-28"
+						>
+							{size.name}
+						</LabelChecked>
+					))}
+					{listSize?.map((size) => (
+						<LabelChecked
+							isOneChecked
+							value={size._id as string}
+							key={size._id}
+							nameInput="chooseSize"
+							className="min-w-28"
+						>
+							{size.name}
+						</LabelChecked>
+					))}
+					{listSize?.map((size) => (
+						<LabelChecked
+							isOneChecked
+							value={size._id as string}
+							key={size._id}
+							nameInput="chooseSize"
+							className="min-w-28"
+						>
+							{size.name}
+						</LabelChecked>
+					))}
 				</div>
 			)}
 		</div>

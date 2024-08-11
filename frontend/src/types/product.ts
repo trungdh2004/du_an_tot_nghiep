@@ -1,4 +1,5 @@
 import { ICategory } from "./category";
+import { IProduct } from "./typeProduct";
 import { IColor, ISize } from "./variants";
 
 export interface IAttribute {
@@ -11,33 +12,50 @@ export interface IAttribute {
 	updatedAt?: string;
 	_id?: string;
 }
-export interface IProduct {
+export interface IProductDetail {
 	_id?: string;
 	name?: string;
 	price?: number;
 	discount?: number;
 	description?: string;
-	attributes?: IAttribute[];
-	category?: ICategory;
+	thumbnail?: string;
+	images?: [
+		{
+			url: string;
+			_id: string;
+		},
+	];
+	is_deleted?: boolean;
+	category?: {
+		_id: string;
+		name: string;
+		description: string;
+	};
+	quantitySold: number;
+	quantity: number;
+	isSpecial: boolean;
+	attributes?: [IAttribute];
 	createdAt?: string;
 	updatedAt?: string;
-	images?: {
-		url: string;
-		_id?: string;
-	}[];
-	listColor: {
-		colorId: string;
-		colorName: string;
-		colorCode: string;
-	}[];
-	isSpecial?: boolean;
-	is_deleted?: boolean;
-	quantity?: number;
-	quantitySold?: number;
 	slug?: string;
-	thumbnail?: string;
-	__v?: number;
+	listColor?: [
+		{
+			colorId: string;
+			colorName: string;
+			list: [IAttribute];
+			quantity: number;
+		},
+	];
+	listSize?: [
+		{
+			sizeId: string;
+			sizeName: string;
+			list: [IAttribute];
+			quantity: number;
+		},
+	];
 }
+
 export interface IProductSlider {
 	colorCode?: string;
 	createdAt?: string;
