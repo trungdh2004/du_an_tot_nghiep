@@ -527,15 +527,15 @@ class ProductController {
           conditions = { color: color };
         } else if (size.length > 0) {
           conditions = { size: size };
-        }
+        }       
         const listAttributeColor = await AttributeModel.find(conditions);
-
         const colorAttributeIds = listAttributeColor?.map((attr) => attr._id);
         queryAttribute = {
           attributes: {
             $in: colorAttributeIds,
           },
         };
+        
       }
 
       // sắp xếp

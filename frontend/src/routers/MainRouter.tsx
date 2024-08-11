@@ -17,7 +17,8 @@ const MainRouter = [
 			{ path: "shop", element: <ShopProduct /> },
 			{ path: "table", element: <UserIndex /> },
 			{ path: "testComponent", element: <TestComponent /> },
-			{ path: "*", element: <NotFound /> },
+      { path: "*", element: <NotFound /> },
+      
 		],
 	},
 ];
