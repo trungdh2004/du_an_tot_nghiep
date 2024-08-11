@@ -202,7 +202,7 @@ const MyBlogs = () => {
 
             </div >
             <div className="flex justify-center mt-5">
-                <Paginations pageCount={response.pageCount} handlePageClick={handleChangePag} />
+                <Paginations forcePage={searchObject.pageIndex - 1} pageCount={response.pageCount} handlePageClick={handleChangePag} />
             </div>
         </>
     )

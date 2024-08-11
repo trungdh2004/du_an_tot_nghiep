@@ -1,5 +1,6 @@
 import DialogConfirm from '@/components/common/DialogConfirm';
 import Paginations from '@/components/common/Pagination';
+import SelectComponent from '@/components/common/SelectComponent';
 import { TooltipComponent } from '@/components/common/TooltipComponent';
 import { Button } from '@/components/ui/button';
 import {
@@ -122,6 +123,17 @@ const BlogList = () => {
                                     setSearchObject((prev: any) => ({ ...prev, tags: values ? values.slug : "" }))
                                 }}
                             />
+                            {/* <SelectComponent<ITag>
+
+                                options={tags}
+                                placeholder="Bài viết"
+                                value={searchObject.tags}
+                                getOptionLabel={(option: ITag) => option.name}
+                                getOptionValue={(option: ITag) => option.slug as string}
+                                onChange={(values: ITag | null) => {
+                                    setSearchObject((prev: any) => ({ ...prev, tags: values ? values.slug : "" }))
+                                }}
+                            /> */}
                             <TooltipComponent label='Mặc định'>
                                 <div> <Button onClick={() => setSearchObject({
                                     pageIndex: 1,
@@ -214,7 +226,7 @@ const BlogList = () => {
                 )}
             </div >
             <div className="flex justify-center mt-5">
-                <Paginations pageCount={response.pageCount} handlePageClick={handleChangePag} />
+                <Paginations forcePage={searchObject.pageIndex - 1} pageCount={response.pageCount} handlePageClick={handleChangePag} />
             </div>
             {!!openDeleteBlog && (
                 <DialogConfirm

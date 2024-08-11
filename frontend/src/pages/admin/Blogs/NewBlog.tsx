@@ -135,9 +135,7 @@ const NewBlog = () => {
 	}
 	return (
 		<div className="">
-			<div className="mb-3 flex justify-end">
-				<Link to="/admin/blogs"><Button className=""> <IoMdArrowRoundBack size={20} className="pr-1" />Quay lại</Button></Link>
-			</div>
+
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
