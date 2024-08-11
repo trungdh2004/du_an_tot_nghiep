@@ -29,12 +29,12 @@ const sidebarConfig: any[] = [
 				isVisible: true,
 				label: "Danh sách",
 			},
-			{
-				path: "/staff",
-				icon: FaUsersCog,
-				isVisible: true,
-				label: "Danh sách nhân viên",
-			},
+			// {
+			// 	path: "/staff",
+			// 	icon: FaUsersCog,
+			// 	isVisible: true,
+			// 	label: "Danh sách nhân viên",
+			// },
 		],
 	},
 	,
