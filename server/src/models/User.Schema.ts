@@ -12,6 +12,10 @@ const UserSchema = new mongoose.Schema(
     full_name: {
       type: String,
     },
+    point:{
+      type:Number,
+      default:0
+    },
     email: {
       type: String,
       required: true,
@@ -59,6 +63,10 @@ const UserSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    is_shipper:{
+      type: Boolean,
+      default: false,
+    }
   },
   {
     timestamps: true,

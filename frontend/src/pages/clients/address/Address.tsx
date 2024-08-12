@@ -202,7 +202,7 @@ const Address = (props: Props) => {
 										<FormLabel className="">Xã, Huyện, Thành phố </FormLabel>
 										<AddressLocation
 											field={field}
-											citys={citys}
+											citys={citys || []}
 											districts={districts}
 											commune={commune}
 											iCity={form.watch("city")}
@@ -224,7 +224,7 @@ const Address = (props: Props) => {
 							render={({ field }) => {
 								return (
 									<FormItem className="">
-										<div className="w-full h-[240px]">
+										<div className="w-full h-[240px] border">
 											<MapSearchLocation
 												height="240px"
 												query={query}

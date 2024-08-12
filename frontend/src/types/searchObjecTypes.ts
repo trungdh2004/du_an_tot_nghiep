@@ -8,8 +8,8 @@ export interface SearchObjectType {
 }
 
 export interface SearchObjectTypeSize extends SearchObjectType {
-	height:number | null;
-	weight:number | null;
+	height: number | null;
+	weight: number | null;
 }
 
 
