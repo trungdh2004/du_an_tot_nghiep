@@ -29,12 +29,12 @@ const sidebarConfig: any[] = [
 				isVisible: true,
 				label: "Danh sách",
 			},
-			{
-				path: "/staff",
-				icon: FaUsersCog,
-				isVisible: true,
-				label: "Danh sách nhân viên",
-			},
+			// {
+			// 	path: "/staff",
+			// 	icon: FaUsersCog,
+			// 	isVisible: true,
+			// 	label: "Danh sách nhân viên",
+			// },
 		],
 	},
 	,
@@ -65,7 +65,7 @@ const sidebarConfig: any[] = [
 			},
 		],
 	},
-	
+
 	{
 		path: "/color",
 		isVisible: true,
@@ -80,17 +80,24 @@ const sidebarConfig: any[] = [
 		isAdmin: false,
 		children: [
 			{
+				path: "/",
+				icon: LuLayoutDashboard,
+				isVisible: true,
+				label: "Danh sách bài viết",
+			},
+			{
 				path: "/new-blog",
 				icon: MdOutlinePostAdd,
 				isVisible: true,
 				label: "Tạo bài viết",
 			},
 			{
-				path: "/",
-				icon: LuLayoutDashboard,
+				path: "/my-blogs",
+				icon: MdOutlinePostAdd,
 				isVisible: true,
-				label: "Danh sách bài viết",
+				label: "Bài viết của tôi",
 			},
+
 		],
 	},
 	{

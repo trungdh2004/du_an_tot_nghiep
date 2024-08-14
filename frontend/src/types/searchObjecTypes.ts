@@ -1,9 +1,9 @@
 export interface SearchObjectType {
 	pageIndex: number;
 	pageSize: number;
-	keyword?: string | null;
-	fieldSort?: string | null;
-	sort?: 1 | -1;
+	keyword: string | null;
+	fieldSort: string | null;
+	sort: 1 | -1;
 	tab?: number;
 }
 
@@ -17,6 +17,10 @@ export interface SearchObjectTypeProduct extends SearchObjectType {
 	min: number | null;
 	max: number | null;
 	category: string | null;
-	color:string[];
-	size:string[]
+	color: string[];
+	size: string[]
+}
+export interface SearchObjectBlog extends SearchObjectType {
+	tab?: number
+	tags: string
 }
