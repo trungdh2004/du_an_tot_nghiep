@@ -10,10 +10,8 @@ type Props = {
     open?: boolean,
 }
 const Attribute = ({ dataColor, dataSize }: Props) => {
-    console.log("Attribute", dataColor);
     const [size, setSize] = useState<ISize>();
     const [color, setColor] = useState<IColor>();
-    console.log(color)
     const handleChangeSize = (size: ISize) => {
         setSize(size);
     }
@@ -33,9 +31,6 @@ const Attribute = ({ dataColor, dataSize }: Props) => {
                             <div className="flex gap-3 items-center">
                                 {dataColor.map((color: any, index: number) => {
                                     return (
-                                        // <button key={color?.colorId}>{color.colorName}</button>
-                                        // <button style={{ background: color.colorCode }} onClick={() => handleChangeColor(color.colorName)}
-                                        //     className="lg:w-[65px] lg:h-[25px] w-[40px] h-[15px] bg-red-500 rounded-full align-middle select-none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs   text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none"></button>
                                         <LabelChecked
                                             isOneChecked
                                             value={color.colorId}
@@ -67,9 +62,6 @@ const Attribute = ({ dataColor, dataSize }: Props) => {
                                         >
                                             {size.sizeName}
                                         </LabelChecked>
-                                        // <button key={size.sizeId} className="lg:w-full rounded-[7px] border-2 border-gray-300 inline-block bg-primary-100 text-xs font-medium uppercase leading-normal text-primary-700 transition ease-in-out hover:bg-primary-accent-200 focus:bg-primary-accent-200 focus:outline-none focus:ring-0 active:bg-primary-accent-200 motion-reduce:transition-none dark:bg-primary-300 dark:hover:bg-primary-400 dark:focus:bg-primary-400 dark:active:bg-primary-400 py-1 duration-200 lg:text-[14px] text-[10px]">
-                                        //     {size.sizeName}
-                                        // </button>
                                     )
                                 })}
                             </div>
