@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import {
   loginFormValidation,
   registerForm,
@@ -14,13 +14,13 @@ import RefreshTokenModel from "../models/RefreshToken";
 import sendToMail from "../mail/mailConfig";
 import OtpModel from "../models/Otp.schema";
 import { IUser, RequestModel } from "../interface/models";
-import { ObjectId } from "mongoose";
 import { TYPEBLOCKED } from "../utils/confirm";
 
 interface PayloadToken {
   id: any;
   email: string;
   is_admin: boolean;
+  is_staff: boolean;
 }
 
 interface ResponseData extends Response {
@@ -89,32 +89,15 @@ class AuthController {
         id: existingEmail._id,
         email: existingEmail.email,
         is_admin: existingEmail.is_admin,
+        is_staff: existingEmail.is_staff
       });
       const refreshToken = await this.generateRefreshToken({
         id: existingEmail._id,
         email: existingEmail.email,
         is_admin: existingEmail.is_admin,
+        is_staff: existingEmail.is_staff
       });
-      // const existingRefreshToken = await RefreshTokenModel.findOne({
-      //   userId: existingEmail._id,
-      // });
-
-      // if (!existingRefreshToken) {
-      //   await RefreshTokenModel.create({
-      //     userId: existingEmail._id,
-      //     token: refreshToken,
-      //   });
-      // } else {
-      //   await RefreshTokenModel.findOneAndUpdate(
-      //     {
-      //       userId: existingEmail._id,
-      //     },
-      //     {
-      //       token: refreshToken,
-      //     }
-      //   );
-      // }
-
+     
       res.cookie("token", refreshToken, {
         maxAge: 1000 * 60 * 24 * 60 * 60,
         httpOnly: true,
@@ -208,32 +191,14 @@ class AuthController {
           id: existingEmail._id,
           email: existingEmail.email,
           is_admin: existingEmail.is_admin,
+          is_staff: existingEmail.is_staff
         });
         const refreshToken = await this.generateRefreshToken({
           id: existingEmail._id,
           email: existingEmail.email,
           is_admin: existingEmail.is_admin,
+          is_staff: existingEmail.is_staff
         });
-
-        // const existingRefreshToken = await RefreshTokenModel.findOne({
-        //   userId: existingEmail._id,
-        // });
-
-        // if (!existingRefreshToken) {
-        //   await RefreshTokenModel.create({
-        //     userId: existingEmail._id,
-        //     token: refreshToken,
-        //   });
-        // } else {
-        //   await RefreshTokenModel.findOneAndUpdate(
-        //     {
-        //       userId: existingEmail._id,
-        //     },
-        //     {
-        //       token: refreshToken,
-        //     }
-        //   );
-        // }
 
         res.cookie("token", refreshToken, {
           maxAge: 1000 * 60 * 24 * 60,
@@ -261,31 +226,16 @@ class AuthController {
         id: newUser._id,
         email: newUser.email,
         is_admin: newUser.is_admin,
+        is_staff: newUser.is_staff
+
       });
       const refreshToken = await this.generateRefreshToken({
         id: newUser._id,
         email: newUser.email,
         is_admin: newUser.is_admin,
-      });
-      const existingRefreshToken = await RefreshTokenModel.findOne({
-        userId: newUser._id,
-      });
+        is_staff: newUser.is_staff
 
-      if (!existingRefreshToken) {
-        await RefreshTokenModel.create({
-          userId: newUser._id,
-          token: refreshToken,
-        });
-      } else {
-        await RefreshTokenModel.findOneAndUpdate(
-          {
-            userId: newUser._id,
-          },
-          {
-            token: refreshToken,
-          }
-        );
-      }
+      });
 
       res.cookie("token", refreshToken, {
         maxAge: 1000 * 60 * 24 * 60,
@@ -318,35 +268,33 @@ class AuthController {
         process.env.SECRET_REFRESHTOKEN!,
         async (err: VerifyErrors | null, data?: object | string) => {
           if (err) {
-            return res.status(STATUS.AUTHENTICATOR).json({
-              message: "Token đã hết hạn mời bạn đăng nhập lại",
+            let message = "Lỗi token";
+
+            if (err.message === "invalid token") {
+              message = "Token không hợp lệ";
+            }
+            if (err.message === "jwt expired") {
+              message = "Token đã hết hạn";
+            }
+  
+            return res.status(STATUS.AUTHORIZED).json({
+              message: message,
             });
           }
           if (!data) {
             return;
           }
 
-          // const refreshTokenDb = await RefreshTokenModel.findOne({
-          //   userId: (data as PayloadToken).id as ObjectId,
-          //   token: refreshToken,
-          // });
-
-          // if (!refreshTokenDb) {
-          //   return res.status(STATUS.AUTHENTICATOR).json({
-          //     message: "Mời bạn đăng nhập lại",
-          //   });
-          // }
           const payload = {
             id: (data as PayloadToken).id,
             email: (data as PayloadToken).email,
             is_admin: (data as PayloadToken).is_admin,
+            is_staff: (data as PayloadToken).is_staff
           };
 
           const newAccessToken = await this.generateAccessToken(payload);
           const newRefreshToken = await this.generateRefreshToken(payload);
-          // await RefreshTokenModel.findByIdAndUpdate(refreshTokenDb._id, {
-          //   token: newRefreshToken,
-          // });
+  
           res.cookie("token", newRefreshToken, {
             maxAge: 24 * 60 * 60 * 1000 * 60,
             httpOnly: true,

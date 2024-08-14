@@ -1,3 +1,6 @@
+import { TypeObjectCategory } from "./TypeObjectCategory";
+import { SizeTypes } from "./typeSize";
+
 export interface IColor {
 	name: string;
 	code: string;
@@ -5,9 +8,17 @@ export interface IColor {
 }
 
 export interface IAttribute {
-	color: string;
-	size: string;
-	price: string;
+	color: IColor | string;
+	size: SizeTypes | string;
+	price: number;
+	quantity: number;
+	discount: number;
+}
+
+export interface IItemListColor {
+	color: IColor | null;
+	size: IColor | null;
+	price: number;
 	quantity: number;
 	discount: number;
 }
@@ -18,9 +29,14 @@ export interface IProduct {
 	discount: number;
 	thumbnail: string;
 	images: { url: string }[];
-	category: string;
+	category: TypeObjectCategory | string;
 	description: string;
 	_id?: string;
-	featured: boolean;
+	featured?: boolean;
 	attributes: IAttribute[];
+	createdAt?:string;
+	updatedAt?:string;
+	is_deleted?: boolean;
+	quantity?: number;
+	quantitySold?: number;
 }

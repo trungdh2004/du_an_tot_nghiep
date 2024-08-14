@@ -6,6 +6,7 @@ import TestComponent from "@/pages/clients/Test";
 import BlogPage from "@/pages/clients/blogs/BLogPage";
 import HomePage from "@/pages/clients/home/page";
 import BlogDetail from "@/pages/clients/blogs/BlogDetail";
+import DetailProduct from "@/pages/clients/detail-home/page";
 
 const MainRouter = [
 	{
@@ -13,11 +14,11 @@ const MainRouter = [
 		element: <MainLayout />,
 		children: [
 			{ path: "", element: <HomePage /> },
+			{ path: "/shop/detail/:slug", element: <DetailProduct /> },
 			{ path: "address", element: <Address /> },
 			{ path: "blogs", element: <BlogPage /> },
 			{ path: "blogDetail/:id", element: <BlogDetail /> },
 			{ path: "table", element: <UserIndex /> },
-			{ path: "testComponent", element: <TestComponent /> },
 			{ path: "*", element: <NotFound /> },
 		],
 	},

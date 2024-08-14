@@ -51,6 +51,7 @@ const BlogDetail = () => {
                 <div className="mb-3 flex justify-end">
                     <Link to="/admin/blogs"><Button className=""> <IoMdArrowRoundBack size={20} className="pr-1" />Quay lại</Button></Link>
                 </div>
+
                 {/* title */}
                 <h3 className="text-3xl font-bold text-[#222222] mt-5">{blog?.title}</h3>
                 {/* user-information */}
@@ -85,6 +86,7 @@ const BlogDetail = () => {
                         #tag
                     </div>
                 </div>
+
 
             </div>
         </>

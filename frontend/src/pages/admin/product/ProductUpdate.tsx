@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -22,33 +23,33 @@ import { cn } from "@/lib/utils";
 import { uploadFileService, uploadMultipleFileService } from "@/service/upload";
 import { useProcessBarLoading } from "@/store/useSidebarAdmin";
 import ImageUploading, { ImageListType } from "react-images-uploading";
-import { CiCircleMinus, CiCirclePlus } from "react-icons/ci";
-import { Textarea } from "@/components/ui/textarea";
+import { CiCirclePlus } from "react-icons/ci";
 import { getAllCategory } from "@/service/category-admin";
 import { getAllSize } from "@/service/size-admin";
-import instance from "@/config/instance";
-import { IColor, IProduct } from "@/types/typeProduct";
+import { IColor, IItemListColor, IProduct } from "@/types/typeProduct";
 import { MdDeleteForever } from "react-icons/md";
 import FroalaEditor from "@/components/common/Froala";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { addProduct, getProductById, updateProductById } from "@/service/product";
+import { getProductById, updateProductById } from "@/service/product";
 import { useNavigate, useParams } from "react-router-dom";
-
+import SelectComponent from "@/components/common/SelectComponent";
 import Select from "react-select";
-import { customStyles } from "@/styles/customStyle";
 import { getAllColor } from "@/service/color";
+import { ISize } from "@/types/variants";
+import { ICategory } from "@/types/category";
 
 const formSchema = z.object({
 	name: z.string().nonempty("Nhập tên sản phẩm"),
-	price: z.number().min(1, "Phải lớn hơn 0"),
+	price: z.string().min(1, "Phải lớn hơn 0"),
 	description: z.string().nonempty("Nhập mô tả sản phẩm"),
-	discount: z.number().min(1, "Phải lớn hơn 0"),
+	discount: z.string().min(1, "Phải lớn hơn 0"),
 	category: z
 		.object({
 			_id: z.string(),
 			name: z.string(),
 		})
+		.nullable()
 		.refine(
 			(data) => {
 				if (!data?._id) return false;
@@ -65,9 +66,12 @@ const formSchema = z.object({
 					.object({
 						_id: z.string().nonempty("Bạn chưa nhập loại sản phẩm"),
 						name: z.string(),
+						code: z.string(),
 					})
+					.nullable()
 					.refine(
 						(data) => {
+							if (!data) return false;
 							if (!data?._id) return false;
 							return true;
 						},
@@ -79,9 +83,10 @@ const formSchema = z.object({
 					.object({
 						_id: z.string().nonempty("Bạn chưa nhập loại sản phẩm"),
 						name: z.string(),
-					})
+					}).nullable()
 					.refine(
 						(data) => {
+							if (!data) return false;
 							if (!data?._id) return false;
 							return true;
 						},
@@ -92,13 +97,14 @@ const formSchema = z.object({
 				price: z.number().min(1, "Phải lớn hơn 0"),
 				quantity: z.number().min(1, "Phải lớn hơn 0"),
 				discount: z.number().min(1, "Phải lớn hơn 0"),
+				_id: z.string().nullable()
 			}),
 		)
 		.refine(
 			(arr) => {
 				// const prices = arr.map((item) => item.price);
 				const combinations = arr.map(
-					(item) => `${item.color._id}-${item.size._id}`,
+					(item) => `${item?.color?._id}-${item?.size?._id}`,
 				);
 				return new Set(combinations).size === combinations.length;
 			},
@@ -139,24 +145,19 @@ const ProductUpdate = () => {
 				_id: "",
 				name: "",
 			},
-			price: 0,
-			discount: 0,
+			price: "",
+			discount: "",
 			featured: false,
 			description: "",
 			thumbnail: "",
 			attributes: [
 				{
-					size: {
-						_id: "",
-						name: "",
-					},
-					color: {
-						_id: "",
-						name: "",
-					},
+					size: null,
+					color: null,
 					price: 0,
 					quantity: 0,
 					discount: 0,
+					_id: null
 				},
 			],
 			images: [],
@@ -174,7 +175,7 @@ const ProductUpdate = () => {
 	const [color, setColor] = useState([]);
 	const [isPending, setIsPending] = useState(false);
 	const { mutate } = useMutation({
-		mutationFn: (value: IProduct) => updateProductById(id as string,value),
+		mutationFn: (value: IProduct) => updateProductById(id as string, value),
 		onSuccess: () => {
 			toast.success("Chỉnh sửa sản phẩm thành công");
 			form.reset();
@@ -208,8 +209,8 @@ const ProductUpdate = () => {
 				form.reset({
 					category: data.data.category,
 					name: data.data.name,
-					price: +data.data.price,
-					discount: +data.data.discount,
+					price: data.data.price.toString(),
+					discount: data.data.discount.toString(),
 					thumbnail: data.data.thumbnail,
 					images: data.data.images,
 					attributes: data.data.attributes,
@@ -255,17 +256,21 @@ const ProductUpdate = () => {
 			const images = [...listImageNotFile, ...listImage];
 			const attribute = values.attributes?.map((attribute) => ({
 				...attribute,
-				color: attribute.color._id,
-				size: attribute.size._id,
+				color: attribute.color?._id as string,
+				size: attribute.size?._id as string,
 			}));
 			const data = {
 				...values,
 				images,
-				category: values.category._id,
+				category: values.category?._id,
 				attributes: attribute,
+				price: +values.price,
+				discount: +values.discount,
 			};
-			mutate(data);
+			mutate(data as IProduct);
 		} catch (error) {
+			console.log("error", error);
+
 			toast.error("Chỉnh sửa sản phẩm xảy ra lỗi");
 		}
 	};
@@ -288,28 +293,29 @@ const ProductUpdate = () => {
 		}
 	};
 
-	const listColor = form.watch("attributes") ? form.watch("attributes")?.reduce(
-		(acc:IColor[], item) => {
-			if(!item.color._id) return acc
-			let group = acc.find((g) => g._id === (item.color as IColor)?._id);
+	const listColor = form.watch("attributes")
+		? form.watch("attributes")?.reduce((acc: IColor[], item: IItemListColor) => {
+			if (!item.color) return acc;
+
+			let group = acc.find((g) => item.color && g._id === item.color._id as string);
+
 			if (!group) {
 				group = {
-					_id: (item.color as IColor)._id as string,
-					name: (item.color as IColor).name as string,
-					code: (item.color as IColor).code as string,
+					_id: item.color._id as string,
+					name: item.color.name as string,
+					code: item.color.code as string,
 				};
 				acc.push(group);
 				return acc;
 			}
 			return acc;
-		},
-		[],
-	) : []
-	
+		}, [])
+		: [];
+
 	return (
 		<div>
-			<h4 className="font-medium text-xl">Chỉnh sửa sản phẩm</h4>
-			
+			<h4 className="font-medium text-xl">Thêm mới sản phẩm</h4>
+
 			<div className="w-full gap-5 grid lg:grid-cols-12 mt-4">
 				<Form {...form}>
 					<form
@@ -330,7 +336,7 @@ const ProductUpdate = () => {
 													<Input
 														placeholder="Tên sản phẩm"
 														{...field}
-														// onChange={(e) => setName(e.target.value)}
+													// onChange={(e) => setName(e.target.value)}
 													/>
 												</FormControl>
 
@@ -350,10 +356,10 @@ const ProductUpdate = () => {
 												<FormControl>
 													<Input
 														placeholder="Giá sản phẩm"
-														type="number"
 														{...field}
 														onChange={(event) => {
-															return field.onChange(+event.target.value);
+															const numericValue = event.target.value.replace(/[^0-9]/g, '');
+															return field.onChange(numericValue);
 														}}
 													/>
 												</FormControl>
@@ -373,16 +379,16 @@ const ProductUpdate = () => {
 											<FormItem>
 												<FormLabel>Danh mục</FormLabel>
 												<FormControl>
-													<Select
-														options={categorys}
-														{...field}
-														classNamePrefix="react-select"
-														getOptionLabel={(option) => option.name}
-														getOptionValue={(option) => option._id}
-														onChange={(values: any) => {
-															field.onChange(values);
-															form.clearErrors("category");
+													<SelectComponent<ICategory>
+														value={field.value}
+														onChange={(newValue: ICategory, action) => {
+															field.onChange(newValue);
+															form.clearErrors(`category`);
 														}}
+														placeholder="Kích thước"
+														options={categorys}
+														getOptionLabel={(option) => option.name}
+														getOptionValue={(option) => option?._id as string}
 													/>
 												</FormControl>
 												<FormMessage className="text-xs" />
@@ -400,12 +406,12 @@ const ProductUpdate = () => {
 												<FormLabel>Giảm giá</FormLabel>
 												<FormControl>
 													<Input
-														placeholder="Giảm giá sản phẩm"
-														type="number"
+														placeholder="Giá sản phẩm"
 														{...field}
-														onChange={(event) =>
-															field.onChange(+event.target.value)
-														}
+														onChange={(event) => {
+															const numericValue = event.target.value.replace(/[^0-9]/g, '');
+															return field.onChange(numericValue);
+														}}
 													/>
 												</FormControl>
 
@@ -523,7 +529,7 @@ const ProductUpdate = () => {
 															onChange={async (imageList: ImageListType) => {
 																try {
 																	setImages(imageList);
-																	form.setValue("images", imageList || []);
+																	field.onChange(imageList);
 																	if (imageList.length > 0) {
 																		form.clearErrors("images");
 																	}
@@ -632,19 +638,18 @@ const ProductUpdate = () => {
 														render={({ field }) => (
 															<FormItem className="flex w-full flex-col">
 																<FormLabel>Kích thước</FormLabel>
-																<Select
-																	options={size}
-																	{...field}
-																	styles={customStyles}
-																	classNamePrefix="react-select"
-																	getOptionLabel={(option) => option.name}
-																	getOptionValue={(option) => option._id}
-																	onChange={(values: any) => {
-																		field.onChange(values);
+																<SelectComponent<ISize>
+																	value={field.value}
+																	onChange={(newValue: ISize, action) => {
+																		field.onChange(newValue);
 																		form.clearErrors(
 																			`attributes.${index}.size`,
 																		);
 																	}}
+																	placeholder="Kích thước"
+																	options={size}
+																	getOptionLabel={(option) => option.name}
+																	getOptionValue={(option) => option?._id as string}
 																/>
 																<FormMessage className="text-xs" />
 															</FormItem>
@@ -658,17 +663,22 @@ const ProductUpdate = () => {
 															render={({ field }) => (
 																<FormItem className="flex w-full flex-col">
 																	<FormLabel>Màu</FormLabel>
-																	<Select
+																	<SelectComponent<IColor>
+																		value={field.value}
+																		onChange={(newValue: IColor, action) => {
+																			field.onChange(newValue);
+																			form.clearErrors(
+																				`attributes.${index}.color`,
+																			);
+																		}}
+																		placeholder="Màu"
 																		options={color}
-																		{...field}
-																		styles={customStyles}
-																		classNamePrefix="react-select"
 																		getOptionLabel={(option) => {
 																			return (
 																				<div className="w-full flex items-center justify-between">
 																					{option.name}{" "}
 																					<p
-																						className="w-2 h-2 rounded-full"
+																						className="w-2 h-2 rounded-full ml-1"
 																						style={{
 																							backgroundColor: option.code,
 																						}}
@@ -676,13 +686,9 @@ const ProductUpdate = () => {
 																				</div>
 																			);
 																		}}
-																		getOptionValue={(option) => option._id}
-																		onChange={(values: any) => {
-																			field.onChange(values);
-																			form.clearErrors(
-																				`attributes.${index}.color`,
-																			);
-																		}}
+																		getOptionValue={(option) =>
+																			option?._id as string
+																		}
 																	/>
 																	<FormMessage className="text-xs" />
 																</FormItem>
@@ -780,11 +786,12 @@ const ProductUpdate = () => {
 											type="button"
 											onClick={() =>
 												append({
-													size: "",
-													color: "",
+													size: null,
+													color: null,
 													price: 0,
 													quantity: 0,
 													discount: 0,
+													_id: null
 												})
 											}
 										>
@@ -821,13 +828,10 @@ const ProductUpdate = () => {
 
 							<Button
 								type="submit"
-								disabled={isPending}
+								disabled={isPending || previewUrl.isLoading}
 								className="mt-4"
-								onClick={() => {
-									console.log("error:", form.formState.errors);
-								}}
 							>
-								Thêm sản phẩm
+								Chỉnh sửa sản phẩm
 							</Button>
 						</div>
 					</form>
@@ -850,19 +854,16 @@ const ProductUpdate = () => {
 							<div className="flex items-center justify-start -space-x-1 *:size-3 *:inline-block  *:rounded-full my-1.5">
 								{listColor?.map((item) => (
 									<span
-									style={{ background: item.code }}
-									className="box-shadow border border-black/40"
-								></span>
+										style={{ background: item.code }}
+										className="box-shadow border border-black/40"
+									></span>
 								))}
-								
 							</div>
 							<div className="flex items-center justify-between">
 								<span className="text-sm font-medium text-red-500">
 									{form.watch("price") || 0} đ
 								</span>
-								<span className="text-xs">
-									Đã bán : 0
-								</span>
+								<span className="text-xs">Đã bán : 0</span>
 							</div>
 						</div>
 					</div>

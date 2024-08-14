@@ -8,17 +8,20 @@ const sidebarConfig: any[] = [
 		path: "",
 		icon: LuLayoutDashboard,
 		isVisible: true,
+		isAdmin: false,
 		label: "Thống kê",
 	},
 	{
 		path: "/category",
 		isVisible: true,
+		isAdmin: false,
 		label: "Danh mục",
 	},
 	{
 		path: "/users",
 		isVisible: true,
 		label: "Người dùng",
+		isAdmin: false,
 		children: [
 			{
 				path: "",
@@ -26,12 +29,12 @@ const sidebarConfig: any[] = [
 				isVisible: true,
 				label: "Danh sách",
 			},
-			{
-				path: "/staff",
-				icon: FaUsersCog,
-				isVisible: true,
-				label: "Danh sách nhân viên",
-			},
+			// {
+			// 	path: "/staff",
+			// 	icon: FaUsersCog,
+			// 	isVisible: true,
+			// 	label: "Danh sách nhân viên",
+			// },
 		],
 	},
 	,
@@ -39,11 +42,14 @@ const sidebarConfig: any[] = [
 		path: "/tags",
 		isVisible: true,
 		label: "Nhãn",
+		isAdmin: false,
+
 	},
 	{
 		path: "/product",
 		isVisible: true,
 		label: "Sản phẩm",
+		isAdmin: false,
 		children: [
 			{
 				path: "/",
@@ -59,34 +65,19 @@ const sidebarConfig: any[] = [
 			},
 		],
 	},
-	{
-		path: "/product",
-		isVisible: true,
-		label: "Sản phẩm",
-		children: [
-			{
-				path: "/",
-				icon: LuLayoutDashboard,
-				isVisible: true,
-				label: "Danh sách sản phẩm",
-			},
-			{
-				path: "/add",
-				icon: LuLayoutDashboard,
-				isVisible: true,
-				label: "Thêm sản phẩm",
-			},
-		],
-	},
+
 	{
 		path: "/color",
 		isVisible: true,
 		label: "Màu sắc",
+		isAdmin: false,
+
 	},
 	{
 		path: "/blogs",
 		isVisible: true,
 		label: "Bài viết",
+		isAdmin: false,
 		children: [
 			{
 				path: "/",
@@ -101,43 +92,28 @@ const sidebarConfig: any[] = [
 				label: "Tạo bài viết",
 			},
 			{
-				path: "/",
-				icon: LuLayoutDashboard,
+				path: "/my-blogs",
+				icon: MdOutlinePostAdd,
 				isVisible: true,
-				label: "Danh sách bài viết",
+				label: "Bài viết của tôi",
 			},
+
 		],
 	},
 	{
 		path: "/size",
 		isVisible: true,
 		label: "Kích thước",
+		isAdmin: false,
 	},
 	{
-		path: "",
+		path: "/revenue",
 		icon: LuLayoutDashboard,
 		isVisible: true,
-		label: "Thống kê",
-	},
-	{
-		path: "/user",
-		isVisible: true,
-		label: "Người dùng",
-		children: [
-			{
-				path: "",
-				icon: FaUsers,
-				isVisible: true,
-				label: "Danh sách",
-			},
-			{
-				path: "/staff",
-				icon: FaUsersCog,
-				isVisible: true,
-				label: "Danh sách nhân viên",
-			},
-		],
-	},
+      label: "Doanh thu",
+		isAdmin: true,
+  }
+
 ];
 
 

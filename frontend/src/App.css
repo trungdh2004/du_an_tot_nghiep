@@ -58,6 +58,16 @@ header .sub-menu::after {
 	background-color: transparent;
 }
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+	display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+}
 .progress {
 	animation: progress 1s infinite linear;
 }
@@ -170,4 +180,19 @@ header .sub-menu::after {
 
 .mapboxgl-control-container {
 	display: none;
+
+}
+.selection-box-tick::before {
+	border: 30px solid transparent;
+	border-bottom: 30px solid #3b82f6;
+	bottom: 0;
+	content: "";
+	position: absolute;
+	right: -40px;
+}
+[contenteditable="true"]:empty:before {
+	content: attr(data-placeholder);
+	pointer-events: none;
+	display: block; /* For Firefox */
+	color: #aaa;
 }

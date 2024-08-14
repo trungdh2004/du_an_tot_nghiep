@@ -306,7 +306,7 @@ const SizeIndex = () => {
 						)}
 						<Button
 							onClick={() => setOpenId(true)}
-							className="bg-blue-500 text-[#ffffff] hover:bg-blue-400 w-full border"
+							className=" bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
 						>
 							Thêm kích thước
 						</Button>

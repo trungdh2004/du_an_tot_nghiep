@@ -9,12 +9,20 @@ import { RequestModel } from "../../interface/models";
 import { generateSlugs } from "../../middlewares/generateSlug";
 import { Types } from "mongoose";
 import { formatDataPaging } from "../../common/pagingData";
+import CartItemModel from "../../models/cart/CartItem.schema";
 
 const ObjectId = require("mongoose").Types.ObjectId;
 
 interface RowIColor {
   colorId: string;
   colorName: string;
+  list: IAttribute[];
+  quantity: number;
+  colorCode: string;
+}
+interface RowISize {
+  sizeId: string;
+  sizeName: string;
   list: IAttribute[];
   quantity: number;
 }
@@ -47,6 +55,11 @@ class ProductController {
         attributes
       );
 
+
+      const quantity = dataAttributes.reduce((acc, item) => {
+        return acc + item.quantity
+      },0)
+
       const product = await ProductModel.create({
         name,
         price,
@@ -57,6 +70,7 @@ class ProductController {
         quantitySold,
         images,
         featured,
+        quantity,
         attributes: dataAttributes?.map((item) => item._id),
       });
 
@@ -74,13 +88,15 @@ class ProductController {
   // client
   async showProductById(req: RequestModel, res: Response) {
     try {
-      const { id } = req.params;
-      if (!id)
+      const { slug } = req.params;
+      if (!slug)
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn chưa chọn sản phẩm",
         });
 
-      const product = await ProductModel.findById(id)
+      const product = await ProductModel.findOne({
+        slug:slug
+      })
         .populate([
           {
             path: "attributes",
@@ -120,6 +136,7 @@ class ProductController {
               colorName: (item.color as IColor).name as string,
               list: [item],
               quantity: item.quantity,
+              colorCode:(item.color as IColor).code as string,
             };
             acc.push(group);
             return acc;
@@ -134,11 +151,25 @@ class ProductController {
       );
 
       const listSize = (product?.attributes as IAttribute[])?.reduce(
-        (acc: string[], item) => {
-          const check = acc.find((row) => row === (item.size as ISize)._id);
-          if (check) return acc;
-          acc.push((item.size as ISize)._id as string);
+        (acc: RowISize[], item) => {
+          let group = acc.find(
+            (g) => g.sizeId === (item.size as ISize)?._id
+          );
+          // Nếu nhóm không tồn tại, tạo nhóm mới
+          if (!group) {
+            group = {
+              sizeId: (item.size as ISize)._id as string,
+              sizeName: (item.size as ISize).name as string,
+              list: [item],
+              quantity: item.quantity,
+            };
+            acc.push(group);
+            return acc;
+          }
 
+          // Thêm đối tượng vào nhóm tương ứng
+          group.list.push(item);
+          group.quantity = group.quantity + item.quantity;
           return acc;
         },
         []
@@ -184,12 +215,20 @@ class ProductController {
         attributes = [],
       } = req.body;
 
+
       const existingProduct = await ProductModel.findById(id);
+
 
       if (!existingProduct)
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có sản phẩm thỏa mãn",
         });
+
+      let slugProduct = existingProduct.slug
+
+      if(existingProduct.name.toLocaleLowerCase() !== name.toLocaleLowerCase()) {
+        slugProduct = generateSlugs(name)
+      }
 
       const listNew = attributes.filter((item: IAttribute) => !item._id);
       const listToId = attributes?.filter((item: IAttribute) => item._id);
@@ -226,7 +265,10 @@ class ProductController {
 
       if (listNew.length > 0) {
         const listNewAttributes = await AttributeModel.create<IAttribute[]>(
-          listNew
+          listNew.map((item:IAttribute) => {
+            const {_id,...value} = item;
+            return value
+          })
         );
         dataAttributes = [
           ...dataAttributes,
@@ -240,6 +282,10 @@ class ProductController {
         });
       }
 
+      const quantity = attributes.reduce((acc:number, item:IAttribute) => {
+        return acc + item.quantity
+      },0)
+      
       const newProduct = await ProductModel.findByIdAndUpdate(
         existingProduct?._id,
         {
@@ -250,9 +296,10 @@ class ProductController {
           thumbnail,
           category,
           quantitySold,
+          quantity,
           images,
           attributes: dataAttributes,
-          slug: generateSlugs(name),
+          slug: slugProduct,
         },
         { new: true }
       ).populate([
@@ -360,6 +407,10 @@ class ProductController {
         is_deleted: true,
       });
 
+      await CartItemModel.deleteOne({
+        product:existingProduct._id,
+      })
+
       return res.status(STATUS.OK).json({
         message: "Ẩn sản phẩm thành công",
       });
@@ -400,6 +451,74 @@ class ProductController {
     }
   }
 
+  async deleteMany(req: RequestModel, res: Response) {
+    try {
+      const { listId, type } = req.body;
+
+      if (!listId || listId.length === 0) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn sản phẩm",
+        });
+      }
+
+      await ProductModel.find({ _id: { $in: listId } }).select("_id");
+
+      const CategoryData = await ProductModel.updateMany(
+        { _id: { $in: listId } },
+        { $set: { is_deleted: true } },
+        { new: true }
+      );
+
+      await CartItemModel.deleteMany({
+        product:{
+          $in: listId
+        }
+      })
+
+      return res.status(STATUS.OK).json({
+        message: "Xóa thành công",
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.kind
+          ? "Có một sản phẩm không có trong dữ liệu"
+          : error.message,
+      });
+    }
+  }
+
+  async unDeleteMany(req: RequestModel, res: Response) {
+    try {
+      const { listId } = req.body;
+
+      if (!listId || listId.length === 0) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn loại sản phẩm",
+        });
+      }
+
+      await ProductModel.find({ _id: { $in: listId } }).select("_id");
+
+      const CategoryData = await ProductModel.updateMany(
+        { _id: { $in: listId } },
+        { $set: { is_deleted: false } },
+        { new: true }
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Khôi phục thành công",
+      });
+    } catch (error: any) {
+      console.log("error", error.kind);
+
+      return res.status(STATUS.INTERNAL).json({
+        message: error.kind
+          ? "Có một sản phẩm không có trong dữ liệu"
+          : error.message,
+      });
+    }
+  }
+
   async pagingProduct(req: RequestModel, res: Response) {
     try {
       const {
@@ -413,7 +532,8 @@ class ProductController {
         category,
         min,
         max,
-        tab
+        tab,
+        rating
       } = req.body;
 
       let limit = pageSize || 10;
@@ -430,16 +550,17 @@ class ProductController {
       let querySort = {};
       let queryCategory = {};
       let queryPrice = {};
-      let queryTab = {}
+      let queryTab = {};
+      let queryRating = {};
 
       if (tab === 2) {
         queryTab = {
-          is_deleted: true
-        }
+          is_deleted: true,
+        };
       } else {
         queryTab = {
-          is_deleted: false
-        }
+          is_deleted: false,
+        };
       }
 
       // attribute
@@ -524,12 +645,16 @@ class ProductController {
         }
       }
 
+      if(rating) {
+
+      }
+
       const listProduct = await ProductModel.find({
         ...queryKeyword,
         ...queryAttribute,
         ...queryCategory,
         ...queryPrice,
-        ...queryTab
+        ...queryTab,
       })
         .sort(querySort)
         .skip(skip)
@@ -548,7 +673,7 @@ class ProductController {
               },
             ],
           },
-          "category"
+          "category",
         ])
         .exec();
 
@@ -557,7 +682,7 @@ class ProductController {
         ...queryAttribute,
         ...queryCategory,
         ...queryPrice,
-        ...queryTab
+        ...queryTab,
       });
 
       const result = formatDataPaging({
