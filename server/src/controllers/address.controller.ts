@@ -49,6 +49,7 @@ class AddressController {
 
   async postAddress(req: RequestModel, res: Response) {
     try {
+
       const { error } = addressValidation.validate(req.body);
 
       if (error) {
@@ -56,6 +57,8 @@ class AddressController {
           message: error.details[0].message,
         });
       }
+
+      let is_main = false
 
       const {
         username,
@@ -82,6 +85,14 @@ class AddressController {
         });
       }
 
+      const countAddress = await AddressModel.countDocuments({
+        user:req.user?.id
+      })
+
+      if(countAddress === 0) {
+        is_main = true
+      }
+
       const newAddress = await AddressModel.create({
         user: existingUser._id,
         username,
@@ -95,6 +106,7 @@ class AddressController {
           coordinates:location
         },
         detailAddress,
+        is_main:is_main
       });
 
       return res.status(STATUS.OK).json({
