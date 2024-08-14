@@ -6,14 +6,13 @@ class UploadController {
     try {
       const file = req.file;
       if (!file) {
-        return res.status(401).json({
+        return res.status(STATUS.BAD_REQUEST).json({
           message: "Message not found",
         });
       }
       return res.status(STATUS.OK).json(file);
     } catch (error: any) {
       // handle error here
-      console.error(error);
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
       });

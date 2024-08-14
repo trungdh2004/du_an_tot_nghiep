@@ -23,6 +23,7 @@ export interface IUser extends MongooseDocument {
   bio: string;
   uid: string;
   provider: string;
+  point:number
 }
 
 export interface RequestModel extends Request {

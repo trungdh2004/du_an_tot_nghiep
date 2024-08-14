@@ -18,6 +18,7 @@ interface RowIColor {
   colorName: string;
   list: IAttribute[];
   quantity: number;
+  colorCode: string;
 }
 interface RowISize {
   sizeId: string;
@@ -135,6 +136,7 @@ class ProductController {
               colorName: (item.color as IColor).name as string,
               list: [item],
               quantity: item.quantity,
+              colorCode:(item.color as IColor).code as string,
             };
             acc.push(group);
             return acc;
@@ -213,12 +215,20 @@ class ProductController {
         attributes = [],
       } = req.body;
 
+
       const existingProduct = await ProductModel.findById(id);
+
 
       if (!existingProduct)
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có sản phẩm thỏa mãn",
         });
+
+      let slugProduct = existingProduct.slug
+
+      if(existingProduct.name.toLocaleLowerCase() !== name.toLocaleLowerCase()) {
+        slugProduct = generateSlugs(name)
+      }
 
       const listNew = attributes.filter((item: IAttribute) => !item._id);
       const listToId = attributes?.filter((item: IAttribute) => item._id);
@@ -255,7 +265,10 @@ class ProductController {
 
       if (listNew.length > 0) {
         const listNewAttributes = await AttributeModel.create<IAttribute[]>(
-          listNew
+          listNew.map((item:IAttribute) => {
+            const {_id,...value} = item;
+            return value
+          })
         );
         dataAttributes = [
           ...dataAttributes,
@@ -268,7 +281,7 @@ class ProductController {
           _id: { $in: listToIdDelete },
         });
       }
-      
+
       const quantity = attributes.reduce((acc:number, item:IAttribute) => {
         return acc + item.quantity
       },0)
@@ -286,7 +299,7 @@ class ProductController {
           quantity,
           images,
           attributes: dataAttributes,
-          slug: generateSlugs(name),
+          slug: slugProduct,
         },
         { new: true }
       ).populate([
