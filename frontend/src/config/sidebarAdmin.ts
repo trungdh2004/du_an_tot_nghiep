@@ -110,10 +110,10 @@ const sidebarConfig: any[] = [
 		path: "/revenue",
 		icon: LuLayoutDashboard,
 		isVisible: true,
-		label: "Doanh thu",
+      label: "Doanh thu",
 		isAdmin: true,
+  }
 
-	}
 ];
 
 

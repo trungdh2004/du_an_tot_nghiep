@@ -27,6 +27,28 @@ import Select from 'react-select';
 import { toast } from 'sonner';
 import { useDebounceCallback } from 'usehooks-ts';
 
+type IBlog = {
+    _id?: string,
+    title: string,
+    content: string,
+    isDeleted: string,
+    createdAt: string,
+    published_at: string,
+    isPublish: boolean,
+    user_id: {
+        avatarUrl?: string,
+        email: string,
+        _id: string,
+        full_name: string,
+    },
+    views_count: number,
+    countLike: number,
+    comments_count: number,
+    thumbnail_url?: string,
+    meta_description: string,
+    tags: string,
+}
+
 const BlogList = () => {
     const [blogs, setBlogs] = useState<IBlog[]>([]);
     const [response, setResponse] = useState<typeResponse>({
@@ -101,6 +123,10 @@ const BlogList = () => {
                 <div className="flex flex-col gap-3 mb-5">
                     <div className="flex justify-between items-center">
                         <h3 className="text-2xl font-semibold">Bài viết</h3>
+                        <Link to="/admin/blogs/new-blog"
+                            className='text-white bg-slate-900 px-5 py-[8px] rounded-xl border border-slate-900 hover:bg-white hover:text-black hover:border hover:border-slate-900 transition-all duration-300'>
+                            Bài viết mới
+                        </Link>
 
                     </div>
                     <div className="flex justify-between items-center gap-3">
@@ -113,6 +139,7 @@ const BlogList = () => {
                         </div>
                         <div className="flex items-center gap-2">
                             <Select
+
                                 className='w-[150px]'
                                 options={tags}
                                 placeholder="Bài viết"
@@ -143,6 +170,7 @@ const BlogList = () => {
                                     sort: 1,
                                     tab: 1,
                                     tags: ""
+
                                 })} className='' variant="destructive"><GrPowerReset size={20} /></Button></div>
                             </TooltipComponent>
                         </div>
@@ -153,6 +181,7 @@ const BlogList = () => {
                 <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger
                         value="1"
+
                         onClick={() => setSearchObject((prev) => ({ ...prev, tab: 1, pageIndex: 1 }))}
 
                     >
@@ -160,6 +189,7 @@ const BlogList = () => {
                     </TabsTrigger>
                     <TabsTrigger
                         value="2"
+
                         onClick={() => { setSearchObject((prev) => ({ ...prev, tab: 2, pageIndex: 1 })) }}
 
                     >
@@ -210,6 +240,7 @@ const BlogList = () => {
 
                                             <div className="flex gap-3">
                                                 <span className="text-[#212B36] text-xs flex items-center gap-1"><FaRegHeart size={16} />{item.countLike}</span>
+
                                                 <span className="text-[#212B36] text-xs flex items-center gap-1"><FaRegComment size={16} />{item.comments_count}</span>
                                                 <span className="text-[#212B36] text-xs flex items-center gap-1"> <FaEye size={16} />{item.views_count}</span>
                                             </div>
@@ -226,6 +257,7 @@ const BlogList = () => {
                 )}
             </div >
             <div className="flex justify-center mt-5">
+
                 <Paginations forcePage={searchObject.pageIndex - 1} pageCount={response.pageCount} handlePageClick={handleChangePag} />
             </div>
             {!!openDeleteBlog && (

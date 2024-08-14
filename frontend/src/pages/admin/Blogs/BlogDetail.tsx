@@ -48,6 +48,9 @@ const BlogDetail = () => {
     return (
         <>
             <div className="w-[900px] mx-auto">
+                <div className="mb-3 flex justify-end">
+                    <Link to="/admin/blogs"><Button className=""> <IoMdArrowRoundBack size={20} className="pr-1" />Quay lại</Button></Link>
+                </div>
 
                 {/* title */}
                 <h3 className="text-3xl font-bold text-[#222222] mt-5">{blog?.title}</h3>
@@ -77,6 +80,13 @@ const BlogDetail = () => {
 
                 </div>
                 {/* Related-blog */}
+                <div className="mt-10">
+                    <h3 className="text-sm text-[#757575] uppercase">Xem cái bài viết theo chủ đề</h3>
+                    <div className="flex">
+                        #tag
+                    </div>
+                </div>
+
 
             </div>
         </>

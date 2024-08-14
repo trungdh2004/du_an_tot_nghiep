@@ -135,7 +135,6 @@ const NewBlog = () => {
 	}
 	return (
 		<div className="">
-
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}

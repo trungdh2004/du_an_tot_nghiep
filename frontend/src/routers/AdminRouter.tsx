@@ -47,12 +47,12 @@ const AdminRouter = [
 				element: <CategoryIndex />,
 			},
 			{
-				path: "product",
-				element: <ProductIndex />,
+				path: "tags",
+				element: <TagIndex />,
 			},
 			{
-				path: "product/add",
-				element: <ProductAddandUpdate />,
+				path: "blogs",
+				element: <BlogList />
 			},
 			{
 				path: "product/update/:id",
@@ -81,7 +81,7 @@ const AdminRouter = [
 			},
 			{
 				path: "color",
-				element: <ColorList />,
+				element: <ColorList />
 			},
 			{
 				path: "blogs",
@@ -91,10 +91,7 @@ const AdminRouter = [
 				path: "blogs/:id/",
 				element: <BlogDetail />,
 			},
-			{
-				path: "blogs/my-blogs",
-				element: <MyBlogs />,
-			},
+			
 		],
 	},
 ];
