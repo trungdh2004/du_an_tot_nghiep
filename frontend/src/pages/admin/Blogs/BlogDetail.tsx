@@ -56,7 +56,8 @@ const BlogDetail = () => {
                     {/*  */}
                     <div className="flex items-center gap-5">
                         <div className="border border-slate-900 w-[50px] h-[50px] rounded-full overflow-hidden">
-                            <img src={blog?.user_id?.avatarUrl || ""}
+
+                            <img src={blog?.user_id?.avatarUrl|| "/avatar_25.jpg"}
                                 className='w-full h-full object-cover' alt="" />
                         </div>
                         <div className="flex-row">
@@ -77,6 +78,13 @@ const BlogDetail = () => {
 
                 </div>
                 {/* Related-blog */}
+
+                <div className="mt-10">
+                    <h3 className="text-sm text-[#757575] uppercase">Xem cái bài viết theo chủ đề</h3>
+                    <div className="flex">
+                        #tag
+                    </div>
+                </div>
 
             </div>
         </>

@@ -1,5 +1,6 @@
 import DialogConfirm from '@/components/common/DialogConfirm';
 import Paginations from '@/components/common/Pagination';
+import SelectComponent from '@/components/common/SelectComponent';
 import { TooltipComponent } from '@/components/common/TooltipComponent';
 import { Button } from '@/components/ui/button';
 import {
@@ -25,6 +26,28 @@ import { Link } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'sonner';
 import { useDebounceCallback } from 'usehooks-ts';
+
+type IBlog = {
+    _id?: string,
+    title: string,
+    content: string,
+    isDeleted: string,
+    createdAt: string,
+    published_at: string,
+    isPublish: boolean,
+    user_id: {
+        avatarUrl?: string,
+        email: string,
+        _id: string,
+        full_name: string,
+    },
+    views_count: number,
+    countLike: number,
+    comments_count: number,
+    thumbnail_url?: string,
+    meta_description: string,
+    tags: string,
+}
 
 const BlogList = () => {
     const [blogs, setBlogs] = useState<IBlog[]>([]);
@@ -183,7 +206,7 @@ const BlogList = () => {
                                     {/* card-content */}
                                     <div className="px-4 pt-2">
                                         <div className="flex items-center gap-1 pb-2">
-                                            <img src={item.user_id?.avatarUrl} className='w-[40px] h-[40px] border-[3px] border-white rounded-full' alt="" />
+                                            <img src={item.user_id?.avatarUrl || "/avatar_25.jpg"} className='w-[40px] h-[40px] border-[3px] border-white rounded-full' alt="" />
                                             <div className="">
                                                 <h3 className="text-sm font-medium">{item.user_id?.full_name}</h3>
                                                 <p className="text-xs text-[#212B36] opacity-50 ">{format(item.published_at || item.createdAt || "", "dd-MM-yyyy")}</p>
@@ -198,6 +221,7 @@ const BlogList = () => {
 
                                             <div className="flex gap-3">
                                                 <span className="text-[#212B36] text-xs flex items-center gap-1"><FaRegHeart size={16} />{item.countLike}</span>
+
                                                 <span className="text-[#212B36] text-xs flex items-center gap-1"><FaRegComment size={16} />{item.comments_count}</span>
                                                 <span className="text-[#212B36] text-xs flex items-center gap-1"> <FaEye size={16} />{item.views_count}</span>
                                             </div>
@@ -214,7 +238,8 @@ const BlogList = () => {
                 )}
             </div >
             <div className="flex justify-center mt-5">
-                <Paginations pageCount={response.pageCount} handlePageClick={handleChangePag} />
+
+                <Paginations forcePage={searchObject.pageIndex - 1} pageCount={response.pageCount} handlePageClick={handleChangePag} />
             </div>
             {!!openDeleteBlog && (
                 <DialogConfirm

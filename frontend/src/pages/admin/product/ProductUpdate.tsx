@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -96,7 +97,7 @@ const formSchema = z.object({
 				price: z.number().min(1, "Phải lớn hơn 0"),
 				quantity: z.number().min(1, "Phải lớn hơn 0"),
 				discount: z.number().min(1, "Phải lớn hơn 0"),
-				_id:z.string().nullable()
+				_id: z.string().nullable()
 			}),
 		)
 		.refine(
@@ -156,7 +157,7 @@ const ProductUpdate = () => {
 					price: 0,
 					quantity: 0,
 					discount: 0,
-					_id:null
+					_id: null
 				},
 			],
 			images: [],
@@ -269,7 +270,7 @@ const ProductUpdate = () => {
 			mutate(data as IProduct);
 		} catch (error) {
 			console.log("error", error);
-			
+
 			toast.error("Chỉnh sửa sản phẩm xảy ra lỗi");
 		}
 	};
@@ -790,7 +791,7 @@ const ProductUpdate = () => {
 													price: 0,
 													quantity: 0,
 													discount: 0,
-													_id:null
+													_id: null
 												})
 											}
 										>

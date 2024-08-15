@@ -36,3 +36,7 @@ export const deleteBlogBYId = (id: string | boolean) => {
 	const url = `/blogs/delete/${id}`;
 	return instance.delete(url);
 }
+export const getBlogDetailClient = (id: string) => {
+	const uri = `/blogs/detailClient/${id}`;
+	return instance.get(uri);
+};
