@@ -1,4 +1,6 @@
 import Paginations from '@/components/common/Pagination';
+
+
 import { TooltipComponent } from '@/components/common/TooltipComponent';
 import { Button } from '@/components/ui/button';
 import {
@@ -97,6 +99,8 @@ const MyBlogs = () => {
                                 onChange={(event) => debounced(event.target.value)}
                             />
                         </div>
+
+
                         <div className="flex items-center gap-2">
                             <Select
                                 options={tags}
@@ -110,15 +114,16 @@ const MyBlogs = () => {
                                 }}
                             />
                             <TooltipComponent label='Mặc định'>
-                                <div> <Button onClick={() => setSearchObject({
-                                    pageIndex: 1,
-                                    pageSize: 9,
-                                    keyword: "",
-                                    fieldSort: "",
-                                    sort: 1,
-                                    tab: 1,
-                                    tags: ""
-                                })} className='' variant="destructive"><GrPowerReset size={20} /></Button></div>
+                                <div>
+                                    <Button onClick={() => setSearchObject({
+                                        pageIndex: 1,
+                                        pageSize: 9,
+                                        keyword: "",
+                                        fieldSort: "",
+                                        sort: 1,
+                                        tab: 1,
+                                        tags: ""
+                                    })} className='' variant="destructive"><GrPowerReset size={20} /></Button></div>
                             </TooltipComponent>
                         </div>
                     </div>
@@ -129,14 +134,12 @@ const MyBlogs = () => {
                     <TabsTrigger
                         value="1"
                         onClick={() => setSearchObject((prev) => ({ ...prev, tab: 1, pageIndex: 1 }))}
-
                     >
                         Bài viết đã đăng tải
                     </TabsTrigger>
                     <TabsTrigger
                         value="2"
                         onClick={() => setSearchObject((prev) => ({ ...prev, tab: 2, pageIndex: 1 }))}
-
                     >
                         Bài viết chưa đăng tải
                     </TabsTrigger>
@@ -167,7 +170,7 @@ const MyBlogs = () => {
                                     <div className="h1/2 bg-gray-200 border-b border-gray-300">
                                         <img src={item.thumbnail_url || "/no-image.png"} className='w-full h-full object-cover' alt="" />
                                         <div className="-mt-5 pl-5">
-                                            <img src={item.user_id?.avatarUrl} className='w-[40px] h-[40px] border-[3px] border-white rounded-full' alt="" />
+                                            <img src={item.user_id?.avatarUrl  || "/avatar_25.jpg" } className='w-[40px] h-[40px] border-[3px] border-white rounded-full' alt="" />
                                         </div>
                                     </div>
                                     {/* card-content */}
@@ -204,7 +207,7 @@ const MyBlogs = () => {
 
             </div >
             <div className="flex justify-center mt-5">
-                <Paginations pageCount={response.pageCount} handlePageClick={handleChangePag} />
+                <Paginations forcePage={searchObject.pageIndex - 1} pageCount={response.pageCount} handlePageClick={handleChangePag} />
             </div>
         </>
     )

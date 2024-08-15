@@ -63,10 +63,7 @@ const CategoryAdd = ({
 
 	const onHandleUpdate = async (dataForm: any) => {
 		try {
-			const { data } = await instance.put(
-				`/category/updateCate/${open}`,
-				dataForm,
-			);
+			const { data } = await updateCategory(open, dataForm)
 			handleClose();
 			handlePaging();
 			toast.success("Bạn cập nhật danh mục thành công");

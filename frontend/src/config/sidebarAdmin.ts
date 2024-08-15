@@ -29,12 +29,12 @@ const sidebarConfig: any[] = [
 				isVisible: true,
 				label: "Danh sách",
 			},
-			{
-				path: "/staff",
-				icon: FaUsersCog,
-				isVisible: true,
-				label: "Danh sách nhân viên",
-			},
+			// {
+			// 	path: "/staff",
+			// 	icon: FaUsersCog,
+			// 	isVisible: true,
+			// 	label: "Danh sách nhân viên",
+			// },
 		],
 	},
 	,
@@ -110,10 +110,10 @@ const sidebarConfig: any[] = [
 		path: "/revenue",
 		icon: LuLayoutDashboard,
 		isVisible: true,
-		label: "Doanh thu",
+      label: "Doanh thu",
 		isAdmin: true,
+  }
 
-	}
 ];
 
 

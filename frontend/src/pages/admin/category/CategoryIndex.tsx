@@ -6,7 +6,7 @@ import {
 	hiddenManyCate,
 	paddingCate,
 	unhiddencate,
-  unhiddenManyCate,
+	unhiddenManyCate,
 } from "@/service/category-admin";
 import { SearchObjectType } from "@/types/searchObjecTypes";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
@@ -37,17 +37,17 @@ const CategoryIndex = () => {
 		updatedAt: string;
 		slug: string;
 	}
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({}); // xử lí selected
-  const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
-  const listId = listRowSeleted.map((data: any) => {
-    return data._id;
-  })
+	const [rowSelection, setRowSelection] = useState<RowSelectionState>({}); // xử lí selected
+	const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
+	const listId = listRowSeleted.map((data: any) => {
+		return data._id;
+	})
 	const [data, setData] = useState<IData[]>([]);
-  const [openId, setOpenId] = useState<string | boolean>(false);
+	const [openId, setOpenId] = useState<string | boolean>(false);
 	const [openUnhiddenCategory, setopenUnhiddenCategory] = useState<string | boolean>(false);
-  const [openHiddenCategory, setOpenHiddenCategory] = useState<string | boolean>(false);
-  const [openManyCate, setOpenManyCate] = useState<string | boolean>(false);
-   const [openUnManyCate, setOpenUnManyCate] = useState<string | boolean>(false);
+	const [openHiddenCategory, setOpenHiddenCategory] = useState<string | boolean>(false);
+	const [openManyCate, setOpenManyCate] = useState<string | boolean>(false);
+	const [openUnManyCate, setOpenUnManyCate] = useState<string | boolean>(false);
 	const debounced = useDebounceCallback((inputValue: string) => {
 		setSearchObject((prev) => ({
 			...prev,
@@ -85,8 +85,8 @@ const CategoryIndex = () => {
 		} catch (error) {
 			console.error("Error fetching data", error);
 		}
-  };
-  
+	};
+
 	const handleHiddenCate = async (id: string | boolean) => {
 		try {
 			const { data } = await hiddencate(id);
@@ -98,20 +98,20 @@ const CategoryIndex = () => {
 		}
 	};
 
-  const handleManyCate = async (listId:any) => {
-    try {
-      const { data } = await hiddenManyCate(listId);
-      setOpenManyCate(false);
-      handleCategory();
-      setRowSelection({})
-      setListRowSelected([])
-      toast.success("Ẩn nhiều danh mục danh mục nhiều thành công");
-    } catch (error) {
-      toast.error("Ẩn danh mục nhiều thất bại");
-    }
-  };
+	const handleManyCate = async (listId: any) => {
+		try {
+			const { data } = await hiddenManyCate(listId);
+			setOpenManyCate(false);
+			handleCategory();
+			setRowSelection({})
+			setListRowSelected([])
+			toast.success("Ẩn nhiều danh mục danh mục nhiều thành công");
+		} catch (error) {
+			toast.error("Ẩn danh mục nhiều thất bại");
+		}
+	};
 
-  const handleUnManyCate = async (listId: any) => {
+	const handleUnManyCate = async (listId: any) => {
 		try {
 			const { data } = await unhiddenManyCate(listId);
 			setOpenUnManyCate(false);
@@ -145,8 +145,8 @@ const CategoryIndex = () => {
 		setSearchObject((prev) => ({
 			...prev,
 			pageIndex: value.selected + 1,
-    }));
-    setRowSelection({});
+		}));
+		setRowSelection({});
 		setListRowSelected([]);
 	};
 	const columns: ColumnDef<IData>[] = [
@@ -286,7 +286,7 @@ const CategoryIndex = () => {
 							>
 								Ẩn nhiều
 							</Button>
-						):''}
+						) : ''}
 						{listId.length !== 0 && searchObject.tab == 2 && (
 							<Button
 								onClick={() => setOpenUnManyCate(true)}
@@ -305,7 +305,7 @@ const CategoryIndex = () => {
 						onClick={() => {
 							setRowSelection({});
 							setListRowSelected([]);
-							setSearchObject((prev) => ({ ...prev, tab: 1 , pageIndex:1 }));
+							setSearchObject((prev) => ({ ...prev, tab: 1, pageIndex: 1 }));
 						}}
 					>
 						Danh mục
@@ -315,7 +315,7 @@ const CategoryIndex = () => {
 						onClick={() => {
 							setRowSelection({});
 							setListRowSelected([]);
-							setSearchObject((prev) => ({ ...prev, tab: 2,pageIndex:1 }));
+							setSearchObject((prev) => ({ ...prev, tab: 2, pageIndex: 1 }));
 						}}
 					>
 						Danh mục ẩn

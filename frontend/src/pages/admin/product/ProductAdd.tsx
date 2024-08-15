@@ -133,7 +133,7 @@ const formSchema = z.object({
 		),
 });
 
-const ProductAddandUpdate = () => {
+const ProductAddPage = () => {
 	const router = useNavigate();
 	const form = useForm({
 		resolver: zodResolver(formSchema),
@@ -846,4 +846,4 @@ const ProductAddandUpdate = () => {
 	);
 };
 
-export default ProductAddandUpdate;
+export default ProductAddPage;
