@@ -1,5 +1,6 @@
 import Paginations from '@/components/common/Pagination';
 
+
 import { TooltipComponent } from '@/components/common/TooltipComponent';
 import { Button } from '@/components/ui/button';
 import {
@@ -88,6 +89,7 @@ const MyBlogs = () => {
                 <div className="flex flex-col gap-3 mb-5">
                     <div className="flex justify-between items-center">
                         <h3 className="text-2xl font-semibold">Bài viết của tôi</h3>
+
                     </div>
                     <div className="flex justify-between items-center gap-3">
                         <div className=" w-[40%]">
@@ -97,6 +99,7 @@ const MyBlogs = () => {
                                 onChange={(event) => debounced(event.target.value)}
                             />
                         </div>
+
 
                         <div className="flex items-center gap-2">
                             <Select
@@ -144,7 +147,6 @@ const MyBlogs = () => {
             </Tabs>
 
             <div className="grid grid-cols-12 gap-6 xl:gap-8 mt-10">
-
                 {blogs.length ? (
                     blogs.map((item: IBlog, index: number) => (
                         <>
@@ -206,7 +208,6 @@ const MyBlogs = () => {
             </div >
             <div className="flex justify-center mt-5">
                 <Paginations forcePage={searchObject.pageIndex - 1} pageCount={response.pageCount} handlePageClick={handleChangePag} />
-
             </div>
         </>
     )

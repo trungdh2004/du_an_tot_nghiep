@@ -257,25 +257,25 @@ const ProductAddPage = () => {
 
 	const listColor = form.watch("attributes")
 		? form
-				.watch("attributes")
-				?.reduce((acc: IColor[], item: IItemListColor) => {
-					if (!item.color) return acc;
+			.watch("attributes")
+			?.reduce((acc: IColor[], item: IItemListColor) => {
+				if (!item.color) return acc;
 
-					let group = acc.find(
-						(g) => item.color && g._id === (item.color._id as string),
-					);
+				let group = acc.find(
+					(g) => item.color && g._id === (item.color._id as string),
+				);
 
-					if (!group) {
-						group = {
-							_id: item.color._id as string,
-							name: item.color.name as string,
-							code: item.color.code as string,
-						};
-						acc.push(group);
-						return acc;
-					}
+				if (!group) {
+					group = {
+						_id: item.color._id as string,
+						name: item.color.name as string,
+						code: item.color.code as string,
+					};
+					acc.push(group);
 					return acc;
-				}, [])
+				}
+				return acc;
+			}, [])
 		: [];
 
 	return (
@@ -302,7 +302,7 @@ const ProductAddPage = () => {
 													<Input
 														placeholder="Tên sản phẩm"
 														{...field}
-														// onChange={(e) => setName(e.target.value)}
+													// onChange={(e) => setName(e.target.value)}
 													/>
 												</FormControl>
 
@@ -542,7 +542,7 @@ const ProductAddPage = () => {
 																								onClick={() =>
 																									onImageUpdate(index)
 																								}
-																								className="cursor-pointer h-[90%] object-cover aspect-square"
+																								className="cursor-pointer h-[90%] object-cover 	"
 																							/>
 																							<AiFillCloseCircle
 																								className="absolute top-2 right right-0 cursor-pointer"
