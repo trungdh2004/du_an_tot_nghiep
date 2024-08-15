@@ -17,5 +17,6 @@ type IBlog = {
 	comments_count: number,
 	thumbnail_url?: string,
 	meta_description: string,
+	meta_title?:string,
 	tags: string,
 }

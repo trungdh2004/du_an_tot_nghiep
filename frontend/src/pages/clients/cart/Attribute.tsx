@@ -29,7 +29,7 @@ const Attribute = ({ dataColor, dataSize }: Props) => {
                         <div className="flex gap-7 lg:gap-10">
                             <h3 className="lg:text-[15px] text-[13px] font-semibold ">Màu</h3>
                             <div className="flex gap-3 items-center">
-                                {dataColor.map((color: any, index: number) => {
+                                {dataColor && dataColor.map((color: any, index: number) => {
                                     return (
                                         <LabelChecked
                                             isOneChecked
