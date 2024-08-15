@@ -7,7 +7,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { pagingProduct } from "@/service/product";
 import ProductDisPlay from "./ProductDisPlay";
 import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
-import { Pagination } from "@/components/ui/pagination";
 import Paginations from "@/components/common/Pagination";
 import ProductSkeleton from "./ProductSkeleton";
 import Price from "./Price";
@@ -68,8 +67,8 @@ const ShopProduct = () => {
 
 	return (
 		<div className="padding pt-[40px]">
-			<div className="grid lg:grid-cols-12 gap-9 h-screen">
-				<div className="col-span-2 lg:col-span-2 lg:block hidden lg:sticky lg:top-0 lg:z-10">
+			<div className="grid lg:grid-cols-12 gap-9">
+				<div className="col-span-2 lg:col-span-2 lg:block hidden">
 					<ScrollArea className="h-[88vh] rounded-md pb-5 pr-4">
 						<Category setSearchParamsObject={setSearchParamsObject} />
 						<Price
@@ -116,7 +115,8 @@ const ShopProduct = () => {
 								searchParams.set("pageIndex", event.selected + 1);
 								setSearchParams(searchParams);
 								query.invalidateQueries({ queryKey: ["productShop"] });
-							}}
+              }}
+              forcePage={0}
 						/>
 					</div>
 				</div>
