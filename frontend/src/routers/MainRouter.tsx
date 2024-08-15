@@ -7,6 +7,7 @@ import TestComponent from "@/pages/clients/Test";
 import HomePage from "@/pages/clients/home/page";
 import DetailProduct from "@/pages/clients/detail-home/page";
 import CartIndex from "@/pages/clients/cart/CartIndex";
+import Index from "@/pages/clients/orderManagements/Index";
 
 const MainRouter = [
 	{
@@ -18,6 +19,8 @@ const MainRouter = [
 			{ path: "address", element: <Address /> },
 			{ path: "table", element: <UserIndex /> },
 			{ path: "cart", element: <CartIndex /> },
+			{ path: "order", element: <CartIndex /> },
+			{ path: "purchase", element: <Index /> },
 			{ path: "*", element: <NotFound /> },
 		],
 	},
