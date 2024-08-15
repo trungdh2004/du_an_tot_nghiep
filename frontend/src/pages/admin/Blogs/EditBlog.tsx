@@ -38,13 +38,16 @@ import {
 	AiOutlineCloudUpload,
 	AiOutlineLoading3Quarters,
 } from "react-icons/ai";
+import { IoMdArrowRoundBack } from "react-icons/io";
 import { MdOutlineCalendarMonth } from "react-icons/md";
-import { useParams } from "react-router-dom";
+
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
 import { toast } from "sonner";
 import { z } from "zod";
 
 const EditBlog = () => {
+	const navigate = useNavigate()
 	const [statusLoading, setStatusLoading] = useState({
 		isSubmitted: false,
 		isLoading: false,
@@ -94,10 +97,8 @@ const EditBlog = () => {
 			setTags(tags?.data);
 		})();
 	}, []);
-
 	const handleAutoSave = async () => {
 		const formData = form.getValues();
-
 		const { _id, ...rest } = formData as any;
 		const payload = {
 			...rest,
@@ -135,6 +136,7 @@ const EditBlog = () => {
 	const debouncedChangeHandler = useDebounce(() => {
 		handleAutoSave();
 	}, 5000);
+
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
 			if (previewUrl.isLoading) {
@@ -143,12 +145,11 @@ const EditBlog = () => {
 				const payload = {
 					...values,
 				};
-
 				setStatusLoading({ isSubmitted: true, isLoading: true });
-
 				const reponse = await publishBlogs(id as string, payload);
 				if (reponse.status === 200) {
 					toast.success("Cập nhập bài viết thành công");
+					navigate("/admin/blogs")
 				} else {
 					throw new Error("Cập nhập bài viết thất bại");
 				}
@@ -163,6 +164,7 @@ const EditBlog = () => {
 	}
 	return (
 		<div className="">
+
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
@@ -190,10 +192,10 @@ const EditBlog = () => {
 															document.title = title;
 															form.clearErrors("title"),
 																(title == "" || title == null) &&
-																	form.setError("title", {
-																		type: "custom",
-																		message: "Tiêu đề nội dung là bắt buộc",
-																	});
+																form.setError("title", {
+																	type: "custom",
+																	message: "Tiêu đề nội dung là bắt buộc",
+																});
 
 															form.setValue("title", title),
 																debouncedChangeHandler();
@@ -423,7 +425,7 @@ const EditBlog = () => {
 																				"flex flex-col justify-center items-center ",
 																				(previewUrl.url ||
 																					blogs?.thumbnail_url) &&
-																					"hidden",
+																				"hidden",
 																			)}
 																		>
 																			<AiOutlineCloudUpload

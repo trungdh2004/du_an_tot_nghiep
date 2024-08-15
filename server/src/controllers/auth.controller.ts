@@ -33,7 +33,7 @@ class AuthController {
       expiresIn: "1h",
     });
   }
-  
+
   async generateRefreshToken(value: PayloadToken | object | string) {
     return jwt.sign(value, process.env.SECRET_REFRESHTOKEN!, {
       expiresIn: "60d",
@@ -649,7 +649,7 @@ class AuthController {
 
   async blockedMany(req: RequestModel, res: Response) {
     try {
-      const { listId  } = req.body;
+      const { listId } = req.body;
 
       if (!listId || listId.length === 0) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -661,7 +661,7 @@ class AuthController {
 
       await UserModel.updateMany(
         { _id: { $in: listId } },
-        { $set: { blocked_at: true  } },{new:true}
+        { $set: { blocked_at: true } }, { new: true }
       );
 
 
@@ -680,7 +680,7 @@ class AuthController {
 
   async unBlockedMany(req: RequestModel, res: Response) {
     try {
-      const { listId  } = req.body;
+      const { listId } = req.body;
 
       if (!listId || listId.length === 0) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -692,7 +692,7 @@ class AuthController {
 
       await UserModel.updateMany(
         { _id: { $in: listId } },
-        { $set: { blocked_at: false  } },{new:true}
+        { $set: { blocked_at: false } }, { new: true }
       );
 
 

@@ -38,32 +38,34 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 	const [chooseColorId, setChooseColorId] = useState("");
 	const [chooseSizeId, setChooseSizeId] = useState("");
 	const [attributeId, setAttributeId] = useState("");
+
 	useMemo(() => {
-		if (chooseColorId && chooseSizeId) {
-			const currentAttribute = product?.attributes?.find(
-				(attribute) =>
-					attribute?.color?._id == chooseColorId &&
-					attribute?.size?._id == chooseSizeId,
-			);
-			setAttributeId(currentAttribute?._id as string);
-			setTotalQuantity(currentAttribute?.quantity as number);
-		} else {
-			setTotalQuantity(product?.quantity as number);
-			setAttributeId("");
-		}
-		if (chooseSizeId && !chooseColorId) {
-			const quantity = product?.listSize?.find(
-				(size) => size?.sizeId == chooseSizeId,
-			)?.quantity;
-			setTotalQuantity(quantity as number);
-		}
-		if (!chooseSizeId && chooseColorId) {
-			const quantity = product?.listColor?.find(
-				(color) => color?.colorId == chooseColorId,
-			)?.quantity;
-			setTotalQuantity(quantity as number);
-		}
-	}, [chooseColorId, chooseSizeId]);
+		const updateQuantityAndAttribute = () => {
+			if (chooseColorId && chooseSizeId) {
+				const currentAttribute = product?.attributes?.find(
+					(attribute) =>
+						attribute?.color?._id === chooseColorId &&
+						attribute?.size?._id === chooseSizeId,
+				);
+				setAttributeId(currentAttribute?._id || "");
+				setTotalQuantity(currentAttribute?.quantity || product?.quantity || 0);
+			} else if (chooseSizeId) {
+				const quantity = product?.listSize?.find(
+					(size) => size?.sizeId === chooseSizeId,
+				)?.quantity;
+				setTotalQuantity(quantity || product?.quantity || 0);
+			} else if (chooseColorId) {
+				const quantity = product?.listColor?.find(
+					(color) => color?.colorId === chooseColorId,
+				)?.quantity;
+				setTotalQuantity(quantity || product?.quantity || 0);
+			} else {
+				setTotalQuantity(product?.quantity || 0);
+				setAttributeId("");
+			}
+		};
+		updateQuantityAndAttribute();
+	}, [chooseColorId, chooseSizeId, product]);
 
 	const handleStateInfoProduct = useCallback(() => {
 		if (!product) return { listColorExist: [], listSizeExist: [] };
@@ -73,20 +75,18 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 				id: color.colorId,
 				colorCode: color.colorCode,
 				colorName: color.colorName,
-				quantity: color.quantity,
-				listSize: [
-					...new Set(color.list?.map((item) => item.size?._id)),
-				] as string[],
+				listSize: color.list
+					?.map((item) => item.size?._id)
+					.filter(Boolean) as string[],
 			})) || [];
 
 		const listSizeExist =
 			product.listSize?.map((size) => ({
 				id: size.sizeId,
 				sizeName: size.sizeName,
-				quantity: size.quantity,
-				listColor: [
-					...new Set(size.list?.map((item) => item.color?._id)),
-				] as string[],
+				listColor: size.list
+					?.map((item) => item.color?._id)
+					.filter(Boolean) as string[],
 			})) || [];
 
 		return { listColorExist, listSizeExist };
@@ -94,14 +94,15 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 
 	useEffect(() => {
 		setStateInfoProduct(handleStateInfoProduct());
-		setTotalQuantity(Number(product?.quantity) || 0);
+		setTotalQuantity(product?.quantity || 0);
 	}, [product, handleStateInfoProduct]);
+
 	return (
 		<div className="p-5 pt-10">
 			<div className="space-y-5">
 				<div className="space-y-0.5">
 					<p className="uppercase text-xs">
-						Danh mục: <span>{(product?.category as any)?.name}</span>
+						Danh mục: <span>{product?.category?.name}</span>
 					</p>
 					<h2 className="uppercase text-xl">{product?.name}</h2>
 					<div className="flex items-center capitalize text-sm text-[#767676] [&>p]:px-4  [&>*]:border-r [&>*]:border-[#00000024]">
@@ -120,17 +121,17 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 							</div>
 						</div>
 						<p className="flex items-center gap-1 text-nowrap">
-							<span className="text-black font-medium ">7</span>
+							<span className="text-black font-medium">7</span>
 							Đánh giá
 						</p>
 						<p className="flex items-center gap-1 text-nowrap">
-							<span className="text-black font-medium ">
+							<span className="text-black font-medium">
 								{product?.quantitySold}
 							</span>
 							Đã bán
 						</p>
 						<p className="flex items-center gap-1 border-none text-nowrap">
-							<span className="text-black font-medium ">7</span>
+							<span className="text-black font-medium">7</span>
 							Lượt xem
 						</p>
 					</div>
@@ -162,7 +163,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						setTotalQuantity={setTotalQuantity}
 					/>
 					<div className="flex items-center">
-						<h3 className="font-normal text-base text-gray-500  min-w-28 max-w-28">
+						<h3 className="font-normal text-base text-gray-500 min-w-28 max-w-28">
 							Số lượng
 						</h3>
 						<div className="flex items-center gap-3">
