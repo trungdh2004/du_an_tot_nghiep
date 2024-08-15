@@ -10,5 +10,5 @@ export interface IProductCart {
     product:string | IProduct;
     quantity:number;
     cart:string | ICart;
-    attribute:string | IAttribute
+    attribute:IAttribute |string 
 }
