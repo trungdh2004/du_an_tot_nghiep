@@ -6,6 +6,7 @@ import TestComponent from "@/pages/clients/Test";
 
 import HomePage from "@/pages/clients/home/page";
 import DetailProduct from "@/pages/clients/detail-home/page";
+import OrderProcessing from "@/pages/clients/OrderProcessing";
 
 const MainRouter = [
 	{
@@ -16,8 +17,10 @@ const MainRouter = [
 			{ path: "/shop/detail/:slug", element: <DetailProduct /> },
 			{ path: "address", element: <Address /> },
 			{ path: "table", element: <UserIndex /> },
-			{ path: "*", element: <NotFound /> },
 		],
 	},
+	{ path: "orderProcessing", element: <OrderProcessing /> },
+	{ path: "*", element: <NotFound /> },
+
 ];
 export default MainRouter;

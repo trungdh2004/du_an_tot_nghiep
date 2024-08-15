@@ -13,6 +13,8 @@ import ColorList from "@/pages/admin/color/ColorList";
 import ProductIndex from "@/pages/admin/product/ProductIndex";
 import ProductAddandUpdate from "@/pages/admin/product/ProductAdd";
 import ProductUpdate from "@/pages/admin/product/ProductUpdate";
+import PrivateAdmin from "./PrivateAdmin";
+// import RevenuePage from "@/pages/admin/revenue/RevenuePage";
 
 const AdminRouter = [
 	{

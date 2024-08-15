@@ -57,8 +57,8 @@ class BlogController {
           message: "Không có bài blog nào",
         });
       }
-      const meta_title = truncateSentence(title, 30) || "";
-      const meta_description = trunTextHtmlConvers(content, 70) || "";
+      const meta_title =title ? truncateSentence(title, 30) || "" : "";
+      const meta_description =content ? trunTextHtmlConvers(content, 70) || "" : "";
       const newPos = await BlogsModel.findByIdAndUpdate(
         existingBlog?._id,
         {
