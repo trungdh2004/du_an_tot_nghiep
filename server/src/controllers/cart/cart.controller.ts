@@ -62,7 +62,7 @@ class CartController {
         },
         {
           $unwind: {
-            path:'$productAttributes',
+            path: '$productAttributes',
             preserveNullAndEmptyArrays: true
           } // Chuyển đổi mảng customer thành tài liệu riêng lẻ
         },
@@ -139,14 +139,14 @@ class CartController {
                 attribute: "$attribute",
               },
             },
-            attributes : {
+            attributes: {
               $addToSet: {
-                _id:"$productAttributes._id",
-                color:"$productAttributes.color",
-                size:"$productAttributes.size",
-                quantity:"$productAttributes.quantity",
-                discount:"$productAttributes.discount",
-                price:"$productAttributes.price",
+                _id: "$productAttributes._id",
+                color: "$productAttributes.color",
+                size: "$productAttributes.size",
+                quantity: "$productAttributes.quantity",
+                discount: "$productAttributes.discount",
+                price: "$productAttributes.price",
               }
             }
           },
@@ -162,7 +162,7 @@ class CartController {
             product: "$_id",
             createdAt: 1,
             items: 1,
-            attributes:1
+            attributes: 1
           },
         },
         {

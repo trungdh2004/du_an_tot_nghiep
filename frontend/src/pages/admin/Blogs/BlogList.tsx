@@ -123,10 +123,6 @@ const BlogList = () => {
                 <div className="flex flex-col gap-3 mb-5">
                     <div className="flex justify-between items-center">
                         <h3 className="text-2xl font-semibold">Bài viết</h3>
-                        <Link to="/admin/blogs/new-blog"
-                            className='text-white bg-slate-900 px-5 py-[8px] rounded-xl border border-slate-900 hover:bg-white hover:text-black hover:border hover:border-slate-900 transition-all duration-300'>
-                            Bài viết mới
-                        </Link>
 
                     </div>
                     <div className="flex justify-between items-center gap-3">
@@ -139,7 +135,6 @@ const BlogList = () => {
                         </div>
                         <div className="flex items-center gap-2">
                             <Select
-
                                 className='w-[150px]'
                                 options={tags}
                                 placeholder="Bài viết"
@@ -150,17 +145,6 @@ const BlogList = () => {
                                     setSearchObject((prev: any) => ({ ...prev, tags: values ? values.slug : "" }))
                                 }}
                             />
-                            {/* <SelectComponent<ITag>
-
-                                options={tags}
-                                placeholder="Bài viết"
-                                value={searchObject.tags}
-                                getOptionLabel={(option: ITag) => option.name}
-                                getOptionValue={(option: ITag) => option.slug as string}
-                                onChange={(values: ITag | null) => {
-                                    setSearchObject((prev: any) => ({ ...prev, tags: values ? values.slug : "" }))
-                                }}
-                            /> */}
                             <TooltipComponent label='Mặc định'>
                                 <div> <Button onClick={() => setSearchObject({
                                     pageIndex: 1,
@@ -170,7 +154,6 @@ const BlogList = () => {
                                     sort: 1,
                                     tab: 1,
                                     tags: ""
-
                                 })} className='' variant="destructive"><GrPowerReset size={20} /></Button></div>
                             </TooltipComponent>
                         </div>
@@ -181,7 +164,6 @@ const BlogList = () => {
                 <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger
                         value="1"
-
                         onClick={() => setSearchObject((prev) => ({ ...prev, tab: 1, pageIndex: 1 }))}
 
                     >
@@ -189,7 +171,6 @@ const BlogList = () => {
                     </TabsTrigger>
                     <TabsTrigger
                         value="2"
-
                         onClick={() => { setSearchObject((prev) => ({ ...prev, tab: 2, pageIndex: 1 })) }}
 
                     >

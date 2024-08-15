@@ -7,7 +7,7 @@ import BlogPage from "@/pages/clients/blogs/BLogPage";
 import HomePage from "@/pages/clients/home/page";
 import BlogDetail from "@/pages/clients/blogs/BlogDetail";
 import DetailProduct from "@/pages/clients/detail-home/page";
-import OrderProcessing from "@/pages/clients/OrderProcessing";
+import CartIndex from "@/pages/clients/cart/CartIndex";
 
 const MainRouter = [
 	{
@@ -20,9 +20,10 @@ const MainRouter = [
 			{ path: "blogs", element: <BlogPage /> },
 			{ path: "blogDetail/:id", element: <BlogDetail /> },
 			{ path: "table", element: <UserIndex /> },
+			{ path: "cart", element: <CartIndex /> },
+			{ path: "*", element: <NotFound /> },
 		],
 	},
-	{ path: "orderProcessing", element: <OrderProcessing /> },
 	{ path: "*", element: <NotFound /> },
 
 ];

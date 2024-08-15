@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { GoPlus } from "react-icons/go";
 import { HiMiniMinus } from "react-icons/hi2";
 
@@ -8,11 +8,7 @@ type Props = {
 	defaultValue?: number;
 };
 
-const InputQuantity = ({
-	maxTotal = Infinity,
-	getValue,
-	defaultValue = 1,
-}: Props) => {
+const InputQuantity = ({ maxTotal = Infinity, getValue, defaultValue = 1 }: Props) => {
 	const elementRef = useRef<{
 		minus: HTMLElement | null;
 		plus: HTMLElement | null;
@@ -65,11 +61,10 @@ const InputQuantity = ({
 			handleChangeInput();
 		}
 	};
-	useMemo(() => {
-		getValue?.(defaultValue);
-	}, []);
+
 	useEffect(() => {
 		updateButtonStates(defaultValue);
+		getValue?.(defaultValue);
 	}, [defaultValue, getValue, maxTotal]);
 
 	return (
@@ -100,4 +95,4 @@ const InputQuantity = ({
 	);
 };
 
-export default memo(InputQuantity);
+export default InputQuantity;
