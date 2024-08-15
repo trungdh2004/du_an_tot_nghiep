@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { memo, useEffect, useMemo, useRef } from "react";
 import { GoPlus } from "react-icons/go";
 import { HiMiniMinus } from "react-icons/hi2";
@@ -6,12 +7,14 @@ type Props = {
 	maxTotal?: number;
 	getValue?: (value: number) => void;
 	defaultValue?: number;
+	disabled?: boolean;
 };
 
 const InputQuantity = ({
 	maxTotal = Infinity,
 	getValue,
 	defaultValue = 1,
+	disabled = false,
 }: Props) => {
 	const elementRef = useRef<{
 		minus: HTMLElement | null;
@@ -73,7 +76,12 @@ const InputQuantity = ({
 	}, [defaultValue, getValue, maxTotal]);
 
 	return (
-		<div className="flex items-center border border-gray-200 rounded w-full max-w-32">
+		<div
+			className={cn(
+				"flex items-center border border-gray-200 rounded w-full max-w-32",
+				disabled && "pointer-events-none bg-black/5",
+			)}
+		>
 			<div
 				ref={(e) => (elementRef.current.minus = e)}
 				onClick={handleMinusClick}
@@ -82,6 +90,7 @@ const InputQuantity = ({
 				<HiMiniMinus />
 			</div>
 			<input
+				disabled={disabled}
 				max={maxTotal}
 				defaultValue={defaultValue}
 				ref={(e) => (elementRef.current.input = e)}

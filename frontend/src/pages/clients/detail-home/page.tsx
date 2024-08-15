@@ -6,7 +6,7 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { IProduct } from "@/types/typeProduct";
+import { IProductDetail } from "@/types/product";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { getProductBySlug } from "../../../service/product";
@@ -16,7 +16,7 @@ import ProductDetailsAndReviews from "./ProductDetailsAndReviews";
 
 const DetailProduct = () => {
 	const { slug } = useParams();
-	const { data, isLoading } = useQuery<IProduct>({
+	const { data, isLoading } = useQuery<IProductDetail>({
 		queryKey: ["GET_PRODUCT_BY_SLUG"],
 		queryFn: async () => {
 			const { data } = await getProductBySlug(

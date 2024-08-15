@@ -44,6 +44,7 @@ export interface IProductDetail {
 			colorName: string;
 			list: [IAttribute];
 			quantity: number;
+			colorCode: string;
 		},
 	];
 	listSize?: [

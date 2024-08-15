@@ -5,14 +5,97 @@ import ListSize from "./ListSize";
 import InputQuantity from "@/components/common/InputQuantity";
 import { Button } from "@/components/ui/button";
 import { MdOutlineAddShoppingCart } from "react-icons/md";
-import { useState } from "react";
-import { IProduct } from "@/types/typeProduct";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { IProductDetail } from "@/types/product";
+
 type Props = {
-	product?:IProduct,
-	isLoading?: boolean
+	product?: IProductDetail;
+	isLoading?: boolean;
 };
-const InfoProduct = ({product,isLoading}:Props) => {
-	const [totalQuanti] = useState();
+
+interface IStateInfoProduct {
+	listColorExist: {
+		id: string;
+		colorCode: string;
+		colorName: string;
+		listSize: string[];
+	}[];
+	listSizeExist: {
+		id: string;
+		sizeName: string;
+		listColor: string[];
+	}[];
+}
+
+const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
+	const [stateInfoProduct, setStateInfoProduct] = useState<IStateInfoProduct>({
+		listColorExist: [],
+		listSizeExist: [],
+	});
+	const [exitsListSize, setExitsListSize] = useState<string[]>([]);
+	const [exitsListColor, setExitsListColor] = useState<string[]>([]);
+	const [totalQuantity, setTotalQuantity] = useState(0);
+	const [chooseColorId, setChooseColorId] = useState("");
+	const [chooseSizeId, setChooseSizeId] = useState("");
+	const [attributeId, setAttributeId] = useState("");
+	useMemo(() => {
+		if (chooseColorId && chooseSizeId) {
+			const currentAttribute = product?.attributes?.find(
+				(attribute) =>
+					attribute?.color?._id == chooseColorId &&
+					attribute?.size?._id == chooseSizeId,
+			);
+			setAttributeId(currentAttribute?._id as string);
+			setTotalQuantity(currentAttribute?.quantity as number);
+		} else {
+			setTotalQuantity(product?.quantity as number);
+			setAttributeId("");
+		}
+		if (chooseSizeId && !chooseColorId) {
+			const quantity = product?.listSize?.find(
+				(size) => size?.sizeId == chooseSizeId,
+			)?.quantity;
+			setTotalQuantity(quantity as number);
+		}
+		if (!chooseSizeId && chooseColorId) {
+			const quantity = product?.listColor?.find(
+				(color) => color?.colorId == chooseColorId,
+			)?.quantity;
+			setTotalQuantity(quantity as number);
+		}
+	}, [chooseColorId, chooseSizeId]);
+
+	const handleStateInfoProduct = useCallback(() => {
+		if (!product) return { listColorExist: [], listSizeExist: [] };
+
+		const listColorExist =
+			product.listColor?.map((color) => ({
+				id: color.colorId,
+				colorCode: color.colorCode,
+				colorName: color.colorName,
+				quantity: color.quantity,
+				listSize: [
+					...new Set(color.list?.map((item) => item.size?._id)),
+				] as string[],
+			})) || [];
+
+		const listSizeExist =
+			product.listSize?.map((size) => ({
+				id: size.sizeId,
+				sizeName: size.sizeName,
+				quantity: size.quantity,
+				listColor: [
+					...new Set(size.list?.map((item) => item.color?._id)),
+				] as string[],
+			})) || [];
+
+		return { listColorExist, listSizeExist };
+	}, [product]);
+
+	useEffect(() => {
+		setStateInfoProduct(handleStateInfoProduct());
+		setTotalQuantity(Number(product?.quantity) || 0);
+	}, [product, handleStateInfoProduct]);
 	return (
 		<div className="p-5 pt-10">
 			<div className="space-y-5">
@@ -20,9 +103,7 @@ const InfoProduct = ({product,isLoading}:Props) => {
 					<p className="uppercase text-xs">
 						Danh mục: <span>{(product?.category as any)?.name}</span>
 					</p>
-					<h2 className="uppercase text-xl">
-						{product?.name}
-					</h2>
+					<h2 className="uppercase text-xl">{product?.name}</h2>
 					<div className="flex items-center capitalize text-sm text-[#767676] [&>p]:px-4  [&>*]:border-r [&>*]:border-[#00000024]">
 						<div className="flex items-end gap-1 pr-4">
 							<span className="border-b border-blue-500 text-blue-500 font-medium">
@@ -43,7 +124,9 @@ const InfoProduct = ({product,isLoading}:Props) => {
 							Đánh giá
 						</p>
 						<p className="flex items-center gap-1 text-nowrap">
-							<span className="text-black font-medium ">{product?.quantitySold}</span>
+							<span className="text-black font-medium ">
+								{product?.quantitySold}
+							</span>
 							Đã bán
 						</p>
 						<p className="flex items-center gap-1 border-none text-nowrap">
@@ -64,23 +147,35 @@ const InfoProduct = ({product,isLoading}:Props) => {
 					</span>
 				</div>
 				<div className="space-y-5">
-					<ListColor />
-					<ListSize />
+					<ListColor
+						listColorExist={stateInfoProduct?.listColorExist}
+						onChoose={setChooseColorId}
+						setExitsListSize={setExitsListSize}
+						exitsListColor={exitsListColor}
+						setTotalQuantity={setTotalQuantity}
+					/>
+					<ListSize
+						listSizeExist={stateInfoProduct?.listSizeExist}
+						onChoose={setChooseSizeId}
+						exitsListSize={exitsListSize}
+						setExitsListColor={setExitsListColor}
+						setTotalQuantity={setTotalQuantity}
+					/>
 					<div className="flex items-center">
 						<h3 className="font-normal text-base text-gray-500  min-w-28 max-w-28">
 							Số lượng
 						</h3>
 						<div className="flex items-center gap-3">
 							<InputQuantity
-
+								disabled={totalQuantity <= 0}
 								defaultValue={4}
-								maxTotal={product?.quantity}
+								maxTotal={totalQuantity}
 								getValue={(value) => {
 									console.log(value);
 								}}
 							/>
 							<span className="text-gray-600 text-sm md:text-base">
-							{product?.quantity} sản phẩm có sẵn
+								{totalQuantity} sản phẩm có sẵn
 							</span>
 						</div>
 					</div>

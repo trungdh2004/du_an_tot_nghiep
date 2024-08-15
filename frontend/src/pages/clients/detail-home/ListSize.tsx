@@ -1,18 +1,27 @@
 import LabelChecked from "@/components/common/LabelChecked";
-import { getAllSize } from "@/service/size-admin";
-import { ISize } from "@/types/variants";
-import { useQuery } from "@tanstack/react-query";
 import SkeletonVariant from "./SkeletonVariant";
 
-const ListSize = () => {
-	const { data: listSize, isLoading } = useQuery<ISize[]>({
-		queryKey: ["GET_SIZES"],
-		queryFn: async () => {
-			const { data } = await getAllSize();
-			await new Promise<void>((resolve) => setTimeout(resolve, 5000));
-			return data.data;
-		},
-	});
+type Props = {
+	listSizeExist?: {
+		id?: string;
+		sizeName?: string;
+		listColor?: string[];
+		quantity?: number;
+	}[];
+	isLoading?: boolean;
+	onChoose?: (value: string) => void;
+	setExitsListColor?: (value: string[]) => void;
+	exitsListSize?: string[];
+	setTotalQuantity?: (value: number) => void;
+};
+const ListSize = ({
+	isLoading,
+	listSizeExist,
+	exitsListSize,
+	onChoose,
+	setExitsListColor,
+	setTotalQuantity,
+}: Props) => {
 	return (
 		<div className="flex items-start ">
 			<h3 className="font-normal text-base text-gray-500  min-w-28 max-w-28">
@@ -22,59 +31,34 @@ const ListSize = () => {
 				<SkeletonVariant />
 			) : (
 				<div className="flex flex-wrap items-center gap-2">
-					{listSize?.map((size) => (
+					{listSizeExist?.map((size) => (
 						<LabelChecked
+							disabled={
+								Number(exitsListSize?.length) > 0
+									? !exitsListSize?.includes(size?.id as string)
+									: false
+							}
+							onChange={(e: Event) => {
+								const elementInput = e?.target as HTMLInputElement;
+								if (elementInput.checked) {
+									onChoose && onChoose(String(size?.id));
+									const currentColor = listSizeExist?.find(
+										(c) => c.id === size?.id,
+									);
+									setTotalQuantity?.(Number(size?.quantity));
+									setExitsListColor?.(currentColor?.listColor as string[]);
+								} else {
+									onChoose && onChoose("");
+									setExitsListColor?.([]);
+								}
+							}}
 							isOneChecked
-							value={size._id as string}
-							key={size._id}
+							value={size.id as string}
+							key={size.id}
 							nameInput="chooseSize"
 							className="min-w-28"
 						>
-							{size.name}
-						</LabelChecked>
-					))}
-					{listSize?.map((size) => (
-						<LabelChecked
-							isOneChecked
-							value={size._id as string}
-							key={size._id}
-							nameInput="chooseSize"
-							className="min-w-28"
-						>
-							{size.name}
-						</LabelChecked>
-					))}
-					{listSize?.map((size) => (
-						<LabelChecked
-							isOneChecked
-							value={size._id as string}
-							key={size._id}
-							nameInput="chooseSize"
-							className="min-w-28"
-						>
-							{size.name}
-						</LabelChecked>
-					))}
-					{listSize?.map((size) => (
-						<LabelChecked
-							isOneChecked
-							value={size._id as string}
-							key={size._id}
-							nameInput="chooseSize"
-							className="min-w-28"
-						>
-							{size.name}
-						</LabelChecked>
-					))}
-					{listSize?.map((size) => (
-						<LabelChecked
-							isOneChecked
-							value={size._id as string}
-							key={size._id}
-							nameInput="chooseSize"
-							className="min-w-28"
-						>
-							{size.name}
+							{size.sizeName}
 						</LabelChecked>
 					))}
 				</div>

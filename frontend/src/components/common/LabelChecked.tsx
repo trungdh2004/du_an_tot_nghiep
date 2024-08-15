@@ -17,7 +17,7 @@ type Props = {
 };
 const LabelChecked = ({
 	value,
-	isOneChecked= false,
+	isOneChecked = false,
 	disabled = false,
 	defaultChecked = false,
 	children,
@@ -31,15 +31,14 @@ const LabelChecked = ({
 		if (!isOneChecked) return;
 		const currentItem = e.currentTarget as HTMLInputElement;
 		const checkboxes = document.querySelectorAll(
-			`input[name="${nameInput}"]:checked`
+			`input[name="${nameInput}"]:checked`,
 		) as NodeListOf<HTMLInputElement>;
-		if(checkboxes.length > 1){
+		if (checkboxes.length > 1) {
 			checkboxes.forEach((checkbox) => {
 				checkbox.checked = false;
 			});
 			currentItem.checked = true;
 		}
-		
 	};
 	return (
 		<label
@@ -47,7 +46,7 @@ const LabelChecked = ({
 			className={cn(
 				" relative  overflow-hidden flex items-center justify-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-3 px-4 gap-2 rounded  bg-white hover:text-blue-500   hover:border-blue-500 has-[:checked]:text-blue-500   has-[:checked]:border-blue-500",
 				className,
-				disabled && "pointer-events-none opacity-70",
+				disabled && "pointer-events-none opacity-70 bg-black/5",
 			)}
 		>
 			<input

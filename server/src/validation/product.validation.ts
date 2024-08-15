@@ -39,7 +39,7 @@ export const productValidations = Joi.object({
       quantity: Joi.number().required().messages({}),
       discount: Joi.number().required().messages({}),
       createdAt: Joi.date().optional(),
-      _id: Joi.string().optional(),
+      _id: Joi.string().optional().allow(null),
       updatedAt: Joi.date().optional(),
       __v: Joi.number().optional(),
     })
