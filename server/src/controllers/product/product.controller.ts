@@ -540,11 +540,11 @@ class ProductController {
       let skip = (pageIndex - 1) * limit || 0;
       let queryKeyword = keyword
         ? {
-            name: {
-              $regex: keyword,
-              $options: "i",
-            },
-          }
+          name: {
+            $regex: keyword,
+            $options: "i",
+          },
+        }
         : {};
       let queryAttribute = {};
       let querySort = {};

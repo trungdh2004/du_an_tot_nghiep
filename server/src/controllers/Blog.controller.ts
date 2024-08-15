@@ -8,6 +8,15 @@ import { formatDataPaging } from "../common/pagingData";
 import TagsModel from "../models/Tags.schema";
 import { generateSlugs } from "../middlewares/generateSlug";
 
+function randomThreeConsecutiveNumbers(a:number) {
+  if(a < 3) {
+      return 0
+  }
+  const start = Math.floor(Math.random() * (a - 3));
+  
+  return start
+}
+
 class BlogController {
   async postBlogs(req: RequestModel, res: Response) {
     try {
@@ -57,8 +66,10 @@ class BlogController {
           message: "Không có bài blog nào",
         });
       }
-      const meta_title =title ? truncateSentence(title, 30) || "" : "";
-      const meta_description =content ? trunTextHtmlConvers(content, 70) || "" : "";
+      const meta_title = title ? truncateSentence(title, 30) || "" : "";
+      const meta_description = content
+        ? trunTextHtmlConvers(content, 70) || ""
+        : "";
       const newPos = await BlogsModel.findByIdAndUpdate(
         existingBlog?._id,
         {
@@ -152,7 +163,7 @@ class BlogController {
         });
       }
 
-      const slug = generateSlugs(meta_title)
+      const slug = generateSlugs(meta_title);
 
       const newBlog = await BlogsModel.findOneAndUpdate(
         existingBlog._id,
@@ -165,7 +176,7 @@ class BlogController {
           meta_description,
           thumbnail_url: thumbnail_url,
           selected_tags,
-          slug
+          slug,
         },
         { new: true }
       );
@@ -188,7 +199,7 @@ class BlogController {
         pageSize,
         pageIndex,
         tab = 1,
-        tags
+        tags,
       } = req.body;
 
       let limit = pageSize || 10;
@@ -202,61 +213,60 @@ class BlogController {
           }
         : {};
       let querySort = {};
-      let queryTab = {}
-      let queryTags = {}
+      let queryTab = {};
+      let queryTags = {};
 
-      if(tab === 2) {
+      if (tab === 2) {
         queryTab = {
-          isPublish:false
-        }
+          isPublish: false,
+        };
 
-        querySort= {
-          createdAt:sort
-        }
-      }else {
-        queryTab = {
-          isPublish:true
-        }
         querySort = {
-          published_at:sort
-        }
+          createdAt: sort,
+        };
+      } else {
+        queryTab = {
+          isPublish: true,
+        };
+        querySort = {
+          published_at: sort,
+        };
       }
-      
-      if(tags) {
+
+      if (tags) {
         const select = await TagsModel.findOne({
-          slug:tags
-        })
+          slug: tags,
+        });
 
         queryTags = {
-          selected_tags:{
-           $in:select?._id
-          }
-        }
+          selected_tags: {
+            $in: select?._id,
+          },
+        };
       }
 
       const listBlogs = await BlogsModel.find({
         ...queryKeyword,
         ...queryTab,
-        ...queryTags
+        ...queryTags,
       })
         .sort(querySort)
         .skip(skip)
         .limit(limit)
         .populate([
           {
-            path:"user_id",
-            select:"_id full_name email avatarUrl"
+            path: "user_id",
+            select: "_id full_name email avatarUrl",
           },
-          "selected_tags"
+          "selected_tags",
         ])
         .exec();
 
       const countBlogs = await BlogsModel.countDocuments({
         ...queryKeyword,
         ...queryTab,
-        ...queryTags
+        ...queryTags,
       });
-
 
       const data = formatDataPaging({
         limit,
@@ -321,13 +331,14 @@ class BlogController {
         pageSize,
         pageIndex,
         tab = 1,
-        tags
+        tags,
       } = req.body;
-      const user = req.user
+      const user = req.user;
 
-      if(!user?.id) return res.status(STATUS.BAD_REQUEST).json({
-        message:"Bạn chưa đăng nhập"
-      }) 
+      if (!user?.id)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa đăng nhập",
+        });
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
       let queryKeyword = keyword
@@ -339,53 +350,53 @@ class BlogController {
           }
         : {};
       let querySort = {};
-      let queryTab = {}
-      let queryTags = {}
+      let queryTab = {};
+      let queryTags = {};
 
-      if(tab === 2) {
+      if (tab === 2) {
         queryTab = {
-          isPublish:false
-        }
+          isPublish: false,
+        };
 
-        querySort= {
-          createdAt:sort
-        }
-      }else {
-        queryTab = {
-          isPublish:true
-        }
         querySort = {
-          published_at:sort
-        }
+          createdAt: sort,
+        };
+      } else {
+        queryTab = {
+          isPublish: true,
+        };
+        querySort = {
+          published_at: sort,
+        };
       }
-      
-      if(tags) {
+
+      if (tags) {
         const select = await TagsModel.findOne({
-          slug:tags
-        })
+          slug: tags,
+        });
 
         queryTags = {
-          selected_tags:{
-           $in:select?._id
-          }
-        }
+          selected_tags: {
+            $in: select?._id,
+          },
+        };
       }
 
       const listBlogs = await BlogsModel.find({
         ...queryKeyword,
         ...queryTab,
         ...queryTags,
-        user_id:user.id
+        user_id: user.id,
       })
         .sort(querySort)
         .skip(skip)
         .limit(limit)
         .populate([
           {
-            path:"user_id",
-            select:"_id full_name email avatarUrl"
+            path: "user_id",
+            select: "_id full_name email avatarUrl",
           },
-          "selected_tags"
+          "selected_tags",
         ])
         .exec();
 
@@ -393,9 +404,8 @@ class BlogController {
         ...queryKeyword,
         ...queryTab,
         ...queryTags,
-        user_id:user.id
+        user_id: user.id,
       });
-
 
       const data = formatDataPaging({
         limit,
@@ -431,6 +441,67 @@ class BlogController {
       return res.status(STATUS.OK).json({
         message: "Xóa thành công",
         data: existingBlog,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error?.message,
+      });
+    }
+  }
+
+  async getBlogDetailClient(req: RequestModel, res: Response) {
+    try {
+      const { id } = req.params;
+
+      if (!id)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn bài viết",
+        });
+
+      const existingBlog = await BlogsModel.findById(id).populate([
+        {
+          path: "user_id",
+          model: "User",
+          select: {
+            _id: 1,
+            full_name: 1,
+            email: 1,
+            avatarUrl: 1,
+          },
+        },
+        {
+          path: "selected_tags",
+          model: "Tags",
+        },
+      ]);
+
+      if (!existingBlog)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có bài viết nào",
+        });
+
+      const countBlog = await BlogsModel.countDocuments({
+        _id: {
+          $ne: existingBlog?._id,
+        },
+        isPublish:true
+      });
+
+      const random = randomThreeConsecutiveNumbers(countBlog)
+
+      const listBlogOrther = await BlogsModel.find({
+        _id: {
+          $ne: existingBlog?._id,
+        },
+        isPublish:true
+      }).skip(random).limit(3)
+
+
+
+      return res.status(STATUS.OK).json({
+        message: "Lấy thành công",
+        data: existingBlog,
+        orther:listBlogOrther
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
