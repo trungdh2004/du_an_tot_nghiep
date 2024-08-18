@@ -17,6 +17,7 @@ import TagIndex from "@/pages/admin/tags/TagIndex";
 import PrivateRouter from "./PrivateRouter";
 import ProductAddPage from "@/pages/admin/product/ProductAdd";
 
+
 const AdminRouter = [
 	{
 		path: "/admin",
@@ -99,7 +100,7 @@ const AdminRouter = [
 				path: "blogs/:id/",
 				element: <BlogDetail />,
 			},
-			
+
 		],
 	},
 ];

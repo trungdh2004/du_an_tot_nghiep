@@ -112,4 +112,4 @@ const InputQuantity: React.FC<InputQuantityProps> = ({
 	);
 };
 
-export default memo(InputQuantity);
+export default InputQuantity;

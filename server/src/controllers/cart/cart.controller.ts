@@ -42,6 +42,11 @@ class CartController {
 
       const listProduct = await CartItemModel.aggregate([
         {
+          $match:{
+            cart:existingCart?._id
+          }
+        },
+        {
           $lookup: {
             from: "products", // Tên bộ sưu tập products
             localField: "product",
@@ -62,7 +67,7 @@ class CartController {
         },
         {
           $unwind: {
-            path:'$productAttributes',
+            path: '$productAttributes',
             preserveNullAndEmptyArrays: true
           } // Chuyển đổi mảng customer thành tài liệu riêng lẻ
         },
@@ -97,7 +102,10 @@ class CartController {
           },
         },
         {
-          $unwind: "$attribute", // Giải nén mảng productDetails
+          $unwind: {
+            path: "$attribute",
+            preserveNullAndEmptyArrays: true, // Bảo toàn giá trị null
+          }
         },
         {
           $lookup: {
@@ -108,7 +116,10 @@ class CartController {
           },
         },
         {
-          $unwind: "$attribute.color", // Giải nén mảng productDetails
+          $unwind: {
+            path: "$attribute.color",
+            preserveNullAndEmptyArrays: true, // Bảo toàn giá trị null
+          }
         },
         {
           $lookup: {
@@ -119,7 +130,10 @@ class CartController {
           },
         },
         {
-          $unwind: "$attribute.size", // Giải nén mảng productDetails
+          $unwind: {
+            path: "$attribute.size",
+            preserveNullAndEmptyArrays: true, // Bảo toàn giá trị null
+          }
         },
         {
           $group: {
@@ -139,14 +153,14 @@ class CartController {
                 attribute: "$attribute",
               },
             },
-            attributes : {
+            attributes: {
               $addToSet: {
-                _id:"$productAttributes._id",
-                color:"$productAttributes.color",
-                size:"$productAttributes.size",
-                quantity:"$productAttributes.quantity",
-                discount:"$productAttributes.discount",
-                price:"$productAttributes.price",
+                _id: "$productAttributes._id",
+                color: "$productAttributes.color",
+                size: "$productAttributes.size",
+                quantity: "$productAttributes.quantity",
+                discount: "$productAttributes.discount",
+                price: "$productAttributes.price",
               }
             }
           },
@@ -162,7 +176,7 @@ class CartController {
             product: "$_id",
             createdAt: 1,
             items: 1,
-            attributes:1
+            attributes: 1
           },
         },
         {
@@ -233,13 +247,17 @@ class CartController {
         }
       })
 
+      // const dataList = await CartItemModel.find({
+      //   cart:existingCart._id
+      // }).populate(["product","attribute"])
+
       const countProduct = await CartItemModel.countDocuments({
         cart: existingCart._id,
       });
       const data = formatDataPaging({
         limit: 10,
         pageIndex: 1,
-        data: dataList,
+        data: listProduct,
         count: countProduct,
       });
 

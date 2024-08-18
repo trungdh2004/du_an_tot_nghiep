@@ -494,7 +494,7 @@ class BlogController {
           $ne: existingBlog?._id,
         },
         isPublish:true
-      }).skip(random).limit(3)
+      }).skip(random).limit(3).populate("user_id")
 
 
 
