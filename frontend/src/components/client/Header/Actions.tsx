@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import Notification from "./Notification";
 import Search from "./Search";
 import User from "./User";
+import Cart from "./Cart";
 const Actions = () => {
 	const { isLoggedIn, authUser } = useAuth();
 	return (
@@ -16,11 +17,7 @@ const Actions = () => {
 			<div className="">
 				<Notification />
 			</div>
-			<div className="hover:bg-[#919eab27] p-1">
-				<Link to="/cart">
-					<LucideShoppingCart strokeWidth={1.5} size={20} />
-				</Link>
-			</div>
+			<Cart />
 
 			{isLoggedIn && authUser?._id ? (
 				<div className="hover:bg-[#919eab27] p-1 ">
