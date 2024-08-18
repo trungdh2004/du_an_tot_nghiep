@@ -21,11 +21,11 @@ interface AlbumProps {
 const Album: React.FC<AlbumProps> = ({ images = [], isLoading }) => {
 	const [activeThumb, setActiveThumb] = React.useState<SwiperType | null>(null);
 	return (
-		<section>
-			<div className="lg:mx-auto max-w-5xl mx-[1.5rem]">
+		<section className="ablum-detail-product">
+			<div className="lg:mx-auto max-w-5xl">
 				<div className="border-8 bg-white border-white">
 					{isLoading ? (
-						<Skeleton className="min-w-full min-h-full h-[450px]" />
+						<Skeleton className="min-w-full min-h-full  md:h-[450px]" />
 					) : (
 						<Swiper
 							modules={[Navigation, Thumbs]}
@@ -36,7 +36,7 @@ const Album: React.FC<AlbumProps> = ({ images = [], isLoading }) => {
 								swiper:
 									activeThumb && !activeThumb.destroyed ? activeThumb : null,
 							}}
-							className="thumbShow"
+							className="thumbShow "
 						>
 							{images.map((p) => (
 								<SwiperSlide key={p._id} className="">

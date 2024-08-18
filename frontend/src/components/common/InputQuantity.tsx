@@ -1,110 +1,113 @@
 import { cn } from "@/lib/utils";
-import { memo, useEffect, useMemo, useRef } from "react";
+import React, { memo, useEffect, useRef, useState, useCallback } from "react";
 import { GoPlus } from "react-icons/go";
 import { HiMiniMinus } from "react-icons/hi2";
 
-type Props = {
+interface InputQuantityProps {
 	maxTotal?: number;
 	getValue?: (value: number) => void;
 	defaultValue?: number;
 	disabled?: boolean;
-};
+	className?: string;
+	size?: "small" | "medium" | "large" | "responsive";
+}
 
-const InputQuantity = ({
+const InputQuantity: React.FC<InputQuantityProps> = ({
 	maxTotal = Infinity,
 	getValue,
 	defaultValue = 1,
 	disabled = false,
-}: Props) => {
-	const elementRef = useRef<{
-		minus: HTMLElement | null;
-		plus: HTMLElement | null;
-		input: HTMLInputElement | null;
-	}>({
-		minus: null,
-		plus: null,
-		input: null,
-	});
+	className,
+	size = "medium",
+}) => {
+	const [value, setValue] = useState(defaultValue);
+	const inputRef = useRef<HTMLInputElement>(null);
 
-	const updateButtonStates = (value: number) => {
-		const { input, minus, plus } = elementRef.current;
-		if (!input || !minus || !plus) return;
+	const updateValue = useCallback(
+		(newValue: number) => {
+			const clampedValue = Math.max(1, Math.min(newValue, maxTotal));
+			setValue(clampedValue);
+			getValue?.(clampedValue);
+		},
+		[maxTotal, getValue],
+	);
 
-		toggleButtonState(plus, value >= maxTotal);
-		toggleButtonState(minus, value <= 1);
-	};
+	const handleInputChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			updateValue(Number(e.target.value));
+		},
+		[updateValue],
+	);
 
-	const toggleButtonState = (button: HTMLElement, disable: boolean) => {
-		if (disable) {
-			button.classList.add("pointer-events-none", "opacity-60");
-		} else {
-			button.classList.remove("pointer-events-none", "opacity-60");
-		}
-	};
+	const handleButtonClick = useCallback(
+		(increment: number) => {
+			updateValue(value + increment);
+		},
+		[value, updateValue],
+	);
 
-	const handleChangeInput = () => {
-		const inputValue = Number(elementRef.current.input?.value);
-		if (inputValue > maxTotal) {
-			elementRef.current.input!.value = String(maxTotal);
-		} else if (inputValue < 1) {
-			elementRef.current.input!.value = String(1);
-		}
-		updateButtonStates(inputValue);
-		getValue?.(inputValue);
-	};
-
-	const handleMinusClick = () => {
-		const input = elementRef.current.input;
-		if (input && Number(input.value) > 1) {
-			input.value = String(Number(input.value) - 1);
-			handleChangeInput();
-		}
-	};
-
-	const handlePlusClick = () => {
-		const input = elementRef.current.input;
-		if (input && Number(input.value) < maxTotal) {
-			input.value = String(Number(input.value) + 1);
-			handleChangeInput();
-		}
-	};
-	useMemo(() => {
-		getValue?.(defaultValue);
-	}, []);
 	useEffect(() => {
-		updateButtonStates(defaultValue);
-	}, [defaultValue, getValue, maxTotal]);
+		updateValue(defaultValue);
+	}, [defaultValue, updateValue]);
+
+	const sizeClasses = {
+		small: "h-8 text-sm",
+		medium: "h-10 text-base",
+		large: "h-12 text-lg",
+		responsive:
+			"h-8 text-sm sm:h-9 sm:text-base md:h-10 md:text-base lg:h-12 lg:text-lg",
+	};
+
+	const buttonClasses = cn(
+		"flex items-center justify-center w-8 sm:w-9 md:w-10 lg:w-12 border-gray-200 cursor-pointer bg-transparent transition-opacity",
+		sizeClasses[size],
+		{
+			"opacity-60 cursor-not-allowed": disabled,
+			"hover:bg-gray-100": !disabled,
+		},
+	);
+
+	const containerClasses = cn(
+		"flex items-center border border-gray-200 rounded w-full",
+		size === "responsive"
+			? "max-w-24 sm:max-w-28 md:max-w-32 lg:max-w-36"
+			: "max-w-32",
+		sizeClasses[size],
+		disabled && "pointer-events-none bg-black/5",
+		className,
+	);
 
 	return (
-		<div
-			className={cn(
-				"flex items-center border border-gray-200 rounded w-full max-w-32",
-				disabled && "pointer-events-none bg-black/5",
-			)}
-		>
-			<div
-				ref={(e) => (elementRef.current.minus = e)}
-				onClick={handleMinusClick}
-				className="p-0.5 md:p-2 border-r border-gray-200 cursor-pointer"
+		<div className={containerClasses}>
+			<button
+				onClick={() => handleButtonClick(-1)}
+				className={cn(buttonClasses, "border-r", { "opacity-60": value <= 1 })}
+				disabled={disabled || value <= 1}
 			>
 				<HiMiniMinus />
-			</div>
+			</button>
 			<input
+				ref={inputRef}
+				type="number"
+				value={value}
+				onChange={handleInputChange}
 				disabled={disabled}
 				max={maxTotal}
-				defaultValue={defaultValue}
-				ref={(e) => (elementRef.current.input = e)}
-				onChange={handleChangeInput}
-				type="number"
-				className="flex-1 h-full w-10 md:w-16 text-center outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+				min={1}
+				className={cn(
+					"flex-1 min-w-8 w-full text-center outline-none appearance-none bg-transparent [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+					sizeClasses[size],
+				)}
 			/>
-			<div
-				ref={(e) => (elementRef.current.plus = e)}
-				onClick={handlePlusClick}
-				className="p-0.5 md:p-2 border-l border-gray-200 cursor-pointer"
+			<button
+				onClick={() => handleButtonClick(1)}
+				className={cn(buttonClasses, "border-l", {
+					"opacity-60": value >= maxTotal,
+				})}
+				disabled={disabled || value >= maxTotal}
 			>
 				<GoPlus />
-			</div>
+			</button>
 		</div>
 	);
 };

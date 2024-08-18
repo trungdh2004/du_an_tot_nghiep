@@ -47,11 +47,11 @@ const DetailProduct = () => {
 						</BreadcrumbItem>
 					</BreadcrumbList>
 				</Breadcrumb>
-				<div className="grid grid-cols-8 bg-white">
-					<div className="col-span-3">
+				<div className="flex max-md:flex-col items-start bg-white">
+					<div className="max-md:w-full w-2/5">
 						<Ablum images={data?.images} isLoading={isLoading} />
 					</div>
-					<div className="col-span-5">
+					<div className="w-full md:flex-1">
 						<InfoProduct product={data} />
 					</div>
 				</div>

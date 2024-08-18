@@ -18,50 +18,49 @@ type Props = {
 	setTotalQuantity?: (value: number) => void;
 };
 
-const ListColor = ({
-	listColorExist,
-	isLoading,
+const ListColor: React.FC<Props> = ({
+	listColorExist = [],
+	isLoading = false,
 	onChoose,
 	setExitsListSize,
-	exitsListColor,
+	exitsListColor = [],
 	setTotalQuantity,
-}: Props) => {
+}) => {
+	const handleChange =
+		(color: Color) => (e: React.ChangeEvent<HTMLInputElement>) => {
+			if (e.target.checked) {
+				onChoose?.(color.id || "");
+				setTotalQuantity?.(color.quantity || 0);
+				setExitsListSize?.(color.listSize || []);
+			} else {
+				onChoose?.("");
+				setExitsListSize?.([]);
+			}
+		};
+
 	return (
-		<div className="flex items-start">
+		<div className="flex max-md:flex-col max-md:gap-3 items-start">
 			<h3 className="font-normal text-base text-gray-500 min-w-28 max-w-28">
 				Màu sắc
 			</h3>
 			{isLoading ? (
 				<SkeletonVariant />
 			) : (
-				<div className="flex flex-wrap items-center gap-2">
-					{listColorExist?.map((color) => (
+				<div className="flex flex-wrap items-center gap-2 w-full">
+					{listColorExist.map((color) => (
 						<LabelChecked
 							disabled={
-								Number(exitsListColor?.length) > 0
-									? !exitsListColor?.includes(color?.id as string)
-									: false
+								exitsListColor.length > 0 &&
+								!exitsListColor.includes(color.id || "")
 							}
-							onChange={(e: Event) => {
-								const elementInput = e?.target as HTMLInputElement;
-								if (elementInput.checked) {
-									onChoose && onChoose(String(color?.id));
-									const currentColor = listColorExist?.find(
-										(c) => c.id === color?.id,
-									);
-									setTotalQuantity?.(Number(color?.quantity));
-									setExitsListSize?.(currentColor?.listSize as string[]);
-								} else {
-									onChoose && onChoose("");
-									setExitsListSize?.([]);
-								}
-							}}
+							onChange={handleChange(color)}
 							isOneChecked
-							value={color?.id as string}
-							key={color?.id}
+							value={color.id || ""}
+							key={color.id}
 							nameInput="chooseColor"
-							haxColor={color?.colorCode}
-							className="min-w-28 text-black"
+							haxColor={color.colorCode}
+							className="text-black"
+							size="responsive"
 						>
 							{color.colorName}
 						</LabelChecked>
