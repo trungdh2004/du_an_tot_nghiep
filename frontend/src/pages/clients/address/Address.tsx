@@ -74,11 +74,13 @@ interface ICity {
 	name: string;
 }
 
-interface IDistrict extends ICity {
+interface IDistrict {
 	idDistrict: string;
+	name: string;
 }
-interface ICommune extends IDistrict {
+interface ICommune {
 	idCommune: string;
+	name: string;
 }
 
 type Props = {};

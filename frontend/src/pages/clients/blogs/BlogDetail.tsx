@@ -33,27 +33,29 @@ const BlogDetail = () => {
 	const htmlContent = md.render(markdownContent as any);
 	return (
 		<div className="padding mx-auto py-12">
-			<div className="grid grid-cols-12 gap-5 w-full  ">
-				<div className="col-span-3 hidden lg:block pr-5">
-					<h3 className="text-base pb-2 font-medium hidden lg:block">
-						{blog?.data?.user_id?.full_name}
-					</h3>
-					<div className="flex  gap-6 pt-2 border-t border-gray-300">
-						<div className="flex items-center gap-2 text-[#757575] ">
-							<span>
-								<FaRegHeart size={20} />
-							</span>
-							<span className="text-lg font-medium">
-								{blog?.data?.countLike}
-							</span>
-						</div>
-						<div className="flex items-center gap-2 text-[#757575]">
-							<span>
-								<FaRegComment size={20} />
-							</span>
-							<span className="text-lg font-medium">
-								{blog?.data?.countLike}
-							</span>
+			<div className="grid grid-cols-12 gap-5 w-full overflow-visible ">
+				<div className="col-span-3 hidden lg:block pr-5 overflow-visible">
+					<div className="sticky top-0">
+						<h3 className="text-base pb-2 font-medium hidden lg:block">
+							{blog?.data?.user_id?.full_name}
+						</h3>
+						<div className="flex  gap-6 pt-2 border-t border-gray-300">
+							<div className="flex items-center gap-2 text-[#757575] ">
+								<span>
+									<FaRegHeart size={20} />
+								</span>
+								<span className="text-lg font-medium">
+									{blog?.data?.countLike}
+								</span>
+							</div>
+							<div className="flex items-center gap-2 text-[#757575]">
+								<span>
+									<FaRegComment size={20} />
+								</span>
+								<span className="text-lg font-medium">
+									{blog?.data?.countLike}
+								</span>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -89,7 +91,7 @@ const BlogDetail = () => {
 						</div>
 					</div>
 					{/* blog?.data-content */}
-					<div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+					<div className={"[&>table]:border-collapse [&>table]:border-gray-400  [&>th]:border [&>td]:border "} dangerouslySetInnerHTML={{ __html: htmlContent }} />
 					{/* Related-blog?.data */}
 					<div className="mt-10">
 						<hr />

@@ -1,13 +1,17 @@
 import mongoose from "mongoose";
 import { ISize } from "../../interface/product";
-import { generateSlugs } from "../../middlewares/generateSlug";
-
-// 1 : Đã đặt đơn
+import { generateOrderCode, generateSlugs } from "../../middlewares/generateSlug";
+import { IOrder } from "../../interface/order";
+// 0 : đơn hàng chưa xác định
+// 1 : Đang chờ xác nhận đơn hàng
 // 2 : Đã xác nhân đơn hàng
 // 3 : Đang giao hàng
-// 4 ship đã giao hàng
-// 5 Đã nhận hàng
-// 6 :Hủy đơn hàng
+// 4 : giao thất bại
+// 5 ship đã giao hàng
+// 6 Đã nhận hàng
+// 7 :Hủy đơn hàng
+
+
 
 const OrderSchema = new mongoose.Schema(
   {
@@ -16,26 +20,36 @@ const OrderSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+    code:{
+      type:String,
       unique: true,
+      index: true,
     },
     address: {
       // địa chỉ
       type: mongoose.Types.ObjectId,
-      ref: "Address",
+      ref: "address",
       required: true,
-      unique: true,
     },
-    status: {
-      // trạng thái đơn hàng
-      type: Number,
-      enum: [1, 2, 3, 4, 5, 6],
-      default: 1,
+    status:{
+      type:Number,
+      enum:[0,1,2,3,4,5,6,7],
+      default:0
+    },
+    statusList: {
+      type: Array,
+      default: [0],
     },
     voucher: {
       // voucher sử dụng
       type: mongoose.Types.ObjectId,
       ref: "Voucher",
       default: null,
+    },
+    voucherVersion:{
+      type:Number,
+      default:null
     },
     totalMoney: {
       // tổng số tiền đơn hàng
@@ -59,18 +73,18 @@ const OrderSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    // thời gian shipper bdau giao
     shippingDate: {
-      // thời gian shipper bdau giao
       type: Date,
       default: null,
     },
+    // thời gian shipper đã giao
     shippedDate: {
-      // thời gian shipper đã giao
       type: Date,
       default: null,
     },
+    // thời gian xác nhận đã nhận
     deliveredDate: {
-      // thời gian xác nhận đã nhận
       type: Date,
       default: null,
     },
@@ -79,27 +93,35 @@ const OrderSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    // 1 là người dùng hủy 2 là nhân viên hủy 3 giao hàng thất bại
     cancelBy: {
-      // 1 là người dùng hủy 2 là nhân viên hủy
       type: Number,
-      enum: [1, 2],
+      enum: [1, 2, 3],
       default: null,
     },
+    noteCancel:{
+      type:String,
+      default: null,
+    },
+    distance:{
+      type:Number,
+      default:0
+    },
+    // tiền ship
     shippingCost: {
-      // tiền ship
       type: Number,
       default: 0,
       required: true,
     },
+    // thời gian ước tính nhân
     estimatedDeliveryDate: {
-      // thời gian ước tính nhân
-      type: Date,
+      type: String,
       required: true,
     },
     paymentMethod: {
       // phương thức thanh toán
       type: Number,
-      enum: [1, 2],
+      enum: [1, 2 , 3],
       default: 1,
       required: true,
     },
@@ -109,17 +131,34 @@ const OrderSchema = new mongoose.Schema(
       default: false,
       required: true,
     },
+    payment:{
+      ref:"Payment",
+      type:mongoose.Types.ObjectId,
+      default:null,
+    },
     note: {
       // lời dặn của người dùng
       type: String,
       default: "",
     },
+    shipper:{
+      ref: 'shipper',
+      type:mongoose.Types.ObjectId,
+      default:null
+    },
+    orderItems:[
+      {
+        type:mongoose.Types.ObjectId,
+        ref:"OrderItems",
+        required:true
+      }
+    ]
   },
   {
     timestamps: true,
   }
 );
 
-const OrderModel = mongoose.model("Order", OrderSchema);
+const OrderModel = mongoose.model<IOrder>("Order", OrderSchema);
 
 export default OrderModel;
