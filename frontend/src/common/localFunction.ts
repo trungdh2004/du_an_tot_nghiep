@@ -1,11 +1,12 @@
 
 export const formatQuantity = (value:number,end?:string) =>{
     if(!value) {
-        return "0"
+        return `0 ${end ? end : ""}`
     }
     const formatValue = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
     return `${formatValue} ${end ? end : ""}`
 }
+
 
 export function optimizeCloudinaryUrl(
 	url: string,

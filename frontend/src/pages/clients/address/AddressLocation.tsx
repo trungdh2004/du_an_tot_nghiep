@@ -15,11 +15,13 @@ interface ICity {
 	name: string;
 }
 
-interface IDistrict extends ICity {
+interface IDistrict {
 	idDistrict: string;
+	name:string
 }
-interface ICommune extends IDistrict {
+interface ICommune  {
 	idCommune: string;
+	name:string
 }
 
 interface IProps {
@@ -32,8 +34,8 @@ interface IProps {
 	handleOnChangeCommune: (value: ICommune) => void;
 	classContent?: string;
 	iCity?: ICity;
-	idDistrict?: IDistrict;
-	idCommune?: ICommune;
+	idDistrict?: IDistrict | null;
+	idCommune?: ICommune | null;
 }
 
 const AddressLocation = ({
@@ -54,12 +56,12 @@ const AddressLocation = ({
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
-				<div className="w-full">
+				<div className="w-full cursor-pointer">
 					<Input
 						{...field}
 						readOnly
 						placeholder="Nhập vị trí"
-						className="w-full"
+						className="w-full cursor-pointer"
 					/>
 				</div>
 			</PopoverTrigger>

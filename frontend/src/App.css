@@ -10,12 +10,14 @@ header .sub-menu::after {
 	width: 50%;
 	height: 40px;
 }
+
 .box-shadow {
 	box-shadow:
 		rgba(191, 197, 203, 0.22) 0px 0px 2px 0px,
 		rgba(145, 158, 171, 0.15) 0px 12px 24px -4px;
 	transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 }
+
 .box-shadow {
 	box-shadow:
 		rgba(191, 197, 203, 0.22) 0px 0px 2px 0px,
@@ -33,10 +35,12 @@ header .sub-menu::after {
 .scroll-custom::-webkit-scrollbar {
 	width: 8px;
 }
+
 .scroll-custom::-webkit-scrollbar-thumb {
 	background-color: rgba(137, 137, 137, 0.266);
 	border-radius: 8px;
 }
+
 .scroll-custom::-webkit-scrollbar-track {
 	background-color: transparent;
 }
@@ -44,13 +48,16 @@ header .sub-menu::after {
 .scroll-custom-x::-webkit-scrollbar {
 	height: 8px;
 }
+
 .scroll-custom-x::-webkit-scrollbar-thumb {
 	background-color: rgba(137, 137, 137, 0.266);
 	border-radius: 8px;
 }
+
 .scroll-custom-x::-webkit-scrollbar-track {
 	background-color: transparent;
 }
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 .no-scrollbar::-webkit-scrollbar {
 	display: none;
@@ -68,17 +75,21 @@ header .sub-menu::after {
 .left-right {
 	transform-origin: 0% 50%;
 }
+
 @keyframes progress {
 	0% {
 		transform: translateX(0) scaleX(0);
 	}
+
 	40% {
 		transform: translateX(0) scaleX(0.4);
 	}
+
 	100% {
 		transform: translateX(100%) scaleX(0.5);
 	}
 }
+
 /* CSS React Select */
 /* .react-select-container {
 	height: 40px;
@@ -111,54 +122,56 @@ header .sub-menu::after {
 	color: #000 !important;
 }
 
-.react-select__value-container
-	.react-select__multi-value.css-1p3m7a8-multiValue {
+.react-select__value-container .react-select__multi-value.css-1p3m7a8-multiValue {
 	background-color: #f4f4f5 !important;
 	color: #000000 !important;
 }
+
 .react-select__multi-value__label {
 	color: #000000 !important;
 }
+
 .react-select__multi-value__remove.css-12a83d4-MultiValueRemove {
 	background-color: transparent !important;
 	color: #000000 !important;
 }
+
 .react-select__multi-value__remove.css-12a83d4-MultiValueRemove:hover {
 	background-color: #f4f4f5 !important;
 	color: #000000 !important;
 	outline: none !important;
 }
+
 .react-select__option.react-select__option--is-focused {
 	background-color: #f4f4f5 !important;
 	color: #000000 !important;
 	cursor: pointer;
 }
 
-.react-select-container .css-13cymwt-control {
-}
-.react-select-container .css-t3ipsp-control {
-}
+.react-select-container .css-13cymwt-control {}
 
-.react-select-container
-	.react-select__value-container
-	.react-select__multi-value.css-1p3m7a8-multiValue {
+.react-select-container .css-t3ipsp-control {}
+
+.react-select-container .react-select__value-container .react-select__multi-value.css-1p3m7a8-multiValue {
 	background-color: #3b83f638 !important;
 	color: #3b82f6 !important;
 }
+
 .react-select-container .react-select__multi-value__label {
 	color: #3b82f6 !important;
 }
-.react-select-container
-	.react-select__multi-value__remove.css-12a83d4-MultiValueRemove {
+
+.react-select-container .react-select__multi-value__remove.css-12a83d4-MultiValueRemove {
 	background-color: transparent !important;
 	color: #3b82f6 !important;
 }
-.react-select-container
-	.react-select__multi-value__remove.css-12a83d4-MultiValueRemove:hover {
+
+.react-select-container .react-select__multi-value__remove.css-12a83d4-MultiValueRemove:hover {
 	background-color: #f1f1f1 !important;
 	color: #333 !important;
 	outline: none !important;
 }
+
 .react-select-container .react-select__option.react-select__option--is-focused {
 	background-color: #3b83f638 !important;
 	color: #3b82f6 !important;
@@ -167,6 +180,7 @@ header .sub-menu::after {
 
 .mapboxgl-control-container {
 	display: none;
+
 }
 .selection-box-tick::before {
 	border: 30px solid transparent;

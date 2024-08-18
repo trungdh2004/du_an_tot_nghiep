@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
-import { IProduct } from "@/types/product";
 import { formatCurrency, formatQuantitySort } from "@/common/func";
+import { IProduct } from "@/types/typeProduct";
 const ProductsByCategory = ({ id }: { id: string }) => {
 	const [products, setProducts] = useState<IProduct[]>();
 	useEffect(() => {
@@ -62,7 +62,7 @@ const ProductsByCategory = ({ id }: { id: string }) => {
 						<div className="p-3">
 							<p>{product?.name}</p>
 							<div className="flex items-center justify-start -space-x-1 *:size-3 *:inline-block  *:rounded-full my-1.5">
-								{product?.listColor?.map((color) => (
+								{(product as any)?.listColor?.map((color:any) => (
 									<span
 										style={{ background: `${color?.colorCode}` }}
 										className="box-shadow border border-black/40"

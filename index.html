@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function randomThreeConsecutiveNumbers(a) {
+            if(a < 3) {
+                return 0
+            }
+            const start = Math.floor(Math.random() * (a - 3));
+            
+            return start
+        }
+
+        console.log("1",randomThreeConsecutiveNumbers(10));
+        console.log("2",randomThreeConsecutiveNumbers(3));
+        console.log("3",randomThreeConsecutiveNumbers(2));
+        console.log("4",randomThreeConsecutiveNumbers(7));
+        console.log("5",randomThreeConsecutiveNumbers(8));
+        console.log("6",randomThreeConsecutiveNumbers(4));
+        
+    </script>
+</body>
+</html>
