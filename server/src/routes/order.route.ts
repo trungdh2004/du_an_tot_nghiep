@@ -12,4 +12,11 @@ routerOrder.post("/pagingOrderServer",authentication, orderController.pagingOrde
 routerOrder.get("/getByIdServer/:id",authentication, orderController.getByIdOrderAdmin);
 routerOrder.post("/pagingOrderClient",authentication, orderController.pagingOrderClient);
 
+
+
+
+
+// shipper
+routerOrder.get("/shipperOrder",authentication, orderController.getListOrderShipper)
+routerOrder.get("/shipperByCode/:code",authentication, orderController.getOrderByCode)
 export default routerOrder;

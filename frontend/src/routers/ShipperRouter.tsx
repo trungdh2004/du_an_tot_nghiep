@@ -1,6 +1,7 @@
 import ShipperLayout from "@/layout/ShipperLayout";
 import ShipperAuth from "@/pages/shipper/ShipperAuth";
 import ShipperIndex from "@/pages/shipper/ShipperIndex";
+import ShipperTranSport from "@/pages/shipper/ShipperTranSport";
 
 const ShipperRouter = [
 	{
@@ -16,6 +17,10 @@ const ShipperRouter = [
 	{
 		path:"/shipper/auth",
 		element:<ShipperAuth />
+	},
+	{
+		path:"/shipper/transport/:code",
+		element:<ShipperTranSport />
 	}
 
 ];

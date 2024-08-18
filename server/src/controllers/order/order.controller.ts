@@ -892,14 +892,23 @@ class OrderController {
   // queryClient
   async pagingOrderClient(req: RequestModel, res: Response) {
     try {
-      const {status = 1,pageIndex,pageSize} = req.body;
+      const {status = -1,pageIndex,pageSize} = req.body;
       const user = req.user
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
+      let queryStatus = {}
+
+      if(status === -1 ) {
+        queryStatus = {}
+      }else {
+        queryStatus = {
+          status:status,
+        }
+      }
 
       const listOrder = await OrderModel.find({
-        status:status,
-        user:user?.id
+        user:user?.id,
+        ...queryStatus
       }).sort({
         createdAt:-1
       }).skip(skip).limit(limit)
@@ -927,7 +936,52 @@ class OrderController {
     }
   }
 
+  //query order shipper 
+  async getListOrderShipper(req: RequestModel, res: Response) {
+    try {
+      const user = req.user
 
+      const listOrder = await OrderModel.find().populate(["address","user"])
+
+      return res.status(STATUS.OK).json({
+        data:listOrder
+      })
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+        message:error.message
+      })
+    }
+  }
+
+
+  //query get order by code
+  async getOrderByCode(req: RequestModel, res: Response) {
+    try {
+      const user = req.user
+      const {code} = req.params
+
+      if(!code) return res.status(STATUS.BAD_REQUEST).json({
+        message:"Chưa chọn đơn hàng"
+      })
+
+      const listOrder = await OrderModel.findOne({
+        code:code
+      }).populate(["address","user",{
+        path:"orderItems",
+        populate:{
+          path:"product"
+        }
+      }])
+
+      return res.status(STATUS.OK).json({
+        data:listOrder
+      })
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+        message:error.message
+      })
+    }
+  }
 }
 
 export default new OrderController();
