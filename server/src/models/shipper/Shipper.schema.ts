@@ -11,14 +11,6 @@ const ShipperSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    firstName:{
-        type:String,
-        required: true,
-    },
-    lastName:{
-        type:String,
-        required: true,
-    },
     fullName:{
         type:String,
         required: true,
