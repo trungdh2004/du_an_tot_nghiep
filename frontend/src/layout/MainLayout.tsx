@@ -1,6 +1,6 @@
 import Footer from "@/components/client/Footer";
 import Header from "@/components/client/Header";
-import { Outlet } from "react-router-dom";
+import { Outlet, ScrollRestoration } from "react-router-dom";
 
 const MainLayout = () => {
 	return (
@@ -9,7 +9,8 @@ const MainLayout = () => {
 			<main className="mt-[64px]">
 				<Outlet />
 			</main>
-			<Footer />
+      <Footer />
+      <ScrollRestoration/>
 		</div>
 	);
 };
