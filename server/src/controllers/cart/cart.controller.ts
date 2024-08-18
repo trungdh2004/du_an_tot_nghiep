@@ -451,6 +451,36 @@ class CartController {
       });
     }
   }
+
+  async getCountProductCart(req:RequestModel,res:Response) {
+    try {
+      const user = req.user;
+
+      let existingCart = await CartModel.findOne({
+        user:user?.id
+      })
+
+      if(!existingCart) {
+        existingCart = await CartModel.create({
+          user:user?.id
+        })
+      }
+
+      const countProductCart = await CartItemModel.countDocuments({
+        cart: existingCart._id
+      })
+
+      return res.status(STATUS.OK).json({
+        message:"Lấy thành công",
+        count:countProductCart || 0
+      })
+
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+        message:error.message
+      })
+    }
+  }
 }
 
 export default new CartController();
