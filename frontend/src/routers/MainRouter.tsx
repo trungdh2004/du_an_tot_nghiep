@@ -2,11 +2,12 @@ import MainLayout from "@/layout/MainLayout";
 import Address from "@/pages/clients/address/Address";
 import NotFound from "@/pages/NotFound";
 import UserIndex from "@/pages/admin/users/UserIndex";
-import TestComponent from "@/pages/clients/Test";
+// import TestComponent from "@/pages/clients/Test";
 import BlogPage from "@/pages/clients/blogs/BLogPage";
 import HomePage from "@/pages/clients/home/page";
 import BlogDetail from "@/pages/clients/blogs/BlogDetail";
 import DetailProduct from "@/pages/clients/detail-home/page";
+// import OrderProcessing from "@/pages/clients/OrderProcessing";
 import CartIndex from "@/pages/clients/cart/CartIndex";
 
 const MainRouter = [
@@ -24,7 +25,7 @@ const MainRouter = [
 			{ path: "*", element: <NotFound /> },
 		],
 	},
+	// { path: "orderProcessing", element: <OrderProcessing /> },
 	{ path: "*", element: <NotFound /> },
-
 ];
 export default MainRouter;

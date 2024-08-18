@@ -1,36 +1,66 @@
 import LabelChecked from "@/components/common/LabelChecked";
-import { getAllSize } from "@/service/size-admin";
-import { ISize } from "@/types/variants";
-import { useQuery } from "@tanstack/react-query";
 import SkeletonVariant from "./SkeletonVariant";
 
-const ListSize = () => {
-	const { data: listSize, isLoading } = useQuery<ISize[]>({
-		queryKey: ["GET_SIZES"],
-		queryFn: async () => {
-			const { data } = await getAllSize();
-			await new Promise<void>((resolve) => setTimeout(resolve, 5000));
-			return data.data;
-		},
-	});
+type Size = {
+	id?: string;
+	sizeName?: string;
+	listColor?: string[];
+	quantity?: number;
+};
+
+type Props = {
+	listSizeExist?: Size[];
+	isLoading?: boolean;
+	onChoose?: (value: string) => void;
+	setExitsListColor?: (value: string[]) => void;
+	exitsListSize?: string[];
+	setTotalQuantity?: (value: number) => void;
+};
+
+const ListSize: React.FC<Props> = ({
+	isLoading = false,
+	listSizeExist = [],
+	exitsListSize = [],
+	onChoose,
+	setExitsListColor,
+	setTotalQuantity,
+}) => {
+	const handleChange =
+		(size: Size) => (e: React.ChangeEvent<HTMLInputElement>) => {
+			if (e.target.checked) {
+				onChoose?.(size.id || "");
+				setTotalQuantity?.(size.quantity || 0);
+				setExitsListColor?.(size.listColor || []);
+			} else {
+				onChoose?.("");
+				setExitsListColor?.([]);
+			}
+		};
+
 	return (
-		<div className="flex items-start ">
-			<h3 className="font-normal text-base text-gray-500  min-w-28 max-w-28">
+		<div className="flex max-md:flex-col max-md:gap-3 items-start">
+			<h3 className="font-normal text-base text-gray-500 min-w-28 max-w-28">
 				Kích thước
 			</h3>
 			{isLoading ? (
 				<SkeletonVariant />
 			) : (
-				<div className="flex flex-wrap items-center gap-2">
-					{listSize?.map((size) => (
+				<div className="flex flex-wrap items-center gap-2 w-full">
+					{listSizeExist.map((size) => (
 						<LabelChecked
+							disabled={
+								exitsListSize.length > 0 &&
+								!exitsListSize.includes(size.id || "")
+							}
+							onChange={handleChange(size)}
 							isOneChecked
-							value={size._id as string}
-							key={size._id}
+							value={size.id || ""}
+							key={size.id}
 							nameInput="chooseSize"
-							className="min-w-28"
+							size="responsive"
+							// size="small"
 						>
-							{size.name}
+							{size.sizeName}
 						</LabelChecked>
 					))}
 				</div>

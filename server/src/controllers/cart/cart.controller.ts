@@ -451,6 +451,47 @@ class CartController {
       });
     }
   }
+
+  async getCountProductCart(req:RequestModel,res:Response) {
+    try {
+      const user = req.user;
+
+      let existingCart = await CartModel.findOne({
+        user:user?.id
+      })
+
+      if(!existingCart) {
+        existingCart = await CartModel.create({
+          user:user?.id
+        })
+      }
+
+      const countProductCart = await CartItemModel.find({
+        cart: existingCart._id
+      })
+
+      if(countProductCart?.length === 0) {
+        return res.status(STATUS.OK).json({
+          message:"Lấy thành công",
+          count: 0
+        })
+      }
+
+      const count = countProductCart?.reduce((acc,product) => {
+        return acc + product.quantity
+      },0)
+
+      return res.status(STATUS.OK).json({
+        message:"Lấy thành công",
+        count:count || 0
+      })
+
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+        message:error.message
+      })
+    }
+  }
 }
 
 export default new CartController();

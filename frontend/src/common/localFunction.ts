@@ -7,6 +7,7 @@ export const formatQuantity = (value:number,end?:string) =>{
     return `${formatValue} ${end ? end : ""}`
 }
 
+
 export function optimizeCloudinaryUrl(
 	url: string,
 	width: number | null = null,
