@@ -11,10 +11,12 @@ import MainRouter from "./routers/MainRouter";
 import ProgessBarLoading from "./components/common/ProgessBarLoading";
 import LoadingProvider from "./components/common/LoadingProvider";
 import { useLoadingModal } from "./store/useLoadingModal";
+import OrderRouter from "./routers/OrderRouter";
 const router = createBrowserRouter([
 	...MainRouter,
 	...AuthRouter,
-	...AdminRouter,
+  ...AdminRouter,
+  ...OrderRouter
 ]);
 const App = () => {
 	const { isOpen } = useLoadingModal();

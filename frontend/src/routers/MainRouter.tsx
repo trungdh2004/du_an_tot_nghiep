@@ -25,7 +25,7 @@ const MainRouter = [
 			{ path: "*", element: <NotFound /> },
 		],
 	},
-	{ path: "orderProcessing", element: <OrderProcessing /> },
+	// { path: "orderProcessing", element: <OrderProcessing /> },
 	{ path: "*", element: <NotFound /> },
 ];
 export default MainRouter;
