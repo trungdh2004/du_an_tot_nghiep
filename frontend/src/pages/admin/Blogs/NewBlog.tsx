@@ -38,8 +38,9 @@ import {
 	AiOutlineCloudUpload,
 	AiOutlineLoading3Quarters,
 } from "react-icons/ai";
+import { IoMdArrowRoundBack } from "react-icons/io";
 import { MdOutlineCalendarMonth } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -158,10 +159,10 @@ const NewBlog = () => {
 															document.title = title;
 															form.clearErrors("title"),
 																(title == "" || title == null) &&
-																	form.setError("title", {
-																		type: "custom",
-																		message: "Tiêu đề nội dung là bắt buộc",
-																	});
+																form.setError("title", {
+																	type: "custom",
+																	message: "Tiêu đề nội dung là bắt buộc",
+																});
 
 															form.setValue("title", title),
 																debouncedChangeHandler();
