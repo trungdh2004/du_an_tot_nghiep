@@ -8,12 +8,11 @@ import { optimizeCloudinaryUrl } from "@/common/localFunction";
 import OutOfStock from "@/assets/OutofStock.png";
 
 const Product = ({ productShop }: any) => {
+
 	return (
 		<div className="w-full pt-9">
 			<div className="grid w-full lg:grid-cols-4 md:grid-cols-3 grid-cols-2 lg:gap-9 md:gap-7 gap-5">
-        {productShop?.content?.map((product: IProduct) => {
-          console.log(product);
-          
+				{productShop?.content?.map((product: IProduct) => {
 					const listColor = product.attributes.reduce(
 						(acc: IColor[], item: any) => {
 							if (!item.color._id) return acc;
@@ -36,7 +35,7 @@ const Product = ({ productShop }: any) => {
 						[],
 					);
 					return (
-						<Link to={"/"}>
+						<Link to={`/shop/detail/${encodeURIComponent(product?.slug || "")}`}>
 							<div className="group">
 								<div>
 									<div className="relative overflow-hidden border bg-[#F4F4F4] flex justify-center items-center max-w-full min-w-full box-shadow ">
@@ -50,7 +49,7 @@ const Product = ({ productShop }: any) => {
 											<img
 												className="absolute top-0 left-0 w-full h-full object-cover transition duration-500 opacity-0 group-hover:opacity-100"
 												src={optimizeCloudinaryUrl(
-													product.images[1].url,
+													product?.images[1]?.url || "",
 													350,
 													370,
 												)}
@@ -89,7 +88,9 @@ const Product = ({ productShop }: any) => {
 									</div>
 									<div className="flex flex-col gap-2 my-4">
 										<h3 className=" lg:text-base text-sm text-[#1A1E26] font-medium w-70 overflow-hidden overflow-ellipsis whitespace-nowrap">
-											<Link to={`shop/`} className="line-clamp-1">{product.name}</Link>
+											<Link to={`shop/`} className="line-clamp-1">
+												{product.name}
+											</Link>
 										</h3>
 										<div className="flex justify-between lg:h-[20px] h-[15px] gap-4">
 											<div className="flex items-center justify-start -space-x-1 *:size-4 *:inline-block  *:rounded-full">
@@ -108,9 +109,7 @@ const Product = ({ productShop }: any) => {
 										<div className="flex gap-2  justify-between items-center ">
 											<div className="flex items-center  gap-2">
 												<span className="lg:text-sm md:text-sm text-xs justify-start font-[500] text-black">
-													{formatCurrency(
-														product.price * (1 - product.discount / 100),
-													)}
+													{formatCurrency(product?.discount || 0)}
 												</span>
 												<span className="lg:text-[13px] md:text-[13px] text-[10px] font-normal">
 													<del>{formatCurrency(product?.price || 0)}</del>

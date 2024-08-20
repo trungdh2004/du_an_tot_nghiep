@@ -1,10 +1,8 @@
 import { Response } from "express";
 import { RequestModel } from "../../interface/models";
 import STATUS from "../../utils/status";
-import ProductModel from "../../models/products/Product.schema";
 import OrderModel from "../../models/order/Order.schema";
 import CartItemModel from "../../models/cart/CartItem.schema";
-import CartModel from "../../models/cart/Cart.schema";
 import { formatDataPaging } from "../../common/pagingData";
 import mongoose from "mongoose";
 import AddressModel from "../../models/Address.schema";
@@ -13,10 +11,9 @@ import { IAttribute, IColor, IProduct, ISize } from "../../interface/product";
 import OrderItemsModel from "../../models/order/OrderProduct.schema";
 import { truncateSentence } from "../../utils/cutText";
 import vnpay from "../payment/vnpay.payment";
-import { ProductCode, VerifyReturnUrl, VnpLocale } from "vnpay";
+import { ProductCode, VnpLocale } from "vnpay";
 import { generateOrderCode } from "../../middlewares/generateSlug";
 import PaymentModel from "../../models/order/Payment.schema";
-import { aw } from "@upstash/redis/zmscore-d1ec861c";
 
 const generateCode = async (code: string): Promise<string> => {
   const existingCode = await OrderModel.findOne({
@@ -146,8 +143,8 @@ class OrderController {
         note,
         code,
         orderItems: listIdOrderItem,
-        status:1,
-        statusList:[0,1]
+        status: 1,
+        statusList: [0, 1],
       });
 
       if (!newOrder) {
@@ -156,10 +153,10 @@ class OrderController {
         });
       }
       await CartItemModel.deleteMany({
-        _id:{
-          $in:listId
-        }
-      })
+        _id: {
+          $in: listId,
+        },
+      });
 
       return res.status(STATUS.OK).json({
         message: "Tạo đơn hàng thành công",
@@ -174,7 +171,7 @@ class OrderController {
   async pagingCartOrder(req: RequestModel, res: Response) {
     try {
       const user = req.user;
-      const { listId } = req.body;
+      const { listId, addressId } = req.body;
 
       if (!user)
         return res.status(STATUS.AUTHORIZED).json({
@@ -184,6 +181,29 @@ class OrderController {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn chưa truyền danh sách sản phẩm chọn",
         });
+      }
+
+      let addressMain = null;
+
+      if (!addressId) {
+        addressMain = await AddressModel.findOne({
+          user: user?.id,
+          is_main: true,
+        });
+      } else {
+        const existingAddress = await AddressModel.findOne({
+          _id:addressId,
+          user: user?.id,
+        });
+
+        if (existingAddress) {
+          addressMain = existingAddress;
+        } else {
+          addressMain = await AddressModel.findOne({
+            user: user?.id,
+            is_main: true,
+          });
+        }
       }
 
       const listIdObject = listId.map(
@@ -258,6 +278,9 @@ class OrderController {
                 attribute: "$attribute",
               },
             },
+            totalAmount: {
+              $sum: { $multiply: ["$quantity", "$attribute.discount"] },
+            },
           },
         },
         {
@@ -271,14 +294,10 @@ class OrderController {
             product: "$_id",
             createdAt: 1,
             items: 1,
+            totalAmount: 1,
           },
         },
       ]);
-
-      const addressMain = await AddressModel.findOne({
-        user: user?.id,
-        is_main: true,
-      });
 
       return res.status(STATUS.OK).json({
         message: "Lấy thành công ",
@@ -521,7 +540,7 @@ class OrderController {
         vnp_TxnRef,
         vnp_SecureHash,
       } = req.query;
-      
+
       if (
         !vnp_Amount ||
         !vnp_BankCode ||
@@ -539,7 +558,7 @@ class OrderController {
           type: 1,
         });
       }
-      
+
       const queryReturn: IReturnVnPay = {
         vnp_Amount: vnp_Amount as string,
         vnp_BankCode: vnp_BankCode as string,
@@ -555,7 +574,6 @@ class OrderController {
         vnp_SecureHash: vnp_SecureHash as string,
       };
       let verify = vnpay.verifyReturnUrl(queryReturn);
-
 
       if (!verify.isVerified) {
         const existingOrder = await OrderModel.findById(vnp_TxnRef);
@@ -616,9 +634,9 @@ class OrderController {
         await OrderModel.findByIdAndDelete(existingOrder._id);
 
         await OrderItemsModel.deleteMany({
-          _id:{
-            $in:existingOrder.orderItems
-          }
+          _id: {
+            $in: existingOrder.orderItems,
+          },
         });
 
         if (state) {
@@ -661,8 +679,8 @@ class OrderController {
         transactionId: verify.vnp_TransactionNo,
         amount: verify.vnp_Amount,
         paymentDate: verify.vnp_PayDate,
-        cardType:verify.vnp_CardType,
-        bankCode: verify.vnp_BankCode
+        cardType: verify.vnp_CardType,
+        bankCode: verify.vnp_BankCode,
       });
 
       await OrderModel.findByIdAndUpdate(existingOrder._id, {
@@ -684,14 +702,14 @@ class OrderController {
         }
       );
 
-      if(state) {
-        const data = JSON.parse(state as string)
+      if (state) {
+        const data = JSON.parse(state as string);
 
         await CartItemModel.deleteMany({
-          _id:{
-            $in:data.listId
-          }
-        })
+          _id: {
+            $in: data.listId,
+          },
+        });
       }
 
       return res.status(STATUS.OK).json({
@@ -708,92 +726,132 @@ class OrderController {
   // server khi nhận đơn hàng
   async pagingOrderAdmin(req: RequestModel, res: Response) {
     try {
-      const {status = 1,pageIndex,pageSize,sort,startDate,endDate,method,paymentStatus} = req.body;
+      const {
+        status = 1,
+        pageIndex,
+        pageSize,
+        sort,
+        startDate,
+        endDate,
+        method,
+        paymentStatus,
+      } = req.body;
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
 
-      let queryDate = {}
-      let queryMethod = {}
-      let queryPaymentStatus = {}
+      let queryDate = {};
+      let queryMethod = {};
+      let queryPaymentStatus = {};
 
-      if(startDate || endDate) {
-        let dateStartString = null
-        let dateEndString = null
-        if(startDate && endDate) {
+      if (startDate || endDate) {
+        let dateStartString = null;
+        let dateEndString = null;
+        if (startDate && endDate) {
           dateStartString = new Date(startDate);
           dateEndString = new Date(endDate);
-          const startOfDay = new Date(dateStartString.getUTCFullYear(), dateStartString.getUTCMonth(), dateStartString.getUTCDate(), 0, 0, 0);
-          const endOfDay = new Date(dateEndString.getUTCFullYear(), dateEndString.getUTCMonth(), dateEndString.getUTCDate(), 23, 59, 59);
+          const startOfDay = new Date(
+            dateStartString.getUTCFullYear(),
+            dateStartString.getUTCMonth(),
+            dateStartString.getUTCDate(),
+            0,
+            0,
+            0
+          );
+          const endOfDay = new Date(
+            dateEndString.getUTCFullYear(),
+            dateEndString.getUTCMonth(),
+            dateEndString.getUTCDate(),
+            23,
+            59,
+            59
+          );
           queryDate = {
-            orderDate:{
+            orderDate: {
               $gte: startOfDay, // Lớn hơn hoặc bằng thời gian bắt đầu của ngày đó
-              $lt: endOfDay
-            }
-          }
-        }else if(startDate) {
+              $lt: endOfDay,
+            },
+          };
+        } else if (startDate) {
           dateStartString = new Date(startDate);
-          const startOfDay = new Date(dateStartString.getUTCFullYear(), dateStartString.getUTCMonth(), dateStartString.getUTCDate(), 0, 0, 0);
-          console.log("startOfDay",startOfDay);
+          const startOfDay = new Date(
+            dateStartString.getUTCFullYear(),
+            dateStartString.getUTCMonth(),
+            dateStartString.getUTCDate(),
+            0,
+            0,
+            0
+          );
+          console.log("startOfDay", startOfDay);
           queryDate = {
-            orderDate:{
+            orderDate: {
               $gte: startOfDay, // Lớn hơn hoặc bằng thời gian bắt đầu của ngày đó
-            }
-          }
-        }else if(endDate) {
+            },
+          };
+        } else if (endDate) {
           dateEndString = new Date(endDate);
-          const endOfDay = new Date(dateEndString.getUTCFullYear(), dateEndString.getUTCMonth(), dateEndString.getUTCDate(), 23, 59, 59);
+          const endOfDay = new Date(
+            dateEndString.getUTCFullYear(),
+            dateEndString.getUTCMonth(),
+            dateEndString.getUTCDate(),
+            23,
+            59,
+            59
+          );
           queryDate = {
-            orderDate:{
-              $lt: endOfDay
-            }
-          }
+            orderDate: {
+              $lt: endOfDay,
+            },
+          };
         }
       }
 
-      if(method) {
-        switch(method) {
+      if (method) {
+        switch (method) {
           case 1:
             queryMethod = {
-              paymentMethod:1
-            }
-            break
+              paymentMethod: 1,
+            };
+            break;
           case 2:
             queryMethod = {
-              paymentMethod:1
-            }
-            break
+              paymentMethod: 1,
+            };
+            break;
           case 3:
             queryMethod = {
-              paymentMethod:1
-            }
-            break
-          default :
-          queryMethod = {}
+              paymentMethod: 1,
+            };
+            break;
+          default:
+            queryMethod = {};
         }
-          
       }
 
-      if(paymentStatus) {
+      if (paymentStatus) {
         queryPaymentStatus = {
-          paymentStatus: !!paymentStatus
-        }
+          paymentStatus: !!paymentStatus,
+        };
       }
 
       const listOrder = await OrderModel.find({
-        status:status,
+        status: status,
         ...queryDate,
         ...queryMethod,
-        ...queryPaymentStatus
-      }).populate(["address","user","payment"]).sort({
-        orderDate:sort
-      }).skip(skip).limit(limit)
+        ...queryPaymentStatus,
+      })
+        .populate(["address", "user", "payment"])
+        .sort({
+          orderDate: sort,
+        })
+        .skip(skip)
+        .limit(limit);
 
       const countOrder = await OrderModel.countDocuments({
-        status:status,
+        status: status,
         ...queryDate,
         ...queryMethod,
-        ...queryPaymentStatus
-      })
+        ...queryPaymentStatus,
+      });
 
       const data = formatDataPaging({
         limit,
@@ -803,120 +861,130 @@ class OrderController {
       });
 
       return res.status(STATUS.OK).json({
-        message:"Lấy danh sách thành công",
-        data:data
-      })
-    } catch (error:any) {
+        message: "Lấy danh sách thành công",
+        data: data,
+      });
+    } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
-        message:error.message
-      })
+        message: error.message,
+      });
     }
   }
 
   // chi tiết order
 
-  async getByIdOrderAdmin(req: RequestModel, res: Response){
+  async getByIdOrderAdmin(req: RequestModel, res: Response) {
     try {
-      const {id} = req.params;
+      const { id } = req.params;
 
-      if(!id) return res.status(STATUS.BAD_REQUEST).json({
-        message:"Bạn chưa chọn đơn hàng"
-      })
-
-      const existingOrder = await OrderModel.findById(id).populate(["user","address"])
-
-      if(!existingOrder) {
+      if (!id)
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Không có đơn hàng nào"
-        })
+          message: "Bạn chưa chọn đơn hàng",
+        });
+
+      const existingOrder = await OrderModel.findById(id).populate([
+        "user",
+        "address",
+      ]);
+
+      if (!existingOrder) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có đơn hàng nào",
+        });
       }
 
       return res.status(STATUS.OK).json({
-        message:"Lấy giá trị thành công",
-        data:existingOrder
-      })
-    } catch (error:any) {
+        message: "Lấy giá trị thành công",
+        data: existingOrder,
+      });
+    } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
-        message:error.message
-      })
+        message: error.message,
+      });
     }
   }
 
   // đồng ý đơn hàng
-  async confirmOrderAdmin(req: RequestModel, res: Response){
+  async confirmOrderAdmin(req: RequestModel, res: Response) {
     try {
-      const {id} = req.params;
+      const { id } = req.params;
 
-      if(!id) return res.status(STATUS.BAD_REQUEST).json({
-        message:"Bạn chưa chọn đơn hàng"
-      })
-
-      const existingOrder = await OrderModel.findById(id)
-
-      if(!existingOrder) {
+      if (!id)
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Không có đơn hàng nào"
-        })
+          message: "Bạn chưa chọn đơn hàng",
+        });
+
+      const existingOrder = await OrderModel.findById(id);
+
+      if (!existingOrder) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có đơn hàng nào",
+        });
       }
 
-      const newExistingOrder = await OrderModel.findByIdAndUpdate(existingOrder._id,{
-        status:2,
-        $push:{
-          statusList:2
-        },
-        confirmedDate:Date.now()
-      })
-
-      await OrderItemsModel.updateMany({
-        _id:{
-          $in:existingOrder.orderItems
+      const newExistingOrder = await OrderModel.findByIdAndUpdate(
+        existingOrder._id,
+        {
+          status: 2,
+          $push: {
+            statusList: 2,
+          },
+          confirmedDate: Date.now(),
         }
-      },{
-        status:2
-      })
+      );
+
+      await OrderItemsModel.updateMany(
+        {
+          _id: {
+            $in: existingOrder.orderItems,
+          },
+        },
+        {
+          status: 2,
+        }
+      );
 
       return res.status(STATUS.OK).json({
-        message:"Cập nhập sản phẩm thành công"
-      })
-    } catch (error:any) {
+        message: "Cập nhập sản phẩm thành công",
+      });
+    } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
-        message:error.message
-      })
+        message: error.message,
+      });
     }
   }
 
-
-
-
-  
   // queryClient
   async pagingOrderClient(req: RequestModel, res: Response) {
     try {
-      const {status = -1,pageIndex,pageSize} = req.body;
-      const user = req.user
+      const { status = -1, pageIndex, pageSize } = req.body;
+      const user = req.user;
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
-      let queryStatus = {}
+      let queryStatus = {};
 
-      if(status === -1 ) {
-        queryStatus = {}
-      }else {
+      if (status === -1) {
+        queryStatus = {};
+      } else {
         queryStatus = {
-          status:status,
-        }
+          status: status,
+        };
       }
 
       const listOrder = await OrderModel.find({
-        user:user?.id,
-        ...queryStatus
-      }).sort({
-        createdAt:-1
-      }).skip(skip).limit(limit)
+        user: user?.id,
+        ...queryStatus,
+      })
+        .sort({
+          createdAt: -1,
+        })
+        .skip(skip)
+        .limit(limit);
 
       const countOrder = await OrderModel.countDocuments({
-        status:status,
-        user:user?.id
-      })
+        status: status,
+        user: user?.id,
+      });
 
       const data = formatDataPaging({
         limit,
@@ -926,60 +994,13 @@ class OrderController {
       });
 
       return res.status(STATUS.OK).json({
-        message:"Lấy danh sách thành công",
-        data:data
-      })
-    } catch (error:any) {
+        message: "Lấy danh sách thành công",
+        data: data,
+      });
+    } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
-        message:error.message
-      })
-    }
-  }
-
-  //query order shipper 
-  async getListOrderShipper(req: RequestModel, res: Response) {
-    try {
-      const user = req.user
-
-      const listOrder = await OrderModel.find().populate(["address","user"])
-
-      return res.status(STATUS.OK).json({
-        data:listOrder
-      })
-    } catch (error:any) {
-      return res.status(STATUS.INTERNAL).json({
-        message:error.message
-      })
-    }
-  }
-
-
-  //query get order by code
-  async getOrderByCode(req: RequestModel, res: Response) {
-    try {
-      const user = req.user
-      const {code} = req.params
-
-      if(!code) return res.status(STATUS.BAD_REQUEST).json({
-        message:"Chưa chọn đơn hàng"
-      })
-
-      const listOrder = await OrderModel.findOne({
-        code:code
-      }).populate(["address","user",{
-        path:"orderItems",
-        populate:{
-          path:"product"
-        }
-      }])
-
-      return res.status(STATUS.OK).json({
-        data:listOrder
-      })
-    } catch (error:any) {
-      return res.status(STATUS.INTERNAL).json({
-        message:error.message
-      })
+        message: error.message,
+      });
     }
   }
 }
