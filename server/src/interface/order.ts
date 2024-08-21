@@ -25,15 +25,20 @@ export interface IOrder extends Document {
     note?:string;
     createdAt:string;
     updatedAt:string;
+    orderItems:string[]
 };
 
 
 export interface IOrderItem extends Document {
-    order:string | IOrder;
     product:string | IProduct;
     status:number;
-    attribute:string | IAttribute
     quantity:number;
     createdAt:string;
     updatedAt:string;
+    color:{
+        name:string,
+        code:string
+    },
+    size:string,
+    price:number
 }

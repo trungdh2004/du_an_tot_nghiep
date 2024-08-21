@@ -42,7 +42,7 @@ interface DataTableProps<TData, TValue> {
 	dataPageSize?: number[]; //! data mảng các size tùy chỉnh
 	pageSize: number; //! số lượng phàn tử trong trang
 	handleChangePageSize: (value: number) => void; //! thay đổi phần tử trang
-	isLoading?:boolean
+	isLoading?: boolean
 }
 
 const TableComponent = <TData, TValue>({
@@ -99,7 +99,7 @@ const TableComponent = <TData, TValue>({
 
 						{isLoading && (
 							<div className="inset-0 absolute bg-gray-300/40 flex justify-center items-center">
-								<AiOutlineLoading3Quarters size={20} className="text-blue-500 animate-spin"/>
+								<AiOutlineLoading3Quarters size={20} className="text-blue-500 animate-spin" />
 							</div>
 						)}
 						{table.getRowModel().rows?.length ? (

@@ -3,6 +3,8 @@ import "froala-editor/css/froala_editor.pkgd.min.css";
 import "froala-editor/js/languages/es";
 import "froala-editor/js/plugins.pkgd.min.js";
 import Froala from "react-froala-wysiwyg";
+
+
 const froalaEditorConfig = {
 	attribution: false,
 	quickInsertEnabled: false,
@@ -11,6 +13,7 @@ const froalaEditorConfig = {
 	imageMultipleStyles: false,
 	imageOutputSize: true,
 	imageRoundPercent: true,
+	fontFamilySelection: true,
 	imageMaxSize: 1024 * 1024 * 2.5,
 	imageEditButtons: [
 		"imageReplace",
@@ -25,7 +28,6 @@ const froalaEditorConfig = {
 	],
 	imageInsertButtons: ["imageBack", "|", "imageUpload"],
 	placeholderText: "Nội dung của bạn ở đây!",
-
 	colorsStep: 5,
 	colorsText: [
 		"#000000",
@@ -40,6 +42,7 @@ const froalaEditorConfig = {
 		"#640487",
 		"REMOVE",
 	],
+	
 	colorsBackground: [
 		"#000000",
 		"#2C2E2F",
@@ -59,6 +62,7 @@ const froalaEditorConfig = {
 				"paragraphFormat",
 				"|",
 				"fontSize",
+				"fontFamily",
 				"textColor",
 				"backgroundColor",
 				"insertImage",
@@ -69,6 +73,7 @@ const froalaEditorConfig = {
 				"formatUL",
 				"indent",
 				"outdent",
+				"emoticons",
 			],
 			buttonsVisible: 6,
 		},
@@ -93,6 +98,7 @@ const froalaEditorConfig = {
 			align: "right",
 			buttonsVisible: 2,
 		},
+		
 	},
 	tableEditButtons: [
 		"tableHeader",
@@ -135,9 +141,12 @@ const froalaEditorConfig = {
 			formData.append("image", images[0]);
 			const { data } = await uploadFileService(formData);
 			editor.image.insert(data.path, null, null, editor.image.get());
+			return false;
 		},
 	},
 };
+
+
 type FroalaEditorType = {
 	content: string;
 	onChangeContext: (value: string) => void;

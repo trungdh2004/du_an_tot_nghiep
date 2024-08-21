@@ -8,8 +8,18 @@ export interface SearchObjectType {
 }
 
 export interface SearchObjectTypeSize extends SearchObjectType {
-  height: number | null;
-  weight: number | null;
+	height: number | null;
+	weight: number | null;
+
+export interface SearchObjectBlog extends SearchObjectType {
+	tab?: number
+	tags?: string
+}
+export interface SearchObjectTag extends SearchObjectType {
+	totalElement?: number;
+	totalOptionPage?: number;
+	tab?: number
+	provider?: string;
 }
 export interface SearchObjectBlog extends SearchObjectType {
 	tab?: number
@@ -29,4 +39,9 @@ export interface SearchObjectTypeProduct extends SearchObjectType {
 	category?: string | null;
 	color?:string[];
 	size?:string[]
+}
+export interface SearchObjectBlog extends SearchObjectType {
+	tab?: number
+	tags: string
+
 }

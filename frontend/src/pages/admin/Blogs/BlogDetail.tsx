@@ -48,9 +48,6 @@ const BlogDetail = () => {
     return (
         <>
             <div className="w-[900px] mx-auto">
-                <div className="mb-3 flex justify-end">
-                    <Link to="/admin/blogs"><Button className=""> <IoMdArrowRoundBack size={20} className="pr-1" />Quay lại</Button></Link>
-                </div>
 
                 {/* title */}
                 <h3 className="text-3xl font-bold text-[#222222] mt-5">{blog?.title}</h3>
@@ -59,12 +56,13 @@ const BlogDetail = () => {
                     {/*  */}
                     <div className="flex items-center gap-5">
                         <div className="border border-slate-900 w-[50px] h-[50px] rounded-full overflow-hidden">
+
                             <img src={blog?.user_id?.avatarUrl|| "/avatar_25.jpg"}
                                 className='w-full h-full object-cover' alt="" />
                         </div>
                         <div className="flex-row">
                             <h3 className="text-[#292929] text-base font-medium ">{blog?.user_id?.full_name}</h3>
-                            <p className='text-[#757575] text-sm'>{blog && format(blog?.published_at || blog?.createdAt || "", "dd-MM-yyyy") }</p>
+                            <p className='text-[#757575] text-sm'>{blog && format(blog?.published_at || blog?.createdAt || "", "dd-MM-yyyy") || ""}</p>
                         </div>
                     </div>
                     <div className="">
@@ -80,13 +78,13 @@ const BlogDetail = () => {
 
                 </div>
                 {/* Related-blog */}
+
                 <div className="mt-10">
                     <h3 className="text-sm text-[#757575] uppercase">Xem cái bài viết theo chủ đề</h3>
                     <div className="flex">
                         #tag
                     </div>
                 </div>
-
 
             </div>
         </>
