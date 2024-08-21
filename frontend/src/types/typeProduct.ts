@@ -40,4 +40,5 @@ export interface IProduct {
 	is_deleted?: boolean;
 	rating: number;
 	quantitySold?: number;
+	slug?:string
 }

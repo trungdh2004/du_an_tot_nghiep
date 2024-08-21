@@ -86,7 +86,9 @@ class AddressController {
       }
 
       const countAddress = await AddressModel.countDocuments({
-        user:req.user?.id
+        user:req.user?.id,
+        is_main:true,
+        deleted:false,
       })
 
       if(countAddress === 0) {
@@ -153,6 +155,7 @@ class AddressController {
 
       await AddressModel.findByIdAndUpdate(existingAddress._id, {
         deleted: true,
+        is_main:false
       });
 
       return res.status(STATUS.OK).json({
