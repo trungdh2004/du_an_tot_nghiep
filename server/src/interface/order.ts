@@ -23,6 +23,7 @@ export interface IOrder extends Document {
     paymentMethod:number;
     paymentStatus:boolean;
     note?:string;
+    shipper:string;
     createdAt:string;
     updatedAt:string;
     orderItems:string[]
