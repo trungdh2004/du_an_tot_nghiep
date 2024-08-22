@@ -1,7 +1,6 @@
 import Joi from "joi";
 
 export const shipperValidation = Joi.object({
-    user:Joi.string().required().messages({}),
     firstName:Joi.string().required().messages({}),
     lastName:Joi.string().required().messages({}),
     fullName:Joi.string().required().messages({}),
