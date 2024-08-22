@@ -1,12 +1,24 @@
 import { Textarea } from "@/components/ui/textarea";
-import React from "react";
+import useDebounceV2 from "@/hooks/debounce";
+import useDebounce from "@/hooks/shared";
+import { ObjectCheckoutOrder } from "@/types/ObjectCheckoutOrder";
+import React, { ChangeEvent, Dispatch, SetStateAction } from "react";
+interface Props {
+	setOrderCheckout: Dispatch<SetStateAction<ObjectCheckoutOrder>>;
+}
+const NoteOrder = ({ setOrderCheckout }: Props) => {
+	const handleNote = useDebounce((e: ChangeEvent<HTMLTextAreaElement>) => {
+		const target = e.target as HTMLTextAreaElement;
+		setOrderCheckout((prev) => {
+			return { ...prev, note: target.value };
+		});
+	}, 1000);
 
-const NoteOrder = () => {
 	return (
 		<div className="py-2 pb-4">
 			<div className="lg:flex flex-col gap-3 bg-white border border-gray-200 px-4 py-2">
 				<h3>Ghi chú</h3>
-				<Textarea />
+				<Textarea onChange={handleNote} />
 			</div>
 		</div>
 	);

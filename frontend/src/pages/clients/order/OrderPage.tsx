@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AddressOrder from "./AddressOrder";
 import ProductOrder from "./ProductOrder";
 import Vorcher from "./Vorcher";
@@ -6,32 +6,75 @@ import Footer from "@/components/client/Footer";
 import PaymentMethod from "./PaymentMethod";
 import NoteOrder from "./NoteOrder";
 import { useSearchParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { pagingOrder } from "@/service/order";
+import { ObjectCheckoutOrder } from "@/types/ObjectCheckoutOrder";
+import { toast } from "sonner";
 
 const OrderPage = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const paramsObject = Object.fromEntries(searchParams.entries());
 	const stateOrder = JSON.parse(paramsObject.state);
-	const {
-		data: order,
-		isLoading,
-		isError,
-	} = useQuery({
-		queryKey: ["order", stateOrder],
-		queryFn: async () => {
+	const [orderParams, setOrderParams] = useState<any | {}>(stateOrder || {});
+	const [order, setOrder] = useState<any>({});
+	const { mutate } = useMutation({
+		mutationKey: ["orderPagingCart"],
+		mutationFn: async (valueOrder) => {
 			try {
-				const response = await pagingOrder(stateOrder);
-				return response;
+				const { data } = await pagingOrder(valueOrder);
+				return data;
 			} catch (error) {
-				console.error("Error fetching order:", error);
+				console.error("Error creating order:", error);
 				throw error;
 			}
 		},
-		refetchInterval: 60000, // refetch every minute
+		onSuccess: (data) => {
+			setOrder(data);
+		},
+		onError: (error) => {
+			console.error("Error in creating order:", error);
+		},
 	});
-	console.log(stateOrder);
-	console.log(order);
+	useEffect(() => {
+		mutate(orderParams);
+	}, []);
+
+	const handleChangeAddress = (id: string) => {
+		if (id) {
+			setOrderParams({ ...orderParams, addressId: id });
+			mutate({ ...orderParams, addressId: id });
+		}
+	};
+
+	const [orderCheckout, setOrderCheckout] = useState<ObjectCheckoutOrder>(
+		() => {
+			return {
+				listId: orderParams.listId,
+				address: order?.address,
+				voucher: "",
+				paymentMethod: 1,
+				note: "",
+				shippingCost: 10000,
+				distance: "",
+			};
+		},
+  );
+  useEffect(() => {
+		if (order?.address) {
+			setOrderCheckout((prev) => ({
+				...prev,
+				address: order.address,
+			}));
+		}
+  }, [order]);
+  console.log("orderCheckout", orderCheckout);
+  
+
+	const handleCheckout = () => {
+    if (orderCheckout.paymentMethod === 1) {
+      
+		}
+	};
 
 	return (
 		<>
@@ -44,11 +87,18 @@ const OrderPage = () => {
 			</div>
 			<div className="bg-main w-full h-full">
 				<div className="lg:px-[130px] md:px-[65px] px-0">
-					<AddressOrder />
-					<ProductOrder />
+					<AddressOrder
+						data={order}
+						handleChangeAddress={handleChangeAddress}
+					/>
+					<ProductOrder data={order} />
 					<Vorcher />
-					<NoteOrder />
-					<PaymentMethod />
+					<NoteOrder setOrderCheckout={setOrderCheckout} />
+					<PaymentMethod
+						data={order}
+						handleCheckout={handleCheckout}
+						setOrderCheckout={setOrderCheckout}
+					/>
 				</div>
 			</div>
 		</>
