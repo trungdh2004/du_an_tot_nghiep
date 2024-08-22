@@ -212,7 +212,7 @@ class OrderController {
             },
             {
               $match: {
-                _id: existingAddressId._id,
+                _id: new mongoose.Types.ObjectId(existingAddressId._id),
               },
             },
             {
@@ -234,7 +234,7 @@ class OrderController {
               },
               {
                 $match: {
-                  _id: existingAddressMain._id,
+                  _id:new mongoose.Types.ObjectId(existingAddressMain._id),
                 },
               },
               {
@@ -258,7 +258,7 @@ class OrderController {
             },
             {
               $match: {
-                _id: existingAddressMain._id,
+                _id:new mongoose.Types.ObjectId(existingAddressMain._id),
               },
             },
             {
