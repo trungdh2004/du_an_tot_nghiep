@@ -195,9 +195,9 @@ class OrderController {
         user: user?.id,
       });
 
+
       if (addressId) {
         const existingAddressId = await AddressModel.findById(addressId);
-
         if (existingAddressId) {
           addressMain = await AddressModel.aggregate([
             {
@@ -242,6 +242,29 @@ class OrderController {
               },
             ]);
           }
+        }
+      }else {
+        if (existingAddressMain) {
+          addressMain = await AddressModel.aggregate([
+            {
+              $geoNear: {
+                near: {
+                  type: "Point",
+                  coordinates: [long, lat],
+                },
+                distanceField: "dist",
+                spherical: true,
+              },
+            },
+            {
+              $match: {
+                _id: existingAddressMain._id,
+              },
+            },
+            {
+              $limit: 1,
+            },
+          ]);
         }
       }
 
