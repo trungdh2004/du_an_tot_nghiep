@@ -16,8 +16,8 @@ import { generateOrderCode } from "../../middlewares/generateSlug";
 import PaymentModel from "../../models/order/Payment.schema";
 import { chargeShippingFee } from "../../common/func";
 
-const long = +process.env.LONGSHOP! || 105.62573250208116
-const lat = +process.env.LATSHOP! || 21.045193948892585
+const long = +process.env.LONGSHOP! || 105.62573250208116;
+const lat = +process.env.LATSHOP! || 21.045193948892585;
 
 const generateCode = async (code: string): Promise<string> => {
   const existingCode = await OrderModel.findOne({
@@ -55,7 +55,7 @@ class OrderController {
         voucher,
         paymentMethod,
         note,
-        shippingCost = 10000,
+        shippingCost,
         distance,
       } = req.body;
 
@@ -108,7 +108,7 @@ class OrderController {
           price: (item.attribute as IAttribute).discount,
           quantity: item.quantity,
           totalMoney: +item.quantity * (item.attribute as IAttribute).discount,
-          attribute:item.attribute
+          attribute: item.attribute,
         };
       });
 
@@ -190,88 +190,63 @@ class OrderController {
 
       let addressMain = null;
 
-      if (!addressId) {
-        // addressMain = await AddressModel.findOne({
-        //   user: user?.id,
-        //   is_main: true,
-        // });
-        addressMain = await AddressModel.aggregate([
-          {
-            $geoNear: {
-              near: {
-                type: 'Point',
-                coordinates: [long,lat]
-              },
-              distanceField: 'dist',
-              spherical: true
-            }
-          },
-          {
-            $match: { 
-              user:new mongoose.Types.ObjectId(user?.id),
-              is_main:true,
-            }
-          },
-          {
-            $limit:1
-          }
-        ]);
-      } else {
-        // const existingAddress = await AddressModel.findOne({
-        //   _id:addressId,
-        //   user: user?.id,
-        // });
+      const existingAddressMain = await AddressModel.findOne({
+        is_main: true,
+        user: user?.id,
+      });
 
-        const existingAddress = await AddressModel.aggregate([
-          {
-            $geoNear: {
-              near: {
-                type: 'Point',
-                coordinates: [long,lat]
-              },
-              distanceField: 'dist',
-              spherical: true
-            }
-          },
-          {
-            $match: { 
-              user:new mongoose.Types.ObjectId(user?.id),
-              _id:new mongoose.Types.ObjectId(addressId as string),
-            }
-          },
-          {
-            $limit:1
-          }
-        ]);
+      if (addressId) {
+        const existingAddressId = await AddressModel.findById(addressId);
 
-        if (existingAddress) {
-          addressMain = existingAddress;
-        } else {
+        if (existingAddressId) {
           addressMain = await AddressModel.aggregate([
             {
               $geoNear: {
                 near: {
-                  type: 'Point',
-                  coordinates: [long,lat]
+                  type: "Point",
+                  coordinates: [long, lat],
                 },
-                distanceField: 'dist',
-                spherical: true
-              }
+                distanceField: "dist",
+                spherical: true,
+              },
             },
             {
-              $match: { 
-                user:new mongoose.Types.ObjectId(user?.id),
-                is_main:true,
-              }
+              $match: {
+                _id: existingAddressId._id,
+              },
             },
             {
-              $limit:1
-            }
+              $limit: 1,
+            },
           ]);
+        } else {
+          if (existingAddressMain) {
+            addressMain = await AddressModel.aggregate([
+              {
+                $geoNear: {
+                  near: {
+                    type: "Point",
+                    coordinates: [long, lat],
+                  },
+                  distanceField: "dist",
+                  spherical: true,
+                },
+              },
+              {
+                $match: {
+                  _id: existingAddressMain._id,
+                },
+              },
+              {
+                $limit: 1,
+              },
+            ]);
+          }
         }
       }
 
-      const shippingCost = chargeShippingFee(addressMain[0]?.dist)
+
+      const shippingCost = addressMain ? chargeShippingFee(addressMain[0]?.dist) : 0;
 
       const listIdObject = listId.map(
         (item: string) => new mongoose.Types.ObjectId(item)
@@ -369,8 +344,8 @@ class OrderController {
       return res.status(STATUS.OK).json({
         message: "Lấy thành công ",
         data: listProduct,
-        address: addressMain[0] || null,
-        shippingCost
+        address:addressMain? addressMain[0] : null,
+        shippingCost,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
@@ -463,7 +438,7 @@ class OrderController {
         voucher,
         paymentMethod,
         note,
-        shippingCost = 10000,
+        shippingCost,
         distance,
         returnUrl,
       } = req.body;
