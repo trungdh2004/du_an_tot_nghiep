@@ -14,6 +14,10 @@ import vnpay from "../payment/vnpay.payment";
 import { ProductCode, VnpLocale } from "vnpay";
 import { generateOrderCode } from "../../middlewares/generateSlug";
 import PaymentModel from "../../models/order/Payment.schema";
+import { chargeShippingFee } from "../../common/func";
+
+const long = +process.env.LONGSHOP! || 105.62573250208116
+const lat = +process.env.LATSHOP! || 21.045193948892585
 
 const generateCode = async (code: string): Promise<string> => {
   const existingCode = await OrderModel.findOne({
@@ -104,6 +108,7 @@ class OrderController {
           price: (item.attribute as IAttribute).discount,
           quantity: item.quantity,
           totalMoney: +item.quantity * (item.attribute as IAttribute).discount,
+          attribute:item.attribute
         };
       });
 
@@ -186,25 +191,87 @@ class OrderController {
       let addressMain = null;
 
       if (!addressId) {
-        addressMain = await AddressModel.findOne({
-          user: user?.id,
-          is_main: true,
-        });
+        // addressMain = await AddressModel.findOne({
+        //   user: user?.id,
+        //   is_main: true,
+        // });
+        addressMain = await AddressModel.aggregate([
+          {
+            $geoNear: {
+              near: {
+                type: 'Point',
+                coordinates: [long,lat]
+              },
+              distanceField: 'dist',
+              spherical: true
+            }
+          },
+          {
+            $match: { 
+              user:new mongoose.Types.ObjectId(user?.id),
+              is_main:true,
+            }
+          },
+          {
+            $limit:1
+          }
+        ]);
       } else {
-        const existingAddress = await AddressModel.findOne({
-          _id:addressId,
-          user: user?.id,
-        });
+        // const existingAddress = await AddressModel.findOne({
+        //   _id:addressId,
+        //   user: user?.id,
+        // });
+
+        const existingAddress = await AddressModel.aggregate([
+          {
+            $geoNear: {
+              near: {
+                type: 'Point',
+                coordinates: [long,lat]
+              },
+              distanceField: 'dist',
+              spherical: true
+            }
+          },
+          {
+            $match: { 
+              user:new mongoose.Types.ObjectId(user?.id),
+              _id:new mongoose.Types.ObjectId(addressId as string),
+            }
+          },
+          {
+            $limit:1
+          }
+        ]);
 
         if (existingAddress) {
           addressMain = existingAddress;
         } else {
-          addressMain = await AddressModel.findOne({
-            user: user?.id,
-            is_main: true,
-          });
+          addressMain = await AddressModel.aggregate([
+            {
+              $geoNear: {
+                near: {
+                  type: 'Point',
+                  coordinates: [long,lat]
+                },
+                distanceField: 'dist',
+                spherical: true
+              }
+            },
+            {
+              $match: { 
+                user:new mongoose.Types.ObjectId(user?.id),
+                is_main:true,
+              }
+            },
+            {
+              $limit:1
+            }
+          ]);
         }
       }
+
+      const shippingCost = chargeShippingFee(addressMain[0]?.dist)
 
       const listIdObject = listId.map(
         (item: string) => new mongoose.Types.ObjectId(item)
@@ -302,7 +369,8 @@ class OrderController {
       return res.status(STATUS.OK).json({
         message: "Lấy thành công ",
         data: listProduct,
-        address: addressMain || null,
+        address: addressMain[0] || null,
+        shippingCost
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
