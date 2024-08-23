@@ -2,6 +2,8 @@ import { getItemLocal } from "@/common/localStorage";
 import LoadingFixed from "@/components/LoadingFixed";
 import instance from "@/config/instance";
 import { currentAccount } from "@/service/account";
+import { getCountMyShoppingCart } from "@/service/cart";
+import useCart from "@/store/cart.store";
 import { AxiosError } from "axios";
 import {
 	createContext,
@@ -38,6 +40,7 @@ interface AuthProviderProps {
 }
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
+	const { setTotalCart } = useCart();
 	const [authUser, setAuthUser] = useState<IUser | undefined>(undefined);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
@@ -46,8 +49,12 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 		setIsLoggedIn(true);
 		(async () => {
 			try {
-				const { data } = await currentAccount();
-				setAuthUser(data?.data);
+				const [account, cartCount] = await Promise.all([
+					currentAccount(),
+					getCountMyShoppingCart(),
+				]);
+				setTotalCart(cartCount?.data?.count);
+				setAuthUser(account?.data?.data);
 			} catch (error) {
 				setAuthUser(undefined);
 				setIsLoggedIn(false);

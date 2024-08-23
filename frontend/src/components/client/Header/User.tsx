@@ -11,6 +11,7 @@ import app from "@/config/initializeFirebase";
 import { useAuth } from "@/hooks/auth";
 import { cn } from "@/lib/utils";
 import { logOut } from "@/service/account";
+import useCart from "@/store/cart.store";
 import { AxiosError } from "axios";
 import { getAuth, signOut } from "firebase/auth";
 import { LucideUser } from "lucide-react";
@@ -18,6 +19,7 @@ import { Link } from "react-router-dom";
 import { toast } from "sonner";
 const User = () => {
 	const { authUser, setAuthUser, setIsLoggedIn } = useAuth();
+	const { updateTotalCart } = useCart();
 	const handleLogout = async () => {
 		try {
 			const data = await logOut();
@@ -25,6 +27,7 @@ const User = () => {
 			setIsLoggedIn?.(false);
 			removeItemLocal("token");
 			signOut(getAuth(app));
+			updateTotalCart(0);
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				toast.error(error.response?.data?.message);

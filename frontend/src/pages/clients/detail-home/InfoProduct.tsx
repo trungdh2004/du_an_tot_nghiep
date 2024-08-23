@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { addProductToCart } from "@/service/cart";
 import { AxiosError } from "axios";
 import useCartAnimation from "@/hooks/useCartAnimation";
+import useCart from "@/store/cart.store";
 
 type Props = {
 	product?: IProductDetail;
@@ -35,6 +36,7 @@ interface IStateInfoProduct {
 
 const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 	const { startAnimation, RenderAnimation } = useCartAnimation();
+	const { updateTotalCart } = useCart();
 	const [stateInfoProduct, setStateInfoProduct] = useState<IStateInfoProduct>({
 		listColorExist: [],
 		listSizeExist: [],
@@ -137,8 +139,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						".ablum-detail-product",
 					) as HTMLDivElement;
 					startAnimation(itemElement, product?.thumbnail as string);
-					toast.message(data?.message);
-					console.log("Add to cart");
+					updateTotalCart(purchaseQuantity);
 				} catch (error) {
 					if (error instanceof AxiosError) {
 						toast.error(error?.response?.data?.message);

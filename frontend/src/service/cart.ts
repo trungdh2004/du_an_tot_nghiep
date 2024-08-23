@@ -13,3 +13,7 @@ export const addProductToCart = (data: addToCartType) => {
 	const uri = `${endpoint}/addProductCart`;
 	return instance.post(uri, data);
 };
+export const getCountMyShoppingCart = () => {
+	const uri = `${endpoint}/countCart`;
+	return instance.get(uri);
+};

@@ -23,8 +23,11 @@ import {
 } from "../../components/ui/form";
 import { Input } from "../../components/ui/input";
 import SignInWithFacebookOrGoogle from "./SignInWithFacebookOrGoogle";
+import useCart from "@/store/cart.store";
+import { getCountMyShoppingCart } from "@/service/cart";
 const Login = () => {
 	const routerHistory = useRouterHistory();
+	const { setTotalCart } = useCart();
 	const { setAuthUser, setIsLoggedIn } = useAuth();
 	const formSchema = z.object({
 		email: z
@@ -50,6 +53,8 @@ const Login = () => {
 			setAuthUser?.(data?.user);
 			setIsLoggedIn?.(true);
 			instance.defaults.headers.common.Authorization = `Bearer ${data?.accessToken}`;
+			const { data: myCart } = await getCountMyShoppingCart();
+			setTotalCart(myCart?.count);
 			toast.success(data?.message);
 			routerHistory();
 		} catch (error) {
