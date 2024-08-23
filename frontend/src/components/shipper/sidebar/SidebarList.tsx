@@ -39,9 +39,9 @@ const SidebarListShipper = () => {
 												key={item.path + item.label}
 												label={row.label}
 												Icon={row.icon}
-												path={`/admin${item.path}${row.path}`}
+												path={`${item.path}${row.path}`}
 												isAction={
-													location.pathname === `/admin${item.path}${row.path}`
+													location.pathname === `${item.path}${row.path}`
 												}
 											/>
 										))}
@@ -57,8 +57,8 @@ const SidebarListShipper = () => {
 						key={item.path}
 						label={item.label}
 						Icon={item.icon}
-						path={`/admin${item.path}`}
-						isAction={location.pathname === `/admin${item.path}`}
+						path={`${item.path}`}
+						isAction={location.pathname === `${item.path}`}
 						isParent
 					/>
 				);

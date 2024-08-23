@@ -38,3 +38,28 @@ export function optimizeCloudinaryUrl(
 	const regex = /\/upload\/?(?:v\d+\/)?/;
 	return url.replace(regex, `/upload/${transformationString}/`);
 }
+
+
+export function convertMeter(meter:number) {
+	if(!meter) return 0
+
+	const value = (+meter / 1000) || 0;
+
+	return value.toFixed(2)
+}
+
+export function convertTimeSection(time:number) {
+	if(!time) return 0
+
+	if(time < 60) {
+		return `${time.toFixed(0)} giây`
+	}if(60 <= time && time < 3600) {
+		const value = time / 60;
+		return `${value.toFixed(0)} phút`
+	}if( 3600 <= time && time < 86400) {
+		const hour = time / 3600;
+		const minute = (time % 3600) / 60;
+		return `${hour.toFixed(0)} giờ ${minute.toFixed(0)} phút`
+	}
+
+}
