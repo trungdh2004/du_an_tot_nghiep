@@ -1,4 +1,5 @@
 import instance from "@/config/instance";
+import { ObjectCheckoutOrder } from "@/types/ObjectCheckoutOrder";
 import axios from "axios";
 
 export const pagingOrder = async (listId: any) => {
@@ -6,7 +7,12 @@ export const pagingOrder = async (listId: any) => {
 	return data;
 };
 
-export const createOrderPayUponReceipt = async () => {
-  const data = await instance.post(`/order/createOrderPayUponReceipt`);
-  return data;
+export const createOrderPayUponReceipt = async (
+	orderCheckout: ObjectCheckoutOrder,
+) => {
+	const data = await instance.post(
+		`/order/createOrderPayUponReceipt`,
+		orderCheckout,
+	);
+	return data;
 };

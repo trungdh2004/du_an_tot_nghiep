@@ -1,6 +1,6 @@
-
 import OrderLayout from "@/layout/OrderLayout";
 import OrderPage from "@/pages/clients/order/OrderPage";
+import OrderSuccess from "@/pages/clients/order/OrderSuccess";
 
 const OrderRouter = [
 	{
@@ -10,6 +10,10 @@ const OrderRouter = [
 			{
 				path: "",
 				element: <OrderPage />,
+			},
+			{
+				path: "success",
+				element: <OrderSuccess />,
 			},
 		],
 	},

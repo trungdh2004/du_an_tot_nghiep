@@ -5,9 +5,9 @@ import Vorcher from "./Vorcher";
 import Footer from "@/components/client/Footer";
 import PaymentMethod from "./PaymentMethod";
 import NoteOrder from "./NoteOrder";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { pagingOrder } from "@/service/order";
+import { createOrderPayUponReceipt, pagingOrder } from "@/service/order";
 import { ObjectCheckoutOrder } from "@/types/ObjectCheckoutOrder";
 import { toast } from "sonner";
 
@@ -58,21 +58,30 @@ const OrderPage = () => {
 				distance: "",
 			};
 		},
-  );
-  useEffect(() => {
+	);
+	useEffect(() => {
 		if (order?.address) {
 			setOrderCheckout((prev) => ({
 				...prev,
 				address: order.address,
 			}));
 		}
-  }, [order]);
-  console.log("orderCheckout", orderCheckout);
-  
-
+	}, [order]);
+	console.log("orderCheckout", orderCheckout);
+const navigate = useNavigate()
 	const handleCheckout = () => {
-    if (orderCheckout.paymentMethod === 1) {
-      
+		if (orderCheckout.paymentMethod === 1) {
+			try {
+				(async () => {
+					const { data } = await createOrderPayUponReceipt(orderCheckout);
+          toast.success("Thanh toán thành công");
+          navigate('/order/success')
+					return data;
+				})();
+			} catch (error) {
+				console.log("Error:", error);
+				toast.error("Thanh toán thất bại");
+			}
 		}
 	};
 

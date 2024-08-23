@@ -1,7 +1,15 @@
+import { useEffect } from "react";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const OrderSuccess = () => {
+	const navigate = useNavigate();
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			navigate("/");
+		}, 5000);
+		return () => clearTimeout(timeout);
+	}, [navigate]);
 	return (
 		<div className="container">
 			<div className="flex flex-col justify-center items-center gap-5 py-11">
