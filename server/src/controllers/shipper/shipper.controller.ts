@@ -200,12 +200,18 @@ class ShipperController {
   }
 
   // update status 2 -> 3
-  async updateStatusOrder(req: RequestShipper, res: Response) {
+  async updateStatusShippingOrder(req: RequestShipper, res: Response) {
     try {
       const {id} = req.params;
-      const {status} = req.body;
+      const shipper = req.shipper
 
-      if(!id || !status) {
+      if(!shipper) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Bạn không phải là shipper"
+        })
+      }
+
+      if(!id ) {
         return res.status(STATUS.BAD_REQUEST).json({
           message:"Chưa nhập giá trị"
         })
@@ -216,18 +222,84 @@ class ShipperController {
       if(!existingOrder) return res.status(STATUS.BAD_REQUEST).json({
         message:"Không có đơn hàng"
       })
+
+      if(existingOrder.shipper.toString() !== shipper?.id.toString()) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Bạn không có quyền đơn hàng này"
+        })
+      }
+
+      const updateOrder = await OrderModel.findByIdAndUpdate(id,{
+        status:3,
+        $push:{
+          statusList:3
+        },
+        shippingDate:Date.now()
+      },{new : true})
+
+      return res.status(STATUS.OK).json({
+        message:"Cập nhập đơn hàng đang giao",
+        data:updateOrder
+      })
     } catch (error:any) {
       return res.status(STATUS.INTERNAL).json({
         message:error.message
       })
     }
   }
+  // update status 3 -> 4
+  async updateStatusShippedOrder(req: RequestShipper, res: Response) {
+    try {
+      const {id} = req.params;
+      const shipper = req.shipper
 
-  // đã giao
+      if(!shipper) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Bạn không phải là shipper"
+        })
+      }
+
+      if(!id ) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Chưa nhập giá trị"
+        })
+      }
+
+      const existingOrder = await OrderModel.findById(id);
+
+      if(!existingOrder) return res.status(STATUS.BAD_REQUEST).json({
+        message:"Không có đơn hàng"
+      })
+
+      if(existingOrder.shipper.toString() !== shipper?.id.toString()) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Bạn không có quyền đơn hàng này"
+        })
+      }
+
+      const updateOrder = await OrderModel.findByIdAndUpdate(id,{
+        status:4,
+        $push:{
+          statusList:4
+        },
+        shippedDate:Date.now()
+      },{new : true})
+
+      return res.status(STATUS.OK).json({
+        message:"Cập nhập đơn hàng giao thành công",
+        data:updateOrder
+      })
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+        message:error.message
+      })
+    }
+  }
+  
+  // lấy tất cả đơn đã giao
   async getListOrderSuccessShipper(req: RequestShipper, res: Response) {
     try {
       const shipper = req.shipper;
-      console.log("log");
       const {pageSize = 1,pageIndex} = req.body
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;

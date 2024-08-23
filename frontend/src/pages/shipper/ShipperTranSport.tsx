@@ -4,27 +4,33 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { Marker } from "react-map-gl";
-import { formatQuantity } from "@/common/localFunction";
+import { convertMeter, convertTimeSection, formatQuantity } from "@/common/localFunction";
 
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { AiFillHome } from "react-icons/ai";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import SourcePage from "@/components/map/Source";
 import { Button } from "@/components/ui/button";
+import { getOrderMapByCode, updateStatusShippedOrder } from "@/service/shipper";
+import { distance } from "framer-motion";
+import { toast } from "sonner";
+import { useMediaQuery } from "usehooks-ts";
 
 const ShipperTranSport = () => {
 	const { code } = useParams();
-    const [isOpen,setIsOpen] = useState(true)
+    const [isOpen,setIsOpen] = useState(false)
+	const matches = useMediaQuery("(min-width: 1024px)");
 
-	const { data } = useQuery({
+	const router = useNavigate()
+	const { data ,isLoading , isError } = useQuery({
 		queryKey: ["listOrder", code],
 		queryFn: async () => {
 			try {
-				const { data } = await instance.get("/order/shipperByCode/" + decodeURIComponent(code as string));
+				const { data } = await getOrderMapByCode(decodeURIComponent(code as string));
 				return data;
 			} catch (error) {
-				return [];
+				router("/shipper")
 			}
 		},
 	});
@@ -37,9 +43,14 @@ const ShipperTranSport = () => {
 	});
     const [directions, setDirections] = useState({
 		distance:0,
-		coords:[]
+		coords:[],
+		duration:0
 	});
-
+	useEffect(() => {
+		if (matches) {
+			setIsOpen(false);
+		}
+	}, [matches]);
 
 	useEffect(() => {
 		navigator.geolocation.getCurrentPosition((data) => {
@@ -53,15 +64,23 @@ const ShipperTranSport = () => {
 	}, []);
 
     const getRoute = async (start:number[],end:number[]) => {
-        const res = await fetch(
-          `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=pk.eyJ1IjoiZG9odXV0cnVuZyIsImEiOiJjbHVwa20zaDMyZ2ppMmtuem93aDN1eXl3In0.O33vYvx7VEUo7mrZGRbqgA`
-        );
-        const data = await res.json();
-        const coords = data.routes[0].geometry.coordinates;
-        setDirections({
-			distance:100,
-			coords:coords
-		});
+        try {
+			const res = await fetch(
+				`https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=pk.eyJ1IjoiZG9odXV0cnVuZyIsImEiOiJjbHVwa20zaDMyZ2ppMmtuem93aDN1eXl3In0.O33vYvx7VEUo7mrZGRbqgA`
+			  );
+			  const data = await res.json();
+			  const coords = data.routes[0].geometry.coordinates;
+			  const distance = data.routes[0]?.distance
+			  const duration = data.routes[0]?.duration
+			  setDirections({
+				  distance:distance,
+				  duration:duration,
+				  coords:coords
+			  });
+
+		} catch (error) {
+			
+		}
       };
 
     useEffect(() => {
@@ -103,10 +122,24 @@ const ShipperTranSport = () => {
 		},
 	];
 
+
+	if(isError) {
+		return <Navigate to={"/shipper"}/>
+	}
+
+	const handleSuccessOrder =async () => {
+		try {
+			const {data:dataOrder} = await updateStatusShippedOrder(data?.data?._id)
+			router("/shipper")
+			toast.success("Giao hàng thành công")
+		} catch (error) {
+			toast.error("Lỗi ")
+		}
+	}
 	return (
 		<div className="w-full h-full flex relative overflow-hidden">
 			<Link to={"/shipper"}>
-				<div className="fixed top-4 left-4 size-10 rounded-full bg-blue-500 z-50 flex items-center justify-center cursor-pointer">
+				<div className="fixed top-4 left-4 size-10 rounded-full bg-blue-500 z-10 flex items-center justify-center cursor-pointer">
 					<AiFillHome size={20} className="text-white" />
 				</div>
 			</Link>
@@ -137,22 +170,21 @@ const ShipperTranSport = () => {
 					)}
 				</MapComponent>
 			</div>
-			<div className={cn("hidden lg:flex w-1/5 h-screen bg-blue-200 p-4 space-y-2  flex-col")}>
+			<div className={cn("absolute -right-[280px] w-[280px] lg:static flex lg:w-1/5 h-screen bg-blue-200 p-2 sm:p-4 space-y-2  flex-col duration-1000 ease-in-out z-50 border-l border-blue-500",isOpen && "right-0")}>
 				{/* user */}
 				<div className="w-full p-2 bg-white rounded-md flex">
-					<div className="size-10 rounded-full bg-white border overflow-hidden">
-						<img
-							src={data?.data?.user?.avatar || "/avatar_25.jpg"}
-							alt=""
-							className="w-full h-full object-cover"
-						/>
-					</div>
-					<div className="flex-1 pl-2">
-						<p className="text-sm leading-5 font-medium">
-							{data?.data?.address?.username}
+					<div className="flex-1">
+						<p className="text-sm leading-5 ">
+							Tên: <span className="font-medium">{data?.data?.address?.username}</span>
 						</p>
-						<p className="text-base leading-5 font-medium">
-							{data?.data?.address?.phone}
+						<p className="text-sm leading-5">
+							SĐT: <span className="font-medium">{data?.data?.address?.phone}</span>
+						</p>
+						<p className="text-sm leading-5">
+							Quãng đường: <span className="font-medium">{convertMeter(directions.distance)} km</span>
+						</p>
+						<p className="text-sm leading-5">
+							Thời gian ước tính: <span className="font-medium">{convertTimeSection(directions.duration)}</span>
 						</p>
 					</div>
 				</div>
@@ -197,7 +229,7 @@ const ShipperTranSport = () => {
 					</p>
 				</div>
 
-				<div className="w-full p-2 bg-white rounded-md flex-1 h-full flex flex-col overflow-hidden">
+				<div className="w-full p-2 bg-white rounded-md flex-1 flex flex-col overflow-hidden">
 					<div className="pb-1 mb-1 border-b text-sm font-medium">
 						Tổng số sản phẩm: {data?.data?.orderItems.length} sp
 					</div>
@@ -230,10 +262,19 @@ const ShipperTranSport = () => {
 					</ScrollArea>
 				</div>
 
-				<Button variant={"success"}>
+				<Button variant={"success"} className="w-full" onClick={handleSuccessOrder}>
 					Giao hàng thành công
 				</Button>
+
+				<div className="absolute h-10 w-6 top-1/2 -translate-y-1/2 bg-blue-200 -left-5 cursor-pointer rounded-s-full border-l border-blue-500" onClick={() => {
+					setIsOpen(prev => !prev)
+				}}></div>
 			</div>
+			<div className={cn("absolute w-full h-full z-20 bg-gray-500/30 hidden duration-1000 ease-in-out ",isOpen && "block lg:hidden")}
+				onClick={() => {
+					setIsOpen(false)
+				}}
+			></div>
 		</div>
 	);
 };

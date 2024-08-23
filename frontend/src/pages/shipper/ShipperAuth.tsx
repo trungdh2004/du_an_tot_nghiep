@@ -1,16 +1,12 @@
 import OverlayViolet from "@/components/OverlayViolet";
-import instance from "@/config/instance";
-import { useAuth } from "@/hooks/auth";
-import { useRouterHistory } from "@/hooks/router";
-import { loginAccount } from "@/service/account";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AxiosError } from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { z } from "zod";
 import { Button } from "../../components/ui/button";
+
 import {
 	Form,
 	FormControl,
@@ -33,12 +29,15 @@ import AddressLocation from "../clients/address/AddressLocation";
 import { useQuery } from "@tanstack/react-query";
 import { callCity, callCommune, callDistrict } from "@/service/address";
 import InputNumber from "@/components/common/InputNumber";
-import { Accordion, AccordionItem } from "@/components/ui/accordion";
 import {
 	AiOutlineCloudUpload,
 	AiOutlineLoading3Quarters,
 } from "react-icons/ai";
 import { uploadFileService } from "@/service/upload";
+import { registerShipper } from "@/service/shipper";
+import { IShipper } from "@/types/shipper.interface";
+import { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 
 interface ICity {
 	idProvince: string;
@@ -88,6 +87,7 @@ const formSchema = z.object({
 });
 
 const ShipperAuth = () => {
+	const router = useNavigate()
 	const [districts, setDistricts] = useState<IDistrict[]>([]);
 	const [commune, setCommune] = useState<ICommune[]>([]);
 	const [previewUrl, setPreviewUrl] = useState({
@@ -108,12 +108,13 @@ const ShipperAuth = () => {
 	const onSubmit = async (payload: z.infer<typeof formSchema>) => {
 		try {
 			console.log("payload", payload);
+			const {data} = await registerShipper(payload as IShipper)
+			toast.success("Đăng kí tài khoản thành công")
+			router("/shipper/pending")
 		} catch (error) {
-			// setAuthUser?.(undefined);
-			// setIsLoggedIn?.(false);
-			// if (error instanceof AxiosError) {
-			// 	toast.error(error.response?.data?.message);
-			// }
+			if (error instanceof AxiosError) {
+				toast.error(error.response?.data?.message);
+			}
 		}
 	};
 
@@ -146,6 +147,7 @@ const ShipperAuth = () => {
 		const address = `${value.name},${form.watch("district")?.name},${form.watch("city")?.name}`;
 		form.setValue("address", address);
 		form.setValue("commune", value);
+		form.clearErrors("address")
 	};
 
 	const handleUploadFile = async (file: File) => {
@@ -157,15 +159,14 @@ const ShipperAuth = () => {
 	};
 
 	return (
-		<div className="h-[100vh]">
+		<div className="h-[100vh] ">
 			<OverlayViolet />
-			<div className="flex items-center justify-center h-screen px-6">
-				<div className="grid grid-cols-12 gap-4 max-w-[90%] lg:max-w-[80%]">
-					<div className="col-span-6 lg:col-span-4 flex justify-center items-center">
+			<div className="flex items-center justify-center min-h-screen py-4 px-2 w-full">
+				<div className="flex gap-4 justify-around w-full">
+					<div className="hidden md:flex  justify-center items-center max-w-[400px]">
 						<img src="/shipperAuth.png" alt="" />
 					</div>
-					<div className="hidden lg:block lg:col-span-4"></div>
-					<div className="col-span-6 lg:col-span-4">
+					<div className="dark:bg-slate-800 w-full max-w-xs md:max-w-sm px-2 md:px-4 lg:px-4 py-4 bg-white shadow-md border border-gray-200 rounded-2xl">
 						<div>
 							<Form {...form}>
 								<form onSubmit={form.handleSubmit(onSubmit)}>
@@ -174,7 +175,7 @@ const ShipperAuth = () => {
 											Thông tin đăng kí
 										</h2>
 										{/* end line */}
-										<div className="flex items-center justify-center">
+										<div className="flex items-center justify-center ">
 											<FormField
 												control={form.control}
 												name="avatar"
@@ -379,9 +380,10 @@ const ShipperAuth = () => {
 									</div>
 									<Button
 										type="submit"
-										className="w-full mt-3 mb-6 text-white text-base font-bold bg-blue-500 hover:bg-blue-400"
+										className="w-full mt-3 text-white text-base font-bold bg-blue-500 hover:bg-blue-400"
+										disabled={previewUrl?.isLoading}
 									>
-										Đăng nhập
+										{previewUrl?.isLoading &&  <AiOutlineLoading3Quarters size={20} className="animate-spin text-white mr-2" /> } Đăng kí
 									</Button>
 								</form>
 							</Form>
