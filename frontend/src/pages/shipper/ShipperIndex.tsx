@@ -1,31 +1,25 @@
 import MapComponent from "@/components/map/Map";
-import instance from "@/config/instance";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
-import { FaMapMarkerAlt } from "react-icons/fa";
 import { Marker } from "react-map-gl";
-import { GoDotFill } from "react-icons/go";
-import {
-	HoverCard,
-	HoverCardContent,
-	HoverCardTrigger,
-} from "@/components/ui/hover-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CalendarIcon } from "lucide-react";
-import { formatQuantity } from "@/common/localFunction";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { getListOrderMap } from "@/service/shipper";
+import { cn } from "@/lib/utils";
+import { IOrderShipper } from "@/types/shipper.interface";
+import MarketItem from "@/components/shipper/shipperMap/MarketItem";
+import useStoreShipper from "@/store/useCurrentShipper";
 
 const ShipperIndex = () => {
-	const { data } = useQuery({
-		queryKey: ["listOrder", "shipper"],
+	const [searchParams, setSearchParams] = useSearchParams()
+	const status = (searchParams.get("status") !== "3" || searchParams.get("status") !== "3") ? "2" : searchParams.get("status")  || "2"
+	const {current} = useStoreShipper()
+	
+	const { data } = useQuery<IOrderShipper[]>({
+		queryKey: ["listOrder", "shipper",status],
 		queryFn: async () => {
 			try {
-				const { data } = await instance.get("/order/shipperOrder");
+				const { data } = await getListOrderMap(status);
 				return data;
 			} catch (error) {
 				return [];
@@ -49,27 +43,22 @@ const ShipperIndex = () => {
 		});
 	}, []);
 
-	const listStatus = [
-		{
-			status:2,
-			name:"Giao hàng"
-		},
-		{
-			status:3,
-			name:"Đang giao hàng"
-		},
-		{
-			status:4,
-			name:"Giao hàng lại"
-		},
-		{
-			status:5,
-			name:"Giao thành công"
-		},
-	]
+	
 
 	return (
-		<div className="w-full h-full">
+		<div className="w-full h-full relative">
+			<div className="fixed top-4 right-0 space-y-2 z-10">
+				<div className={cn("px-2 text-sm md:text-base md:px-4 py-1  rounded-s-sm bg-slate-100 text-blue-500 shadow border font-medium cursor-pointer",status === "2" && "bg-blue-500 text-white border-blue-500")} onClick={() => {
+					setSearchParams({
+						status: "2",
+					})
+				}}>Chưa giao</div>
+				<div className={cn("px-2 text-sm md:text-base md:px-4 py-1 bg-slate-100 rounded-s-sm text-green-500 shadow border cursor-pointer",status === "3" && "bg-green-500 text-white border-green-500")} onClick={() => {
+					setSearchParams({
+						status: "3",
+					})
+				}}>Đang giao</div>
+			</div>
 			<MapComponent
 				height="100vh"
 				longitude={locationCurrent.longitude}
@@ -80,81 +69,23 @@ const ShipperIndex = () => {
 					latitude={locationCurrent.latitude}
 					anchor="bottom"
 				>
-					<FaMapMarkerAlt size={20} className="text-red-500" />
+					{/* <FaMapMarkerAlt size={20} className="text-red-500" /> */}
+					<div className="relative flex items-center justify-center">
+						<div className="relative size-10 rounded-full flex justify-center items-center bg-red-500 z-10">
+							<img
+								src={current?.avatar || "/avatar_25.jpg"}
+								alt=""
+								className="size-8 rounded-full object-cover"
+							/>
+						</div>
+						<div className="absolute size-4 -bottom-1 bg-red-500 rotate-45 z-0"></div>
+					</div>
 				</Marker>
 				{data &&
-					data?.data?.map((item:any) => {
+					data?.map((item: IOrderShipper) => {
 						const location = item?.address?.location?.coordinates;
-
 						return (
-							<Marker
-								longitude={location[0]}
-								latitude={location[1]}
-								anchor="bottom"
-							>
-								<Popover>
-									<PopoverTrigger asChild>
-										<div>
-											<GoDotFill size={20} className="text-red-500" />
-										</div>
-									</PopoverTrigger>
-									<PopoverContent
-										className="w-[240px] p-2"
-										align="center"
-										side="top"
-									>
-										<div className="">
-											<div className="flex items-center pb-2 border-b">
-												<Avatar className="w-8 h-8">
-													<AvatarImage
-														src={item.user.avatar || "/avatar_25.jpg"}
-													/>
-													<AvatarFallback>U</AvatarFallback>
-												</Avatar>
-												<p className="text-base font-medium ml-2">
-													{item.address.username}
-												</p>
-											</div>
-											<p>
-												Mã đơn hàng:{" "}
-												<span className="font-bold">{item?.code}</span>
-											</p>
-											<p>
-												Tổng số lượng sản phẩm:{" "}
-												<span className="font-bold text-red-500">
-													{formatQuantity(item?.orderItems?.length, "sp")}
-												</span>
-											</p>
-											<p>
-												Tổng giá trị đơn hàng:{" "}
-												<span className="font-bold text-red-500">
-													{formatQuantity(item?.totalMoney, "đ")}
-												</span>{" "}
-											</p>
-											<p>
-												Tiền khách trả khi nhận:{" "}
-												<span className="font-bold text-red-500">
-													{formatQuantity(item?.amountToPay, "đ")}
-												</span>{" "}
-											</p>
-											<p>
-												Giá ship:{" "}
-												<span className="font-bold text-red-500">
-													{formatQuantity(item?.shippingCost, "đ")}
-												</span>{" "}
-											</p>
-											<p className="line-clamp-2">Lời nhắn: {item.note}</p>
-											<div className="pt-2 border-t mt-1">
-												<Link target="_blank" to={`/shipper/transport/${encodeURIComponent(item.code)}`}>
-													<div className="w-full text-center border rounded-md border-blue-500 text-blue-500 hover:bg-blue-100">
-														{listStatus.find(status => status.status === item.status)?.name || "Giao hàng"}
-													</div>
-												</Link>
-											</div>
-										</div>
-									</PopoverContent>
-								</Popover>
-							</Marker>
+							<MarketItem order={item} location={location} status={status}/>
 						);
 					})}
 			</MapComponent>

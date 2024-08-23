@@ -24,13 +24,14 @@ export interface SearchObjectTag extends SearchObjectType {
 
 
 export interface SearchObjectTypeProduct extends SearchObjectType {
-	min: number | null;
-	max: number | null;
-	category: string | null;
-	color: string[];
-	size: string[]
+	min?: number | null;
+	max?: number | null;
+	category?: string | null;
+	color?:string[];
+	size?:string[]
 }
 export interface SearchObjectBlog extends SearchObjectType {
 	tab?: number
 	tags: string
+
 }

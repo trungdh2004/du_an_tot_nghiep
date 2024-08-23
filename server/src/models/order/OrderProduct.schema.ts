@@ -34,6 +34,10 @@ const OrderItemsSchema = new mongoose.Schema(
     totalMoney:{
       type:Number,
       default:0
+    },
+    attribute:{
+      type:mongoose.Types.ObjectId,
+      ref:"Attribute",
     }
   },
   {

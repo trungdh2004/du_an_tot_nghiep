@@ -25,6 +25,7 @@ export interface IUser {
 	updatedAt?: string;
 	is_staff?: boolean;
 	_id?: string;
+	is_shipper?: boolean;
 }
 interface AuthContextType {
 	authUser?: IUser | undefined; // thông tin người dùng
