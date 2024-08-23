@@ -114,8 +114,8 @@ const OrderSchema = new mongoose.Schema(
     },
     // thời gian ước tính nhân
     estimatedDeliveryDate: {
-      type: String,
-      required: true,
+      type: Date,
+      default: null,
     },
     paymentMethod: {
       // phương thức thanh toán
