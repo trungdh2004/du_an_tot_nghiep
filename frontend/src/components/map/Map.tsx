@@ -37,7 +37,7 @@ const MapComponent = ({
 	}, [longitude, latitude]);
 	return (
 		<Map
-			mapLib={import("mapbox-gl")}
+			// mapLib={import("mapbox-gl")}
 			{...viewState}
 			onMove={(evt) => {
 				setViewState(evt.viewState);

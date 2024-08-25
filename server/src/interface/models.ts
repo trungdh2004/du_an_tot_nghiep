@@ -24,6 +24,7 @@ export interface IUser extends MongooseDocument {
   uid: string;
   provider: string;
   point:number
+  is_shipper:boolean;
 }
 
 export interface RequestModel extends Request {
@@ -33,4 +34,15 @@ export interface RequestModel extends Request {
     email: string;
     is_staff: boolean;
   };
+}
+
+
+export interface RequestShipper extends Request {
+  shipper?: {
+    id: ObjectId;
+    email: string;
+    id_user: ObjectId;
+    phone:string;
+    fullName: string;
+  }
 }

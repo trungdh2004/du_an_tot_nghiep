@@ -28,15 +28,17 @@ export interface IProduct {
 	price: number;
 	discount: number;
 	thumbnail: string;
+	quantity: number;
 	images: { url: string }[];
 	category: TypeObjectCategory | string;
 	description: string;
 	_id?: string;
 	featured?: boolean;
 	attributes: IAttribute[];
-	createdAt?:string;
-	updatedAt?:string;
+	createdAt?: string;
+	updatedAt?: string;
 	is_deleted?: boolean;
-	quantity?: number;
+	rating: number;
 	quantitySold?: number;
+	slug?:string
 }

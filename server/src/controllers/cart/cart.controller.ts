@@ -466,13 +466,24 @@ class CartController {
         })
       }
 
-      const countProductCart = await CartItemModel.countDocuments({
+      const countProductCart = await CartItemModel.find({
         cart: existingCart._id
       })
 
+      if(countProductCart?.length === 0) {
+        return res.status(STATUS.OK).json({
+          message:"Lấy thành công",
+          count: 0
+        })
+      }
+
+      const count = countProductCart?.reduce((acc,product) => {
+        return acc + product.quantity
+      },0)
+
       return res.status(STATUS.OK).json({
         message:"Lấy thành công",
-        count:countProductCart || 0
+        count:count || 0
       })
 
     } catch (error:any) {

@@ -9,5 +9,6 @@ routerAddress.delete("/deleteAddress/:id", addressController.deleteAddress);
 routerAddress.put("/updateAddress/:id", addressController.updateAddress);
 routerAddress.put("/updateMain/:id", addressController.updateMainAddress);
 routerAddress.get("/:id", addressController.getAddressById);
+routerAddress.post("/getAddressMeter", addressController.getAddressMeter);
 
 export default routerAddress;

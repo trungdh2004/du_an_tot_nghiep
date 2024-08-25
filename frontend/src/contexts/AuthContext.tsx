@@ -1,8 +1,5 @@
-import { getItemLocal } from "@/common/localStorage";
 import LoadingFixed from "@/components/LoadingFixed";
-import instance from "@/config/instance";
 import { currentAccount } from "@/service/account";
-import { AxiosError } from "axios";
 import {
   createContext,
   Dispatch,
@@ -11,7 +8,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import { toast } from "sonner";
 export interface IUser {
   avatarUrl?: string;
   blocked_at?: boolean;
@@ -23,6 +19,7 @@ export interface IUser {
   updatedAt?: string;
   is_staff?: boolean;
   _id?: string;
+  is_shipper?: boolean;
 }
 interface AuthContextType {
   authUser?: IUser | undefined; // thông tin người dùng
