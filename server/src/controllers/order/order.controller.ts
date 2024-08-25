@@ -46,13 +46,11 @@ interface IProductSelectOrder {
 
 interface IAccOrderClient {
   productId: string;
-  product: IProductSelectOrder
+  product: IProductSelectOrder;
   items: IOrderItem[];
   totalMoney: number;
-  is_evaluate:boolean
+  is_evaluate: boolean;
 }
-
-
 
 interface IReturnVnPay {
   vnp_Amount: string;
@@ -895,6 +893,7 @@ class OrderController {
         startDate,
         endDate,
         method,
+        is_shipper,
         paymentStatus,
       } = req.body;
       let limit = pageSize || 10;
@@ -903,6 +902,7 @@ class OrderController {
       let queryDate = {};
       let queryMethod = {};
       let queryPaymentStatus = {};
+      let shipperQuery = {};
 
       if (startDate || endDate) {
         let dateStartString = null;
@@ -994,13 +994,26 @@ class OrderController {
         };
       }
 
+      if (is_shipper) {
+        shipperQuery = {
+          shipper: { $ne: null },
+        };
+      } else {
+        shipperQuery = {
+          shipper: null,
+        };
+      }
+
+      console.log("shipperQuery:", shipperQuery);
+
       const listOrder = await OrderModel.find({
         status: status,
         ...queryDate,
         ...queryMethod,
         ...queryPaymentStatus,
+        ...shipperQuery,
       })
-        .populate(["address", "user", "payment"])
+        .populate(["address", "user", "payment", "shipper"])
         .sort({
           orderDate: sort,
         })
@@ -1012,6 +1025,7 @@ class OrderController {
         ...queryDate,
         ...queryMethod,
         ...queryPaymentStatus,
+        ...shipperQuery,
       });
 
       const data = formatDataPaging({
@@ -1087,11 +1101,16 @@ class OrderController {
 
       console.log("existingOrder:", existingOrder);
 
-      const listUpdateAttribute = existingOrder.orderItems.map(
-        (item, index) => {}
+      existingOrder.orderItems.map(
+        async (item, index) => {
+          const id = (item as IOrderItem).attribute;
+          const quantity = (item as IOrderItem).quantity;
+          await AttributeModel.findByIdAndUpdate(id,
+            { $inc: { quantity: -quantity } }
+          );
+        }
       );
 
-      console.log("listUpdateAttribute:", listUpdateAttribute);
 
       // let futureDateTimeOrder = handleFutureDateTimeOrder(1000);
 
@@ -1149,9 +1168,9 @@ class OrderController {
 
       if (!status) {
         queryStatus = {
-          status:{
-            $in:[1,2,3,4,5,6]
-          }
+          status: {
+            $in: [1, 2, 3, 4, 5, 6],
+          },
         };
       } else {
         queryStatus = {
@@ -1181,7 +1200,8 @@ class OrderController {
           createdAt: -1,
         })
         .skip(skip)
-        .limit(limit).lean();
+        .limit(limit)
+        .lean();
 
       const convestOrder =
         listOrder.length > 0
@@ -1192,43 +1212,46 @@ class OrderController {
                     const accCheck = acc.find(
                       (row) =>
                         row.productId.toString() ===
-                        ((item as IOrderItem).product as IProductSelectOrder)
-                          ._id.toString()
+                        (
+                          (item as IOrderItem).product as IProductSelectOrder
+                        )._id.toString()
                     );
                     // console.log(`accCheck ${order?.code}`,accCheck);
                     if (accCheck) {
-                      const totalMoney = accCheck.totalMoney + (item as IOrderItem).totalMoney
+                      const totalMoney =
+                        accCheck.totalMoney + (item as IOrderItem).totalMoney;
                       accCheck.items.push(item as IOrderItem);
-                      accCheck.totalMoney = totalMoney
+                      accCheck.totalMoney = totalMoney;
                       return acc;
                     }
 
                     acc.push({
-                      productId: ((item as IOrderItem).product as IProductSelectOrder)._id,
-                      product: (item as IOrderItem).product as IProductSelectOrder,
-                      totalMoney:(item as IOrderItem).totalMoney,
-                      items:[item as IOrderItem],
-                      is_evaluate:(item as IOrderItem).is_evaluate
-                    })
+                      productId: (
+                        (item as IOrderItem).product as IProductSelectOrder
+                      )._id,
+                      product: (item as IOrderItem)
+                        .product as IProductSelectOrder,
+                      totalMoney: (item as IOrderItem).totalMoney,
+                      items: [item as IOrderItem],
+                      is_evaluate: (item as IOrderItem).is_evaluate,
+                    });
                     return acc;
                   },
                   []
                 );
                 return {
                   ...order,
-                  itemList:mapItemOrder
-                }
+                  itemList: mapItemOrder,
+                };
               }
 
-              return []
+              return [];
             })
           : [];
 
-      
-
       const countOrder = await OrderModel.countDocuments({
         user: user?.id,
-        ...queryStatus
+        ...queryStatus,
       });
 
       const data = formatDataPaging({
