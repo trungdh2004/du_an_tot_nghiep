@@ -16,7 +16,7 @@ const NoteOrder = ({ setOrderCheckout }: Props) => {
 
 	return (
 		<div className="py-2 pb-4">
-			<div className="lg:flex flex-col gap-3 bg-white border border-gray-200 px-4 py-2">
+			<div className="lg:flex flex-col gap-3 bg-white lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow px-4 py-2">
 				<h3>Ghi chú</h3>
 				<Textarea onChange={handleNote} />
 			</div>

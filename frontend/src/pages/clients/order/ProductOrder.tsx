@@ -4,7 +4,7 @@ import React from "react";
 const ProductOrder = ({ data }: any) => {
 	return (
 		<div className="grid grid-cols-1">
-			<div className="lg:flex md:flex flex-col gap-3 bg-white my-2 py-2 hidden border border-gray-200">
+			<div className="lg:flex md:flex flex-col gap-3 bg-white my-2 py-2 hidden lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow">
 				<div className="lg:grid lg:grid-cols-6 md:grid md:grid-cols-6 lg:px-4 md:px-3 hidden">
 					<div className="col-span-3">
 						<h3 className="lg:text-lg text-base font-medium">Sản phẩm</h3>
@@ -22,7 +22,7 @@ const ProductOrder = ({ data }: any) => {
 			</div>
 			{data?.data?.map((product: any) => {
 				return (
-					<div className="lg:flex flex-col gap-3 bg-white my-2 py-2 border border-gray-200">
+					<div className="lg:flex flex-col gap-3 bg-white my-2 py-2 lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow">
 						<div className="flex flex-col gap-3 my-4">
 							{product?.items?.map((productItem: any) => {
 								return (

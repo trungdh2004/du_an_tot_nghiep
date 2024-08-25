@@ -27,10 +27,10 @@ export interface Address {
 
 export interface ObjectCheckoutOrder {
 	listId: string[];
-	address: Address;
+	addressId: string;
 	voucher?: string;
 	paymentMethod: number;
 	note?: string;
-	shippingCost?: number;
-	distance: string;
+  shippingCost?: number;
+  returnUrl?: string;
 }

@@ -3,71 +3,44 @@ import { Button } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
+
 	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
+
 } from "@/components/ui/dialog";
-import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-	keepPreviousData,
-	useQuery,
-	useQueryClient,
-} from "@tanstack/react-query";
-import { fetchAddress } from "@/service/address";
-import { Skeleton } from "@/components/ui/skeleton";
 import EditAddress from "../address/EditAddress";
 import Paginations from "@/components/common/Pagination";
 import AddAddressOrder from "./AddAddressOrder";
-import { pagingOrder } from "@/service/order";
-import { useSearchParams } from "react-router-dom";
 
 interface Props {
 	open: boolean;
 	closeOpen: (isOpen: boolean) => void;
 	dataAddress: any;
 	handleChangeAddress: (id: string) => void;
+	address: any;
+	pageIndex: number;
+	setPageIndex: (pageIndex: number) => void;
 }
 const ListAddressOrderDetail = ({
 	open,
 	closeOpen,
 	dataAddress,
 	handleChangeAddress,
+	address,
+	pageIndex,
+	setPageIndex,
 }: Props) => {
-	const [pageIndex, setPageIndex] = useState(1);
 	const [openEditById, setOpenEditById] = useState<string | null>(null);
 	const handleClose = () => {
 		setOpenEditById(null);
 	};
 	const [openAdd, setOpenAdd] = useState(false);
-	const {
-		isPending,
-		isError,
-		data: address,
-		isFetching,
-		isPlaceholderData,
-	} = useQuery({
-		queryKey: ["address", pageIndex],
-		queryFn: () => fetchAddress(pageIndex),
-		placeholderData: keepPreviousData,
-	});
+
 	const [selectedValue, setSelectedValue] = useState<string | undefined>(
-		dataAddress._id || undefined,
+		dataAddress?._id || undefined,
 	);
 	return (
 		<div>
-			{isPending && (
-				<div className="flex flex-col space-y-3">
-					<Skeleton className="h-[125px] w-full rounded-xl" />
-				</div>
-			)}
-			{isError && (
-				<div className="flex flex-col space-y-3">
-					<Skeleton className="h-[125px] w-full rounded-xl" />
-				</div>
-			)}
 			<Dialog open={open} onOpenChange={closeOpen}>
 				<DialogContent className="w-[90%] sm:max-w-[660px] rounded-md max-h-[90vh] p-4 overflow-y-auto">
 					<div className="flex justify-between">
@@ -89,7 +62,7 @@ const ListAddressOrderDetail = ({
 							{address?.content?.map((address: any) => {
 								return (
 									<>
-										<div className="flex justify-between">
+										<div className="flex justify-between" key={address?._id}>
 											<div className="flex gap-3">
 												<RadioGroupItem
 													value={address._id}

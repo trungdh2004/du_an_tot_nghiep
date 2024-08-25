@@ -7,7 +7,11 @@ import PaymentMethod from "./PaymentMethod";
 import NoteOrder from "./NoteOrder";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createOrderPayUponReceipt, pagingOrder } from "@/service/order";
+import {
+	createOrderPayUponReceipt,
+	createOrderVNPayPayment,
+	pagingOrder,
+} from "@/service/order";
 import { ObjectCheckoutOrder } from "@/types/ObjectCheckoutOrder";
 import { toast } from "sonner";
 
@@ -17,6 +21,7 @@ const OrderPage = () => {
 	const stateOrder = JSON.parse(paramsObject.state);
 	const [orderParams, setOrderParams] = useState<any | {}>(stateOrder || {});
 	const [order, setOrder] = useState<any>({});
+
 	const { mutate } = useMutation({
 		mutationKey: ["orderPagingCart"],
 		mutationFn: async (valueOrder) => {
@@ -50,32 +55,37 @@ const OrderPage = () => {
 		() => {
 			return {
 				listId: orderParams.listId,
-				address: order?.address,
+				addressId: order?.address?._id,
 				voucher: "",
 				paymentMethod: 1,
 				note: "",
-				shippingCost: 10000,
-				distance: "",
+				shippingCost: order?.shippingCost,
 			};
 		},
 	);
+
 	useEffect(() => {
 		if (order?.address) {
 			setOrderCheckout((prev) => ({
 				...prev,
-				address: order.address,
+				addressId: order?.address?._id,
+				shippingCost: order?.shippingCost,
 			}));
 		}
 	}, [order]);
-	console.log("orderCheckout", orderCheckout);
-const navigate = useNavigate()
-	const handleCheckout = () => {
+
+	const navigate = useNavigate();
+  const handleCheckout = () => {
+    if (!orderCheckout.addressId) {
+      toast.error("Vui lòng chọn địa chỉ giao hàng");
+      return;
+    }
 		if (orderCheckout.paymentMethod === 1) {
 			try {
 				(async () => {
 					const { data } = await createOrderPayUponReceipt(orderCheckout);
-          toast.success("Thanh toán thành công");
-          navigate('/order/success')
+					toast.success("Thanh toán thành công");
+					navigate("/order/success");
 					return data;
 				})();
 			} catch (error) {
@@ -83,22 +93,31 @@ const navigate = useNavigate()
 				toast.error("Thanh toán thất bại");
 			}
 		}
+		console.log("method", orderCheckout.paymentMethod);
+
+		if (orderCheckout.paymentMethod === 2) {
+			try {
+				(async () => {
+					const { data } = await createOrderVNPayPayment({
+						...orderCheckout,
+						returnUrl: `${window.location.origin}/orderprocessing?state=${searchParams.toString().split("state=")[1]}`,
+					});
+					window.location.href = data.paymentUrl;
+					return data;
+				})();
+			} catch (error) {
+				console.log("Error:", error);
+			}
+		}
 	};
 
 	return (
 		<>
-			<div className="bg-white w-full lg:h-[100px] h-[70px] flex items-center border border-gray-200">
-				<div className="flex items-center gap-4 lg:px-[130px] md:px-[65px] px-0">
-					<h1 className="text-2xl">Logo</h1>
-					<span className="lg:text-xl text-sm">|</span>
-					<span className="lg:text-2xl text-sm">Thanh toán</span>
-				</div>
-			</div>
 			<div className="bg-main w-full h-full">
 				<div className="lg:px-[130px] md:px-[65px] px-0">
 					<AddressOrder
 						data={order}
-						handleChangeAddress={handleChangeAddress}
+            handleChangeAddress={handleChangeAddress}
 					/>
 					<ProductOrder data={order} />
 					<Vorcher />
@@ -107,6 +126,7 @@ const navigate = useNavigate()
 						data={order}
 						handleCheckout={handleCheckout}
 						setOrderCheckout={setOrderCheckout}
+						orderCheckout={orderCheckout}
 					/>
 				</div>
 			</div>

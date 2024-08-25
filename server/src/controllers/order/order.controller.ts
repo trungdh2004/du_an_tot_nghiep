@@ -49,14 +49,8 @@ class OrderController {
   async createOrderPayUponReceipt(req: RequestModel, res: Response) {
     try {
       const user = req.user;
-      const {
-        listId,
-        addressId,
-        voucher,
-        paymentMethod,
-        note,
-        shippingCost,
-      } = req.body;
+      const { listId, addressId, voucher, paymentMethod, note, shippingCost } =
+        req.body;
 
       if (paymentMethod !== 1) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -70,7 +64,7 @@ class OrderController {
         });
       }
 
-      if(!addressId) {
+      if (!addressId) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn chưa chọn địa chỉ",
         });
@@ -78,7 +72,7 @@ class OrderController {
 
       let address = await AddressModel.findById(addressId);
 
-      if(!address) {
+      if (!address) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có địa chỉ",
         });
@@ -105,12 +99,12 @@ class OrderController {
         },
       ]);
 
-      if(!addressDetail) {
+      if (!addressDetail) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có địa chỉ",
         });
       }
-      
+
       const listCartItem = await CartItemModel.find<IProductCart>({
         _id: {
           $in: listId,
@@ -178,8 +172,8 @@ class OrderController {
       const newOrder = await OrderModel.create({
         user: user?.id,
         address: addressId,
-        totalMoney:shippingCost ? totalMoney + shippingCost : totalMoney,
-        amountToPay:shippingCost? totalMoney + shippingCost : totalMoney,
+        totalMoney: shippingCost ? totalMoney + shippingCost : totalMoney,
+        amountToPay: shippingCost ? totalMoney + shippingCost : totalMoney,
         distance: addressDetail[0].dist,
         shippingCost: shippingCost || 0,
         paymentMethod,
@@ -233,7 +227,6 @@ class OrderController {
         user: user?.id,
       });
 
-
       if (addressId) {
         const existingAddressId = await AddressModel.findById(addressId);
         if (existingAddressId) {
@@ -272,7 +265,7 @@ class OrderController {
               },
               {
                 $match: {
-                  _id:new mongoose.Types.ObjectId(existingAddressMain._id),
+                  _id: new mongoose.Types.ObjectId(existingAddressMain._id),
                 },
               },
               {
@@ -281,7 +274,7 @@ class OrderController {
             ]);
           }
         }
-      }else {
+      } else {
         if (existingAddressMain) {
           addressMain = await AddressModel.aggregate([
             {
@@ -296,7 +289,7 @@ class OrderController {
             },
             {
               $match: {
-                _id:new mongoose.Types.ObjectId(existingAddressMain._id),
+                _id: new mongoose.Types.ObjectId(existingAddressMain._id),
               },
             },
             {
@@ -306,8 +299,9 @@ class OrderController {
         }
       }
 
-
-      const shippingCost = addressMain ? chargeShippingFee(addressMain[0]?.dist) : 0;
+      const shippingCost = addressMain
+        ? chargeShippingFee(addressMain[0]?.dist)
+        : 0;
 
       const listIdObject = listId.map(
         (item: string) => new mongoose.Types.ObjectId(item)
@@ -405,7 +399,7 @@ class OrderController {
       return res.status(STATUS.OK).json({
         message: "Lấy thành công ",
         data: listProduct,
-        address:addressMain? addressMain[0] : null,
+        address: addressMain ? addressMain[0] : null,
         shippingCost,
       });
     } catch (error: any) {
@@ -514,7 +508,7 @@ class OrderController {
           message: "Bạn chưa chọn sản phẩm",
         });
       }
-      if(!addressId) {
+      if (!addressId) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn chưa chọn địa chỉ",
         });
@@ -522,7 +516,7 @@ class OrderController {
 
       let address = await AddressModel.findById(addressId);
 
-      if(!address) {
+      if (!address) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có địa chỉ",
         });
@@ -549,7 +543,7 @@ class OrderController {
         },
       ]);
 
-      if(!addressDetail) {
+      if (!addressDetail) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có địa chỉ",
         });
@@ -623,8 +617,8 @@ class OrderController {
       const newOrder = await OrderModel.create({
         user: user?.id,
         address: address,
-        totalMoney:shippingCost ? totalMoney + shippingCost : totalMoney,
-        amountToPay:shippingCost? totalMoney + shippingCost : totalMoney,
+        totalMoney: shippingCost ? totalMoney + shippingCost : totalMoney,
+        amountToPay: shippingCost ? totalMoney + shippingCost : totalMoney,
         distance: addressDetail[0].dist,
         shippingCost: shippingCost || 0,
         estimatedDeliveryDate: futureDateTime,

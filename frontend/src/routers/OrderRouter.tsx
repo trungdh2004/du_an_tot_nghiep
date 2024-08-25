@@ -1,11 +1,17 @@
 import OrderLayout from "@/layout/OrderLayout";
 import OrderPage from "@/pages/clients/order/OrderPage";
 import OrderSuccess from "@/pages/clients/order/OrderSuccess";
+import PrivateRouter from "./PrivateRouter";
+import ProtectedRouter from "./ProtectedRouter";
 
 const OrderRouter = [
 	{
 		path: "/order",
-		element: <OrderLayout />,
+		element: (
+			<ProtectedRouter>
+				<OrderLayout />
+			</ProtectedRouter>
+		),
 		children: [
 			{
 				path: "",

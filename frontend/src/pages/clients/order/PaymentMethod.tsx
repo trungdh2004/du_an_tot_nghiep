@@ -2,22 +2,37 @@ import { formatCurrency } from "@/common/func";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { ObjectCheckoutOrder } from "@/types/ObjectCheckoutOrder";
 import React, { useState } from "react";
 import { MdOutlineEventNote } from "react-icons/md";
-
-const PaymentMethod = ({ data, handleCheckout, setOrderCheckout }: any) => {
+interface Props {
+	data: any;
+	handleCheckout: () => void;
+	setOrderCheckout: (order: any) => void;
+	orderCheckout: ObjectCheckoutOrder;
+}
+const PaymentMethod = ({
+	data,
+	handleCheckout,
+	setOrderCheckout,
+	orderCheckout,
+}: Props) => {
 	const [paymentMethod, setPaymentMethod] = useState<string>("1");
 	const arrayTotal = data?.data?.map((product: any) => {
 		return product.totalAmount;
 	});
+	console.log(arrayTotal);
+
 	const totalCost = arrayTotal?.reduce(
 		(acc: number, value: number) => acc + value,
 		0,
-	);
+  );
+  console.log(typeof totalCost);
+  
 
 	return (
 		<div className="py-2 pb-14">
-			<div className="lg:flex flex-col gap-3 bg-white border border-gray-200">
+			<div className="lg:flex flex-col gap-3 bg-white lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow">
 				<div className="p-4">
 					<h3 className="text-lg text-[#595959] font-semibold pb-6">
 						Phương thức thanh toán
@@ -34,7 +49,7 @@ const PaymentMethod = ({ data, handleCheckout, setOrderCheckout }: any) => {
 								onChange={(e) => {
 									setPaymentMethod(e.target.value);
 									setOrderCheckout((prev: any) => {
-										return { ...prev, paymentMethod: e.target.value };
+										return { ...prev, paymentMethod: parseInt(e.target.value) };
 									});
 								}}
 								type="radio"
@@ -62,12 +77,12 @@ const PaymentMethod = ({ data, handleCheckout, setOrderCheckout }: any) => {
 								id="paymentMethod2"
 								value="2"
 								checked={paymentMethod === "2"}
-                onChange={(e) => {
-                  setPaymentMethod(e.target.value)
-                  setOrderCheckout((prev: any) => {
-										return { ...prev, paymentMethod: e.target.value };
+								onChange={(e) => {
+									setPaymentMethod(e.target.value);
+									setOrderCheckout((prev: any) => {
+										return { ...prev, paymentMethod: parseInt(e.target.value) };
 									});
-                }}
+								}}
 							/>
 							<span className="capitalize lg:text-base md:text-base text-sm">
 								Thanh toán VNPAY
@@ -94,7 +109,11 @@ const PaymentMethod = ({ data, handleCheckout, setOrderCheckout }: any) => {
 							<p className="lg:text-base md:text-base text-sm">
 								Phí vận chuyển
 							</p>
-							<span className="">{formatCurrency(10000)}</span>
+							<span className="">
+								{totalCost != 0
+									? formatCurrency(orderCheckout?.shippingCost as number)
+									: formatCurrency(0)}
+							</span>
 						</div>
 						<div className="flex justify-between gap-3">
 							<p className="lg:text-base md:text-base text-sm">
@@ -102,12 +121,16 @@ const PaymentMethod = ({ data, handleCheckout, setOrderCheckout }: any) => {
 							</p>
 							<span className="">{formatCurrency(3000)}</span>
 						</div>
-						<div className="flex items-center lg:justify-start md:justify-start justify-between gap-2">
+						<div className="flex items-center justify-between gap-2">
 							<p className="lg:text-base md:text-base text-sm">
 								Tổng thanh toán :
 							</p>
 							<span className="lg:text-2xl md:text-xl text-xl text-[#f78138]">
-								{formatCurrency(totalCost + 10000 - 3000)}
+								{totalCost != 0
+									? formatCurrency(
+											totalCost + (orderCheckout?.shippingCost as number),
+										)
+									: formatCurrency(0)}
 							</span>
 						</div>
 					</div>
@@ -118,16 +141,25 @@ const PaymentMethod = ({ data, handleCheckout, setOrderCheckout }: any) => {
 						Nhấn "Đặt hàng" đồng nghĩa với việc bạn đồng ý tuân theo Điều khoản
 						Shopee
 					</p>
-					<Button className="px-9" onClick={()=>handleCheckout()}>Đặt hàng</Button>
+					<Button className="px-9" onClick={() => handleCheckout()}>
+						Đặt hàng
+					</Button>
 				</div>
 				<div className="lg:hidden md:hidden fixed flex bottom-0 z-[10] h-[50px] w-full bg-white items-center justify-end gap-3 border border-gray-200 ">
 					<div className="flex flex-col items-center pt-1">
 						<p className="text-sm">Tổng thanh toán</p>
 						<span className="text-base self-end text-[#f78138]">
-							{formatCurrency(totalCost + 10000 - 3000)}
+							{formatCurrency(
+								totalCost + (orderCheckout?.shippingCost as number),
+							)}
 						</span>
 					</div>
-					<Button className="px-9 h-full rounded-none">Đặt hàng</Button>
+					<Button
+						className="px-9 h-full rounded-none"
+						onClick={() => handleCheckout()}
+					>
+						Đặt hàng
+					</Button>
 				</div>
 			</div>
 			<div className="lg:hidden md:hidden block px-4 bg-white border border-gray-200 mt-4 mb-2 py-2">
