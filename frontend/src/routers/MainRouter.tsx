@@ -23,7 +23,7 @@ const MainRouter = [
 			{ path: "blogDetail/:id", element: <BlogDetail /> },
 			{ path: "table", element: <UserIndex /> },
 			{ path: "cart", element: <CartIndex /> },
-       { path: "shop", element: <ShopProduct /> },
+       		{ path: "shop", element: <ShopProduct /> },
 			{ path: "*", element: <NotFound /> },
 		],
 	},
