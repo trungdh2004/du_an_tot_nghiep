@@ -15,3 +15,33 @@ export const chargeShippingFee = (dis:number) => {
         return 50000
     }
 }
+
+
+export function handleFutureDateTimeOrder (dist:number) {
+    const today = Date.now();
+    const nDaysLater = today
+    //  + n * 24 * 60 * 60 * 1000;
+
+    if(!dist) {
+        return today
+    }
+
+    if(dist < 10000) {
+        return today + 1 * 24 * 60 * 60 * 1000
+    }
+
+    if(10000 <= dist && dist < 20000) {
+        return today + 3 * 24 * 60 * 60 * 1000
+    }
+
+    if(20000 <= dist && dist < 40000) {
+        return today + 6 * 24 * 60 * 60 * 1000
+    }
+
+    if(40000 <= dist && dist < 80000) {
+        return today + 8 * 24 * 60 * 60 * 1000
+    }
+    if(80000 <= dist) {
+        return today + 12 * 24 * 60 * 60 * 1000
+    }
+}
