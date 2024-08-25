@@ -11,6 +11,7 @@ import path from "path";
 import ShopProduct from "@/pages/clients/shop/ShopProduct";
 // import OrderProcessing from "@/pages/clients/OrderProcessing";
 import CartIndex from "@/pages/clients/cart/CartIndex";
+import CartPage from "@/pages/clients/cart/CartPage";
 const MainRouter = [
 	{
 		path: "/",
@@ -22,8 +23,8 @@ const MainRouter = [
 			{ path: "blogs", element: <BlogPage /> },
 			{ path: "blogDetail/:id", element: <BlogDetail /> },
 			{ path: "table", element: <UserIndex /> },
-			{ path: "cart", element: <CartIndex /> },
-       { path: "shop", element: <ShopProduct /> },
+			{ path: "cart", element: <CartPage /> },
+			{ path: "shop", element: <ShopProduct /> },
 			{ path: "*", element: <NotFound /> },
 		],
 	},
