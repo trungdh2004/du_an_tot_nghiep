@@ -8,7 +8,7 @@ const MainLayout = () => {
 			<Header />
 			<main className="mt-[64px]">
 				<Outlet />
-			</main>
+      </main>
       <Footer />
       <ScrollRestoration/>
 		</div>

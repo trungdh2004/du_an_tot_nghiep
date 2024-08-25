@@ -7,10 +7,10 @@ import BlogPage from "@/pages/clients/blogs/BLogPage";
 import HomePage from "@/pages/clients/home/page";
 import BlogDetail from "@/pages/clients/blogs/BlogDetail";
 import DetailProduct from "@/pages/clients/detail-home/page";
-import path from "path";
 import ShopProduct from "@/pages/clients/shop/ShopProduct";
 // import OrderProcessing from "@/pages/clients/OrderProcessing";
 import CartIndex from "@/pages/clients/cart/CartIndex";
+import OrderProcessing from "@/pages/clients/order/OrderProcessing";
 const MainRouter = [
 	{
 		path: "/",
@@ -23,11 +23,12 @@ const MainRouter = [
 			{ path: "blogDetail/:id", element: <BlogDetail /> },
 			{ path: "table", element: <UserIndex /> },
 			{ path: "cart", element: <CartIndex /> },
-       { path: "shop", element: <ShopProduct /> },
+			{ path: "shop", element: <ShopProduct /> },
 			{ path: "*", element: <NotFound /> },
 		],
 	},
 	// { path: "orderProcessing", element: <OrderProcessing /> },
-	{ path: "*", element: <NotFound /> },
+  { path: "*", element: <NotFound /> },
+  {path:"orderprocessing", element:<OrderProcessing /> },
 ];
 export default MainRouter;
