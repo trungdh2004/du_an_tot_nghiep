@@ -1,7 +1,11 @@
+import instance from '@/config/instance';
 import { cn } from '@/lib/utils';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import React, { useState } from 'react'
 
 const Index = () => {
+  const queryClient = useQueryClient();
   const [active, setActive] = useState(7);
   const [status, setStatus] = useState('')
   const menuList = [
@@ -34,6 +38,12 @@ const Index = () => {
     setActive(item.index);
     setStatus(item.name);
   }
+  const { data } = useQuery({
+    queryKey: ['order'],
+    queryFn: async () => {
+
+    }
+  })
   return (
     <>
       <div className="padding py-20 bg-main">
