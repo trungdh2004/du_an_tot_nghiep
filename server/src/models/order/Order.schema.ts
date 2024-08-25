@@ -141,7 +141,7 @@ const OrderSchema = new mongoose.Schema(
       default: "",
     },
     shipper:{
-      ref: 'shipper',
+      ref: 'Shipper',
       type:mongoose.Types.ObjectId,
       default:null
     },

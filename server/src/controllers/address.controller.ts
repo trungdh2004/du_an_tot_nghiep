@@ -5,7 +5,7 @@ import { addressValidation } from "../validation/address.validation";
 import STATUS from "../utils/status";
 import { IAddress } from "../interface/address";
 import { RequestModel } from "../interface/models";
-import { ObjectId } from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 
 class AddressController {
   // theo người dùng
@@ -331,20 +331,40 @@ class AddressController {
   async getAddressMeter(req:RequestModel,res:Response) {
     try {
       const {location,meter} = req.body;
-      const data = await AddressModel.find({
-        location:{
-          $geoWithin: {
-            $centerSphere: [
-              location, // Tọa độ của bạn
-              meter / 6378.1 // Khoảng cách tính bằng bán kính Trái Đất (6378.1 km)
-            ]
+      // const data = await AddressModel.find({
+      //   location:{
+      //     $geoWithin: {
+      //       $centerSphere: [
+      //         location, // Tọa độ của bạn
+      //         meter / 6378.1 // Khoảng cách tính bằng bán kính Trái Đất (6378.1 km)
+      //       ]
+      //     }
+          
+      //   }
+      // })
+      console.log("long:",typeof +process.env.LONGSHOP!);
+      console.log("let:",typeof +process.env.LATSHOP!);
+      
+
+      const nearbyLocations = await AddressModel.aggregate([
+        {
+          $geoNear: {
+            near: {
+              type: 'Point',
+              coordinates: location
+            },
+            distanceField: 'dist.calculated',
+            spherical: true
           }
-        }
-      })
+        },
+        {
+          $match: { _id:new mongoose.Types.ObjectId("66b1f3bc0f8ee5d0274e5263") }
+        },
+      ]);
 
 
       return res.status(STATUS.OK).json({
-        data,
+        nearbyLocations,
         message:"Lấy thành công"
       })
       

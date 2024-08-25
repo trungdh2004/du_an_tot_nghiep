@@ -38,6 +38,10 @@ const OrderItemsSchema = new mongoose.Schema(
     attribute:{
       type:mongoose.Types.ObjectId,
       ref:"Attribute",
+    },
+    is_evaluate:{
+      type:Boolean,
+      default:false
     }
   },
   {
