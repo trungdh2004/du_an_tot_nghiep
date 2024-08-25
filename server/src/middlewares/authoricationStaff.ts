@@ -11,7 +11,7 @@ interface PayloadToken {
   is_staff: boolean;
 }
 
-const authorization = async (
+const authorizationStaff = async (
   req: RequestModel,
   res: Response,
   next: NextFunction
@@ -76,3 +76,6 @@ const authorization = async (
     });
   }
 };
+
+
+export default authorizationStaff

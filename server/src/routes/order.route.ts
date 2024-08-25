@@ -1,6 +1,7 @@
 import { Router } from "express";
 import authentication from "../middlewares/authentication";
 import orderController from "../controllers/order/order.controller";
+import authorizationStaff from "../middlewares/authoricationStaff";
 const routerOrder = Router();
 
 routerOrder.post("/createOrderPayUponReceipt",authentication, orderController.createOrderPayUponReceipt);
@@ -8,8 +9,14 @@ routerOrder.post("/pagingCartOrder",authentication, orderController.pagingCartOr
 routerOrder.post("/createStateUrlCart",authentication, orderController.createStateUrlCart);
 routerOrder.get("/returnVnPay",authentication, orderController.returnOrderVnPay);
 routerOrder.post("/createOrderVNPayPayment",authentication, orderController.createOrderVNPayPayment);
+
+// admin
 routerOrder.post("/pagingOrderServer",authentication, orderController.pagingOrderAdmin);
 routerOrder.get("/getByIdServer/:id",authentication, orderController.getByIdOrderAdmin);
+routerOrder.post("/confirmOrder/:id",authentication, orderController.confirmOrderAdmin);
+
+
+// client
 routerOrder.post("/pagingOrderClient",authentication, orderController.pagingOrderClient);
 
 export default routerOrder;

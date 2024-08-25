@@ -14,7 +14,12 @@ import vnpay from "../payment/vnpay.payment";
 import { ProductCode, VnpLocale } from "vnpay";
 import { generateOrderCode } from "../../middlewares/generateSlug";
 import PaymentModel from "../../models/order/Payment.schema";
-import { chargeShippingFee } from "../../common/func";
+import {
+  chargeShippingFee,
+  handleFutureDateTimeOrder,
+} from "../../common/func";
+import AttributeModel from "../../models/products/Attribute.schema";
+import { IOrder, IOrderItem } from "../../interface/order";
 
 const long = +process.env.LONGSHOP! || 105.62573250208116;
 const lat = +process.env.LATSHOP! || 21.045193948892585;
@@ -29,6 +34,23 @@ const generateCode = async (code: string): Promise<string> => {
   }
   return code;
 };
+
+interface IProductSelectOrder {
+  _id: string;
+  name: string;
+  price: number;
+  discount: number;
+  thumbnail: string;
+  slug: string;
+}
+
+interface IAccOrderClient {
+  productId: string;
+  product: IProductSelectOrder;
+  items: IOrderItem[];
+  totalMoney: number;
+  is_evaluate: boolean;
+}
 
 interface IReturnVnPay {
   vnp_Amount: string;
@@ -49,15 +71,8 @@ class OrderController {
   async createOrderPayUponReceipt(req: RequestModel, res: Response) {
     try {
       const user = req.user;
-      const {
-        listId,
-        address,
-        voucher,
-        paymentMethod,
-        note,
-        shippingCost,
-        distance,
-      } = req.body;
+      const { listId, addressId, voucher, paymentMethod, note, shippingCost } =
+        req.body;
 
       if (paymentMethod !== 1) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -68,6 +83,47 @@ class OrderController {
       if (!listId || listId.length === 0) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn chưa chọn sản phẩm",
+        });
+      }
+
+      if (!addressId) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn địa chỉ",
+        });
+      }
+
+      let address = await AddressModel.findById(addressId);
+
+      if (!address) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có địa chỉ",
+        });
+      }
+
+      const addressDetail = await AddressModel.aggregate([
+        {
+          $geoNear: {
+            near: {
+              type: "Point",
+              coordinates: [long, lat],
+            },
+            distanceField: "dist",
+            spherical: true,
+          },
+        },
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(address._id),
+          },
+        },
+        {
+          $limit: 1,
+        },
+      ]);
+
+      if (!addressDetail) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có địa chỉ",
         });
       }
 
@@ -107,7 +163,7 @@ class OrderController {
           size: ((item.attribute as IAttribute).size as ISize)?.name,
           price: (item.attribute as IAttribute).discount,
           quantity: item.quantity,
-          totalMoney: +item.quantity * (item.attribute as IAttribute).discount,
+          totalMoney: +item.quantity * +(item.attribute as IAttribute).discount,
           attribute: item.attribute,
         };
       });
@@ -131,19 +187,17 @@ class OrderController {
       // Tạo một ngày mới sau 2 ngày
       const futureDate = new Date(today);
       futureDate.setDate(today.getDate() + 2);
-      const futureDateTime = futureDate.toISOString();
 
       let code = generateOrderCode();
       code = await generateCode(code);
 
       const newOrder = await OrderModel.create({
         user: user?.id,
-        address: address,
-        totalMoney: totalMoney + shippingCost,
-        amountToPay: totalMoney + shippingCost,
-        distance: 100,
-        shippingCost: shippingCost,
-        estimatedDeliveryDate: futureDateTime,
+        address: addressId,
+        totalMoney: shippingCost ? totalMoney + shippingCost : totalMoney,
+        amountToPay: shippingCost ? totalMoney + shippingCost : totalMoney,
+        distance: addressDetail[0].dist,
+        shippingCost: shippingCost || 0,
         paymentMethod,
         note,
         code,
@@ -195,7 +249,6 @@ class OrderController {
         user: user?.id,
       });
 
-
       if (addressId) {
         const existingAddressId = await AddressModel.findById(addressId);
         if (existingAddressId) {
@@ -234,7 +287,7 @@ class OrderController {
               },
               {
                 $match: {
-                  _id:new mongoose.Types.ObjectId(existingAddressMain._id),
+                  _id: new mongoose.Types.ObjectId(existingAddressMain._id),
                 },
               },
               {
@@ -243,7 +296,7 @@ class OrderController {
             ]);
           }
         }
-      }else {
+      } else {
         if (existingAddressMain) {
           addressMain = await AddressModel.aggregate([
             {
@@ -258,7 +311,7 @@ class OrderController {
             },
             {
               $match: {
-                _id:new mongoose.Types.ObjectId(existingAddressMain._id),
+                _id: new mongoose.Types.ObjectId(existingAddressMain._id),
               },
             },
             {
@@ -268,8 +321,9 @@ class OrderController {
         }
       }
 
-
-      const shippingCost = addressMain ? chargeShippingFee(addressMain[0]?.dist) : 0;
+      const shippingCost = addressMain
+        ? chargeShippingFee(addressMain[0]?.dist)
+        : 0;
 
       const listIdObject = listId.map(
         (item: string) => new mongoose.Types.ObjectId(item)
@@ -367,7 +421,7 @@ class OrderController {
       return res.status(STATUS.OK).json({
         message: "Lấy thành công ",
         data: listProduct,
-        address:addressMain? addressMain[0] : null,
+        address: addressMain ? addressMain[0] : null,
         shippingCost,
       });
     } catch (error: any) {
@@ -457,12 +511,11 @@ class OrderController {
       const user = req.user;
       const {
         listId,
-        address,
+        addressId,
         voucher,
         paymentMethod,
         note,
         shippingCost,
-        distance,
         returnUrl,
       } = req.body;
 
@@ -475,6 +528,46 @@ class OrderController {
       if (!listId || listId.length === 0) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn chưa chọn sản phẩm",
+        });
+      }
+      if (!addressId) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn địa chỉ",
+        });
+      }
+
+      let address = await AddressModel.findById(addressId);
+
+      if (!address) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có địa chỉ",
+        });
+      }
+
+      const addressDetail = await AddressModel.aggregate([
+        {
+          $geoNear: {
+            near: {
+              type: "Point",
+              coordinates: [long, lat],
+            },
+            distanceField: "dist",
+            spherical: true,
+          },
+        },
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(address._id),
+          },
+        },
+        {
+          $limit: 1,
+        },
+      ]);
+
+      if (!addressDetail) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có địa chỉ",
         });
       }
 
@@ -546,10 +639,10 @@ class OrderController {
       const newOrder = await OrderModel.create({
         user: user?.id,
         address: address,
-        totalMoney: totalMoney + shippingCost,
-        amountToPay: totalMoney + shippingCost,
-        distance: 100,
-        shippingCost: shippingCost,
+        totalMoney: shippingCost ? totalMoney + shippingCost : totalMoney,
+        amountToPay: shippingCost ? totalMoney + shippingCost : totalMoney,
+        distance: addressDetail[0].dist,
+        shippingCost: shippingCost || 0,
         estimatedDeliveryDate: futureDateTime,
         paymentMethod,
         note,
@@ -800,6 +893,7 @@ class OrderController {
         startDate,
         endDate,
         method,
+        is_shipper,
         paymentStatus,
       } = req.body;
       let limit = pageSize || 10;
@@ -808,6 +902,7 @@ class OrderController {
       let queryDate = {};
       let queryMethod = {};
       let queryPaymentStatus = {};
+      let shipperQuery = {};
 
       if (startDate || endDate) {
         let dateStartString = null;
@@ -880,12 +975,12 @@ class OrderController {
             break;
           case 2:
             queryMethod = {
-              paymentMethod: 1,
+              paymentMethod: 2,
             };
             break;
           case 3:
             queryMethod = {
-              paymentMethod: 1,
+              paymentMethod: 3,
             };
             break;
           default:
@@ -899,13 +994,26 @@ class OrderController {
         };
       }
 
+      if (is_shipper) {
+        shipperQuery = {
+          shipper: { $ne: null },
+        };
+      } else {
+        shipperQuery = {
+          shipper: null,
+        };
+      }
+
+      console.log("shipperQuery:", shipperQuery);
+
       const listOrder = await OrderModel.find({
         status: status,
         ...queryDate,
         ...queryMethod,
         ...queryPaymentStatus,
+        ...shipperQuery,
       })
-        .populate(["address", "user", "payment"])
+        .populate(["address", "user", "payment", "shipper"])
         .sort({
           orderDate: sort,
         })
@@ -917,6 +1025,7 @@ class OrderController {
         ...queryDate,
         ...queryMethod,
         ...queryPaymentStatus,
+        ...shipperQuery,
       });
 
       const data = formatDataPaging({
@@ -980,7 +1089,9 @@ class OrderController {
           message: "Bạn chưa chọn đơn hàng",
         });
 
-      const existingOrder = await OrderModel.findById(id);
+      const existingOrder = await OrderModel.findById(id).populate({
+        path: "orderItems",
+      });
 
       if (!existingOrder) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -988,30 +1099,56 @@ class OrderController {
         });
       }
 
-      const newExistingOrder = await OrderModel.findByIdAndUpdate(
-        existingOrder._id,
-        {
-          status: 2,
-          $push: {
-            statusList: 2,
-          },
-          confirmedDate: Date.now(),
+      console.log("existingOrder:", existingOrder);
+
+      existingOrder.orderItems.map(
+        async (item, index) => {
+          const id = (item as IOrderItem).attribute;
+          const quantity = (item as IOrderItem).quantity;
+          await AttributeModel.findByIdAndUpdate(id,
+            { $inc: { quantity: -quantity } }
+          );
         }
       );
 
-      await OrderItemsModel.updateMany(
-        {
-          _id: {
-            $in: existingOrder.orderItems,
-          },
-        },
-        {
-          status: 2,
-        }
-      );
+
+      // let futureDateTimeOrder = handleFutureDateTimeOrder(1000);
+
+      // if(existingOrder.distance) {
+      //   futureDateTimeOrder = handleFutureDateTimeOrder(existingOrder.distance);
+      // }''
+
+      // const newExistingOrder = await OrderModel.findByIdAndUpdate(
+      //   existingOrder._id,
+      //   {
+      //     status: 2,
+      //     $push: {
+      //       statusList: 2,
+      //     },
+      //     confirmedDate: Date.now(),
+      //     estimatedDeliveryDate:futureDateTimeOrder
+      //   }
+      // );
+
+      // const listOrderItem =
+
+      // await OrderItemsModel.updateMany(
+      //   {
+      //     _id: {
+      //       $in: existingOrder.orderItems,
+      //     },
+      //   },
+      //   {
+      //     status: 2,
+      //   },
+      //   {
+      //     now:true
+      //   }
+      // );
 
       return res.status(STATUS.OK).json({
-        message: "Cập nhập sản phẩm thành công",
+        message: "Cập nhập đơn hàng thành công",
+        existingOrder,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
@@ -1023,14 +1160,18 @@ class OrderController {
   // queryClient
   async pagingOrderClient(req: RequestModel, res: Response) {
     try {
-      const { status = -1, pageIndex, pageSize } = req.body;
+      const { status, pageIndex, pageSize } = req.body;
       const user = req.user;
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
       let queryStatus = {};
 
-      if (status === -1) {
-        queryStatus = {};
+      if (!status) {
+        queryStatus = {
+          status: {
+            $in: [1, 2, 3, 4, 5, 6],
+          },
+        };
       } else {
         queryStatus = {
           status: status,
@@ -1041,21 +1182,82 @@ class OrderController {
         user: user?.id,
         ...queryStatus,
       })
+        .populate({
+          path: "orderItems",
+          populate: {
+            path: "product",
+            select: {
+              _id: 1,
+              price: 1,
+              discount: 1,
+              thumbnail: 1,
+              name: 1,
+              slug: 1,
+            },
+          },
+        })
         .sort({
           createdAt: -1,
         })
         .skip(skip)
-        .limit(limit);
+        .limit(limit)
+        .lean();
+
+      const convestOrder =
+        listOrder.length > 0
+          ? listOrder?.map((order: IOrder, index) => {
+              if (order.orderItems.length > 0) {
+                const mapItemOrder = order.orderItems.reduce(
+                  (acc: IAccOrderClient[], item) => {
+                    const accCheck = acc.find(
+                      (row) =>
+                        row.productId.toString() ===
+                        (
+                          (item as IOrderItem).product as IProductSelectOrder
+                        )._id.toString()
+                    );
+                    // console.log(`accCheck ${order?.code}`,accCheck);
+                    if (accCheck) {
+                      const totalMoney =
+                        accCheck.totalMoney + (item as IOrderItem).totalMoney;
+                      accCheck.items.push(item as IOrderItem);
+                      accCheck.totalMoney = totalMoney;
+                      return acc;
+                    }
+
+                    acc.push({
+                      productId: (
+                        (item as IOrderItem).product as IProductSelectOrder
+                      )._id,
+                      product: (item as IOrderItem)
+                        .product as IProductSelectOrder,
+                      totalMoney: (item as IOrderItem).totalMoney,
+                      items: [item as IOrderItem],
+                      is_evaluate: (item as IOrderItem).is_evaluate,
+                    });
+                    return acc;
+                  },
+                  []
+                );
+                return {
+                  ...order,
+                  itemList: mapItemOrder,
+                };
+              }
+
+              return [];
+            })
+          : [];
 
       const countOrder = await OrderModel.countDocuments({
-        status: status,
         user: user?.id,
+        ...queryStatus,
       });
 
       const data = formatDataPaging({
         limit,
         pageIndex,
-        data: listOrder,
+        data: convestOrder,
         count: countOrder,
       });
 

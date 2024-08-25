@@ -26,7 +26,8 @@ export interface IOrder extends Document {
     shipper:string;
     createdAt:string;
     updatedAt:string;
-    orderItems:string[]
+    distance:number
+    orderItems:(string|IOrderItem)[]
 };
 
 
@@ -42,4 +43,7 @@ export interface IOrderItem extends Document {
     },
     size:string,
     price:number
+    attribute:string | IAttribute,
+    totalMoney:number
+    is_evaluate:boolean
 }

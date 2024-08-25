@@ -114,8 +114,8 @@ const OrderSchema = new mongoose.Schema(
     },
     // thời gian ước tính nhân
     estimatedDeliveryDate: {
-      type: String,
-      required: true,
+      type: Date,
+      default: null,
     },
     paymentMethod: {
       // phương thức thanh toán
@@ -141,7 +141,7 @@ const OrderSchema = new mongoose.Schema(
       default: "",
     },
     shipper:{
-      ref: 'shipper',
+      ref: 'Shipper',
       type:mongoose.Types.ObjectId,
       default:null
     },
