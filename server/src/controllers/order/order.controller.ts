@@ -20,6 +20,7 @@ import {
 } from "../../common/func";
 import AttributeModel from "../../models/products/Attribute.schema";
 import { IOrder, IOrderItem } from "../../interface/order";
+import ShipperModel from "../../models/shipper/Shipper.schema";
 
 const long = +process.env.LONGSHOP! || 105.62573250208116;
 const lat = +process.env.LATSHOP! || 21.045193948892585;
@@ -68,6 +69,7 @@ interface IReturnVnPay {
 }
 
 class OrderController {
+  
   async createOrderPayUponReceipt(req: RequestModel, res: Response) {
     try {
       const user = req.user;
@@ -889,7 +891,7 @@ class OrderController {
         status = 1,
         pageIndex,
         pageSize,
-        sort,
+        sort=-1,
         startDate,
         endDate,
         method,
@@ -1004,8 +1006,6 @@ class OrderController {
         };
       }
 
-      console.log("shipperQuery:", shipperQuery);
-
       const listOrder = await OrderModel.find({
         status: status,
         ...queryDate,
@@ -1091,6 +1091,9 @@ class OrderController {
 
       const existingOrder = await OrderModel.findById(id).populate({
         path: "orderItems",
+        populate:{
+          path:"attribute",
+        }
       });
 
       if (!existingOrder) {
@@ -1099,8 +1102,20 @@ class OrderController {
         });
       }
 
-      console.log("existingOrder:", existingOrder);
+      const checkQuantity =  existingOrder.orderItems.find((item) => {
+        const attribute = (item as IOrderItem).attribute as IAttribute;
+        if((item as IOrderItem).quantity > attribute.quantity) {
+          return true
+        }
+        return false;
+      })
 
+      if(checkQuantity) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Có sản phẩm vượt qua số lượng sản phẩm còn lại"
+        })
+      }
+      
       existingOrder.orderItems.map(
         async (item, index) => {
           const id = (item as IOrderItem).attribute;
@@ -1112,39 +1127,38 @@ class OrderController {
       );
 
 
-      // let futureDateTimeOrder = handleFutureDateTimeOrder(1000);
+      let futureDateTimeOrder = handleFutureDateTimeOrder(1000);
 
-      // if(existingOrder.distance) {
-      //   futureDateTimeOrder = handleFutureDateTimeOrder(existingOrder.distance);
-      // }''
+      if(existingOrder.distance) {
+        futureDateTimeOrder = handleFutureDateTimeOrder(existingOrder.distance);
+      }
 
-      // const newExistingOrder = await OrderModel.findByIdAndUpdate(
-      //   existingOrder._id,
-      //   {
-      //     status: 2,
-      //     $push: {
-      //       statusList: 2,
-      //     },
-      //     confirmedDate: Date.now(),
-      //     estimatedDeliveryDate:futureDateTimeOrder
-      //   }
-      // );
+      await OrderModel.findByIdAndUpdate(
+        existingOrder._id,
+        {
+          status: 2,
+          $push: {
+            statusList: 2,
+          },
+          confirmedDate: Date.now(),
+          estimatedDeliveryDate:futureDateTimeOrder
+        }
+      );
 
-      // const listOrderItem =
 
-      // await OrderItemsModel.updateMany(
-      //   {
-      //     _id: {
-      //       $in: existingOrder.orderItems,
-      //     },
-      //   },
-      //   {
-      //     status: 2,
-      //   },
-      //   {
-      //     now:true
-      //   }
-      // );
+      await OrderItemsModel.updateMany(
+        {
+          _id: {
+            $in: existingOrder.orderItems,
+          },
+        },
+        {
+          status: 2,
+        },
+        {
+          now:true
+        }
+      );
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập đơn hàng thành công",
@@ -1154,6 +1168,62 @@ class OrderController {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
       });
+    }
+  }
+
+  // chọn shipper
+  async deliveredToShipper(req: RequestModel, res: Response) {
+    try {
+      const {shipper} = req.body;
+      const {id} = req.params;
+
+      if(!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Chưa chọn đơn hàng"
+        })
+      }
+
+      if(!shipper) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Chưa chọn shipper"
+        })
+      }
+
+      const existingOrder = await OrderModel.findById(id);
+
+      if(!existingOrder) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Không có đơn hàng nào"
+        })
+      }
+
+      if(existingOrder.status < 2) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Đơn hàng chưa xác nhận"
+        })
+      }
+
+      const existingShipper = await ShipperModel.findById(shipper)
+
+      if(!existingShipper) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Không có shipper nào"
+        })
+      }
+
+      const updateOrder = await OrderModel.findByIdAndUpdate(id,{
+        shipper:existingShipper._id
+      })
+
+
+      return res.status(STATUS.OK).json({
+        message:"Chọn shipper thành công",
+        data:updateOrder
+      })
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+        message:error.message
+      })
     }
   }
 
@@ -1271,6 +1341,97 @@ class OrderController {
       });
     }
   }
+
+  // đã nhận hàng
+  async receivedClientOrder(req:RequestModel,res:Response) {
+    try {
+      const {id} = req.params;
+      const user = req.user;
+
+      if(!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Bạn chưa chọn đơn hàng"
+        })
+      }
+
+      const existingOrder = await OrderModel.findById(id);
+
+      if(!existingOrder) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Không có đơn hàng"
+        })
+      }
+
+      if(existingOrder.status !== 4) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Đơn hàng chưa giao"
+        })
+      }
+
+      const successOrder = await OrderModel.findByIdAndUpdate(id,{
+        status:5,
+        $push:{
+          statusList:5
+        }
+      },{new : true})
+
+
+      return res.status(STATUS.BAD_REQUEST).json({
+        message:"Cập nhập thành công",
+      })
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+        message:error.message,
+      })
+    }
+  }
+
+  // hủy hàng
+  async cancelClientOrder(req:RequestModel,res:Response) {
+    try {
+      const {id} = req.params;
+      const user = req.user;
+
+      if(!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Bạn chưa chọn đơn hàng"
+        })
+      }
+
+      const existingOrder = await OrderModel.findById(id);
+
+      if(!existingOrder) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Không có đơn hàng"
+        })
+      }
+
+      if(existingOrder.status !== 1) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Đơn hàng không thể hủy"
+        })
+      }
+
+      const successOrder = await OrderModel.findByIdAndUpdate(id,{
+        status:6,
+        $push:{
+          statusList:6
+        }
+      },{new : true})
+
+
+      return res.status(STATUS.BAD_REQUEST).json({
+        message:"Hủy đơn hàng thành công",
+      })
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+        message:error.message,
+      })
+    }
+  }
+
+  
+
 }
 
 export default new OrderController();
