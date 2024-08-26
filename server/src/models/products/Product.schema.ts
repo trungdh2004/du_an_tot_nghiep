@@ -71,6 +71,10 @@ const ProductSchema = new mongoose.Schema({
   ratingQuantity:{
     type: Number,
     default: 0,
+  },
+  viewCount:{
+    type: Number,
+    default: 0,
   }
 }, {
   timestamps:true

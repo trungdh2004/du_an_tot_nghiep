@@ -257,7 +257,7 @@ class CartController {
       const data = formatDataPaging({
         limit: 10,
         pageIndex: 1,
-        data: listProduct,
+        data: dataList,
         count: countProduct,
       });
 
