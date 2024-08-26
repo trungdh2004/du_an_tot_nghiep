@@ -1,13 +1,13 @@
-import instance from '@/config/instance';
 import { cn } from '@/lib/utils';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
-import React, { useState } from 'react'
+import { fetchOrder } from '@/service/order';
+import { IOrderList } from '@/types/order';
+import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 
 const Index = () => {
   const queryClient = useQueryClient();
   const [active, setActive] = useState(7);
-  const [status, setStatus] = useState('')
+  const [status, setStatus] = useState(null)
   const menuList = [
     {
       "index": 7,
@@ -38,15 +38,18 @@ const Index = () => {
     setActive(item.index);
     setStatus(item.name);
   }
-  const { data } = useQuery({
-    queryKey: ['order'],
+  const { data: orderData } = useQuery({
+    queryKey: ['order', status],
     queryFn: async () => {
-
-    }
-  })
+      const { data } = await fetchOrder(status);
+      // console.log("------", data.data.content)
+      return data?.data.content;
+    },
+    placeholderData: keepPreviousData,
+  });
   return (
     <>
-      <div className="padding py-20 bg-main">
+      <div className="lg:padding py-20 bg-main">
         <div className="flex gap-8">
           <div className="w-[300px] hidden lg:block">
             <h3 className="">Nguyễn Tuấn Đức</h3>
@@ -62,110 +65,117 @@ const Index = () => {
                 ))}
               </ul>
             </div>
-            {/* order 1 */}
-            <div className="my-5">
-              <div className="">
-                {/* head-order */}
-                <div className="w-full bg-white box-shadow flex justify-between items-center rounded-sm border border-gray-200 px-4 py-3">
-                  <div className="text-sm md:text-base font-semibold">Mã đơn hàng: <span className='text-gray-500 '>00122323 </span></div>
-                  <div className="text-sm md:text-base text-red-500 font-medium">{status}</div>
-                </div>
-                {/* end head */}
 
-                {/*  order item*/}
-                <div className="w-full bg-white box-shadow  border border-gray-200 rounded-sm px-4 lg:px-8 py-2 ">
-                  <div className="py-4 space-y-4">
-                    <div className="flex justify-between gap-3 md:gap-5 pb-4 border-b border-gray-300 ">
-                      <div className="size-[100px]">
-                        <img src="https://down-vn.img.susercontent.com/file/vn-11134207-7qukw-lhkarqtaf4ch9e_tn" className='w-full h-full' alt="" />
+            {orderData && orderData?.map((item: IOrderList) => {
+              return (
+                <>
+                  <div key={item._id} className="my-5">
+                    <div className="">
+                      {/* head-order */}
+                      <div className="w-full bg-white box-shadow flex justify-between items-center rounded-sm border border-gray-200 px-4 py-3">
+                        <div className="text-sm md:text-base font-semibold">Mã đơn hàng: <span className='text-gray-500 '>{item?.code} </span></div>
+                        <div className="text-sm md:text-base text-red-500 font-medium">{status}</div>
                       </div>
-                      <div className="flex flex-1 flex-col md:flex-row gap-2">
-                        <div className="">
-                          <h3 className="text-base md:text-[18px] font-medium line-clamp-1 ">Ốp lưng iphone TPU Silicon Mềm Bảo Vệ Bốn Góc Màu Trong Suốt Siêu Chống Sốc 7plus/8plus/xs/11/12/13/14/15/pro//promax</h3>
-                          <p className="text-base text-[#0000008A]">Phân loại hàng: Trắng đen</p>
-                          <span>x1</span>
+                      {/* end head */}
+
+                      {/*  order item*/}
+                      <div className="w-full bg-white box-shadow  border border-gray-200 rounded-sm px-4 lg:px-8 py-2 ">
+                        <div className="py-4 space-y-4">
+                          <div className="flex justify-between gap-3 md:gap-5 pb-4 border-b border-gray-300 ">
+                            <div className="size-[100px]">
+                              <img src="https://down-vn.img.susercontent.com/file/vn-11134207-7qukw-lhkarqtaf4ch9e_tn" className='w-full h-full' alt="" />
+                            </div>
+                            <div className="flex flex-1 flex-col md:flex-row gap-2">
+                              <div className="">
+                                <h3 className="text-base md:text-[18px] font-medium line-clamp-1 ">Ốp lưng iphone TPU Silicon Mềm Bảo Vệ Bốn Góc Màu Trong Suốt Siêu Chống Sốc 7plus/8plus/xs/11/12/13/14/15/pro//promax</h3>
+                                <p className="text-base text-[#0000008A]">Phân loại hàng: Trắng đen</p>
+                                <span>x1</span>
+                              </div>
+                              <div className="text-red-500 flex items-end md:items-center ">
+                                <span className="text-gray-500 line-through pr-3">100.000đ</span>89.000đ
+                              </div>
+                            </div>
+                          </div>
+                          {/* 2 */}
+                          <div className="flex justify-between gap-3 md:gap-5 pb-4 border-b border-gray-300 ">
+                            <div className="size-[100px]">
+                              <img src="https://down-vn.img.susercontent.com/file/vn-11134207-7qukw-lhkarqtaf4ch9e_tn" className='w-full h-full' alt="" />
+                            </div>
+                            <div className="flex flex-1 flex-col md:flex-row gap-2">
+                              <div className="">
+                                <h3 className="text-base md:text-[18px] font-medium line-clamp-1 ">Ốp lưng iphone TPU Silicon Mềm Bảo Vệ Bốn Góc Màu Trong Suốt Siêu Chống Sốc 7plus/8plus/xs/11/12/13/14/15/pro//promax</h3>
+                                <p className="text-base text-[#0000008A]">Phân loại hàng: Trắng đen</p>
+                                <span>x1</span>
+                              </div>
+                              <div className="text-red-500 flex items-end md:items-center ">
+                                <span className="text-gray-500 line-through pr-3">100.000đ</span>89.000đ
+                              </div>
+                            </div>
+                          </div>
+                          {/* feedback */}
+                          <div className="w-full flex justify-between items-center pt-2">
+                            <button className="px-8 py-2 text-white bg-blue-500 border border-blue-500 rounded-md">Đánh giá</button>
+                            <p className="text-sm md:text-base flex gap-x-3">Tổng số tiền (1 sản phẩm): <span className="text-red-500 text-[18px]">60đ</span></p>
+                          </div>
                         </div>
-                        <div className="text-red-500 flex items-end md:items-center ">
-                          <span className="text-gray-500 line-through pr-3">100.000đ</span>89.000đ
+                      </div>
+                      {/*  order item*/}
+                      <div className="w-full bg-white box-shadow  border border-gray-200 rounded-sm px-4 lg:px-8 py-2 ">
+                        <div className="py-4 space-y-4">
+                          <div className="flex justify-between gap-3 md:gap-5 pb-4 border-b border-gray-300 ">
+                            <div className="size-[100px]">
+                              <img src="https://down-vn.img.susercontent.com/file/vn-11134207-7qukw-lhkarqtaf4ch9e_tn" className='w-full h-full' alt="" />
+                            </div>
+                            <div className="flex flex-1 flex-col md:flex-row gap-2">
+                              <div className="">
+                                <h3 className="text-base md:text-[18px] font-medium line-clamp-1 ">Ốp lưng iphone TPU Silicon Mềm Bảo Vệ Bốn Góc Màu Trong Suốt Siêu Chống Sốc 7plus/8plus/xs/11/12/13/14/15/pro//promax</h3>
+                                <p className="text-base text-[#0000008A]">Phân loại hàng: Trắng đen</p>
+                                <span>x1</span>
+                              </div>
+                              <div className="text-red-500 flex items-end md:items-center ">
+                                <span className="text-gray-500 line-through pr-3">100.000đ</span>89.000đ
+                              </div>
+                            </div>
+                          </div>
+                          {/* 2 */}
+                          <div className="flex justify-between gap-3 md:gap-5 pb-4 border-b border-gray-300 ">
+                            <div className="size-[100px]">
+                              <img src="https://down-vn.img.susercontent.com/file/vn-11134207-7qukw-lhkarqtaf4ch9e_tn" className='w-full h-full' alt="" />
+                            </div>
+                            <div className="flex flex-1 flex-col md:flex-row gap-2">
+                              <div className="">
+                                <h3 className="text-base md:text-[18px] font-medium line-clamp-1 ">Ốp lưng iphone TPU Silicon Mềm Bảo Vệ Bốn Góc Màu Trong Suốt Siêu Chống Sốc 7plus/8plus/xs/11/12/13/14/15/pro//promax</h3>
+                                <p className="text-base text-[#0000008A]">Phân loại hàng: Trắng đen</p>
+                                <span>x1</span>
+                              </div>
+                              <div className="text-red-500 flex items-end md:items-center ">
+                                <span className="text-gray-500 line-through pr-3">100.000đ</span>89.000đ
+                              </div>
+                            </div>
+                          </div>
+                          {/* feedback */}
+                          <div className="w-full flex justify-between items-center pt-2">
+                            <button className="px-8 py-2 text-white bg-blue-500 border border-blue-500 rounded-md">Đánh giá</button>
+                            <p className="text-sm md:text-base flex gap-x-3">Tổng số tiền (1 sản phẩm): <span className="text-red-500 text-[18px]">60đ</span></p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    {/* 2 */}
-                    <div className="flex justify-between gap-3 md:gap-5 pb-4 border-b border-gray-300 ">
-                      <div className="size-[100px]">
-                        <img src="https://down-vn.img.susercontent.com/file/vn-11134207-7qukw-lhkarqtaf4ch9e_tn" className='w-full h-full' alt="" />
+                    <div className="bg-yellow-50/60 box-shadow border border-gray-200 px-4 lg:px-8 py-3 md:py-6">
+                      <div className="flex justify-between">
+                        <div className=" text-sm md:text-base font-normal ">Thời gian dự kiến nhận hàng: <span className="">3-4 ngày</span></div>
+                        <div className="text-sm md:text-base font-normal">Thành tiền: <span className="text-[18px] text-red-500">8000đ</span></div>
                       </div>
-                      <div className="flex flex-1 flex-col md:flex-row gap-2">
-                        <div className="">
-                          <h3 className="text-base md:text-[18px] font-medium line-clamp-1 ">Ốp lưng iphone TPU Silicon Mềm Bảo Vệ Bốn Góc Màu Trong Suốt Siêu Chống Sốc 7plus/8plus/xs/11/12/13/14/15/pro//promax</h3>
-                          <p className="text-base text-[#0000008A]">Phân loại hàng: Trắng đen</p>
-                          <span>x1</span>
-                        </div>
-                        <div className="text-red-500 flex items-end md:items-center ">
-                          <span className="text-gray-500 line-through pr-3">100.000đ</span>89.000đ
-                        </div>
-                      </div>
-                    </div>
-                    {/* feedback */}
-                    <div className="w-full flex justify-between items-center pt-2">
-                      <button className="px-8 py-2 text-white bg-blue-500 border border-blue-500 rounded-md">Đánh giá</button>
-                      <p className="text-sm md:text-base flex gap-x-3">Tổng số tiền (1 sản phẩm): <span className="text-red-500 text-[18px]">60đ</span></p>
                     </div>
                   </div>
-                </div>
-                {/*  order item*/}
-                <div className="w-full bg-white box-shadow  border border-gray-200 rounded-sm px-4 lg:px-8 py-2 ">
-                  <div className="py-4 space-y-4">
-                    <div className="flex justify-between gap-3 md:gap-5 pb-4 border-b border-gray-300 ">
-                      <div className="size-[100px]">
-                        <img src="https://down-vn.img.susercontent.com/file/vn-11134207-7qukw-lhkarqtaf4ch9e_tn" className='w-full h-full' alt="" />
-                      </div>
-                      <div className="flex flex-1 flex-col md:flex-row gap-2">
-                        <div className="">
-                          <h3 className="text-base md:text-[18px] font-medium line-clamp-1 ">Ốp lưng iphone TPU Silicon Mềm Bảo Vệ Bốn Góc Màu Trong Suốt Siêu Chống Sốc 7plus/8plus/xs/11/12/13/14/15/pro//promax</h3>
-                          <p className="text-base text-[#0000008A]">Phân loại hàng: Trắng đen</p>
-                          <span>x1</span>
-                        </div>
-                        <div className="text-red-500 flex items-end md:items-center ">
-                          <span className="text-gray-500 line-through pr-3">100.000đ</span>89.000đ
-                        </div>
-                      </div>
-                    </div>
-                    {/* 2 */}
-                    <div className="flex justify-between gap-3 md:gap-5 pb-4 border-b border-gray-300 ">
-                      <div className="size-[100px]">
-                        <img src="https://down-vn.img.susercontent.com/file/vn-11134207-7qukw-lhkarqtaf4ch9e_tn" className='w-full h-full' alt="" />
-                      </div>
-                      <div className="flex flex-1 flex-col md:flex-row gap-2">
-                        <div className="">
-                          <h3 className="text-base md:text-[18px] font-medium line-clamp-1 ">Ốp lưng iphone TPU Silicon Mềm Bảo Vệ Bốn Góc Màu Trong Suốt Siêu Chống Sốc 7plus/8plus/xs/11/12/13/14/15/pro//promax</h3>
-                          <p className="text-base text-[#0000008A]">Phân loại hàng: Trắng đen</p>
-                          <span>x1</span>
-                        </div>
-                        <div className="text-red-500 flex items-end md:items-center ">
-                          <span className="text-gray-500 line-through pr-3">100.000đ</span>89.000đ
-                        </div>
-                      </div>
-                    </div>
-                    {/* feedback */}
-                    <div className="w-full flex justify-between items-center pt-2">
-                      <button className="px-8 py-2 text-white bg-blue-500 border border-blue-500 rounded-md">Đánh giá</button>
-                      <p className="text-sm md:text-base flex gap-x-3">Tổng số tiền (1 sản phẩm): <span className="text-red-500 text-[18px]">60đ</span></p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-yellow-50/60 box-shadow border border-gray-200 px-4 lg:px-8 py-3 md:py-6">
-                <div className="flex justify-between">
-                  <div className=" text-sm md:text-base font-normal ">Thời gian dự kiến nhận hàng: <span className="">3-4 ngày</span></div>
-                  <div className="text-sm md:text-base font-normal">Thành tiền: <span className="text-[18px] text-red-500">8000đ</span></div>
-                </div>
-              </div>
-            </div>
+                </>
+              )
+            })}
+            {/* order 1 */}
+
             {/* order 2 */}
             <div className="my-5">
               <div className="">
-                {/* head-order */}
                 <div className="w-full bg-white box-shadow flex justify-between items-center rounded-sm border border-gray-200 px-4 py-3">
                   <div className="text-sm md:text-base font-semibold">Mã đơn hàng: <span className='text-gray-500 '>00122323 </span></div>
                   <div className="text-sm md:text-base text-red-500 font-medium">{status}</div>

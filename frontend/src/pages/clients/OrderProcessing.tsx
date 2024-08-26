@@ -2,7 +2,9 @@ import React from 'react'
 
 const OrderProcessing = () => {
   return (
-    <div>OrderProcessing</div>
+    <div className='flex justify-center items-center'>
+      <p>Đơn hàng của bạn đa</p>
+    </div>
   )
 }
 
