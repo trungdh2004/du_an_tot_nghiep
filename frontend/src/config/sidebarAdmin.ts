@@ -1,5 +1,5 @@
 import { LuLayoutDashboard } from "react-icons/lu";
-import { FaUsers } from "react-icons/fa";
+import { FaBox, FaUsers } from "react-icons/fa";
 import { FaUsersCog } from "react-icons/fa";
 import { MdOutlinePostAdd } from "react-icons/md";
 
@@ -43,7 +43,6 @@ const sidebarConfig: any[] = [
 		isVisible: true,
 		label: "Nhãn",
 		isAdmin: false,
-
 	},
 	{
 		path: "/product",
@@ -71,7 +70,6 @@ const sidebarConfig: any[] = [
 		isVisible: true,
 		label: "Màu sắc",
 		isAdmin: false,
-
 	},
 	{
 		path: "/blogs",
@@ -97,7 +95,6 @@ const sidebarConfig: any[] = [
 				isVisible: true,
 				label: "Bài viết của tôi",
 			},
-
 		],
 	},
 	{
@@ -110,11 +107,16 @@ const sidebarConfig: any[] = [
 		path: "/revenue",
 		icon: LuLayoutDashboard,
 		isVisible: true,
-      label: "Doanh thu",
+		label: "Doanh thu",
 		isAdmin: true,
-  }
-
+	},
+	{
+		path: "/order",
+		icon: FaBox,
+		isVisible: true,
+		label: "Đơn hàng",
+		isAdmin: true,
+	},
 ];
-
 
 export default sidebarConfig;

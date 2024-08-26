@@ -16,7 +16,7 @@ import MyBlogs from "@/pages/admin/Blogs/MyBlog";
 import TagIndex from "@/pages/admin/tags/TagIndex";
 import PrivateRouter from "./PrivateRouter";
 import ProductAddPage from "@/pages/admin/product/ProductAdd";
-
+import OrderList from "@/pages/admin/order/OrderList";
 
 const AdminRouter = [
 	{
@@ -53,7 +53,7 @@ const AdminRouter = [
 			},
 			{
 				path: "blogs",
-				element: <BlogList />
+				element: <BlogList />,
 			},
 			{
 				path: "product/update/:id",
@@ -90,17 +90,22 @@ const AdminRouter = [
 			},
 			{
 				path: "color",
-				element: <ColorList />
+				element: <ColorList />,
 			},
 			{
 				path: "blogs",
-				element: <BlogList />
+				element: <BlogList />,
 			},
 			{
 				path: "blogs/:id/",
 				element: <BlogDetail />,
 			},
 
+			//order
+			{
+				path: "order",
+				element: <OrderList />,
+			},
 		],
 	},
 ];
