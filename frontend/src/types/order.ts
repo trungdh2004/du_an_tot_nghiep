@@ -1,5 +1,10 @@
 import { IColor } from "./typeProduct";
 
+
+export interface IStatus {
+  index: number | null;
+  name: string | null;
+}
 export interface IProductOfOrder {
   _id: string;
   name: string;
@@ -15,6 +20,9 @@ export interface IItemOrder {
     name: string;
     code: string;
   };
+  product: IProductOfOrder;
+  size: string;
+  quantity: number;
   createdAt: string;
   is_evaluate: boolean;
   price: number;
@@ -23,7 +31,7 @@ export interface IItemOrderList {
   productId: string;
   product: IProductOfOrder;
   totalMoney: number;
-  items: IItemOrder;
+  items: IItemOrder[];
   is_evaluate: boolean;
 }
 export interface IOrderList {
@@ -53,5 +61,5 @@ export interface IOrderList {
   orderDate: string;
   createdAt: string;
   updatedAt: string;
-  itemList: IItemOrderList;
+  itemList: IItemOrderList[];
 }

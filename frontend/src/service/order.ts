@@ -32,7 +32,7 @@ export const returnUrlVnPay = async (dataUrl: any) => {
   return data;
 };
 
-export const fetchOrder = async (status: null | number) => {
-  const data = await instance.post(`/order/pagingOrderClient`, status);
+export const fetchOrder = async (obj: { status: null | number }) => {
+  const data = await instance.post(`/order/pagingOrderClient`, obj);
   return data;
 }
