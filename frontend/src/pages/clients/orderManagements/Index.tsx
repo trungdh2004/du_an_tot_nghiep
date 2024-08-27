@@ -2,8 +2,10 @@ import { formatQuantity } from '@/common/localFunction';
 import { cn } from '@/lib/utils';
 import { fetchOrder } from '@/service/order';
 import { IItemOrder, IItemOrderList, IOrderList } from '@/types/order';
+import { Item } from '@radix-ui/react-dropdown-menu';
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import LoadingTable from './LoadingTable';
 
 const Index = () => {
   const queryClient = useQueryClient();
@@ -68,8 +70,9 @@ const Index = () => {
                 ))}
               </ul>
             </div>
-
-            {isLoading && <div className="animate-pulse w-full h-[300px]"></div>}
+            <div className="h-[500px">
+              {isLoading && (<div className=''><LoadingTable /></div>)}
+            </div>
             {!isLoading && orderData && orderData?.map((item: IOrderList) => {
               return (
                 <>
@@ -116,9 +119,15 @@ const Index = () => {
                               {/* feedback */}
                               <div className="w-full flex justify-between items-center pt-2">
                                 {/*  */}
-                                <button className="px-5 py-2 md:px-6 md:py-3 text-white bg-blue-500 border border-blue-500 rounded-sm text-sm md:text-[16px]">Đánh giá</button>
-                                <p className="text-sm md:text-base flex gap-x-3">Tổng số tiền ({itemOrderList?.items.length as number} sản phẩm):
-                                  <span className="text-red-500  text-sm md:text-[18px] ">{formatQuantity(itemOrderList.totalMoney, "₫")}</span></p>
+                                {item.status === 6 && (
+                                  <div className="w-full">
+                                    <button className="px-5 py-2 md:px-6 lg:py-3 text-white bg-blue-500 border border-blue-500 rounded-sm text-sm lg:text-[18px]">Đánh giá</button>
+                                  </div>
+                                )}
+                                <div className="flex  justify-end w-full">
+                                  <p className="text-right text-sm md:text-base lg:font-medium lg:flex gap-x-3">Tổng số tiền ({itemOrderList?.items.length as number} sản phẩm):
+                                    <span className="text-red-500 font-medium lg:font-semibold text-sm lg:text-[18px] pl-2 lg:pl-0">{formatQuantity(itemOrderList.totalMoney, "₫")}</span></p>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -126,10 +135,16 @@ const Index = () => {
                       })}
                     </div>
                     <div className="bg-yellow-50/60 box-shadow border border-gray-200 px-4 lg:px-8 py-3 md:py-6">
-                      <div className="flex justify-between">
+                      <div className="flex justify-between items-center">
                         {/* change */}
-                        <div className=" text-sm md:text-base font-normal ">Thời gian dự kiến nhận hàng: <span className="">3-4 ngày</span></div>
-                        <div className="text-sm md:text-base font-normal">Thành tiền: <span className="text-sm md:text-[18px] text-red-500">{formatQuantity(item.totalMoney, "₫")}</span></div>
+                        {[1, 2].includes(item.status) && (
+                          <button className="px-5 py-2 lg:px-6 lg:py-3 text-white bg-red-500 border border-orange-700 rounded-sm text-sm lg:text-[18px]">Hủy đơn hàng</button>
+                        )}
+                        {[3, 5].includes(item.status) && (
+                          <div className=" text-sm lg:text-base font-normal ">Thời gian dự kiến nhận hàng: <span className="">{item?.estimatedDeliveryDate}</span></div>
+
+                        )}
+                        <div className="text-sm lg:text-base font-normal">Thành tiền: <span className="text-sm lg:text-[18px]  text-red-500">{formatQuantity(item.totalMoney, "₫")}</span></div>
                       </div>
                     </div>
                   </div>
