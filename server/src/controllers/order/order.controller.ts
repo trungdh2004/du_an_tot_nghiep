@@ -1060,6 +1060,13 @@ class OrderController {
       const existingOrder = await OrderModel.findById(id).populate([
         "user",
         "address",
+        "shipper",
+        {
+          path:"orderItems",
+          populate:{
+            path:"product"
+          }
+        }
       ]);
 
       if (!existingOrder) {
