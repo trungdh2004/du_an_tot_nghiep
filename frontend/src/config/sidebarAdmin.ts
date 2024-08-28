@@ -116,6 +116,44 @@ const sidebarConfig: any[] = [
 		isVisible: true,
 		label: "Đơn hàng",
 		isAdmin: true,
+		children: [
+			{
+				path: "",
+				icon: LuLayoutDashboard,
+				isVisible: true,
+				label: "Đơn hàng chờ xác nhận",
+			},
+			{
+				path: "/orderconfirm",
+				icon: MdOutlinePostAdd,
+				isVisible: true,
+				label: "Đơn hàng xác nhận",
+			},
+			{
+				path: "/ordership",
+				icon: MdOutlinePostAdd,
+				isVisible: true,
+				label: "Đơn giao hàng ",
+			},
+			{
+				path: "/ordershipsuccess",
+				icon: MdOutlinePostAdd,
+				isVisible: true,
+				label: "Đơn giao hàng thành công",
+			},
+			{
+				path: "/orderreceived",
+				icon: MdOutlinePostAdd,
+				isVisible: true,
+				label: "Đơn đã nhận",
+			},
+			{
+				path: "/ordercancel",
+				icon: MdOutlinePostAdd,
+				isVisible: true,
+				label: "Đơn đã hủy",
+			},
+		],
 	},
 ];
 

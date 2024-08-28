@@ -16,7 +16,8 @@ import MyBlogs from "@/pages/admin/Blogs/MyBlog";
 import TagIndex from "@/pages/admin/tags/TagIndex";
 import PrivateRouter from "./PrivateRouter";
 import ProductAddPage from "@/pages/admin/product/ProductAdd";
-import OrderList from "@/pages/admin/order/OrderList";
+import OrderNeedConfirm from "@/pages/admin/order/OrderNeedConfirm";
+import OrderById from "@/pages/admin/order/OrderById";
 
 const AdminRouter = [
 	{
@@ -104,7 +105,31 @@ const AdminRouter = [
 			//order
 			{
 				path: "order",
-				element: <OrderList />,
+				element: <OrderNeedConfirm />,
+			},
+			{
+				path: "order/orderconfirm",
+				element: <OrderNeedConfirm />,
+			},
+			{
+				path: "order/ordership",
+				element: <OrderNeedConfirm />,
+			},
+			{
+				path: "order/ordershipsuccess",
+				element: <OrderNeedConfirm />,
+			},
+			{
+				path: "order/orderreceived",
+				element: <OrderNeedConfirm />,
+			},
+			{
+				path: "order/ordercancel",
+				element: <OrderNeedConfirm />,
+			},
+			{
+				path: "order/:id",
+				element: <OrderById />,
 			},
 		],
 	},

@@ -43,3 +43,5 @@ export interface SearchObjectBlog extends SearchObjectType {
 	tab?: number;
 	tags: string;
 }
+
+
