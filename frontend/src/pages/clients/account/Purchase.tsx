@@ -4,13 +4,14 @@ import { fetchOrder } from '@/service/order';
 import { IItemOrder, IItemOrderList, IOrderList } from '@/types/order';
 import { Item } from '@radix-ui/react-dropdown-menu';
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import LoadingTable from './LoadingTable';
 
-const Index = () => {
+const OrderManagements = () => {
   const queryClient = useQueryClient();
   const [active, setActive] = useState(7);
-  const [status, setStatus] = useState(null)
+  const [status, setStatus] = useState(null);
+  const [showLoader, setShowLoader] = useState(true)
   const menuList = [
     {
       "index": 7,
@@ -51,19 +52,21 @@ const Index = () => {
     },
     staleTime: 5 * 60 * 60,
   });
-
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoader(false);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [isLoading])
   return (
     <>
-      <div className="lg:padding py-20 bg-main">
-        <div className="flex gap-8">
-          <div className="w-[300px] hidden lg:block">
-            <h3 className="">Nguyễn Tuấn Đức</h3>
-          </div>
+      <div className="">
+        <div className="">
           <div className="w-full">
             <div className="sticky top-0">
-              <ul className="flex scroll-custom  no-scrollbar text-base bg-white box-shadow scroll-custom overflow-x-auto">
+              <ul className="flex scroll-custom  no-scrollbar text-base bg-white md:border md:border-gray-200 rounded box-shadow scroll-custom overflow-x-auto">
                 {menuList.map((item: any) => (
-                  <li key={item.index} onClick={() => handleMenuClick(item)} className={cn(`flex-1 text-nowrap px-5 cursor-pointer font-medium flex justify-center py-4 border-b-2 border-gray-300 hover:border-b-2
+                  <li key={item.index} onClick={() => handleMenuClick(item)} className={cn(`flex-1 text-nowrap px-5 cursor-pointer font-medium flex justify-center py-5 border-b-2 border-gray-200 hover:border-b-2
                                  hover:border-blue-500 hover:text-blue-500 transition-all duration-300 `, active === item.index && `border-blue-500 text-blue-500`)}>
                     {item.name}
                   </li>
@@ -79,8 +82,8 @@ const Index = () => {
                   <div key={item._id} className="my-5">
                     <div className="">
                       {/* head-order */}
-                      <div className="w-full bg-white box-shadow flex justify-between items-center rounded-sm border border-gray-200 px-5 py-3">
-                        <div className="text-sm md:text-base font-semibold">Mã đơn hàng: <span className='text-gray-500 '>{item?.code} </span></div>
+                      <div className="w-full bg-white box-shadow flex justify-between items-center rounded-sm border border-gray-200 px-5 py-5">
+                        <div className="text-sm md:text-base font-semibold">Mã đơn hàng: <span className='text-gray-900 font-medium'>{item?.code} </span></div>
                         <div className="text-sm md:text-base text-red-500 font-medium">{menuList.find((status) => status.index === item.status)?.name}</div>
                       </div>
                       {/* end head */}
@@ -102,12 +105,12 @@ const Index = () => {
                                       <div className="">
                                         <h3 className="text-base md:text-[18px] font-medium line-clamp-1 ">{itemOrder?.product.name}</h3>
                                         <p className="text-base text-[#0000008A] flex gap-x-1">Phân loại hàng:
-                                          <span className="">{itemOrder?.color.name},</span>
-                                          <span className="">{itemOrder?.size}</span>
+                                          <span className="text-gray-700 font-normal">{itemOrder?.color.name},</span>
+                                          <span className="text-gray-700 font-normal">{itemOrder?.size}</span>
                                         </p>
                                         <span>x{itemOrder?.quantity}</span>
                                       </div>
-                                      <div className="text-red-500 flex items-end md:items-center ">
+                                      <div className="text-red-500 flex items-end md:items-center font-medium ">
                                         <span className="text-gray-500 line-through pr-3">{formatQuantity(itemOrder?.product.price, "₫")}</span>
                                         <span className="">{formatQuantity(itemOrder?.price, "₫")}</span>
                                       </div>
@@ -116,12 +119,11 @@ const Index = () => {
                                 )
                               })}
 
-                              {/* feedback */}
                               <div className="w-full flex justify-between items-center pt-2">
                                 {/*  */}
                                 {item.status === 6 && (
                                   <div className="w-full">
-                                    <button className="px-5 py-2 md:px-6 lg:py-3 text-white bg-blue-500 border border-blue-500 rounded-sm text-sm lg:text-[18px]">Đánh giá</button>
+                                    <button className="px-5 py-2 md:px-8 lg:py-3 text-white bg-blue-500 border border-blue-500 rounded-sm text-sm lg:text-[18px]">Đánh giá</button>
                                   </div>
                                 )}
                                 <div className="flex  justify-end w-full">
@@ -134,17 +136,17 @@ const Index = () => {
                         )
                       })}
                     </div>
-                    <div className="bg-yellow-50/60 box-shadow border border-gray-200 px-4 lg:px-8 py-3 md:py-6">
+                    <div className="bg-[#FFFCF5] box-shadow border border-gray-200 px-4 lg:px-8 py-3 md:py-6">
                       <div className="flex justify-between items-center">
                         {/* change */}
                         {[1, 2].includes(item.status) && (
-                          <button className="px-5 py-2 lg:px-6 lg:py-3 text-white bg-red-500 border border-orange-700 rounded-sm text-sm lg:text-[18px]">Hủy đơn hàng</button>
+                          <button className="px-5 py-2 lg:px-8 lg:py-3 text-white bg-red-500 border border-orange-700 hover:bg-red-600 transition-all  duration-300    rounded-sm text-sm lg:text-[18px]">Hủy đơn hàng</button>
                         )}
                         {[3, 5].includes(item.status) && (
-                          <div className=" text-sm lg:text-base font-normal ">Thời gian dự kiến nhận hàng: <span className="">{item?.estimatedDeliveryDate}</span></div>
+                          <div className=" text-sm lg:text-base font-medium ">Thời gian dự kiến nhận hàng: <span className="">{item?.estimatedDeliveryDate}</span></div>
 
                         )}
-                        <div className="text-sm lg:text-base font-normal">Thành tiền: <span className="text-sm lg:text-[18px]  text-red-500">{formatQuantity(item.totalMoney, "₫")}</span></div>
+                        <div className="text-sm lg:text-base font-medium">Thành tiền: <span className="text-sm lg:text-[18px] font-medium lg:font-semibold text-red-500">{formatQuantity(item.totalMoney, "₫")}</span></div>
                       </div>
                     </div>
                   </div>
@@ -168,4 +170,4 @@ const Index = () => {
   )
 }
 
-export default Index
+export default OrderManagements
