@@ -1,6 +1,8 @@
 import { getOrderById } from "@/service/order";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import OrderTracking from "./OrderTracking";
+import OrderInformation from "./OrderInformation";
 
 const OrderById = () => {
 	const { id } = useParams();
@@ -17,12 +19,13 @@ const OrderById = () => {
 				console.log(error);
 			}
 		})();
-  }, []);
-  console.log(data);
-  
-  return <div>
-    
-  </div>;
+	}, []);
+	return (
+		<div className="grid grid-cols-1 gap-4">
+			<OrderTracking data={data} />
+			<OrderInformation data={data} />
+		</div>
+	);
 };
 
 export default OrderById;

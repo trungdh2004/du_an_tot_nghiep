@@ -137,12 +137,3 @@ const OrderNeedConfirm = () => {
 };
 
 export default OrderNeedConfirm;
-// status = 1,
-//         pageIndex,
-//         pageSize,
-//         sort=-1,
-//         startDate,
-//         endDate,
-//         method,
-//         is_shipper,
-//         paymentStatus,

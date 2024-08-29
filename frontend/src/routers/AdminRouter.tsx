@@ -18,6 +18,11 @@ import PrivateRouter from "./PrivateRouter";
 import ProductAddPage from "@/pages/admin/product/ProductAdd";
 import OrderNeedConfirm from "@/pages/admin/order/OrderNeedConfirm";
 import OrderById from "@/pages/admin/order/OrderById";
+import OrderConfirm from "@/pages/admin/order/OrderConfirm";
+import OrderShip from "@/pages/admin/order/OrderShip";
+import OrderShipSuccess from "@/pages/admin/order/OrderShipSuccess";
+import OrderReceived from "@/pages/admin/order/OrderReceived";
+import OrderCancel from "@/pages/admin/order/OrderCancel";
 
 const AdminRouter = [
 	{
@@ -109,23 +114,23 @@ const AdminRouter = [
 			},
 			{
 				path: "order/orderconfirm",
-				element: <OrderNeedConfirm />,
+				element: <OrderConfirm />,
 			},
 			{
 				path: "order/ordership",
-				element: <OrderNeedConfirm />,
+				element: <OrderShip />,
 			},
 			{
 				path: "order/ordershipsuccess",
-				element: <OrderNeedConfirm />,
+				element: <OrderShipSuccess />,
 			},
 			{
 				path: "order/orderreceived",
-				element: <OrderNeedConfirm />,
+				element: <OrderReceived />,
 			},
 			{
 				path: "order/ordercancel",
-				element: <OrderNeedConfirm />,
+				element: <OrderCancel />,
 			},
 			{
 				path: "order/:id",
