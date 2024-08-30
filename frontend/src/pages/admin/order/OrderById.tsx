@@ -10,21 +10,22 @@ const OrderById = () => {
 	const [data, setData] = useState({});
 	const [dataTrackings, setDataTracking] = useState([]);
 	useEffect(() => {
-		(async () => {
-			try {
-				const data = await getOrderById(id as string);
-				setDataTracking(data.data.listStatusOrderDate);
-				setData(data.data.data);
-				return data;
-			} catch (error) {
-				console.log(error);
-			}
-		})();
+		handleGetOrderById();
 	}, []);
+	const handleGetOrderById = async () => {
+		try {
+			const data = await getOrderById(id as string);
+			setDataTracking(data.data.listStatusOrderDate);
+			setData(data.data.data);
+			return data;
+		} catch (error) {
+			console.log(error);
+		}
+	};
 	return (
 		<div className="grid grid-cols-1 gap-4">
 			<OrderTracking data={dataTrackings} />
-			<OrderInformation data={data} />
+			<OrderInformation data={data} getOrderById={handleGetOrderById} />
 			<OrderDetailTime data={dataTrackings} />
 		</div>
 	);

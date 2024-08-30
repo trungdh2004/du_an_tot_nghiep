@@ -48,3 +48,8 @@ export const getOrderById = async (id: string) => {
 	const data = await instance.get(`/order/getByIdServer/${id}`);
 	return data;
 };
+
+export const confirmOrder = async (id: string) => {
+	const data = await instance.post(`/order/confirmOrder/${id}`);
+	return data;
+};

@@ -12,7 +12,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 interface Props {
-	setSearchParamsObject: Dispatch<SetStateAction<{} | SearchObjectTypeProduct>>;
+	setSearchParamsObject: Dispatch<SetStateAction<SearchObjectTypeProduct>>;
 }
 const SelectSort = ({ setSearchParamsObject }: Props) => {
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -20,7 +20,7 @@ const SelectSort = ({ setSearchParamsObject }: Props) => {
 	const query = useQueryClient();
 	const navigate = useNavigate();
 	const handleReset = () => {
-		const defaultParams = {
+		const defaultParams:SearchObjectTypeProduct = {
 			pageIndex: 1,
 			pageSize: 12,
 			keyword: "",
@@ -48,12 +48,12 @@ const SelectSort = ({ setSearchParamsObject }: Props) => {
 			case "1":
 				searchParams.set("sort", "1");
 				setSearchParams(searchParams);
-				setSearchParamsObject((prev) => ({ ...prev, sort: 1 }));
+				setSearchParamsObject((prev) => ({ ...prev, sort: 1,fieldSort:"discount" }));
 				break;
 			case "-1":
 				searchParams.set("sort", "-1");
 				setSearchParams(searchParams);
-				setSearchParamsObject((prev) => ({ ...prev, sort: -1 }));
+				setSearchParamsObject((prev) => ({ ...prev, sort: -1,fieldSort:"discount" }));
 				break;
 			default:
 				break;
