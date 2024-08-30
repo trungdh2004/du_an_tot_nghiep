@@ -16,11 +16,14 @@ const OrderTracking = ({ data }: any) => {
 							size={35}
 							className={cn(
 								"text-gray-500",
-								data.createdAt ||
-									data.confirmedDate ||
-									data.shippingDate ||
-									data.shippedDate ||
-									data.deliveredDate
+								data.some(
+									(order: {
+										status: number;
+										date: string;
+										message: string;
+										sub: string;
+									}) => order && order.status === 1,
+								)
 									? "text-blue-500"
 									: "",
 							)}
@@ -28,9 +31,25 @@ const OrderTracking = ({ data }: any) => {
 					</div>
 					<span className="mt-2 text-black text-sm">Đã Đặt Hàng</span>
 					<span className="text-sm text-gray-500">
-						{data?.createdAt
+						{data.find(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 1,
+						)
 							? formatInTimeZone(
-									new Date(data.createdAt),
+									new Date(
+										data.find(
+											(order: {
+												status: number;
+												date: string;
+												message: string;
+												sub: string;
+											}) => order && order.status === 1,
+										).date,
+									),
 									"Asia/Ho_Chi_Minh",
 									"dd/MM/yyyy HH:mm:ss",
 								)
@@ -41,10 +60,14 @@ const OrderTracking = ({ data }: any) => {
 				<div
 					className={cn(
 						"flex-auto border-t-2 border-gray-500 pb-12",
-						data.confirmedDate ||
-							data.shippingDate ||
-							data.shippedDate ||
-							data.deliveredDate
+						data.some(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 2,
+						)
 							? "border-blue-500"
 							: "",
 					)}
@@ -56,10 +79,14 @@ const OrderTracking = ({ data }: any) => {
 							size={35}
 							className={cn(
 								"text-gray-500",
-								data.confirmedDate ||
-									data.shippingDate ||
-									data.shippedDate ||
-									data.deliveredDate
+								data.some(
+									(order: {
+										status: number;
+										date: string;
+										message: string;
+										sub: string;
+									}) => order && order.status === 2,
+								)
 									? "text-blue-500"
 									: "",
 							)}
@@ -67,9 +94,25 @@ const OrderTracking = ({ data }: any) => {
 					</div>
 					<span className="mt-2 text-black text-sm">Xác nhận</span>
 					<span className="text-sm text-gray-500">
-						{data?.confirmedDate
+						{data.find(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 2,
+						)
 							? formatInTimeZone(
-									new Date(data.confirmedDate),
+									new Date(
+										data.find(
+											(order: {
+												status: number;
+												date: string;
+												message: string;
+												sub: string;
+											}) => order && order.status === 2,
+										).date,
+									),
 									"Asia/Ho_Chi_Minh",
 									"dd/MM/yyyy HH:mm:ss",
 								)
@@ -80,7 +123,14 @@ const OrderTracking = ({ data }: any) => {
 				<div
 					className={cn(
 						"flex-auto border-t-2 border-gray-500 pb-12",
-						data.shippingDate || data.shippedDate || data.deliveredDate
+						data.some(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 3,
+						)
 							? "border-blue-500"
 							: "",
 					)}
@@ -92,19 +142,40 @@ const OrderTracking = ({ data }: any) => {
 							size={35}
 							className={cn(
 								"text-gray-500",
-								data.shippingDate || data.shippedDate || data.deliveredDate
+								data.some(
+									(order: {
+										status: number;
+										date: string;
+										message: string;
+										sub: string;
+									}) => order && order.status === 3,
+								)
 									? "text-blue-500"
 									: "",
 							)}
 						/>
 					</div>
-					<span className="mt-2 text-black text-sm">
-						Chuyển đơn vị giao hàng
-					</span>
+					<span className="mt-2 text-black text-sm">Đang giao hàng</span>
 					<span className="text-sm text-gray-500">
-						{data?.shippingDate
+						{data.find(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 3,
+						)
 							? formatInTimeZone(
-									new Date(data.shippingDate),
+									new Date(
+										data.find(
+											(order: {
+												status: number;
+												date: string;
+												message: string;
+												sub: string;
+											}) => order && order.status === 3,
+										).date,
+									),
 									"Asia/Ho_Chi_Minh",
 									"dd/MM/yyyy HH:mm:ss",
 								)
@@ -115,7 +186,16 @@ const OrderTracking = ({ data }: any) => {
 				<div
 					className={cn(
 						"flex-auto border-t-2 border-gray-500 pb-12",
-						data.shippedDate || data.deliveredDate ? "border-blue-500" : "",
+						data.some(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 4,
+						)
+							? "border-blue-500"
+							: "",
 					)}
 				/>
 
@@ -125,15 +205,40 @@ const OrderTracking = ({ data }: any) => {
 							size={35}
 							className={cn(
 								"text-gray-500",
-								data.shippedDate || data.deliveredDate ? "text-blue-500" : "",
+								data.some(
+									(order: {
+										status: number;
+										date: string;
+										message: string;
+										sub: string;
+									}) => order && order.status === 4,
+								)
+									? "text-blue-500"
+									: "",
 							)}
 						/>
 					</div>
 					<span className="mt-2 text-black text-sm">Giao hàng</span>
 					<span className="text-sm text-gray-500">
-						{data?.shippedDate
+						{data.find(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 4,
+						)
 							? formatInTimeZone(
-									new Date(data.shippedDate),
+									new Date(
+										data.find(
+											(order: {
+												status: number;
+												date: string;
+												message: string;
+												sub: string;
+											}) => order && order.status === 4,
+										).date,
+									),
 									"Asia/Ho_Chi_Minh",
 									"dd/MM/yyyy HH:mm:ss",
 								)
@@ -143,7 +248,16 @@ const OrderTracking = ({ data }: any) => {
 				<div
 					className={cn(
 						"flex-auto border-t-2 border-gray-500 pb-12",
-						data.deliveredDate ? "border-blue-500" : "",
+						data.some(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 5,
+						)
+							? "border-blue-500"
+							: "",
 					)}
 				/>
 
@@ -153,22 +267,46 @@ const OrderTracking = ({ data }: any) => {
 							size={35}
 							className={cn(
 								"text-gray-500",
-								data.deliveredDate ? "text-blue-500" : "",
+								data.some(
+									(order: {
+										status: number;
+										date: string;
+										message: string;
+										sub: string;
+									}) => order && order.status === 5,
+								)
+									? "text-blue-500"
+									: "",
 							)}
 						/>
 					</div>
 					<span className="mt-2 text-black text-sm">Đã nhận hàng</span>
 					<span className="text-sm text-gray-500">
-						{data?.deliveredDate
+						{data.find(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 5,
+						)
 							? formatInTimeZone(
-									new Date(data.deliveredDate),
+									new Date(
+										data.find(
+											(order: {
+												status: number;
+												date: string;
+												message: string;
+												sub: string;
+											}) => order && order.status === 5,
+										).date,
+									),
 									"Asia/Ho_Chi_Minh",
 									"dd/MM/yyyy HH:mm:ss",
 								)
 							: "Chưa xác nhận"}
 					</span>
 				</div>
-		
 			</div>
 		</div>
 	);

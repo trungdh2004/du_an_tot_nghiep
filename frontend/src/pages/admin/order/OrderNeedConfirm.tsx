@@ -41,7 +41,6 @@ const OrderNeedConfirm = () => {
 	const handleOrderNeed = async () => {
 		try {
 			const { data } = await pagingOrderAdmin(searchObjecOrder);
-			console.log(data.data);
 			setOrderNeed(data.data.content);
 			setResponse({
 				pageCount: data.data.totalPage,

@@ -3,17 +3,18 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import OrderTracking from "./OrderTracking";
 import OrderInformation from "./OrderInformation";
+import OrderDetailTime from "./OrderDetailTime";
 
 const OrderById = () => {
 	const { id } = useParams();
 	const [data, setData] = useState({});
-	console.log(id);
+	const [dataTrackings, setDataTracking] = useState([]);
 	useEffect(() => {
 		(async () => {
 			try {
-				const { data } = await getOrderById(id as string);
-				console.log(data);
-				setData(data.data);
+				const data = await getOrderById(id as string);
+				setDataTracking(data.data.listStatusOrderDate);
+				setData(data.data.data);
 				return data;
 			} catch (error) {
 				console.log(error);
@@ -22,8 +23,9 @@ const OrderById = () => {
 	}, []);
 	return (
 		<div className="grid grid-cols-1 gap-4">
-			<OrderTracking data={data} />
+			<OrderTracking data={dataTrackings} />
 			<OrderInformation data={data} />
+			<OrderDetailTime data={dataTrackings} />
 		</div>
 	);
 };

@@ -7,13 +7,10 @@ const OrderInforAddress = ({ data }: any) => {
 	console.log(data);
 	// const dateString = data.createdAt;
 	// const formattedDate = format(new Date(data.createdAt), "dd/MM/yyyy HH:mm:ss");
-  const handleChangeOrder = async () => {
-    try {
-      
-    } catch (error) {
-      
-    }
-  };
+	const handleChangeOrder = async () => {
+		try {
+		} catch (error) {}
+	};
 	return (
 		<div className="col-span-1">
 			<div className="flex flex-col gap-5">
@@ -72,7 +69,7 @@ const OrderInforAddress = ({ data }: any) => {
 						</p>
 					</div>
 				</div>
-				{(data.status === 1 || data.status === 2 || data.status === 3) && (
+				{data.status === 1 && (
 					<div className="bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-100 box-shadow p-4">
 						<h3 className="font-medium">Xác nhận</h3>
 						<Button className="bg-[#369de7] hover:bg-[#5eb3f0]">

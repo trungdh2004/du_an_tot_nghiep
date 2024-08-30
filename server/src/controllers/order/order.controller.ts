@@ -21,6 +21,8 @@ import {
 import AttributeModel from "../../models/products/Attribute.schema";
 import { IOrder, IOrderItem } from "../../interface/order";
 import ShipperModel from "../../models/shipper/Shipper.schema";
+import ProductModel from "../../models/products/Product.schema";
+import { IAddress } from "../../interface/address";
 
 const long = +process.env.LONGSHOP! || 105.62573250208116;
 const lat = +process.env.LATSHOP! || 21.045193948892585;
@@ -1074,9 +1076,52 @@ class OrderController {
         });
       }
 
+      const listStatusOrderDate = existingOrder.statusList
+        .reverse()
+        ?.map((item) => {
+          if (item === 5) {
+            return {
+              status: 5,
+              date: existingOrder?.deliveredDate,
+              message: "Đơn hàng thành công",
+            };
+          } else if (item === 4) {
+            return {
+              status: 4,
+              date: existingOrder?.shippedDate,
+              message: "Đơn hàng giao thành công",
+              sub: `Người nhận: ${
+                (existingOrder?.address as IAddress).username
+              }`,
+            };
+          } else if (item === 3) {
+            return {
+              status: 3,
+              date: existingOrder?.shippingDate,
+              message: "Đơn hàng đang giao",
+              sub: `Đơn hàng sẽ sớm được giao, vui lòng chú ý điện thoại`,
+            };
+          } else if (item === 2) {
+            return {
+              status: 2,
+              date: existingOrder?.confirmedDate,
+              message: "Đơn hàng đang được chuẩn bị",
+              sub: "Shop đang chuẩn bị đơn hàng",
+            };
+          } else if (item === 1) {
+            return {
+              status: 1,
+              date: existingOrder?.orderDate,
+              message: "Đơn hàng đặt thành công",
+              sub: "Đơn hàng đã được đặt",
+            };
+          }
+        });
+
       return res.status(STATUS.OK).json({
         message: "Lấy giá trị thành công",
         data: existingOrder,
+        listStatusOrderDate,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
@@ -1123,9 +1168,13 @@ class OrderController {
       }
 
       existingOrder.orderItems.map(async (item, index) => {
+        const orderItem = item as IOrderItem;
         const id = (item as IOrderItem).attribute;
         const quantity = (item as IOrderItem).quantity;
         await AttributeModel.findByIdAndUpdate(id, {
+          $inc: { quantity: -quantity },
+        });
+        await ProductModel.findByIdAndUpdate(orderItem?.product, {
           $inc: { quantity: -quantity },
         });
       });
@@ -1426,6 +1475,93 @@ class OrderController {
 
       return res.status(STATUS.BAD_REQUEST).json({
         message: "Hủy đơn hàng thành công",
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async getByIdOrderClient(req: RequestModel, res: Response) {
+    try {
+      const { id } = req.params;
+      const user = req.user;
+
+      if (!id)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn đơn hàng",
+        });
+
+      const existingOrder = await OrderModel.findById(id).populate([
+        "address",
+        "shipper",
+        {
+          path: "orderItems",
+          populate: {
+            path: "product",
+          },
+        },
+      ]);
+
+      if (!existingOrder) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có đơn hàng nào",
+        });
+      }
+
+      if (existingOrder.user.toString() !== user?.id.toString()) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn không có quyền xem chi tiết đơn hàng",
+        });
+      }
+
+      const listStatusOrderDate = existingOrder.statusList
+        .reverse()
+        ?.map((item) => {
+          if (item === 5) {
+            return {
+              status: 5,
+              date: existingOrder?.deliveredDate,
+              message: "Đơn hàng thành công",
+            };
+          } else if (item === 4) {
+            return {
+              status: 4,
+              date: existingOrder?.shippedDate,
+              message: "Đơn hàng giao thành công",
+              sub: `Người nhận: ${
+                (existingOrder?.address as IAddress).username
+              }`,
+            };
+          } else if (item === 3) {
+            return {
+              status: 3,
+              date: existingOrder?.shippingDate,
+              message: "Đơn hàng đang giao",
+              sub: `Đơn hàng sẽ sớm được giao, vui lòng chú ý điện thoại`,
+            };
+          } else if (item === 2) {
+            return {
+              status: 2,
+              date: existingOrder?.confirmedDate,
+              message: "Đơn hàng đang được chuẩn bị",
+              sub: "Shop đang chuẩn bị đơn hàng",
+            };
+          } else if (item === 1) {
+            return {
+              status: 1,
+              date: existingOrder?.orderDate,
+              message: "Đơn hàng đặt thành công",
+              sub: "Đơn hàng đã được đặt",
+            };
+          }
+        });
+
+      return res.status(STATUS.OK).json({
+        message: "Lấy giá trị thành công",
+        data: existingOrder,
+        listStatusOrderDate,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({

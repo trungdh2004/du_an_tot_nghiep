@@ -13,20 +13,14 @@ import { formatCurrency } from "@/common/func";
 import OrderInforAddress from "./OrderInforAddress";
 
 const OrderInformation = ({ data }: any) => {
-	console.log(data.orderItems);
-	console.log(data);
 	const arrayTotal = data?.orderItems?.map((product: any) => {
-		console.log(product);
-
 		return product.totalMoney;
 	});
-	console.log(arrayTotal);
 
 	const totalCost = arrayTotal?.reduce(
 		(acc: number, value: number) => acc + value,
 		0,
 	);
-	console.log(totalCost);
 
 	return (
 		<div className="grid grid-cols-3 gap-4">
