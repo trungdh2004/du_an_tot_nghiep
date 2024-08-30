@@ -613,6 +613,7 @@ class OrderController {
           price: (item.attribute as IAttribute).discount,
           quantity: item.quantity,
           totalMoney: +item.quantity * (item.attribute as IAttribute).discount,
+          attribute: (item.attribute as IAttribute)._id
         };
       });
 
