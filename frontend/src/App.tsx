@@ -12,11 +12,13 @@ import ProgessBarLoading from "./components/common/ProgessBarLoading";
 import LoadingProvider from "./components/common/LoadingProvider";
 import { useLoadingModal } from "./store/useLoadingModal";
 import ShipperRouter from "./routers/ShipperRouter";
+import OrderRouter from "./routers/OrderRouter";
 const router = createBrowserRouter([
 	...MainRouter,
 	...AuthRouter,
 	...AdminRouter,
-	...ShipperRouter
+	...ShipperRouter,
+	...OrderRouter,
 ]);
 const App = () => {
 	const { isOpen } = useLoadingModal();
