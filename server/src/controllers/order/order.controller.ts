@@ -1063,6 +1063,7 @@ class OrderController {
         "user",
         "address",
         "shipper",
+        "payment",
         {
           path:"orderItems",
           populate:{
@@ -1430,6 +1431,20 @@ class OrderController {
         }
       },{new : true})
 
+      await OrderItemsModel.updateMany(
+        {
+          _id: {
+            $in: existingOrder.orderItems,
+          },
+        },
+        {
+          status: 5,
+        },
+        {
+          now:true
+        }
+      );
+
 
       return res.status(STATUS.BAD_REQUEST).json({
         message:"Cập nhập thành công",
@@ -1474,6 +1489,20 @@ class OrderController {
         }
       },{new : true})
 
+      await OrderItemsModel.updateMany(
+        {
+          _id: {
+            $in: existingOrder.orderItems,
+          },
+        },
+        {
+          status: 6,
+        },
+        {
+          now:true
+        }
+      );
+
 
       return res.status(STATUS.BAD_REQUEST).json({
         message:"Hủy đơn hàng thành công",
@@ -1498,6 +1527,7 @@ class OrderController {
       const existingOrder = await OrderModel.findById(id).populate([
         "address",
         "shipper",
+        "payment",
         {
           path:"orderItems",
           populate:{
