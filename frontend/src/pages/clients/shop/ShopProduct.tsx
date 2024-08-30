@@ -67,8 +67,8 @@ const ShopProduct = () => {
 
 	return (
 		<div className="padding pt-[40px]">
-			<div className="grid lg:grid-cols-12 gap-9">
-				<div className="col-span-2 lg:col-span-2 lg:block hidden">
+			<div className="grid lg:grid-cols-12 gap-9 relative">
+				<div className="col-span-2 lg:col-span-2 lg:block hidden h-[88vh] sticky top-[100px]">
 					<ScrollArea className="h-[88vh] rounded-md pb-5 pr-4">
 						<Category setSearchParamsObject={setSearchParamsObject} />
 						<Price

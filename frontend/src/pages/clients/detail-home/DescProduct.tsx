@@ -16,7 +16,7 @@ const DescProduct = ({description,isLoading}:Props) => {
     const htmlContent = md.render(markdownContent as any);
 	
 	return (
-		<div className="break-all">
+		<div className="break-all bg-white p-4 rounded-md">
 			<div dangerouslySetInnerHTML={{ __html: htmlContent }} />
 			
 		</div>

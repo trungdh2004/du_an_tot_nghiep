@@ -27,7 +27,7 @@ const DetailProduct = () => {
 	});
 	return (
 		<div className="bg-[#f9fafb]">
-			<div className="padding">
+			<div className="padding ">
 				<Breadcrumb className="py-3">
 					<BreadcrumbList>
 						<BreadcrumbItem>
@@ -35,16 +35,28 @@ const DetailProduct = () => {
 						</BreadcrumbItem>
 						<BreadcrumbSeparator />
 						<BreadcrumbItem>
-							<BreadcrumbLink href="/components">Sản phẩm</BreadcrumbLink>
+							<BreadcrumbLink href="/shop">Sản phẩm</BreadcrumbLink>
 						</BreadcrumbItem>
-						<BreadcrumbSeparator />
-						<BreadcrumbItem>
-							<BreadcrumbLink href="/components">Áo phông</BreadcrumbLink>
-						</BreadcrumbItem>
-						<BreadcrumbSeparator />
-						<BreadcrumbItem>
-							<BreadcrumbPage>Áo Boy Phố</BreadcrumbPage>
-						</BreadcrumbItem>
+						{data?.category?.name && (
+							<>
+								<BreadcrumbSeparator />
+								<BreadcrumbItem>
+									<BreadcrumbLink
+										href={`/shop?category=${data?.category?._id}`}
+									>
+										{data?.category?.name}
+									</BreadcrumbLink>
+								</BreadcrumbItem>
+							</>
+						)}
+						{data?.name && (
+							<>
+								<BreadcrumbSeparator />
+								<BreadcrumbItem>
+									<BreadcrumbPage>{data?.name}</BreadcrumbPage>
+								</BreadcrumbItem>
+							</>
+						)}
 					</BreadcrumbList>
 				</Breadcrumb>
 				<div className="flex max-md:flex-col items-start bg-white">

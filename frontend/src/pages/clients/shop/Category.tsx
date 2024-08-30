@@ -13,7 +13,7 @@ import React, {
 } from "react";
 import { useSearchParams } from "react-router-dom";
 interface Props {
-	setSearchParamsObject: Dispatch<SetStateAction<{} | SearchObjectTypeProduct>>;
+	setSearchParamsObject:  Dispatch<SetStateAction<SearchObjectTypeProduct>>;
 }
 const Category = ({ setSearchParamsObject }: Props) => {
 	const [category, setCategory] = useState([]);

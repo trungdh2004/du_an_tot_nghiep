@@ -18,5 +18,6 @@ routerOrder.post("/confirmOrder/:id",authentication, orderController.confirmOrde
 
 // client
 routerOrder.post("/pagingOrderClient",authentication, orderController.pagingOrderClient);
+routerOrder.get("/getDetailOrder/:id",authentication, orderController.getByIdOrderClient);
 
 export default routerOrder;

@@ -8,6 +8,7 @@ export interface IOrder extends Document {
     code:string;
     address:string | IAddress;
     status:number
+    statusList:number[]
     voucher?:any;
     totalMoney:number;
     amountToPay:number;

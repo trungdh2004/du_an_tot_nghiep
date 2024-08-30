@@ -5,7 +5,13 @@ import cookieParser from "cookie-parser";
 import router from "./routes/index.route";
 import STATUS from "./utils/status";
 import dbConnect from "./config/db";
-import { v2 as cloudinary } from "cloudinary";
+import * as cron from 'cron';
+import rootCron from "./cron/index"
+import updateStatusShippedToSuccess from "./cron/job1";
+const job = new cron.CronJob(rootCron.jobSchedules.job1, updateStatusShippedToSuccess, null, true, rootCron.timezone);
+
+// Bắt đầu công việc cron
+job.start();
 
 dotenv.config();
 const app = express();

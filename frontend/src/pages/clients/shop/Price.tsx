@@ -5,7 +5,7 @@ import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
 import { useDebounceValue } from "usehooks-ts";
 import { useQueryClient } from "@tanstack/react-query";
 interface Props {
-	setSearchParamsObject: Dispatch<SetStateAction<{} | SearchObjectTypeProduct>>;
+	setSearchParamsObject: Dispatch<SetStateAction<SearchObjectTypeProduct>>;
 	searchParamsObject: SearchObjectTypeProduct;
 }
 const Price = ({ setSearchParamsObject, searchParamsObject }: Props) => {
