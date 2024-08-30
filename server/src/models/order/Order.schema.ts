@@ -40,6 +40,10 @@ const OrderSchema = new mongoose.Schema(
       type: Array,
       default: [0],
     },
+    voucherAmount:{
+      type:Number,
+      default:0,
+    },
     voucher: {
       // voucher sử dụng
       type: mongoose.Types.ObjectId,
