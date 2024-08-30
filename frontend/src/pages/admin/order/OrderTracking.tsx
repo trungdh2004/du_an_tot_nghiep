@@ -10,19 +10,6 @@ const OrderTracking = ({ data }: any) => {
 		<div className="bg-main rounded-lg  box-shadow p-5 border border-1 border-gray-200">
 			<h3 className="my-5">Chi tiết theo dõi đơn hàng</h3>
 			<div className="flex items-center justify-between w-full">
-				<div
-					className={cn(
-						"flex-auto border-t-2 border-gray-500 pb-12",
-						data.createdAt ||
-							data.confirmedDate ||
-							data.shippingDate ||
-							data.shippedDate ||
-							data.deliveredDate
-							? "border-blue-500"
-							: "",
-					)}
-				/>
-
 				<div className="relative flex flex-col items-center">
 					<div className="w-10 h-10 flex items-center justify-center">
 						<FaRegCircleCheck
@@ -181,12 +168,7 @@ const OrderTracking = ({ data }: any) => {
 							: "Chưa xác nhận"}
 					</span>
 				</div>
-				<div
-					className={cn(
-						"flex-auto border-t-2 border-gray-500 pb-12",
-						data.deliveredDate ? "border-blue-500" : "",
-					)}
-				/>
+		
 			</div>
 		</div>
 	);
