@@ -1067,7 +1067,14 @@ class OrderController {
         {
           path:"orderItems",
           populate:{
-            path:"product"
+            path:"product",
+            select:{
+              name:1,
+              _id:1,
+              thumbnail:1,
+              price:1,
+              discount:1
+            }
           }
         }
       ]);
@@ -1531,7 +1538,14 @@ class OrderController {
         {
           path:"orderItems",
           populate:{
-            path:"product"
+            path:"product",
+            select:{
+              name:1,
+              _id:1,
+              thumbnail:1,
+              price:1,
+              discount:1
+            }
           }
         }
       ]);
