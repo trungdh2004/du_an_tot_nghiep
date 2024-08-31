@@ -612,6 +612,7 @@ class OrderController {
           price: (item.attribute as IAttribute).discount,
           quantity: item.quantity,
           totalMoney: +item.quantity * (item.attribute as IAttribute).discount,
+          attribute: (item.attribute as IAttribute)._id
         };
       });
 
@@ -1064,11 +1065,18 @@ class OrderController {
         "shipper",
         "payment",
         {
-          path: "orderItems",
-          populate: {
-            path: "product",
-          },
-        },
+          path:"orderItems",
+          populate:{
+            path:"product",
+            select:{
+              name:1,
+              _id:1,
+              thumbnail:1,
+              price:1,
+              discount:1
+            }
+          }
+        }
       ]);
 
       if (!existingOrder) {
@@ -1528,11 +1536,18 @@ class OrderController {
         "shipper",
         "payment",
         {
-          path: "orderItems",
-          populate: {
-            path: "product",
-          },
-        },
+          path:"orderItems",
+          populate:{
+            path:"product",
+            select:{
+              name:1,
+              _id:1,
+              thumbnail:1,
+              price:1,
+              discount:1
+            }
+          }
+        }
       ]);
 
       if (!existingOrder) {

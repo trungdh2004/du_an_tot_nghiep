@@ -1,7 +1,9 @@
 import { cn } from "@/lib/utils";
 import { formatInTimeZone } from "date-fns-tz";
 import React from "react";
+import { CiCircleCheck } from "react-icons/ci";
 import { FaRegCircleCheck } from "react-icons/fa6";
+import OrderTrackingMobile from "./OrderTrackingMobile";
 
 const OrderTracking = ({ data }: any) => {
 	console.log(data);
@@ -9,7 +11,7 @@ const OrderTracking = ({ data }: any) => {
 	return (
 		<div className="bg-main rounded-lg  box-shadow p-5 border border-1 border-gray-200">
 			<h3 className="my-5">Chi tiết theo dõi đơn hàng</h3>
-			<div className="flex items-center justify-between w-full">
+			<div className="lg:flex md:flex sm:flex hidden items-center justify-between w-full">
 				<div className="relative flex flex-col items-center">
 					<div className="w-10 h-10 flex items-center justify-center">
 						<FaRegCircleCheck
@@ -282,7 +284,7 @@ const OrderTracking = ({ data }: any) => {
 					</div>
 					<span className="mt-2 text-black text-sm">Đã nhận hàng</span>
 					<span className="text-sm text-gray-500">
-						{data.find(
+						{/* {data.find(
 							(order: {
 								status: number;
 								date: string;
@@ -290,7 +292,7 @@ const OrderTracking = ({ data }: any) => {
 								sub: string;
 							}) => order && order.status === 5,
 						)
-							? formatInTimeZone(
+							&& formatInTimeZone(
 									new Date(
 										data.find(
 											(order: {
@@ -299,15 +301,16 @@ const OrderTracking = ({ data }: any) => {
 												message: string;
 												sub: string;
 											}) => order && order.status === 5,
-										).date,
+										)?.date,
 									),
 									"Asia/Ho_Chi_Minh",
 									"dd/MM/yyyy HH:mm:ss",
 								)
-							: "Chưa xác nhận"}
+							} */}
 					</span>
 				</div>
 			</div>
+			<OrderTrackingMobile data={data} />
 		</div>
 	);
 };

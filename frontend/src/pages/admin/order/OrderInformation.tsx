@@ -40,7 +40,7 @@ const OrderInformation = ({ data, getOrderById }: any) => {
 							</TableHeader>
 							<TableBody>
 								{data?.orderItems?.map((pro: any) => (
-									<TableRow key={pro.pro}>
+									<TableRow key={pro._id}>
 										<TableCell className="font-medium">
 											<div className="flex items-center gap-3">
 												<img

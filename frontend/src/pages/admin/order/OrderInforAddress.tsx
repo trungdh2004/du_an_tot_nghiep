@@ -114,6 +114,15 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 						</Button>
 					</div>
 				)}
+
+				<div className="bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-100 box-shadow p-4">
+					<h3 className="font-medium">Lựa chọn giao hàng</h3>
+					{data.status === 2 && (
+						<Button className="bg-[#369de7] hover:bg-[#5eb3f0]">
+							Lựa chọn
+						</Button>
+					)}
+				</div>
 			</div>
 		</div>
 	);

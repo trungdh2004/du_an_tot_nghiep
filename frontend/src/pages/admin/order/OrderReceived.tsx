@@ -108,7 +108,7 @@ const OrderReceived = () => {
 		<div>
 			<div className="flex flex-col gap-3">
 				<div className="flex flex-col gap-3">
-					<h4 className="font-medium text-xl">Danh sách đơn hàng xác nhận</h4>
+					<h4 className="font-medium text-xl">Danh sách đơn hàng đã nhận</h4>
 					<div className="flex justify-between">
 						<Input
 							placeholder="Tìm kiếm đơn hàng"
