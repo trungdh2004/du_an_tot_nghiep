@@ -5,8 +5,8 @@ const routerCart = Router();
 
 routerCart.post("/addProductCart", authentication, cartController.addProductToCart);
 routerCart.put("/updateProductCart/:id", authentication, cartController.updateCartItem);
-routerCart.get("/pagingCart", authentication, cartController.pagingCart);
-routerCart.get("/deleteProductCart/:id", authentication, cartController.deleteCartItem);
+routerCart.post("/pagingCart", authentication, cartController.pagingCart);
+routerCart.post("/deleteProductCart", authentication, cartController.deleteCartItem);
 routerCart.get("/countCart", authentication, cartController.getCountProductCart);
 
 export default routerCart;
