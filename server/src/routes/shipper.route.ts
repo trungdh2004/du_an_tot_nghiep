@@ -6,6 +6,7 @@ import authenticationShipper from "../middlewares/authenticationShipper";
 const routerShipper = Router();
 
 routerShipper.post("/registerShipper",authentication, shipperController.registerShipper);
+routerShipper.post("/paging",authentication, shipperController.pagingShipper);
 routerShipper.get("/getCurrentShipper",authentication, shipperController.getByCurrentShipper);
 routerShipper.get("/getListOrderMap/:status",authenticationShipper, shipperController.getListOrderShipperMap);
 routerShipper.get("/getOrderByCode/:code",authenticationShipper, shipperController.getOrderByCode);
