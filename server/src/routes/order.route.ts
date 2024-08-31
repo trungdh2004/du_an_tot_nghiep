@@ -14,6 +14,7 @@ routerOrder.post("/createOrderVNPayPayment",authentication, orderController.crea
 routerOrder.post("/pagingOrderServer",authentication, orderController.pagingOrderAdmin);
 routerOrder.get("/getByIdServer/:id",authentication, orderController.getByIdOrderAdmin);
 routerOrder.post("/confirmOrder/:id",authentication, orderController.confirmOrderAdmin);
+routerOrder.post("/deliveredToShipper",authentication, orderController.deliveredToShipper);
 
 
 // client
