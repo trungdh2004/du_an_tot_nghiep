@@ -16,6 +16,7 @@ type Props = {
 	setExitsListSize?: (value: string[]) => void;
 	exitsListColor?: string[];
 	setTotalQuantity?: (value: number) => void;
+	sizeInput?: "small" | "medium" | "large" | "responsive";
 };
 
 const ListColor: React.FC<Props> = ({
@@ -25,6 +26,7 @@ const ListColor: React.FC<Props> = ({
 	setExitsListSize,
 	exitsListColor = [],
 	setTotalQuantity,
+	sizeInput,
 }) => {
 	const handleChange =
 		(color: Color) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,7 +62,7 @@ const ListColor: React.FC<Props> = ({
 							nameInput="chooseColor"
 							haxColor={color.colorCode}
 							className="text-black"
-							size="responsive"
+							size={sizeInput || "responsive"}
 						>
 							{color.colorName}
 						</LabelChecked>
