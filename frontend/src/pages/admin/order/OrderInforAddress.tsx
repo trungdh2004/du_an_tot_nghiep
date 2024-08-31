@@ -1,13 +1,17 @@
 import { formatCurrency } from "@/common/func";
 import { Button } from "@/components/ui/button";
 import { confirmOrder } from "@/service/order";
+import { pagingShipperOrder } from "@/service/shipper";
+import { SearchShipperOrder } from "@/types/shipper.interface";
 import { formatInTimeZone } from "date-fns-tz";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import OrderSelectShipper from "./OrderSelectShipper";
 
 const OrderInforAddress = ({ data, getOrderById }: any) => {
 	console.log(data);
 	// const dateString = data.createdAt;
 	// const formattedDate = format(new Date(data.createdAt), "dd/MM/yyyy HH:mm:ss");
+	const [pageIndex, setPageIndex] = useState(1);
 	const handleChangeOrder = async (id: string) => {
 		try {
 			const data = await confirmOrder(id);
@@ -17,6 +21,27 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 			console.log(error);
 		}
 	};
+	const [searchObjecOrder, setSearchObjecOrder] = useState<SearchShipperOrder>({
+		pageIndex: pageIndex,
+		pageSize: 5,
+		active: null,
+		keyword: "",
+		isBlock: null,
+	});
+  const [dataShipper, setDataShipper] = useState({});
+  console.log('data',dataShipper);
+  
+	const [open, setOpen] = useState(false);
+	useEffect(() => {
+		(async () => {
+			try {
+				const { data } = await pagingShipperOrder(searchObjecOrder);
+				setDataShipper(data);
+			} catch (error) {
+				console.log(error);
+			}
+		})();
+	}, [searchObjecOrder]);
 	return (
 		<div className="col-span-1">
 			<div className="flex flex-col gap-5">
@@ -118,12 +143,24 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 				<div className="bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-100 box-shadow p-4">
 					<h3 className="font-medium">Lựa chọn giao hàng</h3>
 					{data.status === 2 && (
-						<Button className="bg-[#369de7] hover:bg-[#5eb3f0]">
+						<Button
+							className="bg-[#369de7] hover:bg-[#5eb3f0]"
+							onClick={() => setOpen(true)}
+						>
 							Lựa chọn
 						</Button>
 					)}
 				</div>
 			</div>
+			{!!open && (
+				<OrderSelectShipper
+					open={open}
+					closeOpen={() => setOpen(false)}
+					pageIndex={pageIndex}
+          setPageIndex={setPageIndex}
+          dataShipper={dataShipper}
+				/>
+			)}
 		</div>
 	);
 };
