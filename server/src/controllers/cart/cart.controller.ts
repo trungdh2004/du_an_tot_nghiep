@@ -431,7 +431,7 @@ class CartController {
 
       await CartItemModel.deleteMany({
         _id:{
-          $in:[listId]
+          $in:listId
         }
       });
 

@@ -932,7 +932,7 @@ class OrderController {
             59
           );
           queryDate = {
-            orderDate: {
+            createdAt: {
               $gte: startOfDay, // Lớn hơn hoặc bằng thời gian bắt đầu của ngày đó
               $lt: endOfDay,
             },
@@ -947,14 +947,15 @@ class OrderController {
             0,
             0
           );
-          console.log("startOfDay", startOfDay);
           queryDate = {
-            orderDate: {
-              $gte: startOfDay, // Lớn hơn hoặc bằng thời gian bắt đầu của ngày đó
+            createdAt: {
+              $gte: startOfDay // Lớn hơn hoặc bằng thời gian bắt đầu của ngày đó
             },
           };
         } else if (endDate) {
           dateEndString = new Date(endDate);
+          console.log("dateEndString:",dateEndString);
+          
           const endOfDay = new Date(
             dateEndString.getUTCFullYear(),
             dateEndString.getUTCMonth(),
@@ -963,9 +964,11 @@ class OrderController {
             59,
             59
           );
+          console.log("endOfDay:",endOfDay.toLocaleString());
+
           queryDate = {
-            orderDate: {
-              $lt: endOfDay,
+            createdAt: {
+              $lte: endOfDay
             },
           };
         }
@@ -1008,6 +1011,17 @@ class OrderController {
           shipper: null,
         };
       }
+
+      console.log("queryDate:",queryDate);
+      
+      console.log("hihi",{
+        status: status,
+        ...queryDate,
+        ...queryMethod,
+        ...queryPaymentStatus,
+        ...shipperQuery,
+      });
+      
 
       const listOrder = await OrderModel.find({
         status: status,
@@ -1209,9 +1223,11 @@ class OrderController {
           await ProductModel.findByIdAndUpdate(orderItem?.product,
             { $inc: { quantity: -quantity } }
           )
+          await OrderItemsModel.findByIdAndUpdate((item as IOrderItem)._id, {
+            status: 2,
+          });
         }
       );
-
 
       let futureDateTimeOrder = handleFutureDateTimeOrder(1000);
 
@@ -1440,7 +1456,7 @@ class OrderController {
         })
       }
 
-      const existingOrder = await OrderModel.findById(id);
+      const existingOrder = await OrderModel.findById(id).populate("orderItems");
 
       if(!existingOrder) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -1474,7 +1490,11 @@ class OrderController {
           now:true
         }
       );
-
+      existingOrder?.orderItems?.map(async (item) => {
+        await OrderItemsModel.findByIdAndUpdate((item as IOrderItem)._id, {
+          status: 5,
+        });
+      });
 
       return res.status(STATUS.BAD_REQUEST).json({
         message:"Cập nhập thành công",
