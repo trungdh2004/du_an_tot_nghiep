@@ -1223,9 +1223,11 @@ class OrderController {
           await ProductModel.findByIdAndUpdate(orderItem?.product,
             { $inc: { quantity: -quantity } }
           )
+          await OrderItemsModel.findByIdAndUpdate((item as IOrderItem)._id, {
+            status: 2,
+          });
         }
       );
-
 
       let futureDateTimeOrder = handleFutureDateTimeOrder(1000);
 
@@ -1454,7 +1456,7 @@ class OrderController {
         })
       }
 
-      const existingOrder = await OrderModel.findById(id);
+      const existingOrder = await OrderModel.findById(id).populate("orderItems");
 
       if(!existingOrder) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -1488,7 +1490,11 @@ class OrderController {
           now:true
         }
       );
-
+      existingOrder?.orderItems?.map(async (item) => {
+        await OrderItemsModel.findByIdAndUpdate((item as IOrderItem)._id, {
+          status: 5,
+        });
+      });
 
       return res.status(STATUS.BAD_REQUEST).json({
         message:"Cập nhập thành công",
