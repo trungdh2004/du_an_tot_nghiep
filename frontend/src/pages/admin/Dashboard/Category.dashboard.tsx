@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/chart";
 import { useQuery } from "@tanstack/react-query";
 import { getCountCategory } from "@/service/dashboard.service";
+import { formatQuantity } from "@/common/localFunction";
 
 export const description = "A bar chart with a custom label";
 
@@ -111,6 +112,7 @@ export default function CategoryDashboard() {
 								offset={8}
 								className="fill-foreground"
 								fontSize={12}
+								formatter={(value:any) => formatQuantity(value,"đ")}
 							/>
 						</Bar>
 					</BarChart>
