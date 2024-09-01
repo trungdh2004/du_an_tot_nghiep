@@ -284,7 +284,7 @@ const OrderTracking = ({ data }: any) => {
 					</div>
 					<span className="mt-2 text-black text-sm">Đã nhận hàng</span>
 					<span className="text-sm text-gray-500">
-						{/* {data.find(
+						{data.find(
 							(order: {
 								status: number;
 								date: string;
@@ -292,7 +292,7 @@ const OrderTracking = ({ data }: any) => {
 								sub: string;
 							}) => order && order.status === 5,
 						)
-							&& formatInTimeZone(
+							? formatInTimeZone(
 									new Date(
 										data.find(
 											(order: {
@@ -306,7 +306,7 @@ const OrderTracking = ({ data }: any) => {
 									"Asia/Ho_Chi_Minh",
 									"dd/MM/yyyy HH:mm:ss",
 								)
-							} */}
+							: "Chưa xác nhận"}
 					</span>
 				</div>
 			</div>

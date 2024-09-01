@@ -141,7 +141,12 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 					</div>
 				)}
 
-        <div className={cn("bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-100 box-shadow p-4",data.status !==2 && "hidden")}>
+				<div
+					className={cn(
+						"bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-100 box-shadow p-4",
+						data.status !== 2 && "hidden",
+					)}
+				>
 					<h3 className="font-medium">Lựa chọn giao hàng</h3>
 					{data.status === 2 &&
 						(data.shipper === null ? (
@@ -179,6 +184,21 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 								</div>
 							</div>
 						))}
+				</div>
+				<div
+					className={cn(
+						"bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-100 box-shadow p-4",
+						data.status !== 1 && "hidden",
+					)}
+				>
+					<h3 className="font-medium">Hủy đơn hàng</h3>
+					{data.status === 1 && (
+						<Button
+							className="bg-[#e74b36] hover:bg-[#f05e5e]"
+						>
+							Hủy đơn hàng
+						</Button>
+					)}
 				</div>
 			</div>
 			{!!open && (

@@ -23,6 +23,7 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { IoFilter } from "react-icons/io5";
 import { SearchObjectOrder } from "@/types/searchObjectOrder";
+import { vi } from "date-fns/locale";
 interface Props {
 	searchObjectOrder: SearchObjectOrder;
 	setSearchObjectOrder: any;
@@ -43,7 +44,11 @@ const SearchOrder = ({ searchObjectOrder, setSearchObjectOrder }: Props) => {
 							)}
 						>
 							<CalendarIcon className="mr-2 h-4 w-4" />
-							{dateStart ? format(dateStart, "PPP") : <span>Ngày bắt đầu</span>}
+							{dateStart ? (
+								format(dateStart, "dd/MM/yyyy")
+							) : (
+								<span>Ngày bắt đầu</span>
+							)}
 						</Button>
 					</PopoverTrigger>
 					<PopoverContent className="w-auto p-0" align="start">
@@ -52,6 +57,17 @@ const SearchOrder = ({ searchObjectOrder, setSearchObjectOrder }: Props) => {
 							selected={dateStart}
 							onSelect={setDateStart}
 							initialFocus
+							locale={vi}
+							disabled={(date) => {
+								const checkStartDate: boolean =
+									!!dateEnd && date > new Date(dateEnd);
+
+								return (
+									date > new Date() ||
+									date < new Date("1900-01-01") ||
+									checkStartDate
+								);
+							}}
 						/>
 					</PopoverContent>
 				</Popover>
@@ -65,7 +81,11 @@ const SearchOrder = ({ searchObjectOrder, setSearchObjectOrder }: Props) => {
 							)}
 						>
 							<CalendarIcon className="mr-2 h-4 w-4" />
-							{dateEnd ? format(dateEnd, "PPP") : <span>Ngày kết thúc</span>}
+							{dateEnd ? (
+								format(dateEnd, "dd/MM/yyyy")
+							) : (
+								<span>Ngày kết thúc</span>
+							)}
 						</Button>
 					</PopoverTrigger>
 					<PopoverContent className="w-auto p-0" align="start">
@@ -74,6 +94,17 @@ const SearchOrder = ({ searchObjectOrder, setSearchObjectOrder }: Props) => {
 							selected={dateEnd}
 							onSelect={setDateEnd}
 							initialFocus
+							locale={vi}
+							disabled={(date) => {
+								const checkStartDate: boolean =
+									!!dateStart && date < new Date(dateStart);
+
+								return (
+									date > new Date() ||
+									date < new Date("1900-01-01") ||
+									checkStartDate
+								);
+							}}
 						/>
 					</PopoverContent>
 				</Popover>

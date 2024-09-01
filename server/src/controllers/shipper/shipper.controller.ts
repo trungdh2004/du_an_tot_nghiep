@@ -1,3 +1,4 @@
+import { IOrderItem } from "./../../interface/order";
 import { Response } from "express";
 import { RequestModel, RequestShipper } from "../../interface/models";
 import STATUS from "../../utils/status";
@@ -5,6 +6,8 @@ import { shipperValidation } from "../../validation/shipper.validation";
 import ShipperModel from "../../models/shipper/Shipper.schema";
 import OrderModel from "../../models/order/Order.schema";
 import { formatDataPaging } from "../../common/pagingData";
+import ProductModel from "../../models/products/Product.schema";
+import OrderItemsModel from "../../models/order/OrderProduct.schema";
 
 class ShipperController {
   async registerShipper(req: RequestModel, res: Response) {
@@ -64,7 +67,7 @@ class ShipperController {
 
   async pagingShipper(req: RequestModel, res: Response) {
     try {
-      const { pageSize, pageIndex, active, isBlock ,keyword} = req.body;
+      const { pageSize, pageIndex, active, isBlock, keyword } = req.body;
 
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
@@ -76,37 +79,39 @@ class ShipperController {
             },
           }
         : {};
-      let queryActive = {}
-      let queryIsBlock = {}
+      let queryActive = {};
+      let queryIsBlock = {};
 
-      console.log("Boolean(active)",typeof active === "boolean");
-      console.log("Boolean(block)",typeof isBlock === "boolean");
-      
+      console.log("Boolean(active)", typeof active === "boolean");
+      console.log("Boolean(block)", typeof isBlock === "boolean");
 
-      if(typeof active === "boolean") {
+      if (typeof active === "boolean") {
         queryActive = {
-          active: active
-        }
+          active: active,
+        };
       }
 
-      if(typeof isBlock === "boolean") {
+      if (typeof isBlock === "boolean") {
         queryIsBlock = {
-          is_block: isBlock
-        }
+          is_block: isBlock,
+        };
       }
 
       const listData = await ShipperModel.find({
         ...queryKeyword,
         ...queryActive,
-        ...queryIsBlock
-      }).sort({createdAt:-1}).skip(skip).limit(limit).populate("user")
-
+        ...queryIsBlock,
+      })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate("user");
 
       const countShipper = await ShipperModel.countDocuments({
         ...queryKeyword,
         ...queryActive,
-        ...queryIsBlock
-      })
+        ...queryIsBlock,
+      });
 
       const result = formatDataPaging({
         limit,
@@ -116,7 +121,6 @@ class ShipperController {
       });
 
       return res.status(STATUS.OK).json(result);
-
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
@@ -279,7 +283,7 @@ class ShipperController {
         });
       }
 
-      const existingOrder = await OrderModel.findById(id);
+      const existingOrder = await OrderModel.findById(id).populate("orderItems");
 
       if (!existingOrder)
         return res.status(STATUS.BAD_REQUEST).json({
@@ -303,6 +307,12 @@ class ShipperController {
         },
         { new: true }
       );
+
+      existingOrder?.orderItems?.map(async (item) => {
+        await OrderItemsModel.findByIdAndUpdate((item as IOrderItem)._id, {
+          status: 3,
+        });
+      });
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập đơn hàng đang giao",
@@ -332,13 +342,17 @@ class ShipperController {
         });
       }
 
-      const existingOrder = await OrderModel.findById(id);
+      const existingOrder = await OrderModel.findById(id).populate(
+        "orderItems"
+      );
+
 
       if (!existingOrder)
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có đơn hàng",
         });
 
+      
       if (existingOrder.shipper.toString() !== shipper?.id.toString()) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn không có quyền đơn hàng này",
@@ -357,9 +371,21 @@ class ShipperController {
         { new: true }
       );
 
+      existingOrder?.orderItems?.map(async (item) => {
+        const product = (item as IOrderItem).product;
+        const quantity = (item as IOrderItem).quantity;
+
+        await ProductModel.findByIdAndUpdate(product, {
+          $inc: { quantitySold: +quantity },
+        });
+        await OrderItemsModel.findByIdAndUpdate((item as IOrderItem)._id, {
+          status: 4,
+        });
+      });
+
       return res.status(STATUS.OK).json({
         message: "Cập nhập đơn hàng giao thành công",
-        data: updateOrder,
+        // data: updateOrder,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({

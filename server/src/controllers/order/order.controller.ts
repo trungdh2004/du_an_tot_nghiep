@@ -1212,18 +1212,23 @@ class OrderController {
           message:`Sản phẩm '${((checkQuantity as IOrderItem).product as IProduct)?.name}' đã hết hàng loại hàng (${(checkQuantity as IOrderItem).color.name} - ${(checkQuantity as IOrderItem).size})`
         })
       }
-
-      existingOrder.orderItems.map(async (item, index) => {
-        const orderItem = item as IOrderItem;
-        const id = (item as IOrderItem).attribute;
-        const quantity = (item as IOrderItem).quantity;
-        await AttributeModel.findByIdAndUpdate(id, {
-          $inc: { quantity: -quantity },
-        });
-        await ProductModel.findByIdAndUpdate(orderItem?.product, {
-          $inc: { quantity: -quantity },
-        });
-      });
+      
+      existingOrder.orderItems.map(
+        async (item, index) => {
+          const orderItem = (item as IOrderItem)
+          const id = (item as IOrderItem).attribute;
+          const quantity = (item as IOrderItem).quantity;
+          await AttributeModel.findByIdAndUpdate(id,
+            { $inc: { quantity: -quantity } }
+          );
+          await ProductModel.findByIdAndUpdate(orderItem?.product,
+            { $inc: { quantity: -quantity } }
+          )
+          await OrderItemsModel.findByIdAndUpdate((item as IOrderItem)._id, {
+            status: 2,
+          });
+        }
+      );
 
       let futureDateTimeOrder = handleFutureDateTimeOrder(1000);
 
@@ -1447,7 +1452,7 @@ class OrderController {
         });
       }
 
-      const existingOrder = await OrderModel.findById(id);
+      const existingOrder = await OrderModel.findById(id).populate("orderItems");
 
       if (!existingOrder) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -1485,6 +1490,11 @@ class OrderController {
           now: true,
         }
       );
+      existingOrder?.orderItems?.map(async (item) => {
+        await OrderItemsModel.findByIdAndUpdate((item as IOrderItem)._id, {
+          status: 5,
+        });
+      });
 
       return res.status(STATUS.BAD_REQUEST).json({
         message: "Cập nhập thành công",
