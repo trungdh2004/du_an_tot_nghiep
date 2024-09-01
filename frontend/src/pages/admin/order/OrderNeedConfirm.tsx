@@ -9,27 +9,7 @@ import { format, parseISO } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { IoEyeSharp, IoFilter } from "react-icons/io5";
 import { Link } from "react-router-dom";
-import {
-	DropdownMenu,
-	DropdownMenuCheckboxItem,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuRadioGroup,
-	DropdownMenuRadioItem,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import SearchOrder from "./SearchOrder";
 
 const OrderNeedConfirm = () => {
 	interface IOrder {
@@ -45,7 +25,7 @@ const OrderNeedConfirm = () => {
 	}
 
 	const [orderNeed, setOrderNeed] = useState<any>({});
-	const [searchObjecOrder, setSearchObjecOrder] = useState<SearchObjectOrder>({
+	const [searchObjectOrder, setSearchObjectOrder] = useState<SearchObjectOrder>({
 		status: 1,
 		pageIndex: 1,
 		pageSize: 5,
@@ -58,7 +38,7 @@ const OrderNeedConfirm = () => {
 	});
 	useEffect(() => {
 		handleOrderNeed();
-	}, [searchObjecOrder]);
+	}, [searchObjectOrder]);
 	const [response, setResponse] = useState<typeResponse>({
 		pageCount: 0,
 		totalElement: 0, //tổng số phần tử
@@ -66,7 +46,7 @@ const OrderNeedConfirm = () => {
 	});
 	const handleOrderNeed = async () => {
 		try {
-			const { data } = await pagingOrderAdmin(searchObjecOrder);
+			const { data } = await pagingOrderAdmin(searchObjectOrder);
 			setOrderNeed(data.data.content);
 			setResponse({
 				pageCount: data.data.totalPage,
@@ -79,14 +59,14 @@ const OrderNeedConfirm = () => {
 		}
 	};
 	const handleChangePageSize = (value: number) => {
-		setSearchObjecOrder((prev) => ({
+		setSearchObjectOrder((prev) => ({
 			...prev,
 			pageSize: value,
 		}));
 	};
 	const handleChangePage = (value: any) => {
 		console.log("value change page", value);
-		setSearchObjecOrder((prev) => ({
+		setSearchObjectOrder((prev) => ({
 			...prev,
 			pageIndex: value.selected + 1,
 		}));
@@ -167,159 +147,16 @@ const OrderNeedConfirm = () => {
 			},
 		},
 	];
-	const [dateStart, setDateStart] = React.useState<Date | undefined>();
-	const [dateEnd, setDateEnd] = React.useState<Date | undefined>();
 
 	return (
 		<div>
 			<div className="flex flex-col gap-3">
 				<div className="flex flex-col gap-3">
 					<h4 className="font-medium text-xl">Danh sách đơn hàng</h4>
-					<div className="flex justify-between">
-						<div className="flex gap-3 items-center">
-							<Popover>
-								<PopoverTrigger asChild>
-									<Button
-										variant={"outline"}
-										className={cn(
-											"w-[240px] justify-start text-left font-normal",
-											!dateStart && "text-muted-foreground",
-										)}
-									>
-										<CalendarIcon className="mr-2 h-4 w-4" />
-										{dateStart ? (
-											format(dateStart, "PPP")
-										) : (
-											<span>Ngày bắt đầu</span>
-										)}
-									</Button>
-								</PopoverTrigger>
-								<PopoverContent className="w-auto p-0" align="start">
-									<Calendar
-										mode="single"
-										selected={dateStart}
-										onSelect={setDateStart}
-										initialFocus
-									/>
-								</PopoverContent>
-							</Popover>
-							<Popover>
-								<PopoverTrigger asChild>
-									<Button
-										variant={"outline"}
-										className={cn(
-											"w-[240px] justify-start text-left font-normal",
-											!dateEnd && "text-muted-foreground",
-										)}
-									>
-										<CalendarIcon className="mr-2 h-4 w-4" />
-										{dateEnd ? (
-											format(dateEnd, "PPP")
-										) : (
-											<span>Ngày kết thúc</span>
-										)}
-									</Button>
-								</PopoverTrigger>
-								<PopoverContent className="w-auto p-0" align="start">
-									<Calendar
-										mode="single"
-										selected={dateEnd}
-										onSelect={setDateEnd}
-										initialFocus
-									/>
-								</PopoverContent>
-							</Popover>
-							<Button
-								onClick={() => {
-									setSearchObjecOrder((prev) => ({
-										...prev,
-										pageIndex: 1,
-										startDate: dateStart,
-										endDate: dateEnd,
-									}));
-								}}
-								className=""
-							>
-								Tìm kiếm
-							</Button>
-						</div>
-						<div className="pr-5">
-							<DropdownMenu>
-								<DropdownMenuTrigger asChild>
-									<div className="cursor-pointer">
-										<IoFilter size={20} />
-									</div>
-								</DropdownMenuTrigger>
-								<DropdownMenuContent className="w-[150px]" align="end">
-									<DropdownMenuLabel>Sắp xếp theo</DropdownMenuLabel>
-									<DropdownMenuSeparator />
-									<DropdownMenuRadioGroup
-										value={`${searchObjecOrder.method}`}
-										onValueChange={(e) => {
-											const method = parseInt(e);
-											setSearchObjecOrder((prev) => ({
-												...prev,
-												pageIndex: 1,
-												method: method,
-											}));
-										}}
-									>
-										<DropdownMenuRadioItem value="1" className="cursor-pointer">
-											Thanh toán khi nhận hàng
-										</DropdownMenuRadioItem>
-										<DropdownMenuRadioItem value="2" className="cursor-pointer">
-											Thanh toán Internet banking
-										</DropdownMenuRadioItem>
-									</DropdownMenuRadioGroup>
-									<DropdownMenuSeparator />
-									<DropdownMenuLabel>Sắp xếp theo chiều</DropdownMenuLabel>
-									<DropdownMenuRadioGroup
-										value={`${searchObjecOrder.sort}`}
-										onValueChange={(e) => {
-											const sortNumber = parseInt(e) as 1 | -1;
-											setSearchObjecOrder((prev) => ({
-												...prev,
-												pageIndex: 1,
-												sort: sortNumber,
-											}));
-										}}
-									>
-										<DropdownMenuRadioItem value="1" className="cursor-pointer">
-											Tăng dần
-										</DropdownMenuRadioItem>
-										<DropdownMenuRadioItem
-											value="-1"
-											className="cursor-pointer"
-										>
-											Giảm dần
-										</DropdownMenuRadioItem>
-									</DropdownMenuRadioGroup>
-									<DropdownMenuSeparator />
-									<DropdownMenuSeparator />
-									<DropdownMenuItem
-										onClick={() => {
-											setSearchObjecOrder({
-												status: 1,
-												pageIndex: 1,
-												pageSize: 5,
-												sort: 1,
-												method: null,
-												startDate: null,
-												endDate: null,
-												paymentStatus: null,
-												is_shipper: null,
-											});
-											setDateEnd(undefined);
-											setDateStart(undefined);
-										}}
-										className="cursor-pointer bg-[#f0f0f0] text-red-500 pl-8"
-									>
-										Mặc định
-									</DropdownMenuItem>
-								</DropdownMenuContent>
-							</DropdownMenu>
-						</div>
-					</div>
+					<SearchOrder
+						searchObjectOrder={searchObjectOrder}
+						setSearchObjectOrder={setSearchObjectOrder}
+					/>
 				</div>
 				<TableComponent
 					data={orderNeed}
@@ -329,8 +166,8 @@ const OrderNeedConfirm = () => {
 					// setRowSelection={setRowSelection}
 					// phân trang
 					handleChangePage={handleChangePage}
-					pageIndex={searchObjecOrder.pageIndex as number}
-					pageSize={searchObjecOrder.pageSize as number}
+					pageIndex={searchObjectOrder.pageIndex as number}
+					pageSize={searchObjectOrder.pageSize as number}
 					pageCount={response.pageCount}
 					totalElement={response.totalElement}
 					handleChangePageSize={handleChangePageSize}
