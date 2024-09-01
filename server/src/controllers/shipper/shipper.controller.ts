@@ -82,9 +82,6 @@ class ShipperController {
       let queryActive = {};
       let queryIsBlock = {};
 
-      console.log("Boolean(active)", typeof active === "boolean");
-      console.log("Boolean(block)", typeof isBlock === "boolean");
-
       if (typeof active === "boolean") {
         queryActive = {
           active: active,
