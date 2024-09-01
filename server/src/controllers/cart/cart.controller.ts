@@ -421,23 +421,19 @@ class CartController {
 
   async deleteCartItem(req: RequestModel, res: Response) {
     try {
-      const { id } = req.params;
+      const { listId } = req.body;
 
-      if (!id) {
+      if (!listId) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn chưa chọn giá trị",
         });
       }
 
-      const existingCartItem = await CartItemModel.findById(id);
-
-      if (!existingCartItem) {
-        return res.status(STATUS.BAD_REQUEST).json({
-          message: "Không có giá trị thỏa mãn",
-        });
-      }
-
-      await CartItemModel.findByIdAndDelete(id);
+      await CartItemModel.deleteMany({
+        _id:{
+          $in:[listId]
+        }
+      });
 
       return res.status(STATUS.OK).json({
         message: "Xóa thành công",
