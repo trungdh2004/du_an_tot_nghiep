@@ -1149,9 +1149,18 @@ class OrderController {
 
       const existingOrder = await OrderModel.findById(id).populate({
         path: "orderItems",
-        populate:{
-          path:"attribute",
-        }
+        populate:[
+          {
+            path:"attribute",
+          },
+          {
+            path:"product",
+            select:{
+              name:1,
+              _id:1
+            }
+          }
+        ]
       });
 
       
@@ -1162,9 +1171,22 @@ class OrderController {
         });
       }
 
+      const checkAttribute = existingOrder.orderItems.find((item) => {
+        if(typeof (item as IOrderItem).attribute === "string") {
+          return true
+        }
+        return false;
+      })
+
+      if(checkAttribute) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:`Sản phẩm '${((checkAttribute as IOrderItem).product as IProduct)?.name}' đã không còn loại hàng (${(checkAttribute as IOrderItem).color.name} - ${(checkAttribute as IOrderItem).size})`
+        })
+      }
+
       const checkQuantity =  existingOrder.orderItems.find((item) => {
         const attribute = (item as IOrderItem).attribute as IAttribute;
-        if((item as IOrderItem).quantity > attribute.quantity) {
+        if((item as IOrderItem)?.quantity > attribute?.quantity) {
           return true
         }
         return false;
@@ -1172,7 +1194,7 @@ class OrderController {
 
       if(checkQuantity) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Có sản phẩm vượt qua số lượng sản phẩm còn lại"
+          message:`Sản phẩm '${((checkQuantity as IOrderItem).product as IProduct)?.name}' đã hết hàng loại hàng (${(checkQuantity as IOrderItem).color.name} - ${(checkQuantity as IOrderItem).size})`
         })
       }
       
