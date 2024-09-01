@@ -130,6 +130,12 @@ const sidebarConfig: any[] = [
 				label: "Đơn hàng xác nhận",
 			},
 			{
+				path: "/orderconfirmShipper",
+				icon: MdOutlinePostAdd,
+				isVisible: true,
+				label: "Đơn hàng chọn vận chuyển",
+			},
+			{
 				path: "/ordership",
 				icon: MdOutlinePostAdd,
 				isVisible: true,

@@ -53,3 +53,14 @@ export const confirmOrder = async (id: string) => {
 	const data = await instance.post(`/order/confirmOrder/${id}`);
 	return data;
 };
+
+export const selectShipper = async ({
+	id,
+	shipper,
+}: {
+	id: string;
+	shipper: string | undefined;
+}) => {
+  const data = await instance.post(`/order/deliveredToShipper/${id}`, { shipper });
+	return data;
+};

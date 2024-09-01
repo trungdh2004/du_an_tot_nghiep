@@ -5,28 +5,41 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Paginations from "@/components/common/Pagination";
+import { selectShipper } from "@/service/order";
 interface Props {
 	open: boolean;
 	closeOpen: (isOpen: boolean) => void;
-	// dataAddress: any;
+	dataOrderId: any;
 	// handleChangeAddress: (id: string) => void;
 	dataShipper: any;
 	pageIndex: number;
 	setPageIndex: (pageIndex: number) => void;
+	getOrderById: any;
 }
 const OrderSelectShipper = ({
 	open,
 	closeOpen,
+	dataOrderId,
 	// dataAddress,
 	// handleChangeAddress,
+	getOrderById,
 	dataShipper,
 	pageIndex,
 	setPageIndex,
 }: Props) => {
-	const [selectedValue, setSelectedValue] = useState<string | undefined>(
-		undefined,
-	);
-
+	const [shipper, setShipper] = useState<string | undefined>(undefined);
+	console.log(dataOrderId);
+	const id = dataOrderId._id;
+	console.log(shipper);
+	const handleSelectShipper = async () => {
+		try {
+			const data = await selectShipper({ id, shipper });
+			getOrderById();
+			return data;
+		} catch (error) {
+			console.log(error);
+		}
+	};
 	return (
 		<div>
 			<Dialog open={open} onOpenChange={closeOpen}>
@@ -38,8 +51,8 @@ const OrderSelectShipper = ({
 					<div className="flex flex-col gap-4">
 						<RadioGroup
 							className="mt-1"
-							value={selectedValue ?? undefined}
-							onValueChange={setSelectedValue}
+							value={shipper ?? undefined}
+							onValueChange={setShipper}
 						>
 							{dataShipper?.content?.map((shipper: any) => {
 								return (
@@ -53,7 +66,7 @@ const OrderSelectShipper = ({
 												/>
 
 												<div className="flex flex-col gap-2">
-													<div className="flex gap-3">
+													<div className="flex gap-5">
 														<img
 															src={shipper.avatar}
 															alt=""
@@ -70,7 +83,8 @@ const OrderSelectShipper = ({
 																Căn cước công dân : {shipper.idCitizen}
 															</span>
 															<span className="font-light text-sm">
-																Địa chỉ : {shipper.city.name} - {shipper.district.name} - {shipper.commune.name}
+																Địa chỉ : {shipper.city.name} -{" "}
+																{shipper.district.name} - {shipper.commune.name}
 															</span>
 														</div>
 													</div>
@@ -97,6 +111,7 @@ const OrderSelectShipper = ({
 							type="submit"
 							onClick={() => {
 								// handleChangeAddress(selectedValue as string);
+								handleSelectShipper();
 								closeOpen(false);
 							}}
 						>

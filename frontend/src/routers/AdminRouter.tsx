@@ -23,6 +23,8 @@ import OrderShip from "@/pages/admin/order/OrderShip";
 import OrderShipSuccess from "@/pages/admin/order/OrderShipSuccess";
 import OrderReceived from "@/pages/admin/order/OrderReceived";
 import OrderCancel from "@/pages/admin/order/OrderCancel";
+import path from "path";
+import OrderConfirmShipper from "@/pages/admin/order/OrderConfirmShipper";
 
 const AdminRouter = [
 	{
@@ -135,6 +137,10 @@ const AdminRouter = [
 			{
 				path: "order/:id",
 				element: <OrderById />,
+			},
+			{
+				path: "order/orderconfirmShipper",
+				element: <OrderConfirmShipper />,
 			},
 		],
 	},
