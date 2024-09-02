@@ -1586,7 +1586,6 @@ class OrderController {
         }
       );
 
-
       return res.status(STATUS.BAD_REQUEST).json({
         message:"Hủy đơn hàng thành công",
       })
