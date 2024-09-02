@@ -1,7 +1,15 @@
+import { formatQuantity } from '@/common/localFunction';
 import { cn } from '@/lib/utils'
+import { fetchOrderDetail } from '@/service/order';
+import { IListStatusOrderDate, IOrderItemDetail } from '@/types/order';
+import { useQuery } from '@tanstack/react-query';
 import { Banknote, FileText, Inbox, Star, Truck } from 'lucide-react';
 import { useState } from 'react';
 import { BsChevronLeft } from 'react-icons/bs'
+import { Link, useParams } from 'react-router-dom';
+import LoadingTable from './LoadingTable';
+import { format } from 'date-fns';
+
 type StatusHistoryItem = {
   status?: string;
   date?: string;
@@ -11,45 +19,117 @@ type StatusHistoryObject = {
   [key: string]: StatusHistoryItem;
 };
 const PurchaseOrder = () => {
+  const [status, setStatus] = useState(null);
+  const menuList = [
+    {
+      "index": 7,
+      "name": "Tất cả",
+    },
+    {
+      "index": 1,
+      "name": "Chờ xác nhận",
+    },
+    {
+      "index": 2,
+      "name": "Chờ lấy hàng",
+    },
+    {
+      "index": 3,
+      "name": "Chờ giao hàng",
+    },
+    {
+      "index": 5,
+      "name": "Đã giao",
+    },
+    {
+      "index": 6,
+      "name": "Đã hủy",
+    },
+  ];
+  const statusList = [
+    {
+      index: 1,
+      percent: 35,
+    },
+    {
+      index: 2,
+      percent: 35,
+    },
+    {
+      index: 3,
+      percent: 60,
+    },
+    {
+      index: 4,
+      percent: 80,
+    },
+    {
+      index: 5,
+      percent: 100,
+    },
+  ]
   const [process, setProcess] = useState({
-    index: 1,
-    percent: 35,
+    index: 0,
+    percent: 0,
   });
   const [statusOrder, setStatusOrder] = useState<StatusHistoryObject>({});
 
+  const { id } = useParams();
+  const handleStatus = async (status: number) => {
+    const percent = data?.data?.status + 1 == 1 ? data?.data?.status : ((data?.data?.status + 1) / 6) * 100;
+    setProcess({ index: data?.data?.status + 1, percent });
+  }
+  const { data, isLoading } = useQuery({
+    queryKey: ['purchase', id],
+    queryFn: async () => {
+      const { data } = await fetchOrderDetail(id as string);
+      setStatus(data?.data.status);
+      handleStatus(data?.data.status)
+      return data;
+    }
+  });
   const steps = [
     {
       status: "pending",
       label: "Đơn hàng đã đặt",
       icon: FileText,
-      time: statusOrder?.pending?.date,
+      time: data?.listStatusOrderDate?.date,
     },
     {
       status: "confirmed",
-      label: "Đã xác nhận thông tin thanh toán",
+      label: "Đã xác nhận",
       // order?.payment?.method === "cash_on_delivery"
       //   ? "Đã xác nhận thông tin thanh toán"
       //   : `Đơn hàng đã thanh toán (${formatMoney(order?.finalAmount || 0)})`,
       icon: Banknote,
       time: statusOrder?.confirmed?.date,
     },
-    { status: "shipped", label: "Đã giao cho ĐVVC", icon: Truck },
+    { status: "shipped", label: "Đang vận chuyển", icon: Truck },
     { status: "delivered", label: "Đã nhận được hàng", icon: Inbox },
     { status: "reviewed", label: "Đánh giá", icon: Star },
   ];
+  // console.log("order detail", data)
+  // console.log("dadadadadad", data?.data?.status)
   return (
     <>
-      <div className="w-full px-20">
+      <div className="w-full px-0 lg:px-20">
+        <div className="h-[500px">
+          {isLoading && (<div className=''><LoadingTable /></div>)}
+        </div>
         <div className="">
-          <div className="bg-white py-5 px-5 border-b-2 box-shadow border-dotted border-gray-300  rounded flex justify-between items-center">
-            <div className=""><button className="text-sm md:text-lg  flex  items-center gap-1 text-gray-500 uppercase"><BsChevronLeft size={16} /> Trở lại</button></div>
-            <div className="flex md:gap-x-3 xl:gap-x-5 uppercase ">
-              <p className="flex gap-1 ">Mã đơn hàng: <span className="">JSAdadkada</span></p>
+          <div className="bg-white py-5 px-2 md:px-5 border-b-2 box-shadow border-dotted border-gray-300  rounded flex justify-between items-center">
+            <div className="">
+              <Link to={`/account/purchase`}>
+                <button className="text-sm lg:text-lg  flex  items-center gap-1 text-gray-500 uppercase"><BsChevronLeft size={16} /> Trở lại</button>
+              </Link>
+            </div>
+            <div className="hidden md:flex md:gap-x-3 xl:gap-x-5 uppercase ">
+              <p className="flex gap-1 ">Mã đơn hàng: {data?.data.code}  <span className=""></span></p>
               <span className="">|</span>
-              <span className="text-red-500">Đơn hàng đã hoàn thành</span>
+              <span className="text-red-500">{menuList.find((item) => item.index === status)?.name}</span>
             </div>
           </div>
-          {/*  */}
+          {/* status */}
           <div className="">
             <div
               className={cn(
@@ -107,22 +187,75 @@ const PurchaseOrder = () => {
               </div>
             </div>
             {/*  */}
-            <div className="bg-[#FFFCF5] py-7 px-5 border-b-2 box-shadow border-dotted border-gray-300">
-              <div className="flex w-full justify-end items-center">
-                <button className="px-5 py-2 lg:px-8 lg:py-3 text-white bg-red-500 border border-orange-700 hover:bg-red-600 transition-all  duration-300    rounded-sm text-sm lg:text-[18px]">Hủy đơn hàng</button>
-              </div>
-            </div>
+
           </div>
           {/* information */}
           <div className="bg-white">
-            <div className="px-5 py-5 border-b-2 border-dotted border-gray-300  rounded">
-              <h3 className="text-lg lg:text-xl font-medium pb-2">Địa Chỉ Nhận Hàng</h3>
-              <p className="text-sm md:text-base leading-[160%] py-1">Nguyễn Tuấn Đức</p>
-              <p className="text-[rgba(0,0,0,.68)] leading-[160%]">0377760889</p>
-              <p className="text-[rgba(0,0,0,.68)] leading-[160%]">Số 6, Ngõ 33 Đường Bờ Đa, Xã Dị Nậu, Huyện Thạch Thất, Hà Nội</p>
+            {/* customer */}
+            <div className="p-5 border-b-2 border-dotted border-gray-300  rounded">
+              <h3 className="text-lg lg:text-xl font-medium pb-2 ">Địa Chỉ Nhận Hàng</h3>
+              <div className="flex">
+                <div className="min-w-[300px] md:pr-10 py-3">
+                  <p className="text-sm md:text-base leading-[160%] uppercase py-1">{data?.data?.address?.username}</p>
+                  <p className="text-[rgba(0,0,0,.68)] leading-[160%]">{data?.data?.address?.phone}</p>
+                  <p className="text-[rgba(0,0,0,.68)] leading-[160%]">{data?.data?.address?.address}</p>
+                </div>
+                <div className="flex flex-col w-[60%]">
+                  {data?.listStatusOrderDate?.map((item: IListStatusOrderDate, index: number) => {
+                    if (!item) return null;
+                    return (
+                      <>
+                        <div className="px-5 flex gap-5 border-l border-gray-200 ">
+                          <div className="flex flex-col items-center">
+                            <div className="w-8 h-8 flex justify-center items-center border border-gray-200 bg-[#26aa99] rounded-full"><FileText size={16} color='white' /></div>
+                            <div className={cn("w-[2px] h-14 bg-gray-200", (data?.listStatusOrderDate.length - 1) === index && "hidden")}></div>
+                          </div>
+                          <div className="">
+                            {item?.date && format(new Date(item?.date), "hh:mm dd/MM/yyyy")}
+                            {/* {new Date(item?.date)} */}
+                          </div>
+                          <div className="">
+                            <h3 className="text-[#26aa99] font-bold">{item?.message}</h3>
+                            <p className="">{item?.sub}</p>
+                          </div>
+                        </div >
+                      </>
+                    )
+                  })}
+                </div>
+
+
+              </div>
             </div>
-            <div className="box-shadow">
-              <div className="w-full h-[200px]">Sản phẩm</div>
+            {/* product */}
+            <div className="box-shadow ">
+              <div className="w-full ">
+                {data?.data?.orderItems?.map((itemOrder: IOrderItemDetail, index: number) => {
+                  return (
+                    <>
+                      <div key={itemOrder._id} className="w-full flex justify-between gap-3 md:gap-5 px-5 py-4 border-b border-dotted border-gray-300 ">
+                        <div className="size-[100px] bg-gray-100 p-2">
+                          <img src={itemOrder?.product.thumbnail} className='w-full h-full' alt="" />
+                        </div>
+                        <div className="flex flex-1 flex-col md:flex-row md:justify-between gap-2">
+                          <div className="">
+                            <h3 className="text-base md:text-[18px] font-medium line-clamp-1 ">{itemOrder?.product.name}</h3>
+                            <p className="text-base text-[#0000008A] flex gap-x-1">Phân loại hàng:
+                              <span className="text-gray-700 font-normal">{itemOrder?.color.name},</span>
+                              <span className="text-gray-700 font-normal">{itemOrder?.size}</span>
+                            </p>
+                            <span>x{itemOrder?.quantity}</span>
+                          </div>
+                          <div className="text-red-500 flex items-end md:items-center font-medium ">
+                            <span className="text-gray-500 line-through pr-3">{formatQuantity(itemOrder?.product.price, "₫")}</span>
+                            <span className="">{formatQuantity(itemOrder?.price, "₫")}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )
+                })}
+              </div>
               <div className="flex border-t border-gray-200">
                 <div className="w-[75%] flex flex-col text-right ">
                   <span className="py-4 px-3 border-b-2 border-r-2  border-dotted text-sm md:text-base rounded text-[rgba(0,0,0,.68)] leading-[160%]">Tổng tiền hàng</span>
@@ -131,14 +264,14 @@ const PurchaseOrder = () => {
                   <span className="py-6 px-3 border-b-2 border-r-2 border-dotted rounded text-lg md:text-xl text-[rgba(0,0,0,.68)] leading-[160%]">Thành tiền</span>
                 </div>
                 <div className="w-[25%] flex flex-col text-right">
-                  <span className="py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-base text-[rgba(0,0,0,.68)] leading-[160%]">₫10.900</span>
+                  <span className="py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-base text-[rgba(0,0,0,.68)] leading-[160%]">{formatQuantity(data?.data?.totalMoney, "₫")}</span>
                   <span className="py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-base text-[rgba(0,0,0,.68)] leading-[160%]">₫5.000</span>
                   <span className="py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-base  text-[rgba(0,0,0,.68)] leading-[160%]">-₫5.000 </span>
-                  <span className="py-6 px-3 border-b-2 border-r-2 border-dotted rounded text-red-500 text-lg md:text-xl leading-[160%]">₫10.900</span>
+                  <span className="py-6 px-3 border-b-2 border-r-2 border-dotted rounded text-red-500 text-lg md:text-xl leading-[160%]">{formatQuantity(data?.data?.totalMoney, "₫")}</span>
                 </div>
               </div>
               <div className="border border-[rgba(224,168,0,.4)] rounded w-full px-5 py-2 text-[rgba(0,0,0,.68)] leading-[160%]">
-                Vui lòng thanh toán <span className="text-red-500">₫10.900</span> khi nhận hàng
+                Vui lòng thanh toán <span className="text-red-500">{formatQuantity(data?.data?.totalMoney, "₫")}</span> khi nhận hàng
               </div>
               <div className="flex ">
                 <div className="w-[75%] flex flex-col text-right">

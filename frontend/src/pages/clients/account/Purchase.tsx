@@ -6,6 +6,7 @@ import { Item } from '@radix-ui/react-dropdown-menu';
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import LoadingTable from './LoadingTable';
+import { Link } from 'react-router-dom';
 
 const OrderManagements = () => {
   const queryClient = useQueryClient();
@@ -89,52 +90,54 @@ const OrderManagements = () => {
                       {/* end head */}
 
                       {/*  order item*/}
-                      {item?.itemList?.map((itemOrderList: IItemOrderList) => {
-                        // console.log("itemOrderList: ", itemOrderList)
-                        return (
-                          <div key={itemOrderList.productId} className="w-full bg-white box-shadow  border border-gray-200 rounded-sm px-4 lg:px-8 py-2 ">
-                            <div className="py-4 space-y-4">
-                              {itemOrderList?.items?.map((itemOrder: IItemOrder) => {
-                                // console.log("itemOrderList: ", itemOrder)
-                                return (
-                                  <div key={itemOrder._id} className="w-full flex justify-between gap-3 md:gap-5 pb-4 border-b border-gray-300 ">
-                                    <div className="size-[100px]">
-                                      <img src={itemOrder?.product.thumbnail} className='w-full h-full' alt="" />
-                                    </div>
-                                    <div className="flex flex-1 flex-col md:flex-row md:justify-between gap-2">
-                                      <div className="">
-                                        <h3 className="text-base md:text-[18px] font-medium line-clamp-1 ">{itemOrder?.product.name}</h3>
-                                        <p className="text-base text-[#0000008A] flex gap-x-1">Phân loại hàng:
-                                          <span className="text-gray-700 font-normal">{itemOrder?.color.name},</span>
-                                          <span className="text-gray-700 font-normal">{itemOrder?.size}</span>
-                                        </p>
-                                        <span>x{itemOrder?.quantity}</span>
+                      <Link to={`/account/purchase/order/${item?._id}`}>
+                        {item?.itemList?.map((itemOrderList: IItemOrderList) => {
+                          // console.log("itemOrderList: ", itemOrderList)
+                          return (
+                            <div key={itemOrderList.productId} className="w-full bg-white box-shadow  border border-gray-200 rounded-sm px-4 lg:px-8 py-2 ">
+                              <div className="py-4 space-y-4">
+                                {itemOrderList?.items?.map((itemOrder: IItemOrder) => {
+                                  // console.log("itemOrderList: ", itemOrder)
+                                  return (
+                                    <div key={itemOrder._id} className="w-full flex justify-between gap-3 md:gap-5 pb-4 border-b border-gray-300 ">
+                                      <div className="size-[100px]">
+                                        <img src={itemOrder?.product.thumbnail} className='w-full h-full' alt="" />
                                       </div>
-                                      <div className="text-red-500 flex items-end md:items-center font-medium ">
-                                        <span className="text-gray-500 line-through pr-3">{formatQuantity(itemOrder?.product.price, "₫")}</span>
-                                        <span className="">{formatQuantity(itemOrder?.price, "₫")}</span>
+                                      <div className="flex flex-1 flex-col md:flex-row md:justify-between gap-2">
+                                        <div className="">
+                                          <h3 className="text-base md:text-[18px] font-medium line-clamp-1 ">{itemOrder?.product.name}</h3>
+                                          <p className="text-base text-[#0000008A] flex gap-x-1">Phân loại hàng:
+                                            <span className="text-gray-700 font-normal">{itemOrder?.color.name},</span>
+                                            <span className="text-gray-700 font-normal">{itemOrder?.size}</span>
+                                          </p>
+                                          <span>x{itemOrder?.quantity}</span>
+                                        </div>
+                                        <div className="text-red-500 flex items-end md:items-center font-medium ">
+                                          <span className="text-gray-500 line-through pr-3">{formatQuantity(itemOrder?.product.price, "₫")}</span>
+                                          <span className="">{formatQuantity(itemOrder?.price, "₫")}</span>
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                )
-                              })}
+                                  )
+                                })}
 
-                              <div className="w-full flex justify-between items-center pt-2">
-                                {/*  */}
-                                {item.status === 6 && (
-                                  <div className="w-full">
-                                    <button className="px-5 py-2 md:px-8 lg:py-3 text-white bg-blue-500 border border-blue-500 rounded-sm text-sm lg:text-[18px]">Đánh giá</button>
+                                <div className="w-full flex justify-between items-center pt-2">
+                                  {/*  */}
+                                  {item.status === 6 && (
+                                    <div className="w-full">
+                                      <button className="px-5 py-2 md:px-8 lg:py-3 text-white bg-blue-500 border border-blue-500 rounded-sm text-sm lg:text-[18px]">Đánh giá</button>
+                                    </div>
+                                  )}
+                                  <div className="flex  justify-end w-full">
+                                    <p className="text-right text-sm md:text-base lg:font-medium lg:flex gap-x-3">Tổng số tiền ({itemOrderList?.items.length as number} sản phẩm):
+                                      <span className="text-red-500 font-medium lg:font-semibold text-sm lg:text-[18px] pl-2 lg:pl-0">{formatQuantity(itemOrderList.totalMoney, "₫")}</span></p>
                                   </div>
-                                )}
-                                <div className="flex  justify-end w-full">
-                                  <p className="text-right text-sm md:text-base lg:font-medium lg:flex gap-x-3">Tổng số tiền ({itemOrderList?.items.length as number} sản phẩm):
-                                    <span className="text-red-500 font-medium lg:font-semibold text-sm lg:text-[18px] pl-2 lg:pl-0">{formatQuantity(itemOrderList.totalMoney, "₫")}</span></p>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        )
-                      })}
+                          )
+                        })}
+                      </Link>
                     </div>
                     <div className="bg-[#FFFCF5] box-shadow border border-gray-200 px-4 lg:px-8 py-3 md:py-6">
                       <div className="flex justify-between items-center">

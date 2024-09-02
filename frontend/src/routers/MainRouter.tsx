@@ -36,7 +36,7 @@ const MainRouter = [
             element: <OrderManagements />
           },
           {
-            path: '/account/purchase/order',
+            path: '/account/purchase/order/:id',
             element: <OrderDetail />
           },
         ]

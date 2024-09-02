@@ -36,3 +36,8 @@ export const fetchOrder = async (obj: { status: null | number }) => {
   const data = await instance.post(`/order/pagingOrderClient`, obj);
   return data;
 }
+
+export const fetchOrderDetail = async (id: string) => {
+  const data = await instance.get(`/order/getDetailOrder/${id}`);
+  return data;
+}

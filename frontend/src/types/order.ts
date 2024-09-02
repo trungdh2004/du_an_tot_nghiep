@@ -24,6 +24,7 @@ export interface IItemOrder {
   size: string;
   quantity: number;
   createdAt: string;
+  updatedAt: string;
   is_evaluate: boolean;
   price: number;
 }
@@ -62,4 +63,44 @@ export interface IOrderList {
   createdAt: string;
   updatedAt: string;
   itemList: IItemOrderList[];
+}
+export interface IOrderItemDetail extends IItemOrder {
+  status: number;
+  totalMoney: number;
+  __v?: number;
+}
+export interface IOrderDetail {
+  _id: string;
+  user: string;
+  code: string;
+  address: string;
+  status: number;
+  statusList: number[];
+  voucher: string | null;
+  voucherVersion: string | null;
+  totalMoney: number;
+  amountToPay: number;
+  confirmedDate: string | null;
+  shippingDate: string | null;
+  shippedDate: string | null;
+  deliveredDate: string | null;
+  cancelBy: string | null;
+  noteCancel: string | null;
+  distance: number;
+  shippingCost: number;
+  estimatedDeliveryDate: string | null;
+  paymentMethod: number;
+  paymentStatus: boolean;
+  payment: string | null;
+  note: string;
+  orderItems: IOrderItemDetail;
+  orderDate: string;
+  createdAt: string;
+  updatedAt: string;
+}
+export interface IListStatusOrderDate {
+  status: number;
+  date: string;
+  message: string;
+  sub: string;
 }

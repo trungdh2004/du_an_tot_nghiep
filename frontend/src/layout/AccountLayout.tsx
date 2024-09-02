@@ -4,8 +4,8 @@ import { Outlet } from 'react-router-dom'
 const AccountLayout = () => {
   return (
     <>
-      <div className="px-0 sm:px-[30px] md:px-[40px] bg-main">
-        <div className="flex w-full gap-8 py-20 px-0 lg:px-12 ">
+      <div className="padding max-md:px-0 g bg-main">
+        <div className="flex w-full gap-8 py-12 px-0  ">
           <div className="hidden lg:flex w-[250px] ">
             <div className="">
               Nguyễn Tuấn Đức
