@@ -101,7 +101,7 @@ const ListOrderNew = () => {
 								<TableRow key={row._id}>
 									<TableCell className="text-center">
 										<TooltipComponent label="Xem chi tiết">
-											<Link to={"/"}>
+											<Link to={`/admin/order/${row._id}`}>
 												<MdOutlineRemoveRedEye size={20} className="text-blue-500"/>
 											</Link>
 										</TooltipComponent>

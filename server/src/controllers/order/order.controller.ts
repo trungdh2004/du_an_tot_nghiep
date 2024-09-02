@@ -1325,6 +1325,19 @@ class OrderController {
     }
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
   // queryClient
   async pagingOrderClient(req: RequestModel, res: Response) {
     try {
@@ -1511,11 +1524,28 @@ class OrderController {
     try {
       const { id } = req.params;
       const user = req.user;
+      const {note,cancelBy} = req.body;
 
-      if (!id) {
+      let noteCancel = note || ""
+
+      if(cancelBy !== 1 && cancelBy !== 2 && cancelBy !== 3) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message: "Bạn chưa chọn đơn hàng",
-        });
+          message:"Truyền dữ liệu không thỏa mãn"
+        })
+      }
+
+      if(!note) {
+        if(cancelBy === 2) {
+          noteCancel = "Sản phẩm của chúng tôi không cung cấp được xin lỗi quý khách"
+        }else if(cancelBy === 2) {
+          noteCancel = "Giao hàng thất bại bởi không liên lạc được với người dùng"
+        }
+      }
+
+      if(!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Bạn chưa chọn đơn hàng"
+        })
       }
 
       const existingOrder = await OrderModel.findById(id);
@@ -1532,16 +1562,15 @@ class OrderController {
         });
       }
 
-      const successOrder = await OrderModel.findByIdAndUpdate(
-        id,
-        {
-          status: 6,
-          $push: {
-            statusList: 6,
-          },
+      const successOrder = await OrderModel.findByIdAndUpdate(id,{
+        status:6,
+        $push:{
+          statusList:6
         },
-        { new: true }
-      );
+        noteCancel,
+        cancelBy:cancelBy,
+        cancelOrderDate:Date.now()
+      },{new : true})
 
       await OrderItemsModel.updateMany(
         {
