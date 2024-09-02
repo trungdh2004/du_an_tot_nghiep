@@ -5,7 +5,7 @@ import EditBlog from "@/pages/admin/Blogs/EditBlog";
 import NewBlog from "@/pages/admin/Blogs/NewBlog";
 import CategoryIndex from "@/pages/admin/category/CategoryIndex";
 import ColorList from "@/pages/admin/color/ColorList";
-import Dashboard from "@/pages/admin/Dashboard";
+import Dashboard from "@/pages/admin/Dashboard/Dashboard";
 
 import UserDetail from "@/pages/admin/users/UserDetail";
 import UserIndex from "@/pages/admin/users/UserIndex";
