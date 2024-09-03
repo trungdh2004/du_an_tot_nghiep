@@ -14,7 +14,7 @@ import React, {
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
 interface Props {
-	setSearchParamsObject: Dispatch<SetStateAction<{} | SearchObjectTypeProduct>>;
+	setSearchParamsObject: Dispatch<SetStateAction<SearchObjectTypeProduct>>;
 }
 const Size = ({ setSearchParamsObject }: Props) => {
 	const [size, setSize] = useState([]);

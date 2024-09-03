@@ -9,6 +9,7 @@ import { IOrder } from "../../interface/order";
 // 4 : ship đã giao hàng
 // 5 : Đã nhận hàng
 // 6 : Hủy đơn hàng
+// 7 : Đã đánh giá
 
 
 
@@ -33,12 +34,16 @@ const OrderSchema = new mongoose.Schema(
     },
     status:{
       type:Number,
-      enum:[0,1,2,3,4,5,6],
+      enum:[0,1,2,3,4,5,6,7],
       default:0
     },
     statusList: {
       type: Array,
       default: [0],
+    },
+    voucherAmount:{
+      type:Number,
+      default:0,
     },
     voucher: {
       // voucher sử dụng

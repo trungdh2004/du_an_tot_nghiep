@@ -4,7 +4,7 @@ import { CiStar } from 'react-icons/ci';
 import { FaRegStar, FaStar } from 'react-icons/fa';
 import { useSearchParams } from 'react-router-dom';
 interface Props {
-	setSearchParamsObject: Dispatch<SetStateAction<{} | SearchObjectTypeProduct>>;
+	setSearchParamsObject: Dispatch<SetStateAction<SearchObjectTypeProduct>>;
 }
 const SortFilterStar = ({ setSearchParamsObject }:Props) => {
 	const [rating, setRating] = useState<number | null>(null);

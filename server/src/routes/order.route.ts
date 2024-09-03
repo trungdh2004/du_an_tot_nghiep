@@ -14,9 +14,12 @@ routerOrder.post("/createOrderVNPayPayment",authentication, orderController.crea
 routerOrder.post("/pagingOrderServer",authentication, orderController.pagingOrderAdmin);
 routerOrder.get("/getByIdServer/:id",authentication, orderController.getByIdOrderAdmin);
 routerOrder.post("/confirmOrder/:id",authentication, orderController.confirmOrderAdmin);
+routerOrder.post("/deliveredToShipper/:id",authentication, orderController.deliveredToShipper);
+routerOrder.post("/cancelOrder/:id",authentication, orderController.cancelClientOrder);
 
 
 // client
 routerOrder.post("/pagingOrderClient",authentication, orderController.pagingOrderClient);
+routerOrder.get("/getDetailOrder/:id",authentication, orderController.getByIdOrderClient);
 
 export default routerOrder;

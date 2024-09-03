@@ -16,6 +16,7 @@ import routerCart from "./cart.route";
 import routerOrder from "./order.route";
 import routerVoucher from "./voucher.route";
 import routerShipper from "./shipper.route";
+import routerDashboard from "./dashboard.route";
 
 const router = Router();
 
@@ -35,5 +36,6 @@ router.use("/cart", routerCart);
 router.use("/order", routerOrder);
 router.use("/voucher", routerVoucher);
 router.use("/shipper", routerShipper);
+router.use("/dashboard", routerDashboard);
 
 export default router;
