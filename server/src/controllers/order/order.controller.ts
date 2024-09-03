@@ -251,7 +251,7 @@ class OrderController {
 
       const checkTotalMoney = listDateNew?.reduce((acc:number,item:any) => {
         return acc + item.totalMoney 
-      },0) + shippingCost;
+      },0) 
 
       if(voucherMain) {
         if(voucherMain.minimumOrderValue > checkTotalMoney) {
@@ -280,15 +280,15 @@ class OrderController {
       let code = generateOrderCode();
       code = await generateCode(code);
 
-      const {amountReduced,totalMoneyNew} = amountReducedVoucher(shippingCost ? totalMoney + shippingCost : totalMoney,voucherMain);
-
-
+      console.log("totalMoney",totalMoney);
+      
+      const {amountReduced,totalMoneyNew} = amountReducedVoucher(totalMoney,voucherMain);
 
       const newOrder = await OrderModel.create({
         user: user?.id,
         address: addressId,
-        totalMoney: totalMoneyNew,
-        amountToPay: totalMoneyNew,
+        totalMoney: totalMoneyNew + shippingCost,
+        amountToPay: totalMoneyNew + shippingCost,
         voucherAmount:amountReduced,
         voucher:voucherMain,
         voucherVersion:voucherMain?.version,
@@ -639,6 +639,18 @@ class OrderController {
         });
       }
 
+      const checkTotalMoney = listCartItem?.reduce((acc:number,item:any) => {
+        const totalMoney = item.quantity * (item?.attribute?.discount || 0)
+        return acc + totalMoney 
+      },0) 
+      if(voucherMain) {
+        if(voucherMain.minimumOrderValue > checkTotalMoney) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message:"Đơn hàng không đạt đủ điều kiện voucher"
+          })
+        }
+      }
+
       const stateValue = {
         listId,
         voucher: voucherMain?._id || null,
@@ -803,7 +815,7 @@ class OrderController {
 
       const checkTotalMoney = listDateNew?.reduce((acc:number,item:any) => {
         return acc + item.totalMoney 
-      },0) + shippingCost;
+      },0)
 
       if(voucherMain) {
         if(voucherMain.minimumOrderValue > checkTotalMoney) {
@@ -832,16 +844,14 @@ class OrderController {
       let code = generateOrderCode();
       code = await generateCode(code);
 
-      const {amountReduced,totalMoneyNew} = amountReducedVoucher(shippingCost ? totalMoney + shippingCost : totalMoney,voucherMain);
+      const {amountReduced,totalMoneyNew} = amountReducedVoucher(totalMoney,voucherMain);
 
-      console.log("voucherMain:",voucherMain);
-      
 
       const newOrder = await OrderModel.create({
         user: user?.id,
         address: address,
-        totalMoney: totalMoneyNew,
-        amountToPay: totalMoneyNew,
+        totalMoney: totalMoneyNew + shippingCost,
+        amountToPay: totalMoneyNew + shippingCost,
         voucherAmount:amountReduced,
         voucher:voucherMain,
         voucherVersion:voucherMain?.version,
