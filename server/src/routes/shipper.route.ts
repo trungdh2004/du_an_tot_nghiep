@@ -14,6 +14,5 @@ routerShipper.get("/getOrderByCode/:code",authenticationShipper, shipperControll
 routerShipper.put("/updateStatusShippingOrder/:id",authenticationShipper, shipperController.updateStatusShippingOrder);
 routerShipper.put("/updateStatusShippedOrder/:id",authenticationShipper, shipperController.updateStatusShippedOrder);
 
-
 routerShipper.post("/getListOrderSuccessShipper",authenticationShipper, shipperController.getListOrderSuccessShipper);
 export default routerShipper;

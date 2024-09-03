@@ -16,7 +16,15 @@ import MyBlogs from "@/pages/admin/Blogs/MyBlog";
 import TagIndex from "@/pages/admin/tags/TagIndex";
 import PrivateRouter from "./PrivateRouter";
 import ProductAddPage from "@/pages/admin/product/ProductAdd";
-
+import OrderNeedConfirm from "@/pages/admin/order/OrderNeedConfirm";
+import OrderById from "@/pages/admin/order/OrderById";
+import OrderConfirm from "@/pages/admin/order/OrderConfirm";
+import OrderShip from "@/pages/admin/order/OrderShip";
+import OrderShipSuccess from "@/pages/admin/order/OrderShipSuccess";
+import OrderReceived from "@/pages/admin/order/OrderReceived";
+import OrderCancel from "@/pages/admin/order/OrderCancel";
+import path from "path";
+import OrderConfirmShipper from "@/pages/admin/order/OrderConfirmShipper";
 
 const AdminRouter = [
 	{
@@ -53,7 +61,7 @@ const AdminRouter = [
 			},
 			{
 				path: "blogs",
-				element: <BlogList />
+				element: <BlogList />,
 			},
 			{
 				path: "product/update/:id",
@@ -90,17 +98,50 @@ const AdminRouter = [
 			},
 			{
 				path: "color",
-				element: <ColorList />
+				element: <ColorList />,
 			},
 			{
 				path: "blogs",
-				element: <BlogList />
+				element: <BlogList />,
 			},
 			{
 				path: "blogs/:id/",
 				element: <BlogDetail />,
 			},
 
+			//order
+			{
+				path: "order",
+				element: <OrderNeedConfirm />,
+			},
+			{
+				path: "order/orderconfirm",
+				element: <OrderConfirm />,
+			},
+			{
+				path: "order/ordership",
+				element: <OrderShip />,
+			},
+			{
+				path: "order/ordershipsuccess",
+				element: <OrderShipSuccess />,
+			},
+			{
+				path: "order/orderreceived",
+				element: <OrderReceived />,
+			},
+			{
+				path: "order/ordercancel",
+				element: <OrderCancel />,
+			},
+			{
+				path: "order/:id",
+				element: <OrderById />,
+			},
+			{
+				path: "order/orderconfirmShipper",
+				element: <OrderConfirmShipper />,
+			},
 		],
 	},
 ];
