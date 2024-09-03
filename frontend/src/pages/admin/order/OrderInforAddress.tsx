@@ -7,6 +7,7 @@ import { formatInTimeZone } from "date-fns-tz";
 import React, { useEffect, useState } from "react";
 import OrderSelectShipper from "./OrderSelectShipper";
 import { cn } from "@/lib/utils";
+import OrderCancelConfirm from "./OrderCancelConfirm";
 
 const OrderInforAddress = ({ data, getOrderById }: any) => {
 	console.log(data);
@@ -33,6 +34,7 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 	console.log("data", dataShipper);
 
 	const [open, setOpen] = useState(false);
+	const [openCancel, setOpenCancel] = useState(false);
 	useEffect(() => {
 		(async () => {
 			try {
@@ -195,6 +197,7 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 					{data.status === 1 && (
 						<Button
 							className="bg-[#e74b36] hover:bg-[#f05e5e]"
+							onClick={() => setOpenCancel(true)}
 						>
 							Hủy đơn hàng
 						</Button>
@@ -210,6 +213,14 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 					dataShipper={dataShipper}
 					dataOrderId={data}
 					getOrderById={getOrderById}
+				/>
+			)}
+			{!!openCancel && (
+				<OrderCancelConfirm
+					open={openCancel}
+					closeOpen={() => setOpenCancel(false)}
+					getOrderById={getOrderById}
+					dataOrderId={data}
 				/>
 			)}
 		</div>

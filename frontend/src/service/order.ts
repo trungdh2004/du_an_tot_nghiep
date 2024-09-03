@@ -61,6 +61,20 @@ export const selectShipper = async ({
 	id: string;
 	shipper: string | undefined;
 }) => {
-  const data = await instance.post(`/order/deliveredToShipper/${id}`, { shipper });
+	const data = await instance.post(`/order/deliveredToShipper/${id}`, {
+		shipper,
+	});
+	return data;
+};
+
+export const cancelOrder = async (
+	id: string,
+	note: string,
+	cancelBy?: number,
+) => {
+	const data = await instance.post(`/order/cancelOrder/${id}`, {
+		note: note,
+		cancelBy: cancelBy,
+	});
 	return data;
 };
