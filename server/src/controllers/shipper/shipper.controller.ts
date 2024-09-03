@@ -189,6 +189,35 @@ class ShipperController {
     }
   }
 
+  async getShipperById(req: RequestModel, res: Response) {
+    try {
+      const {id} = req.params
+
+      if(!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Bạn chưa chọn shipper"
+        })
+      }
+
+      const existingShipper = await ShipperModel.findById(id)
+
+      if(!existingShipper) { 
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Không có shipper nào"
+        })
+      }
+
+      return res.status(STATUS.OK).json({
+        message:"Lấy thông tin thành công",
+        data:existingShipper
+      })
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      })
+    }
+  }
+
   async getListOrderShipperMap(req: RequestShipper, res: Response) {
     try {
       const shipper = req.shipper;

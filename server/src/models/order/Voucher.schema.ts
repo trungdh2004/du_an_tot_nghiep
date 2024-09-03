@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 import { ISize } from "../../interface/product";
 import { generateSlugs } from "../../middlewares/generateSlug";
+import { IVoucher } from "../../interface/voucher";
 // import { IOrderItem } from "../../interface/order";
 
-// 1 : phần trăm,
-// 2 : giá tiền 
+// 1 : giá tiền 
+// 2 : phần trăm,
 
 
 const VoucherSchema = new mongoose.Schema(
@@ -45,6 +46,11 @@ const VoucherSchema = new mongoose.Schema(
             required: true,
             default: 0
         },
+        minimumOrderValue: {
+            type: Number,
+            required: true,
+            default: 0
+        },
         usageCount: {
             type: Number,
             default: 0
@@ -77,6 +83,6 @@ const VoucherSchema = new mongoose.Schema(
     }
 );
 
-const VoucherModel = mongoose.model("Voucher", VoucherSchema);
+const VoucherModel = mongoose.model<IVoucher>("Voucher", VoucherSchema);
 
 export default VoucherModel;

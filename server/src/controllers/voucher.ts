@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
-import { generateOrderCode } from "../middlewares/generateSlug";
+import { generateOrderCode, generateVoucherCode } from "../middlewares/generateSlug";
 import VoucherModel from "../models/order/Voucher.schema";
 import STATUS from "../utils/status";
 import { RequestModel } from "../interface/models";
 import OrderModel from "../models/order/Order.schema";
 import { voucherValidation } from "../validation/voucher.validation";
 import { formatDataPaging } from "../common/pagingData";
+import { IVoucher } from "../interface/voucher";
 
 const generateCode = async (code: string): Promise<string> => {
   const existingCode = await VoucherModel.findOne({
@@ -16,6 +17,45 @@ const generateCode = async (code: string): Promise<string> => {
     return generateCode(codeNew as string);
   }
   return code;
+};
+
+export const checkVoucher =  (voucher: IVoucher) => {
+  if (voucher.status === 0) {
+    return {
+      message: "Voucher không hoạt động",
+      check:false
+    }
+  }
+
+  const dateNow = new Date().getTime();
+  const stopVoucher = voucher.endDate;
+  const startDateVoucher = voucher.startDate;
+
+
+  if (dateNow < new Date(startDateVoucher).getTime()) {
+    return {
+      message: "Voucher chưa đến thời gian sử dụng",
+      check:false
+    }
+  }
+  if (dateNow > new Date(stopVoucher).getTime()) {
+    return {
+      message: "Voucher đã hết hạn",
+      check:false
+    }
+  }
+
+  if (voucher.usageCount >= voucher.usageLimit) {
+    return {
+      message: "Voucher đã hết lượt sử dụng",
+      check:false
+    }
+  }
+
+  return {
+    check :true,
+    voucher
+  }
 };
 
 class VoucherController {
@@ -37,9 +77,10 @@ class VoucherController {
         discountType,
         discountValue,
         usageLimit,
+        minimumOrderValue
       } = req.body;
 
-      let code = generateOrderCode();
+      let code = generateVoucherCode();
       code = await generateCode(code);
 
       const newVoucher = await VoucherModel.create({
@@ -52,6 +93,7 @@ class VoucherController {
         usageLimit,
         code,
         user: user?.id,
+        minimumOrderValue
       });
 
       return res.status(STATUS.OK).json({
@@ -67,7 +109,7 @@ class VoucherController {
 
   async getVoucherCode(req: RequestModel, res: Response) {
     try {
-      const { code } = req.body;
+      const { code ,totalMoney = 0} = req.body;
       const user = req.user;
 
       if (!code)
@@ -92,6 +134,13 @@ class VoucherController {
 
       const dateNow = new Date().getTime();
       const stopVoucher = existingVoucher.endDate;
+      const startDateVoucher = existingVoucher.startDate;
+
+      if (dateNow < new Date(startDateVoucher).getTime()) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Voucher chưa đến thời gian sử dụng",
+        });
+      }
 
       if (dateNow > new Date(stopVoucher).getTime()) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -105,10 +154,19 @@ class VoucherController {
         });
       }
 
+      if(existingVoucher.minimumOrderValue > totalMoney) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Sản phẩm chọn không đạt đủ điều kiện đơn hàng"
+        })
+      }
+
       const existingOrderVoucher = await OrderModel.findOne({
         user: user?.id,
         voucher: existingVoucher?.id,
         voucherVersion: existingVoucher.version,
+        status: {
+          $ne: 0,
+        },
       });
 
       if (existingOrderVoucher) {
@@ -130,25 +188,27 @@ class VoucherController {
 
   async stopAction(req: RequestModel, res: Response) {
     try {
-      const {id} = req.params
+      const { id } = req.params;
 
-      if(!id) return res.status(STATUS.BAD_REQUEST).json({
-        message:"Bạn chưa chọn giá trị"
-      })
+      if (!id)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn giá trị",
+        });
 
-      const existingAction = await VoucherModel.findById(id)
+      const existingAction = await VoucherModel.findById(id);
 
-      if(!existingAction) return res.status(STATUS.BAD_REQUEST).json({
-        message:"Không có voucher"
-      })
+      if (!existingAction)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có voucher",
+        });
 
-      const update = await VoucherModel.findByIdAndUpdate(id,{
-        status:2
-      })
+      const update = await VoucherModel.findByIdAndUpdate(id, {
+        status: 2,
+      });
 
       return res.status(STATUS.OK).json({
-        message:"Ngừng sử dụng thành công"
-      })
+        message: "Ngừng sử dụng thành công",
+      });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
@@ -156,28 +216,30 @@ class VoucherController {
     }
   }
 
-  async startAction(req:RequestModel,res:Response) {
+  async startAction(req: RequestModel, res: Response) {
     try {
-      const {id} = req.params
+      const { id } = req.params;
 
-      if(!id) return res.status(STATUS.BAD_REQUEST).json({
-        message:"Bạn chưa chọn giá trị"
-      })
+      if (!id)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn giá trị",
+        });
 
-      const existingAction = await VoucherModel.findById(id)
+      const existingAction = await VoucherModel.findById(id);
 
-      if(!existingAction) return res.status(STATUS.BAD_REQUEST).json({
-        message:"Không có voucher"
-      })
+      if (!existingAction)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có voucher",
+        });
 
-      const update = await VoucherModel.findByIdAndUpdate(id,{
-        status:1,
-        version:existingAction.version + 1
-      })
+      const update = await VoucherModel.findByIdAndUpdate(id, {
+        status: 1,
+        version: existingAction.version + 1,
+      });
 
       return res.status(STATUS.OK).json({
-        message:"Sử dụng thành công"
-      })
+        message: "Sử dụng thành công",
+      });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
@@ -195,6 +257,7 @@ class VoucherController {
         discountType,
         discountValue,
         usageLimit,
+        minimumOrderValue
       } = req.body;
       const { id } = req.params;
       const { error } = voucherValidation.validate(req.body);
@@ -226,6 +289,7 @@ class VoucherController {
         discountType,
         discountValue,
         usageLimit,
+        minimumOrderValue
       });
 
       return res.status(STATUS.OK).json({
@@ -278,7 +342,7 @@ class VoucherController {
         discountType,
         usageLimit,
         sort,
-        fieldSort
+        fieldSort,
       } = req.body;
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
@@ -306,24 +370,24 @@ class VoucherController {
         };
       }
 
-      if(startDate) {
+      if (startDate) {
         queryStartDate = {
-          startDate:{
-            $gte:startDate
-          }
-        }
+          startDate: {
+            $gte: startDate,
+          },
+        };
       }
 
-      if(discountType) {
+      if (discountType) {
         queryDiscountType = {
-          discountType:discountType
-        }
+          discountType: discountType,
+        };
       }
 
-      if(usageLimit) {
-        queryUsageLimit={
-          usageLimit:usageLimit
-        }
+      if (usageLimit) {
+        queryUsageLimit = {
+          usageLimit: usageLimit,
+        };
       }
 
       if (fieldSort) {
@@ -342,7 +406,10 @@ class VoucherController {
         ...queryDiscountType,
         ...queryUsageLimit,
         ...queryStartDate,
-      }).sort(querySort).skip(skip).limit(limit)
+      })
+        .sort(querySort)
+        .skip(skip)
+        .limit(limit);
 
       const countVoucher = await VoucherModel.countDocuments({
         ...queryTab,
@@ -350,7 +417,7 @@ class VoucherController {
         ...queryDiscountType,
         ...queryUsageLimit,
         ...queryStartDate,
-      })
+      });
 
       const result = formatDataPaging({
         limit,
@@ -359,16 +426,13 @@ class VoucherController {
         count: countVoucher,
       });
 
-
-      return res.status(STATUS.OK).json(result)
+      return res.status(STATUS.OK).json(result);
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
       });
     }
   }
-
-
 }
 
 export default new VoucherController();
