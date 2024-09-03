@@ -18,15 +18,15 @@ import {
   chargeShippingFee,
   handleFutureDateTimeOrder,
 } from "../../common/func";
-import AttributeModel from "../../models/products/Attribute.schema";
 import { IOrder, IOrderItem } from "../../interface/order";
 import ShipperModel from "../../models/shipper/Shipper.schema";
-import ProductModel from "../../models/products/Product.schema";
 import { IAddress } from "../../interface/address";
-// import { SocketEmit } from "../../socket/socket.service";
+// import { SocketEmit } from "../../socket/socketNotifycation.service";
 import VoucherModel from "../../models/order/Voucher.schema";
 import { checkVoucher } from "../voucher";
 import { IVoucher } from "../../interface/voucher";
+import AttributeModel from "../../models/products/Attribute.schema";
+import ProductModel from "../../models/products/Product.schema";
 
 const long = +process.env.LONGSHOP! || 105.62573250208116;
 const lat = +process.env.LATSHOP! || 21.045193948892585;
@@ -1323,7 +1323,7 @@ class OrderController {
           if (item === 6) {
             return {
               status: 6,
-              date: existingOrder?.deliveredDate,
+              date: existingOrder?.cancelOrderDate,
               message: "Đơn hàng đã hủy",
             };
           }
@@ -1382,6 +1382,7 @@ class OrderController {
   async confirmOrderAdmin(req: RequestModel, res: Response) {
     try {
       const { id } = req.params;
+      const user = req.user
 
       if (!id)
         return res.status(STATUS.BAD_REQUEST).json({
@@ -1410,83 +1411,83 @@ class OrderController {
         });
       }
 
-      // SocketEmit(existingOrder, "confirmOrder");
+      // SocketEmit(existingOrder, "confirmOrder",`${user?.id}`);
 
-      // const checkAttribute = existingOrder.orderItems.find((item) => {
-      //   if(typeof (item as IOrderItem).attribute === "string") {
-      //     return true
-      //   }
-      //   return false;
-      // })
+      const checkAttribute = existingOrder.orderItems.find((item) => {
+        if(typeof (item as IOrderItem).attribute === "string") {
+          return true
+        }
+        return false;
+      })
 
-      // if(checkAttribute) {
-      //   return res.status(STATUS.BAD_REQUEST).json({
-      //     message:`Sản phẩm '${((checkAttribute as IOrderItem).product as IProduct)?.name}' đã không còn loại hàng (${(checkAttribute as IOrderItem).color.name} - ${(checkAttribute as IOrderItem).size})`
-      //   })
-      // }
+      if(checkAttribute) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:`Sản phẩm '${((checkAttribute as IOrderItem).product as IProduct)?.name}' đã không còn loại hàng (${(checkAttribute as IOrderItem).color.name} - ${(checkAttribute as IOrderItem).size})`
+        })
+      }
 
-      // const checkQuantity =  existingOrder.orderItems.find((item) => {
-      //   const attribute = (item as IOrderItem).attribute as IAttribute;
-      //   if((item as IOrderItem)?.quantity > attribute?.quantity) {
-      //     return true
-      //   }
-      //   return false;
-      // })
+      const checkQuantity =  existingOrder.orderItems.find((item) => {
+        const attribute = (item as IOrderItem).attribute as IAttribute;
+        if((item as IOrderItem)?.quantity > attribute?.quantity) {
+          return true
+        }
+        return false;
+      })
 
-      // if(checkQuantity) {
-      //   return res.status(STATUS.BAD_REQUEST).json({
-      //     message:`Sản phẩm '${((checkQuantity as IOrderItem).product as IProduct)?.name}' đã hết hàng loại hàng (${(checkQuantity as IOrderItem).color.name} - ${(checkQuantity as IOrderItem).size})`
-      //   })
-      // }
+      if(checkQuantity) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:`Sản phẩm '${((checkQuantity as IOrderItem).product as IProduct)?.name}' đã hết hàng loại hàng (${(checkQuantity as IOrderItem).color.name} - ${(checkQuantity as IOrderItem).size})`
+        })
+      }
 
-      // existingOrder.orderItems.map(
-      //   async (item, index) => {
-      //     const orderItem = (item as IOrderItem)
-      //     const id = (item as IOrderItem).attribute;
-      //     const quantity = (item as IOrderItem).quantity;
-      //     await AttributeModel.findByIdAndUpdate(id,
-      //       { $inc: { quantity: -quantity } }
-      //     );
-      //     await ProductModel.findByIdAndUpdate(orderItem?.product,
-      //       { $inc: { quantity: -quantity } }
-      //     )
-      //     await OrderItemsModel.findByIdAndUpdate((item as IOrderItem)._id, {
-      //       status: 2,
-      //     });
-      //   }
-      // );
+      existingOrder.orderItems.map(
+        async (item, index) => {
+          const orderItem = (item as IOrderItem)
+          const id = (item as IOrderItem).attribute;
+          const quantity = (item as IOrderItem).quantity;
+          await AttributeModel.findByIdAndUpdate(id,
+            { $inc: { quantity: -quantity } }
+          );
+          await ProductModel.findByIdAndUpdate(orderItem?.product,
+            { $inc: { quantity: -quantity } }
+          )
+          await OrderItemsModel.findByIdAndUpdate((item as IOrderItem)._id, {
+            status: 2,
+          });
+        }
+      );
 
-      // let futureDateTimeOrder = handleFutureDateTimeOrder(1000);
+      let futureDateTimeOrder = handleFutureDateTimeOrder(1000);
 
-      // if(existingOrder.distance) {
-      //   futureDateTimeOrder = handleFutureDateTimeOrder(existingOrder.distance);
-      // }
+      if(existingOrder.distance) {
+        futureDateTimeOrder = handleFutureDateTimeOrder(existingOrder.distance);
+      }
 
-      // await OrderModel.findByIdAndUpdate(
-      //   existingOrder._id,
-      //   {
-      //     status: 2,
-      //     $push: {
-      //       statusList: 2,
-      //     },
-      //     confirmedDate: Date.now(),
-      //     estimatedDeliveryDate:futureDateTimeOrder
-      //   }
-      // );
+      await OrderModel.findByIdAndUpdate(
+        existingOrder._id,
+        {
+          status: 2,
+          $push: {
+            statusList: 2,
+          },
+          confirmedDate: Date.now(),
+          estimatedDeliveryDate:futureDateTimeOrder
+        }
+      );
 
-      // await OrderItemsModel.updateMany(
-      //   {
-      //     _id: {
-      //       $in: existingOrder.orderItems,
-      //     },
-      //   },
-      //   {
-      //     status: 2,
-      //   },
-      //   {
-      //     now:true
-      //   }
-      // );
+      await OrderItemsModel.updateMany(
+        {
+          _id: {
+            $in: existingOrder.orderItems,
+          },
+        },
+        {
+          status: 2,
+        },
+        {
+          now:true
+        }
+      );
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập đơn hàng thành công",
@@ -1864,7 +1865,13 @@ class OrderController {
       const listStatusOrderDate = existingOrder.statusList
         .reverse()
         ?.map((item) => {
-          if (item === 5) {
+          if (item === 6) {
+            return {
+              status: 6,
+              date: existingOrder?.cancelOrderDate,
+              message: "Đơn hàng đã hủy",
+            };
+          } else if (item === 5) {
             return {
               status: 5,
               date: existingOrder?.deliveredDate,
