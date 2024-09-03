@@ -1,7 +1,7 @@
 import { LuLayoutDashboard } from "react-icons/lu";
-import { FaBox, FaUsers } from "react-icons/fa";
+import { FaBox, FaShippingFast, FaUsers } from "react-icons/fa";
 import { FaUsersCog } from "react-icons/fa";
-import { MdOutlinePostAdd } from "react-icons/md";
+import { MdOutlineEventNote, MdOutlinePostAdd } from "react-icons/md";
 
 const sidebarConfig: any[] = [
 	{
@@ -119,43 +119,43 @@ const sidebarConfig: any[] = [
 		children: [
 			{
 				path: "",
-				icon: LuLayoutDashboard,
+				icon: MdOutlineEventNote,
 				isVisible: true,
 				label: "Đơn hàng chờ xác nhận",
 			},
 			{
 				path: "/orderconfirm",
-				icon: MdOutlinePostAdd,
+				icon: MdOutlineEventNote,
 				isVisible: true,
 				label: "Đơn hàng xác nhận",
 			},
 			{
 				path: "/orderconfirmShipper",
-				icon: MdOutlinePostAdd,
+				icon: MdOutlineEventNote,
 				isVisible: true,
 				label: "Đơn hàng chọn vận chuyển",
 			},
 			{
 				path: "/ordership",
-				icon: MdOutlinePostAdd,
+				icon: MdOutlineEventNote,
 				isVisible: true,
 				label: "Đơn giao hàng ",
 			},
 			{
 				path: "/ordershipsuccess",
-				icon: MdOutlinePostAdd,
+				icon: MdOutlineEventNote,
 				isVisible: true,
 				label: "Đơn giao hàng thành công",
 			},
 			{
 				path: "/orderreceived",
-				icon: MdOutlinePostAdd,
+				icon: MdOutlineEventNote,
 				isVisible: true,
 				label: "Đơn đã nhận",
 			},
 			{
 				path: "/ordercancel",
-				icon: MdOutlinePostAdd,
+				icon: MdOutlineEventNote,
 				isVisible: true,
 				label: "Đơn đã hủy",
 			},
