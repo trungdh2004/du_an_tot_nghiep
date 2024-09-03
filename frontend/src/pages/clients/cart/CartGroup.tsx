@@ -17,8 +17,6 @@ const CartGroup = ({
 	onItemCheckedChange,
 	checkedState,
 }: CartGroupProps) => {
-	console.log(">>>CartGroup", cart);
-
 	return (
 		<div className="bg-white mb-3">
 			<div className="flex items-center border-b border-black border-opacity-[0.09] h-15 px-2.5 md:px-5 py-3">
@@ -33,19 +31,48 @@ const CartGroup = ({
 				</div>
 				<div>{cart?.product?.name}</div>
 			</div>
-			{cart?.items?.map((item) => (
-				<CartItem
-					listSizeAndColor={{
-						listSize: cart?.listSize as any,
-						listColor: cart?.listColor as any,
-					}}
-					key={item._id}
-					item={item}
-					productId={cart.product._id as string}
-					checked={checkedState[item._id as string]}
-					onCheckedChange={onItemCheckedChange}
-				/>
-			))}
+			{cart?.items?.map((item, index) => {
+				const attributeAlreadyExists = cart?.items?.reduce(
+					(acc, p) => {
+						if (p._id !== item._id) {
+							const colorId = (p?.attribute?.color as any)?._id;
+							const sizeId = (p?.attribute?.size as any)?._id;
+							if (
+								colorId &&
+								colorId !== (item?.attribute?.color as any)?._id &&
+								!acc.listColor.includes(colorId)
+							) {
+								acc.listColor.push(colorId);
+							}
+							if (
+								sizeId &&
+								sizeId !== (item?.attribute?.size as any)?._id &&
+								!acc.listSize.includes(sizeId)
+							) {
+								acc.listSize.push(sizeId);
+							}
+						}
+						return acc;
+					},
+					{ listColor: [] as string[], listSize: [] as string[] },
+				);
+				console.log(">>>Group Item", cart);
+
+				return (
+					<CartItem
+						listSizeAndColor={{
+							listSize: cart?.listSize as any,
+							listColor: cart?.listColor as any,
+						}}
+						attributeAlreadyExists={attributeAlreadyExists}
+						key={item._id}
+						item={item}
+						productId={cart.product._id as string}
+						checked={checkedState[item._id as string]}
+						onCheckedChange={onItemCheckedChange}
+					/>
+				);
+			})}
 		</div>
 	);
 };

@@ -19,7 +19,7 @@ import { Link } from "react-router-dom";
 import { toast } from "sonner";
 const User = () => {
 	const { authUser, setAuthUser, setIsLoggedIn } = useAuth();
-	const { updateTotalCart } = useCart();
+	const { setCarts, updateTotalCart } = useCart();
 	const handleLogout = async () => {
 		try {
 			const data = await logOut();
@@ -28,6 +28,7 @@ const User = () => {
 			removeItemLocal("token");
 			signOut(getAuth(app));
 			updateTotalCart(0);
+			setCarts([]);
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				toast.error(error.response?.data?.message);

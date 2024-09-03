@@ -14,6 +14,8 @@ import { addProductToCart } from "@/service/cart";
 import { AxiosError } from "axios";
 import useCartAnimation from "@/hooks/useCartAnimation";
 import useCart from "@/store/cart.store";
+import { useCurrentRouteAndNavigation } from "@/hooks/router";
+import { useAuth } from "@/hooks/auth";
 
 type Props = {
 	product?: IProductDetail;
@@ -35,7 +37,9 @@ interface IStateInfoProduct {
 }
 
 const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
+	const { isLoggedIn } = useAuth();
 	const { startAnimation, RenderAnimation } = useCartAnimation();
+	const navigateIsLogin = useCurrentRouteAndNavigation();
 	const { updateTotalCart } = useCart();
 	const [stateInfoProduct, setStateInfoProduct] = useState<IStateInfoProduct>({
 		listColorExist: [],
@@ -114,6 +118,9 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 		setTotalQuantity(product?.quantity || 0);
 	}, [product, handleStateInfoProduct]);
 	const handleOrderProduct = async (action: "add-to-cart" | "buy-now") => {
+		if (!isLoggedIn) {
+			return navigateIsLogin();
+		}
 		if (!attributeId) {
 			setIsErrorAttribute(true);
 			return;
@@ -155,6 +162,8 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 				break;
 		}
 	};
+	console.log(">>>product", product);
+
 	return (
 		<>
 			{RenderAnimation()}
