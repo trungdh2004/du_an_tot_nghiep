@@ -72,6 +72,16 @@ const OrderTracking = ({ data }: any) => {
 						)
 							? "border-blue-500"
 							: "",
+						data.some(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 6,
+						)
+							? "border-red-500"
+							: "",
 					)}
 				/>
 
@@ -90,6 +100,16 @@ const OrderTracking = ({ data }: any) => {
 									}) => order && order.status === 2,
 								)
 									? "text-blue-500"
+									: "",
+								data.some(
+									(order: {
+										status: number;
+										date: string;
+										message: string;
+										sub: string;
+									}) => order && order.status === 6,
+								)
+									? "text-red-500"
 									: "",
 							)}
 						/>
@@ -135,6 +155,16 @@ const OrderTracking = ({ data }: any) => {
 						)
 							? "border-blue-500"
 							: "",
+						data.some(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 6,
+						)
+							? "border-red-500"
+							: "",
 					)}
 				/>
 
@@ -153,6 +183,16 @@ const OrderTracking = ({ data }: any) => {
 									}) => order && order.status === 3,
 								)
 									? "text-blue-500"
+									: "",
+								data.some(
+									(order: {
+										status: number;
+										date: string;
+										message: string;
+										sub: string;
+									}) => order && order.status === 6,
+								)
+									? "text-red-500"
 									: "",
 							)}
 						/>
@@ -198,6 +238,16 @@ const OrderTracking = ({ data }: any) => {
 						)
 							? "border-blue-500"
 							: "",
+						data.some(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 6,
+						)
+							? "border-red-500"
+							: "",
 					)}
 				/>
 
@@ -216,6 +266,16 @@ const OrderTracking = ({ data }: any) => {
 									}) => order && order.status === 4,
 								)
 									? "text-blue-500"
+									: "",
+								data.some(
+									(order: {
+										status: number;
+										date: string;
+										message: string;
+										sub: string;
+									}) => order && order.status === 6,
+								)
+									? "text-red-500"
 									: "",
 							)}
 						/>
@@ -260,6 +320,16 @@ const OrderTracking = ({ data }: any) => {
 						)
 							? "border-blue-500"
 							: "",
+						data.some(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 6,
+						)
+							? "border-red-500"
+							: "",
 					)}
 				/>
 
@@ -279,10 +349,31 @@ const OrderTracking = ({ data }: any) => {
 								)
 									? "text-blue-500"
 									: "",
+								data.some(
+									(order: {
+										status: number;
+										date: string;
+										message: string;
+										sub: string;
+									}) => order && order.status === 6,
+								)
+									? "text-red-500"
+									: "",
 							)}
 						/>
 					</div>
-					<span className="mt-2 text-black text-sm">Đã nhận hàng</span>
+					<span className="mt-2 text-black text-sm">
+						{data.some(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 6,
+						)
+							? "Đã hủy hàng"
+							: "Đã nhận hàng"}
+					</span>
 					<span className="text-sm text-gray-500">
 						{data.find(
 							(order: {
@@ -290,7 +381,7 @@ const OrderTracking = ({ data }: any) => {
 								date: string;
 								message: string;
 								sub: string;
-							}) => order && order.status === 5,
+							}) => order && order.status === 6,
 						)
 							? formatInTimeZone(
 									new Date(
@@ -300,13 +391,35 @@ const OrderTracking = ({ data }: any) => {
 												date: string;
 												message: string;
 												sub: string;
-											}) => order && order.status === 5,
+											}) => order && order.status === 6,
 										)?.date,
 									),
 									"Asia/Ho_Chi_Minh",
 									"dd/MM/yyyy HH:mm:ss",
 								)
-							: "Chưa xác nhận"}
+							: data.find(
+										(order: {
+											status: number;
+											date: string;
+											message: string;
+											sub: string;
+										}) => order && order.status === 5,
+								  )
+								? formatInTimeZone(
+										new Date(
+											data.find(
+												(order: {
+													status: number;
+													date: string;
+													message: string;
+													sub: string;
+												}) => order && order.status === 5,
+											)?.date,
+										),
+										"Asia/Ho_Chi_Minh",
+										"dd/MM/yyyy HH:mm:ss",
+									)
+								: "Chưa xác nhận"}
 					</span>
 				</div>
 			</div>

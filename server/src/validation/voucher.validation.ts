@@ -5,7 +5,8 @@ export const voucherValidation = Joi.object({
   description: Joi.string().required().messages({}),
   startDate: Joi.string().required().messages({}),
   endDate: Joi.string().required().messages({}),
-  discountType: Joi.string().required().messages({}),
-  discountValue: Joi.string().required().messages({}),
-  usageLimit: Joi.string().required().messages({}),
+  discountType: Joi.number().required().messages({}),
+  discountValue: Joi.number().required().messages({}),
+  usageLimit: Joi.number().required().messages({}),
+  minimumOrderValue: Joi.number().required().messages({}),
 });

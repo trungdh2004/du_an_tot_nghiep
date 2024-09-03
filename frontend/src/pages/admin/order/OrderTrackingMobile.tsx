@@ -39,6 +39,16 @@ const OrderTrackingMobile = ({ data }: any) => {
 						)
 							? "bg-blue-600"
 							: "",
+						data.some(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 6,
+						)
+							? "bg-red-600"
+							: "",
 					)}
 				></div>
 				<span className="ml-2 text-sm text-gray-500">
@@ -82,6 +92,16 @@ const OrderTrackingMobile = ({ data }: any) => {
 						)
 							? "text-blue-600"
 							: "",
+						data.some(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 6,
+						)
+							? "text-red-600"
+							: "",
 					)}
 				/>
 
@@ -100,6 +120,16 @@ const OrderTrackingMobile = ({ data }: any) => {
 							}) => order && order.status === 3,
 						)
 							? "bg-blue-600"
+							: "",
+						data.some(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 6,
+						)
+							? "bg-red-600"
 							: "",
 					)}
 				></div>
@@ -144,6 +174,16 @@ const OrderTrackingMobile = ({ data }: any) => {
 						)
 							? "text-blue-600"
 							: "",
+						data.some(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 6,
+						)
+							? "text-red-600"
+							: "",
 					)}
 				/>
 
@@ -162,6 +202,16 @@ const OrderTrackingMobile = ({ data }: any) => {
 							}) => order && order.status === 4,
 						)
 							? "bg-blue-600"
+							: "",
+						data.some(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 6,
+						)
+							? "bg-red-600"
 							: "",
 					)}
 				></div>
@@ -206,6 +256,16 @@ const OrderTrackingMobile = ({ data }: any) => {
 						)
 							? "text-blue-600"
 							: "",
+						data.some(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 6,
+						)
+							? "text-red-600"
+							: "",
 					)}
 				/>
 
@@ -224,6 +284,16 @@ const OrderTrackingMobile = ({ data }: any) => {
 							}) => order && order.status === 5,
 						)
 							? "bg-blue-600"
+							: "",
+						data.some(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 6,
+						)
+							? "bg-red-600"
 							: "",
 					)}
 				></div>
@@ -254,8 +324,44 @@ const OrderTrackingMobile = ({ data }: any) => {
 				</span>
 			</div>
 			<div className="flex">
-				<CiCircleCheck size={20} />
-				<span className="ml-2 text-sm text-gray-500">Đã nhận hàng</span>
+				<CiCircleCheck
+					size={20}
+					className={cn(
+						"text-gray-500",
+						data.some(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 5,
+						)
+							? "text-blue-600"
+							: "",
+						data.some(
+							(order: {
+								status: number;
+								date: string;
+								message: string;
+								sub: string;
+							}) => order && order.status === 6,
+						)
+							? "text-red-600"
+							: "",
+					)}
+				/>
+				<span className="ml-2 text-sm text-gray-500">
+					{data.some(
+						(order: {
+							status: number;
+							date: string;
+							message: string;
+							sub: string;
+						}) => order && order.status === 6,
+					)
+						? "Đã hủy hàng"
+						: "Đã nhận hàng"}
+				</span>
 			</div>
 			<div className="pl-5">
 				<span className="ml-2 text-sm text-gray-500">
@@ -265,7 +371,7 @@ const OrderTrackingMobile = ({ data }: any) => {
 							date: string;
 							message: string;
 							sub: string;
-						}) => order && order.status === 5,
+						}) => order && order.status === 6,
 					)
 						? formatInTimeZone(
 								new Date(
@@ -275,13 +381,35 @@ const OrderTrackingMobile = ({ data }: any) => {
 											date: string;
 											message: string;
 											sub: string;
-										}) => order && order.status === 5,
+										}) => order && order.status === 6,
 									)?.date,
 								),
 								"Asia/Ho_Chi_Minh",
 								"dd/MM/yyyy HH:mm:ss",
 							)
-						: "Chưa xác nhận"}
+						: data.find(
+									(order: {
+										status: number;
+										date: string;
+										message: string;
+										sub: string;
+									}) => order && order.status === 5,
+							  )
+							? formatInTimeZone(
+									new Date(
+										data.find(
+											(order: {
+												status: number;
+												date: string;
+												message: string;
+												sub: string;
+											}) => order && order.status === 5,
+										)?.date,
+									),
+									"Asia/Ho_Chi_Minh",
+									"dd/MM/yyyy HH:mm:ss",
+								)
+							: "Chưa xác nhận"}
 				</span>
 			</div>
 		</div>
