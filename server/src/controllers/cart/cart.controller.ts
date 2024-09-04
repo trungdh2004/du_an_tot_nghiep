@@ -190,9 +190,10 @@ class CartController {
         const listColor = (cartItem?.attributes as IAttribute[])?.reduce(
           (acc: RowIColor[], item) => {
             let group = acc.find(
-              (g) => g.colorId === (item.color as IColor)?._id
+              (g) =>
+                g.colorId.toString() ===
+                ((item.color as IColor)._id?.toString() as string)
             );
-
             // Nếu nhóm không tồn tại, tạo nhóm mới
             if (!group) {
               group = {
@@ -216,7 +217,11 @@ class CartController {
 
         const listSize = (cartItem?.attributes as IAttribute[])?.reduce(
           (acc: RowISize[], item) => {
-            let group = acc.find((g) => g.sizeId === (item.size as ISize)?._id);
+            let group = acc.find(
+              (g) =>
+                g.sizeId.toString() ===
+                ((item.size as ISize)._id?.toString() as string)
+            );
             // Nếu nhóm không tồn tại, tạo nhóm mới
             if (!group) {
               group = {
@@ -430,9 +435,9 @@ class CartController {
       }
 
       await CartItemModel.deleteMany({
-        _id:{
-          $in:listId
-        }
+        _id: {
+          $in: listId,
+        },
       });
 
       return res.status(STATUS.OK).json({

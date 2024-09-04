@@ -5,13 +5,15 @@ import { Checkbox } from "@/components/ui/checkbox";
 import useDebounce from "@/hooks/shared";
 import { getCountMyShoppingCart, updateCartItem } from "@/service/cart";
 import useCart from "@/store/cart.store";
-import { ICartItem } from "@/types/cart";
+import { ICart, ICartItem } from "@/types/cart";
 import { IListColorAttribute, IListSizeAttribute } from "@/types/product";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 import Attribute from "./Attribute";
+import { useState } from "react";
 
 interface CartItemProps {
+	cart?: ICart;
 	item: ICartItem;
 	listSizeAndColor?: {
 		listColor?: IListColorAttribute[];
@@ -27,6 +29,7 @@ interface CartItemProps {
 }
 
 const CartItem = ({
+	cart,
 	item,
 	productId,
 	checked,
@@ -34,7 +37,12 @@ const CartItem = ({
 	attributeAlreadyExists,
 	onCheckedChange,
 }: CartItemProps) => {
+	const [isOpen, setIsOpen] = useState(false);
 	const { carts, setItemCart, setCarts, setTotalCart } = useCart();
+	const [errors, setErrors] = useState({
+		color: false,
+		size: false,
+	});
 	const handleChangeQuantity = useDebounce(async (value: number) => {
 		try {
 			await updateCartItem(item?._id as string, { quantity: value });
@@ -56,10 +64,46 @@ const CartItem = ({
 		}
 	}, 700);
 	const handleChangeAttributes = async (colorId: string, sizeId: string) => {
-		console.log(">>>Item", item);
-	};
-	console.log(">>>>>>ITem", item);
+		const { color: currentColorId, size: currentSizeId } =
+			item?.attribute ?? {};
+		if (
+			(currentColorId as any)?._id === colorId &&
+			(currentSizeId as any)?._id === sizeId
+		) {
+			setIsOpen(false);
+			return;
+		}
+		const errors = {
+			color: !colorId,
+			size: !sizeId,
+		};
 
+		if (errors.color || errors.size) {
+			setErrors(errors);
+			return;
+		}
+		const attribute = cart?.attributes?.find(
+			(attr) =>
+				(attr.color as any)?._id === colorId &&
+				(attr.size as any)?._id === sizeId,
+		);
+		if (attribute?.quantity && attribute?.quantity == 0) {
+			return toast.error(
+				`Màu ${(attribute?.color as any)?.name}, Size ${(attribute?.size as any)?.name} tạm thời hết hàng.`,
+			);
+		}
+		// const newCarts = carts?.map((cart) => ({
+		// 	...cart,
+		// 	items: cart?.items?.map((itemCart) =>
+		// 		itemCart?._id === item?._id
+		// 			? { ...itemCart, quantity: value }
+		// 			: itemCart,
+		// 	),
+		// }));
+		// setCarts(newCarts);
+		setIsOpen(false);
+		setErrors({ color: false, size: false });
+	};
 	return (
 		<div
 			key={item._id}
@@ -83,6 +127,10 @@ const CartItem = ({
 				<div className="px-2.5 py-1.5 sm:w-full w-[78%] md:w-5/6">
 					<p className="max-sm:truncate">{item.name}</p>
 					<Attribute
+						isOpen={isOpen}
+						setIsOpen={setIsOpen}
+						errors={errors}
+						setErrors={setErrors}
 						handleChangeAttributes={handleChangeAttributes}
 						attributeAlreadyExists={attributeAlreadyExists}
 						product={listSizeAndColor}

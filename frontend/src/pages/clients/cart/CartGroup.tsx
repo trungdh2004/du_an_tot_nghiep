@@ -31,7 +31,7 @@ const CartGroup = ({
 				</div>
 				<div>{cart?.product?.name}</div>
 			</div>
-			{cart?.items?.map((item, index) => {
+			{cart?.items?.map((item) => {
 				const attributeAlreadyExists = cart?.items?.reduce(
 					(acc, p) => {
 						if (p._id !== item._id) {
@@ -56,10 +56,9 @@ const CartGroup = ({
 					},
 					{ listColor: [] as string[], listSize: [] as string[] },
 				);
-				console.log(">>>Group Item", cart);
-
 				return (
 					<CartItem
+						cart={cart}
 						listSizeAndColor={{
 							listSize: cart?.listSize as any,
 							listColor: cart?.listColor as any,

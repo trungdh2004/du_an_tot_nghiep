@@ -15,6 +15,7 @@ routerOrder.post("/pagingOrderServer",authentication, orderController.pagingOrde
 routerOrder.get("/getByIdServer/:id",authentication, orderController.getByIdOrderAdmin);
 routerOrder.post("/confirmOrder/:id",authentication, orderController.confirmOrderAdmin);
 routerOrder.post("/deliveredToShipper/:id",authentication, orderController.deliveredToShipper);
+routerOrder.post("/cancelOrder/:id",authentication, orderController.cancelClientOrder);
 
 
 // client

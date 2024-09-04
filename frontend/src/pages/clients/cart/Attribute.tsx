@@ -10,14 +10,16 @@ import {
 	IListSizeAttribute,
 } from "@/types/product";
 import { motion } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { RiArrowDownSFill } from "react-icons/ri";
 import ListColor from "../detail-home/ListColor";
 import ListSize from "../detail-home/ListSize";
 import { Button } from "@/components/ui/button";
 import { useMediaQuery } from "usehooks-ts";
+import { cn } from "@/lib/utils";
 
 type Props = {
+	isOpen: boolean;
 	product?: {
 		_id?: string;
 		listColor?: IListColorAttribute[];
@@ -27,29 +29,28 @@ type Props = {
 		listColor?: string[];
 		listSize?: string[];
 	};
+	errors?: {
+		color: boolean;
+		size: boolean;
+	};
+	isSubmitted?: boolean;
+	setIsOpen: (value: boolean) => void;
+	setErrors?: Dispatch<SetStateAction<{ color: boolean; size: boolean }>>;
 	attribute?: IAttribute;
 	handleChangeAttributes?: (colorId: string, sizeId: string) => void;
 };
-interface IStateInfoProduct {
-	listColorExist: {
-		id: string;
-		colorCode: string;
-		colorName: string;
-		listSize: string[];
-	}[];
-	listSizeExist: {
-		id: string;
-		sizeName: string;
-		listColor: string[];
-	}[];
-}
+
 const Attribute = ({
+	isOpen,
 	product,
 	attribute,
+	errors,
+	setIsOpen,
+	setErrors,
+	isSubmitted,
 	attributeAlreadyExists,
 	handleChangeAttributes,
 }: Props) => {
-	const [isOpen, setIsOpen] = useState(false);
 	const isMobile = useMediaQuery("(max-width: 768px)");
 	const [attributesId, setAttributesId] = useState({
 		sizeId: "",
@@ -57,59 +58,16 @@ const Attribute = ({
 	});
 	const [exitsListSize, setExitsListSize] = useState<string[]>([]);
 	const [exitsListColor, setExitsListColor] = useState<string[]>([]);
-	const [stateInfoProduct, setStateInfoProduct] = useState<IStateInfoProduct>({
-		listColorExist: [],
-		listSizeExist: [],
-	});
 	const { listSizeExist, listColorExist } = useExitsColorSizeAttribute(
 		product as any,
 	);
-	console.log(">>>product", product);
 
 	useEffect(() => {
 		if (!isOpen) {
 			resetAttributes();
 		}
 	}, [isOpen]);
-	const handleStateInfoProduct = useCallback(() => {
-		if (!product) return { listColorExist: [], listSizeExist: [] };
 
-		const uniqueList = <T extends { id: string }>(list: T[]) => {
-			const map = new Map<string, T>();
-			list.forEach((item) => {
-				if (!map.has(item.id)) {
-					map.set(item.id, item);
-				}
-			});
-			return Array.from(map.values());
-		};
-
-		const listColorExist = uniqueList(
-			product.listColor?.map((color) => ({
-				id: color.colorId,
-				colorCode: color.colorCode,
-				colorName: color.colorName,
-				listSize: Array.from(
-					new Set(color.list?.map((item) => item.size?._id).filter(Boolean)),
-				) as string[],
-			})) || [],
-		);
-
-		const listSizeExist = uniqueList(
-			product.listSize?.map((size) => ({
-				id: size.sizeId,
-				sizeName: size.sizeName,
-				listColor: Array.from(
-					new Set(size.list?.map((item) => item.color?._id).filter(Boolean)),
-				) as string[],
-			})) || [],
-		);
-		return { listColorExist, listSizeExist };
-	}, []);
-
-	useEffect(() => {
-		setStateInfoProduct(handleStateInfoProduct());
-	}, [product, handleStateInfoProduct]);
 	const resetAttributes = () => {
 		setAttributesId({ sizeId: "", colorId: "" });
 		setExitsListColor([]);
@@ -118,15 +76,20 @@ const Attribute = ({
 
 	const handleColorChange = (colorId: string) => {
 		setAttributesId((prev) => ({ ...prev, colorId }));
+		if (colorId && isSubmitted) {
+			setErrors?.((prev) => ({ ...prev, color: false }));
+		}
 	};
 
 	const handleSizeChange = (sizeId: string) => {
 		setAttributesId((prev) => ({ ...prev, sizeId }));
+		if (sizeId && isSubmitted) {
+			setErrors?.((prev) => ({ ...prev, size: false }));
+		}
 	};
 
 	const handleConfirm = () => {
 		handleChangeAttributes?.(attributesId.colorId, attributesId.sizeId);
-		setIsOpen(false);
 	};
 
 	const animationMenu = {
@@ -153,34 +116,70 @@ const Attribute = ({
 					</div>
 				</button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent className="min-w-80 px-5 py-3">
-				<div className="space-y-3">
-					<ListColor
-						onChoose={handleColorChange}
-						validExits
-						widthLabel={120}
-						listColorExist={stateInfoProduct?.listColorExist}
-						exitsListColor={exitsListColor}
-						colorIdChecked={attribute?.color?._id}
-						sizeInput={isMobile ? "mobile" : "small"}
-						selectedColor={attributeAlreadyExists?.listColor}
-						setExitsListSize={setExitsListSize}
-					/>
-					<ListSize
-						validExits
-						widthLabel={120}
-						listSizeExist={stateInfoProduct?.listSizeExist}
-						exitsListSize={exitsListSize}
-						sizeIdChecked={attribute?.size?._id}
-						setExitsListColor={setExitsListColor}
-						sizeInput={isMobile ? "mobile" : "small"}
-						selectedSize={attributeAlreadyExists?.listSize}
-						onChoose={handleSizeChange}
-					/>
+			<DropdownMenuContent className="min-w-80 p-1.5">
+				<div
+					className={cn(
+						"space-y-3 p-1.5 rounded",
+						errors?.color && errors?.size && "bg-red-50",
+					)}
+				>
+					<div className={cn("w-full p-1", errors?.color && "bg-red-50")}>
+						<ListColor
+							onChoose={handleColorChange}
+							validExits
+							widthLabel={120}
+							listColorExist={listColorExist}
+							exitsListColor={exitsListColor}
+							colorIdChecked={attribute?.color?._id}
+							sizeInput={isMobile ? "mobile" : "small"}
+							selectedColor={attributeAlreadyExists?.listColor}
+							setExitsListSize={setExitsListSize}
+						/>
+						<span
+							className={cn(
+								"text-red-500 hidden text-xs",
+								errors?.color && !errors?.size && "inline-block",
+							)}
+						>
+							Bạn chưa chọn màu sắc cho sản phẩm
+						</span>
+					</div>
+					<div className={cn("w-full p-1", errors?.size && "bg-red-50")}>
+						<ListSize
+							validExits
+							widthLabel={120}
+							listSizeExist={listSizeExist}
+							exitsListSize={exitsListSize}
+							sizeIdChecked={attribute?.size?._id}
+							setExitsListColor={setExitsListColor}
+							sizeInput={isMobile ? "mobile" : "small"}
+							selectedSize={attributeAlreadyExists?.listSize}
+							onChoose={handleSizeChange}
+						/>
+						<span
+							className={cn(
+								"text-red-500 hidden text-xs",
+								errors?.size && !errors?.color && "inline-block",
+							)}
+						>
+							Bạn chưa chọn kích thước cho sản phẩm
+						</span>
+					</div>
+					<span
+						className={cn(
+							"text-red-500 hidden text-xs",
+							errors?.color && errors?.size && "inline-block",
+						)}
+					>
+						Bạn biến thể cho sản phẩm
+					</span>
 				</div>
 				<div className="flex items-center justify-end gap-3 mt-5">
 					<Button
-						onClick={() => setIsOpen(false)}
+						onClick={() => {
+							setErrors?.({ color: false, size: false });
+							setIsOpen(false);
+						}}
 						className="bg-transparent hover:bg-gray-50 outline-none text-gray-500 w-24 h-8 md:h-10 md:w-40 py-0.5"
 					>
 						Trở lại

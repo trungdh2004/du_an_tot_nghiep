@@ -73,7 +73,7 @@ class ShipperController {
       let skip = (pageIndex - 1) * limit || 0;
       let queryKeyword = keyword
         ? {
-            name: {
+            fullName: {
               $regex: keyword,
               $options: "i",
             },
@@ -81,9 +81,6 @@ class ShipperController {
         : {};
       let queryActive = {};
       let queryIsBlock = {};
-
-      console.log("Boolean(active)", typeof active === "boolean");
-      console.log("Boolean(block)", typeof isBlock === "boolean");
 
       if (typeof active === "boolean") {
         queryActive = {
@@ -192,6 +189,35 @@ class ShipperController {
     }
   }
 
+  async getShipperById(req: RequestModel, res: Response) {
+    try {
+      const {id} = req.params
+
+      if(!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Bạn chưa chọn shipper"
+        })
+      }
+
+      const existingShipper = await ShipperModel.findById(id)
+
+      if(!existingShipper) { 
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Không có shipper nào"
+        })
+      }
+
+      return res.status(STATUS.OK).json({
+        message:"Lấy thông tin thành công",
+        data:existingShipper
+      })
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      })
+    }
+  }
+
   async getListOrderShipperMap(req: RequestShipper, res: Response) {
     try {
       const shipper = req.shipper;
@@ -283,7 +309,9 @@ class ShipperController {
         });
       }
 
-      const existingOrder = await OrderModel.findById(id).populate("orderItems");
+      const existingOrder = await OrderModel.findById(id).populate(
+        "orderItems"
+      );
 
       if (!existingOrder)
         return res.status(STATUS.BAD_REQUEST).json({
@@ -346,13 +374,11 @@ class ShipperController {
         "orderItems"
       );
 
-
       if (!existingOrder)
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có đơn hàng",
         });
 
-      
       if (existingOrder.shipper.toString() !== shipper?.id.toString()) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn không có quyền đơn hàng này",

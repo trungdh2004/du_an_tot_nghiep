@@ -21,14 +21,11 @@ const PaymentMethod = ({
 	const arrayTotal = data?.data?.map((product: any) => {
 		return product.totalAmount;
 	});
-	console.log(arrayTotal);
 
 	const totalCost = arrayTotal?.reduce(
 		(acc: number, value: number) => acc + value,
 		0,
   );
-  console.log(typeof totalCost);
-  
 
 	return (
 		<div className="py-2 pb-14">
