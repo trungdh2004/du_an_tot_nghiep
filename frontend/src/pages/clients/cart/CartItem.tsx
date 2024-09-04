@@ -2,15 +2,16 @@ import { formatCurrency } from "@/common/func";
 import { optimizeCloudinaryUrl } from "@/common/localFunction";
 import InputQuantity from "@/components/common/InputQuantity";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useUpdateAttributeItemCart } from "@/hooks/cart";
 import useDebounce from "@/hooks/shared";
 import { getCountMyShoppingCart, updateCartItem } from "@/service/cart";
 import useCart from "@/store/cart.store";
 import { ICart, ICartItem } from "@/types/cart";
 import { IListColorAttribute, IListSizeAttribute } from "@/types/product";
 import { AxiosError } from "axios";
+import { useState } from "react";
 import { toast } from "sonner";
 import Attribute from "./Attribute";
-import { useState } from "react";
 
 interface CartItemProps {
 	cart?: ICart;
@@ -43,6 +44,7 @@ const CartItem = ({
 		color: false,
 		size: false,
 	});
+	const { updateAttributeItemCart } = useUpdateAttributeItemCart();
 	const handleChangeQuantity = useDebounce(async (value: number) => {
 		try {
 			await updateCartItem(item?._id as string, { quantity: value });
@@ -63,46 +65,15 @@ const CartItem = ({
 			}
 		}
 	}, 700);
-	const handleChangeAttributes = async (colorId: string, sizeId: string) => {
-		const { color: currentColorId, size: currentSizeId } =
-			item?.attribute ?? {};
-		if (
-			(currentColorId as any)?._id === colorId &&
-			(currentSizeId as any)?._id === sizeId
-		) {
-			setIsOpen(false);
-			return;
-		}
-		const errors = {
-			color: !colorId,
-			size: !sizeId,
-		};
-
-		if (errors.color || errors.size) {
-			setErrors(errors);
-			return;
-		}
-		const attribute = cart?.attributes?.find(
-			(attr) =>
-				(attr.color as any)?._id === colorId &&
-				(attr.size as any)?._id === sizeId,
-		);
-		if (attribute?.quantity && attribute?.quantity == 0) {
-			return toast.error(
-				`Màu ${(attribute?.color as any)?.name}, Size ${(attribute?.size as any)?.name} tạm thời hết hàng.`,
-			);
-		}
-		// const newCarts = carts?.map((cart) => ({
-		// 	...cart,
-		// 	items: cart?.items?.map((itemCart) =>
-		// 		itemCart?._id === item?._id
-		// 			? { ...itemCart, quantity: value }
-		// 			: itemCart,
-		// 	),
-		// }));
-		// setCarts(newCarts);
-		setIsOpen(false);
-		setErrors({ color: false, size: false });
+	const handleChangeAttributes = (colorId: string, sizeId: string) => {
+		updateAttributeItemCart({
+			colorId,
+			sizeId,
+			item,
+			cart,
+			setIsOpen,
+			setErrors,
+		});
 	};
 	return (
 		<div
@@ -139,10 +110,10 @@ const CartItem = ({
 					<div className="flex lg:hidden">
 						<div className="text-center text-xs space-x-2">
 							<span className="line-through text-black/50 text-[10px]">
-								{formatCurrency(item?.price)}
+								{formatCurrency(item?.attribute?.price)}
 							</span>
 							<span className="text-red-500">
-								{formatCurrency(item?.discount)}
+								{formatCurrency(item?.attribute?.discount)}
 							</span>
 						</div>
 						<div className="ml-auto">

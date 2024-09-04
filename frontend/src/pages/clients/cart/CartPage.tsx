@@ -13,6 +13,8 @@ import CartGroup from "./CartGroup";
 type CheckedState = Record<string, boolean>;
 const CartPage = () => {
 	const { carts, totalCart, itemCart, setItemCart, setTotalCart } = useCart();
+	console.log(">>>Cart thay đổi");
+
 	const [checkedState, setCheckedState] = useState<CheckedState>({});
 	const [allChecked, setAllChecked] = useState<boolean>(false);
 	const [groupCheckedState, setGroupCheckedState] = useState<CheckedState>({});
@@ -35,7 +37,7 @@ const CartPage = () => {
 						if (checkedState[item?._id as string]) {
 							groupAcc.totalQuantity += 1;
 							groupAcc.totalAmount +=
-								(item?.discount || 0) * (item?.quantity || 0);
+								(item?.attribute?.discount || 0) * (item?.quantity || 0);
 						}
 						return groupAcc;
 					},
@@ -54,6 +56,7 @@ const CartPage = () => {
 
 	const totalAttribute = useMemo(() => {
 		if (!carts) return 0;
+		console.log(">>> totalAttribute");
 
 		return carts.reduce((totalItems, cart) => {
 			const groupItemsCount = cart?.items?.length;
