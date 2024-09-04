@@ -58,16 +58,20 @@ const amountReducedVoucher =(totalMoney: number, voucher: IVoucher | null):IAmou
 
   if (voucherDiscountType === 2) {
     const amountReduced = (+totalMoney * +voucherDiscountValue) / 100;
+    const totalVoucherAmountNew = totalMoney - amountReduced
 
     return {
       amountReduced,
-      totalMoneyNew: totalMoney - amountReduced,
+      totalMoneyNew: totalVoucherAmountNew >= 0 ? totalVoucherAmountNew :0,
     };
   }
   if (voucherDiscountType === 1) {
+    const totalVoucherAmountNew = totalMoney - voucherDiscountValue
+
     return {
       amountReduced: voucherDiscountValue,
-      totalMoneyNew: totalMoney - voucherDiscountValue,
+      totalMoneyNew: totalVoucherAmountNew >= 0 ? totalVoucherAmountNew :0,
+
     };
   }
 
@@ -280,8 +284,6 @@ class OrderController {
       let code = generateOrderCode();
       code = await generateCode(code);
 
-      console.log("totalMoney",totalMoney);
-      
       const {amountReduced,totalMoneyNew} = amountReducedVoucher(totalMoney,voucherMain);
 
       const newOrder = await OrderModel.create({
@@ -1172,7 +1174,6 @@ class OrderController {
           };
         } else if (endDate) {
           dateEndString = new Date(endDate);
-          console.log("dateEndString:", dateEndString);
 
           const endOfDay = new Date(
             dateEndString.getUTCFullYear(),
@@ -1182,7 +1183,6 @@ class OrderController {
             59,
             59
           );
-          console.log("endOfDay:", endOfDay.toLocaleString());
 
           queryDate = {
             createdAt: {
@@ -1229,16 +1229,6 @@ class OrderController {
           shipper: null,
         };
       }
-
-      console.log("queryDate:", queryDate);
-
-      console.log("hihi", {
-        status: status,
-        ...queryDate,
-        ...queryMethod,
-        ...queryPaymentStatus,
-        ...shipperQuery,
-      });
 
       const listOrder = await OrderModel.find({
         status: status,
@@ -1614,7 +1604,6 @@ class OrderController {
                           (item as IOrderItem).product as IProductSelectOrder
                         )._id.toString()
                     );
-                    // console.log(`accCheck ${order?.code}`,accCheck);
                     if (accCheck) {
                       const totalMoney =
                         accCheck.totalMoney + (item as IOrderItem).totalMoney;
