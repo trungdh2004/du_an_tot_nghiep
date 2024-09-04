@@ -7,13 +7,13 @@ import CartItemModel from "../../models/cart/CartItem.schema";
 import { formatDataPaging } from "../../common/pagingData";
 import ProductModel from "../../models/products/Product.schema";
 import mongoose from "mongoose";
-import { IAttribute, IColor, ISize } from "../../interface/product";
-
+import { IAttribute, IColor, IProduct, ISize } from "../../interface/product";
+import AttributeModel from "../../models/products/Attribute.schema";
 
 interface RowIColor {
   colorId: string;
   colorName: string;
-  colorCode:string;
+  colorCode: string;
   list: IAttribute[];
   quantity: number;
 }
@@ -42,9 +42,9 @@ class CartController {
 
       const listProduct = await CartItemModel.aggregate([
         {
-          $match:{
-            cart:existingCart?._id
-          }
+          $match: {
+            cart: existingCart?._id,
+          },
         },
         {
           $lookup: {
@@ -67,9 +67,9 @@ class CartController {
         },
         {
           $unwind: {
-            path: '$productAttributes',
-            preserveNullAndEmptyArrays: true
-          } // Chuyển đổi mảng customer thành tài liệu riêng lẻ
+            path: "$productAttributes",
+            preserveNullAndEmptyArrays: true,
+          }, // Chuyển đổi mảng customer thành tài liệu riêng lẻ
         },
         {
           $lookup: {
@@ -80,7 +80,7 @@ class CartController {
           },
         },
         {
-          $unwind: '$productAttributes.color'
+          $unwind: "$productAttributes.color",
         },
         {
           $lookup: {
@@ -91,7 +91,7 @@ class CartController {
           },
         },
         {
-          $unwind: '$productAttributes.size'
+          $unwind: "$productAttributes.size",
         },
         {
           $lookup: {
@@ -105,7 +105,7 @@ class CartController {
           $unwind: {
             path: "$attribute",
             preserveNullAndEmptyArrays: true, // Bảo toàn giá trị null
-          }
+          },
         },
         {
           $lookup: {
@@ -119,7 +119,7 @@ class CartController {
           $unwind: {
             path: "$attribute.color",
             preserveNullAndEmptyArrays: true, // Bảo toàn giá trị null
-          }
+          },
         },
         {
           $lookup: {
@@ -133,7 +133,7 @@ class CartController {
           $unwind: {
             path: "$attribute.size",
             preserveNullAndEmptyArrays: true, // Bảo toàn giá trị null
-          }
+          },
         },
         {
           $group: {
@@ -161,8 +161,8 @@ class CartController {
                 quantity: "$productAttributes.quantity",
                 discount: "$productAttributes.discount",
                 price: "$productAttributes.price",
-              }
-            }
+              },
+            },
           },
         },
         {
@@ -176,7 +176,7 @@ class CartController {
             product: "$_id",
             createdAt: 1,
             items: 1,
-            attributes: 1
+            attributes: 1,
           },
         },
         {
@@ -191,7 +191,9 @@ class CartController {
         const listColor = (cartItem?.attributes as IAttribute[])?.reduce(
           (acc: RowIColor[], item) => {
             let group = acc.find(
-              (g) => g.colorId.toString() === (item.color as IColor)._id?.toString() as string
+              (g) =>
+                g.colorId.toString() ===
+                ((item.color as IColor)._id?.toString() as string)
             );
             // Nếu nhóm không tồn tại, tạo nhóm mới
             if (!group) {
@@ -200,12 +202,12 @@ class CartController {
                 colorName: (item.color as IColor).name as string,
                 list: [item],
                 quantity: item.quantity,
-                colorCode:(item.color as IColor).code
+                colorCode: (item.color as IColor).code,
               };
               acc.push(group);
               return acc;
             }
-  
+
             // Thêm đối tượng vào nhóm tương ứng
             group.list.push(item);
             group.quantity = group.quantity + item.quantity;
@@ -213,11 +215,13 @@ class CartController {
           },
           []
         );
-  
+
         const listSize = (cartItem?.attributes as IAttribute[])?.reduce(
           (acc: RowISize[], item) => {
             let group = acc.find(
-              (g) => g.sizeId.toString() === (item.size as ISize)._id?.toString() as string
+              (g) =>
+                g.sizeId.toString() ===
+                ((item.size as ISize)._id?.toString() as string)
             );
             // Nếu nhóm không tồn tại, tạo nhóm mới
             if (!group) {
@@ -230,7 +234,7 @@ class CartController {
               acc.push(group);
               return acc;
             }
-  
+
             // Thêm đối tượng vào nhóm tương ứng
             group.list.push(item);
             group.quantity = group.quantity + item.quantity;
@@ -242,9 +246,9 @@ class CartController {
         return {
           ...cartItem,
           listColor,
-          listSize
-        }
-      })
+          listSize,
+        };
+      });
 
       // const dataList = await CartItemModel.find({
       //   cart:existingCart._id
@@ -388,21 +392,94 @@ class CartController {
           message: "Bạn chưa chọn",
         });
 
-      const existingCartItem = await CartItemModel.findById(id);
+      const existingCartItem = await CartItemModel.findById(id).populate(
+        "attribute"
+      );
 
       if (!existingCartItem) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có giá trị thỏa mãn",
         });
       }
+
+      let quantityDefauld = quantity || existingCartItem?.quantity;
+
+      console.log("existingCartItem", existingCartItem);
+
+      if (quantity) {
+        if (!(existingCartItem.attribute as IAttribute)._id) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Sản phẩm không còn loại này",
+          });
+        }
+
+        if (quantity > (existingCartItem.attribute as IAttribute).quantity) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: `Chỉ còn ${
+              (existingCartItem.attribute as IAttribute).quantity
+            } sản phẩm loại hàng này`,
+          });
+        }
+      }
+
+      if (attribute) {
+        const checkCartItem = await CartItemModel.findOne({
+          attribute: attribute
+        })
+
+        if(checkCartItem) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Loại hàng này đã có ở giỏ hàng",
+          });
+        }
+
+        const checkAttribute = await AttributeModel.findById(attribute);
+
+        if (!checkAttribute) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Sản phẩm không còn loại hàng này nữa",
+          });
+        }
+
+        if (checkAttribute.quantity < quantityDefauld) {
+          quantityDefauld = checkAttribute.quantity;
+        }
+      }
+
       const updatedProduct = await CartItemModel.findByIdAndUpdate(
         id,
         {
           quantity: quantity ? quantity : existingCartItem.quantity,
           attribute: attribute ? attribute : existingCartItem.attribute,
         },
-        { new: true, populate: ["product", "attribute"] }
-      );
+        {
+          new: true,
+          populate: [
+            {
+              path: "product",
+              select: {
+                name: 1,
+                _id: 1,
+                thumbnail: 1,
+                quantitySold: 1,
+                price: 1,
+                discount: 1,
+              },
+            },
+            {
+              path: "attribute",
+              populate: [
+                {
+                  path: "color",
+                },
+                {
+                  path: "size",
+                },
+              ],
+            },
+          ],
+        }
+      ).lean();
 
       if (!updatedProduct) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -410,9 +487,23 @@ class CartController {
         });
       }
 
+      const result = {
+        quantity: updatedProduct.quantity,
+        createdAt: updatedProduct.createdAt,
+        _id: updatedProduct._id,
+        price: (updatedProduct.product as IProduct).price,
+        name: (updatedProduct.product as IProduct).name,
+        productId:(updatedProduct.product as IProduct)._id,
+        quantitySold: (updatedProduct.product as IProduct).quantitySold,
+        discount: (updatedProduct.product as IProduct).discount,
+        thumbnail:(updatedProduct.product as IProduct).thumbnail,
+        attribute: updatedProduct.attribute,
+      };
+
+
       return res.status(STATUS.OK).json({
         message: "Thay đổi thành công",
-        data: updatedProduct,
+        data: result,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
@@ -432,9 +523,9 @@ class CartController {
       }
 
       await CartItemModel.deleteMany({
-        _id:{
-          $in:listId
-        }
+        _id: {
+          $in: listId,
+        },
       });
 
       return res.status(STATUS.OK).json({
@@ -447,44 +538,43 @@ class CartController {
     }
   }
 
-  async getCountProductCart(req:RequestModel,res:Response) {
+  async getCountProductCart(req: RequestModel, res: Response) {
     try {
       const user = req.user;
 
       let existingCart = await CartModel.findOne({
-        user:user?.id
-      })
+        user: user?.id,
+      });
 
-      if(!existingCart) {
+      if (!existingCart) {
         existingCart = await CartModel.create({
-          user:user?.id
-        })
+          user: user?.id,
+        });
       }
 
       const countProductCart = await CartItemModel.find({
-        cart: existingCart._id
-      })
+        cart: existingCart._id,
+      });
 
-      if(countProductCart?.length === 0) {
+      if (countProductCart?.length === 0) {
         return res.status(STATUS.OK).json({
-          message:"Lấy thành công",
-          count: 0
-        })
+          message: "Lấy thành công",
+          count: 0,
+        });
       }
 
-      const count = countProductCart?.reduce((acc,product) => {
-        return acc + product.quantity
-      },0)
+      const count = countProductCart?.reduce((acc, product) => {
+        return acc + product.quantity;
+      }, 0);
 
       return res.status(STATUS.OK).json({
-        message:"Lấy thành công",
-        count:count || 0
-      })
-
-    } catch (error:any) {
+        message: "Lấy thành công",
+        count: count || 0,
+      });
+    } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
-        message:error.message
-      })
+        message: error.message,
+      });
     }
   }
 }
