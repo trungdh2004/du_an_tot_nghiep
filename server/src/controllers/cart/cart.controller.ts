@@ -7,7 +7,8 @@ import CartItemModel from "../../models/cart/CartItem.schema";
 import { formatDataPaging } from "../../common/pagingData";
 import ProductModel from "../../models/products/Product.schema";
 import mongoose from "mongoose";
-import { IAttribute, IColor, ISize } from "../../interface/product";
+import { IAttribute, IColor, IProduct, ISize } from "../../interface/product";
+import AttributeModel from "../../models/products/Attribute.schema";
 
 interface RowIColor {
   colorId: string;
@@ -391,21 +392,94 @@ class CartController {
           message: "Bạn chưa chọn",
         });
 
-      const existingCartItem = await CartItemModel.findById(id);
+      const existingCartItem = await CartItemModel.findById(id).populate(
+        "attribute"
+      );
 
       if (!existingCartItem) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có giá trị thỏa mãn",
         });
       }
+
+      let quantityDefauld = quantity || existingCartItem?.quantity;
+
+      console.log("existingCartItem", existingCartItem);
+
+      if (quantity) {
+        if (!(existingCartItem.attribute as IAttribute)._id) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Sản phẩm không còn loại này",
+          });
+        }
+
+        if (quantity > (existingCartItem.attribute as IAttribute).quantity) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: `Chỉ còn ${
+              (existingCartItem.attribute as IAttribute).quantity
+            } sản phẩm loại hàng này`,
+          });
+        }
+      }
+
+      if (attribute) {
+        const checkCartItem = await CartItemModel.findOne({
+          attribute: attribute,
+        });
+
+        if (checkCartItem) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Loại hàng này đã có ở giỏ hàng",
+          });
+        }
+
+        const checkAttribute = await AttributeModel.findById(attribute);
+
+        if (!checkAttribute) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Sản phẩm không còn loại hàng này nữa",
+          });
+        }
+
+        if (checkAttribute.quantity < quantityDefauld) {
+          quantityDefauld = checkAttribute.quantity;
+        }
+      }
+
       const updatedProduct = await CartItemModel.findByIdAndUpdate(
         id,
         {
           quantity: quantity ? quantity : existingCartItem.quantity,
           attribute: attribute ? attribute : existingCartItem.attribute,
         },
-        { new: true, populate: ["product", "attribute"] }
-      );
+        {
+          new: true,
+          populate: [
+            {
+              path: "product",
+              select: {
+                name: 1,
+                _id: 1,
+                thumbnail: 1,
+                quantitySold: 1,
+                price: 1,
+                discount: 1,
+              },
+            },
+            {
+              path: "attribute",
+              populate: [
+                {
+                  path: "color",
+                },
+                {
+                  path: "size",
+                },
+              ],
+            },
+          ],
+        }
+      ).lean();
 
       if (!updatedProduct) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -413,9 +487,22 @@ class CartController {
         });
       }
 
+      const result = {
+        quantity: updatedProduct.quantity,
+        createdAt: updatedProduct.createdAt,
+        _id: updatedProduct._id,
+        price: (updatedProduct.product as IProduct).price,
+        name: (updatedProduct.product as IProduct).name,
+        productId: (updatedProduct.product as IProduct)._id,
+        quantitySold: (updatedProduct.product as IProduct).quantitySold,
+        discount: (updatedProduct.product as IProduct).discount,
+        thumbnail: (updatedProduct.product as IProduct).thumbnail,
+        attribute: updatedProduct.attribute,
+      };
+
       return res.status(STATUS.OK).json({
         message: "Thay đổi thành công",
-        data: updatedProduct,
+        data: result,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
