@@ -27,7 +27,7 @@ import { checkVoucher } from "../voucher";
 import { IVoucher } from "../../interface/voucher";
 import AttributeModel from "../../models/products/Attribute.schema";
 import ProductModel from "../../models/products/Product.schema";
-import {  socketNotificationOrderClient } from "../../socket/socketNotifycationClient.service";
+import { socketNotificationOrderClient } from "../../socket/socketNotifycationClient.service";
 
 const long = +process.env.LONGSHOP! || 105.62573250208116;
 const lat = +process.env.LATSHOP! || 21.045193948892585;
@@ -1480,8 +1480,12 @@ class OrderController {
         }
       );
 
-
-      socketNotificationOrderClient(orderUpdate?.code as string, 2, `${user?.id}`, orderUpdate?._id as string);
+      socketNotificationOrderClient(
+        orderUpdate?.code as string,
+        2,
+        `${user?.id}`,
+        orderUpdate?._id as string
+      );
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập đơn hàng thành công",
@@ -1564,15 +1568,15 @@ class OrderController {
             $in: [1, 2, 3, 4, 5, 6],
           },
         };
-      } if (status === 8) {
+      }else if (status === 8) {
         queryStatus = {
           status: {
-            $in:[4,5]
-          }
+            $in: [4, 5],
+          },
         };
-      }else {
+      } else {
         queryStatus = {
-          status: status
+          status: status,
         };
       }
 
@@ -1721,7 +1725,6 @@ class OrderController {
           now: true,
         }
       );
-      
 
       return res.status(STATUS.BAD_REQUEST).json({
         message: "Cập nhập thành công",
