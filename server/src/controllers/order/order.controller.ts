@@ -1564,10 +1564,10 @@ class OrderController {
             $in: [1, 2, 3, 4, 5, 6],
           },
         };
-      } if (Array.isArray(status)) {
+      } if (status === 8) {
         queryStatus = {
           status: {
-            $in:[...status]
+            $in:[4,5]
           }
         };
       }else {
