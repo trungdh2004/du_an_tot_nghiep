@@ -93,14 +93,13 @@ const OrderPage = () => {
 				toast.error("Thanh toán thất bại");
 			}
 		}
-		console.log("method", orderCheckout.paymentMethod);
 
 		if (orderCheckout.paymentMethod === 2) {
 			try {
 				(async () => {
 					const { data } = await createOrderVNPayPayment({
 						...orderCheckout,
-						returnUrl: `${window.location.origin}/orderprocessing?state=${searchParams.toString().split("state=")[1]}`,
+						returnUrl: `${window.location.origin}/orderprocessing`,
 					});
 					window.location.href = data.paymentUrl;
 					return data;

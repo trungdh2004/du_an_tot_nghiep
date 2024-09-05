@@ -42,7 +42,7 @@ interface DataTableProps<TData, TValue> {
 	dataPageSize?: number[]; //! data mảng các size tùy chỉnh
 	pageSize: number; //! số lượng phàn tử trong trang
 	handleChangePageSize: (value: number) => void; //! thay đổi phần tử trang
-	isLoading?: boolean
+	isLoading?: boolean;
 }
 
 const TableComponent = <TData, TValue>({
@@ -57,7 +57,7 @@ const TableComponent = <TData, TValue>({
 	setRowSelection,
 	handleChangePageSize,
 	dataPageSize,
-	isLoading = false
+	isLoading = false,
 }: DataTableProps<TData, TValue>) => {
 	const table = useReactTable({
 		data,
@@ -84,9 +84,9 @@ const TableComponent = <TData, TValue>({
 												{header.isPlaceholder
 													? null
 													: flexRender(
-														header.column.columnDef.header,
-														header.getContext(),
-													)}
+															header.column.columnDef.header,
+															header.getContext(),
+														)}
 											</TableHead>
 										);
 									})}
@@ -96,17 +96,19 @@ const TableComponent = <TData, TValue>({
 					</TableHeader>
 
 					<TableBody className="scroll-custom relative">
-
 						{isLoading && (
 							<div className="inset-0 absolute bg-gray-300/40 flex justify-center items-center">
-								<AiOutlineLoading3Quarters size={20} className="text-blue-500 animate-spin" />
+								<AiOutlineLoading3Quarters
+									size={20}
+									className="text-blue-500 animate-spin"
+								/>
 							</div>
 						)}
 						{table.getRowModel().rows?.length ? (
 							table.getRowModel().rows.map((row) => (
 								<TableRow
 									key={row.id}
-								// data-state={(row.getIsSelected() && "selected") || ""}
+									// data-state={(row.getIsSelected() && "selected") || ""}
 								>
 									{row.getVisibleCells().map((cell) => (
 										<TableCell key={cell.id}>

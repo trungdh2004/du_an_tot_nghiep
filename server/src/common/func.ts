@@ -1,5 +1,5 @@
 export const chargeShippingFee = (dis: number) => {
-  if (!dis) return null;
+  if (!dis) return 0;
 
   if (+dis <= 5000) {
     return 0;
@@ -14,6 +14,7 @@ export const chargeShippingFee = (dis: number) => {
   } else if (90000 < dis) {
     return 50000;
   }
+  return 0;
 };
 
 export function handleFutureDateTimeOrder(dist: number) {
@@ -46,8 +47,10 @@ export function handleFutureDateTimeOrder(dist: number) {
 }
 
 export function getMonthStartAndEnd(i: number) {
-  const tenMonth = new Date();
+  const today = new Date();
+  let tenMonth = new Date(today.getFullYear(), today.getMonth(), 1, 0, 0, 0);
   tenMonth.setMonth(tenMonth.getMonth() - i);
+
   const startDate = new Date(
     tenMonth.getFullYear(),
     tenMonth.getMonth(),

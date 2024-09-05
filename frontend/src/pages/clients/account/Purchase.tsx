@@ -12,7 +12,8 @@ const OrderManagements = () => {
   const queryClient = useQueryClient();
   const [active, setActive] = useState(7);
   const [status, setStatus] = useState(null);
-  const [showLoader, setShowLoader] = useState(true)
+  const [showLoader, setShowLoader] = useState(true);
+  const [statusLists, setStatusLists] = useState<number[]>([0]);
   const menuList = [
     {
       "index": 7,
@@ -31,7 +32,7 @@ const OrderManagements = () => {
       "name": "Chờ giao hàng",
     },
     {
-      "index": 5,
+      "index": 8,
       "name": "Đã giao",
     },
     {
@@ -48,6 +49,8 @@ const OrderManagements = () => {
     queryKey: ['purchase', status],
     queryFn: async () => {
       const { data } = await fetchOrder({ status: status });
+      // console.log("---------------------", data.data?.content.statusList)
+      // setStatus(data.data?.content.statusList)
       // console.log("------", data.data.content)
       return data?.data.content;
     },
@@ -58,7 +61,8 @@ const OrderManagements = () => {
       setShowLoader(false);
     }, 5000);
     return () => clearTimeout(timer);
-  }, [isLoading])
+  }, [isLoading]);
+  // console.log("dladalndalfndalfdjanldkans", statusLists)
   return (
     <>
       <div className="">
@@ -100,19 +104,21 @@ const OrderManagements = () => {
                                   // console.log("itemOrderList: ", itemOrder)
                                   return (
                                     <div key={itemOrder._id} className="w-full flex justify-between gap-3 md:gap-5 pb-4 border-b border-gray-300 ">
-                                      <div className="size-[100px]">
+                                      <div className="size-[80px] md:size-[100px] bg-gray-100 p-2">
                                         <img src={itemOrder?.product.thumbnail} className='w-full h-full' alt="" />
                                       </div>
                                       <div className="flex flex-1 flex-col md:flex-row md:justify-between gap-2">
                                         <div className="">
                                           <h3 className="text-base md:text-[18px] font-medium line-clamp-1 ">{itemOrder?.product.name}</h3>
-                                          <p className="text-base text-[#0000008A] flex gap-x-1">Phân loại hàng:
-                                            <span className="text-gray-700 font-normal">{itemOrder?.color.name},</span>
-                                            <span className="text-gray-700 font-normal">{itemOrder?.size}</span>
-                                          </p>
-                                          <span>x{itemOrder?.quantity}</span>
+                                          <div className="flex flex-row md:flex-col gap-x-3">
+                                            <p className="text-base text-[#0000008A] flex gap-x-1"><span className="hidden md:text-block">Phân loại hàng:</span>
+                                              <span className="text-gray-500 text-sm md:text-base font-normal">{itemOrder?.color.name},</span>
+                                              <span className="text-gray-500 text-sm md:text-base font-normal">{itemOrder?.size}</span>
+                                            </p>
+                                            <span className='text-sm text-gray-900 md:text-base'>x{itemOrder?.quantity}</span>
+                                          </div>
                                         </div>
-                                        <div className="text-red-500 flex items-end md:items-center font-medium ">
+                                        <div className="text-red-500 text-sm md:text-base flex items-end md:items-center font-medium ">
                                           <span className="text-gray-500 line-through pr-3">{formatQuantity(itemOrder?.product.price, "₫")}</span>
                                           <span className="">{formatQuantity(itemOrder?.price, "₫")}</span>
                                         </div>
@@ -142,10 +148,13 @@ const OrderManagements = () => {
                     <div className="bg-[#FFFCF5] box-shadow border border-gray-200 px-4 lg:px-8 py-3 md:py-6">
                       <div className="flex justify-between items-center">
                         {/* change */}
-                        {[1, 2].includes(item.status) && (
-                          <button className="px-5 py-2 lg:px-8 lg:py-3 text-white bg-red-500 border border-orange-700 hover:bg-red-600 transition-all  duration-300    rounded-sm text-sm lg:text-[18px]">Hủy đơn hàng</button>
+                        {[1].includes(item.status) && (
+                          <button className="px-3 py-2 lg:px-8 lg:py-3 text-white bg-red-500 border border-orange-700 hover:bg-red-600 transition-all  duration-300    rounded-sm text-xs lg:text-[16px]">Hủy đơn hàng</button>
                         )}
-                        {[3, 5].includes(item.status) && (
+                        {[4].includes(item.status) && (
+                          <button className="px-3 py-2 lg:px-8 lg:py-3 text-white bg-blue-500 border border-blue-600 hover:bg-blue-600 transition-all  duration-300    rounded-sm text-xs lg:text-[16px]">Đã nhận hàng</button>
+                        )}
+                        {[2, 3].includes(item.status) && (
                           <div className=" text-sm lg:text-base font-medium ">Thời gian dự kiến nhận hàng: <span className="">{item?.estimatedDeliveryDate}</span></div>
 
                         )}
