@@ -26,7 +26,7 @@ const DetailProduct = () => {
 		},
 	});
 	return (
-		<div className="bg-[#f9fafb]">
+		<div className="">
 			<div className="padding ">
 				<Breadcrumb className="py-3">
 					<BreadcrumbList>

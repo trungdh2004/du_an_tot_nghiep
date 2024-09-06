@@ -1,0 +1,7 @@
+const TYPENOTIFICATION = {
+  PRODUCT: "APP//PRODUCT",
+  BLOG: "APP//BLOG",
+  ORDER: "APP//ORDER",
+};
+
+export default TYPENOTIFICATION;

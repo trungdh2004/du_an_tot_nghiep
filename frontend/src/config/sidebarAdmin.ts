@@ -115,7 +115,7 @@ const sidebarConfig: any[] = [
 		icon: FaBox,
 		isVisible: true,
 		label: "Đơn hàng",
-		isAdmin: true,
+		isAdmin: false,
 		children: [
 			{
 				path: "",
