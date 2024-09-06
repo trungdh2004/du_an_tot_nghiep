@@ -1,5 +1,5 @@
 import { LuLayoutDashboard } from "react-icons/lu";
-import { FaUsers } from "react-icons/fa";
+import { FaBox, FaUsers } from "react-icons/fa";
 import { FaUsersCog } from "react-icons/fa";
 import { MdOutlinePostAdd } from "react-icons/md";
 
@@ -43,7 +43,6 @@ const sidebarConfig: any[] = [
 		isVisible: true,
 		label: "Nhãn",
 		isAdmin: false,
-
 	},
 	{
 		path: "/product",
@@ -71,7 +70,6 @@ const sidebarConfig: any[] = [
 		isVisible: true,
 		label: "Màu sắc",
 		isAdmin: false,
-
 	},
 	{
 		path: "/blogs",
@@ -97,7 +95,6 @@ const sidebarConfig: any[] = [
 				isVisible: true,
 				label: "Bài viết của tôi",
 			},
-
 		],
 	},
 	{
@@ -110,11 +107,60 @@ const sidebarConfig: any[] = [
 		path: "/revenue",
 		icon: LuLayoutDashboard,
 		isVisible: true,
-      label: "Doanh thu",
+		label: "Doanh thu",
 		isAdmin: true,
-  }
-
+	},
+	{
+		path: "/order",
+		icon: FaBox,
+		isVisible: true,
+		label: "Đơn hàng",
+		isAdmin: false,
+		children: [
+			{
+				path: "",
+				icon: LuLayoutDashboard,
+				isVisible: true,
+				label: "Đơn hàng chờ xác nhận",
+			},
+			{
+				path: "/orderconfirm",
+				icon: MdOutlinePostAdd,
+				isVisible: true,
+				label: "Đơn hàng xác nhận",
+			},
+			{
+				path: "/orderconfirmShipper",
+				icon: MdOutlinePostAdd,
+				isVisible: true,
+				label: "Đơn hàng chọn vận chuyển",
+			},
+			{
+				path: "/ordership",
+				icon: MdOutlinePostAdd,
+				isVisible: true,
+				label: "Đơn giao hàng ",
+			},
+			{
+				path: "/ordershipsuccess",
+				icon: MdOutlinePostAdd,
+				isVisible: true,
+				label: "Đơn giao hàng thành công",
+			},
+			{
+				path: "/orderreceived",
+				icon: MdOutlinePostAdd,
+				isVisible: true,
+				label: "Đơn đã nhận",
+			},
+			{
+				path: "/ordercancel",
+				icon: MdOutlinePostAdd,
+				isVisible: true,
+				label: "Đơn đã hủy",
+			},
+		],
+	},
 ];
-
 
 export default sidebarConfig;
