@@ -22,7 +22,6 @@ const CommentProSchema = new mongoose.Schema(
     },
     user: {
       type: String,
-      index: true,
       required: true,
     },
     commentType: {
