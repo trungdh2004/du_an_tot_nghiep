@@ -111,12 +111,26 @@ const Attribute = ({
 							<RiArrowDownSFill size={20} />
 						</motion.div>
 					</div>
-					<div className="text-sm text-left text-gray-500">
-						{attribute?.color?.name}, {attribute?.size?.name}
+					<div
+						className={cn(
+							"text-sm text-left ",
+							(!attribute?.color && !attribute?.size) || !attribute?.quantity
+								? "text-red-500 max-sm:max-w-44 text-[10px]"
+								: "text-gray-500 ",
+						)}
+					>
+						{!attribute?.color && !attribute?.size
+							? `Phân loại hàng này đã bị xoá, vui lòng lựa chọn một phân loại khác.`
+							: attribute?.quantity
+								? `${attribute?.color?.name}, ${attribute?.size?.name}`
+								: `Phân loại hàng này đã hết, vui lòng lựa chọn một phân loại khác.`}
 					</div>
 				</button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent className="min-w-80 p-1.5">
+			<DropdownMenuContent
+				className="min-w-80 p-1.5"
+				align={!attribute?.color && !attribute?.size ? "end" : "center"}
+			>
 				<div
 					className={cn(
 						"space-y-3 p-1.5 rounded",
