@@ -5,12 +5,13 @@ import { Outlet, ScrollRestoration } from "react-router-dom";
 const MainLayout = () => {
 	return (
 		<div>
+			<div className="bg-magic"></div>
 			<Header />
 			<main className="mt-[64px]">
 				<Outlet />
-      </main>
-      <Footer />
-      <ScrollRestoration/>
+			</main>
+			<Footer />
+			<ScrollRestoration />
 		</div>
 	);
 };

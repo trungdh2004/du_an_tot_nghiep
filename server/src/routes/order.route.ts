@@ -21,5 +21,6 @@ routerOrder.post("/cancelOrder/:id",authentication, orderController.cancelClient
 // client
 routerOrder.post("/pagingOrderClient",authentication, orderController.pagingOrderClient);
 routerOrder.get("/getDetailOrder/:id",authentication, orderController.getByIdOrderClient);
+routerOrder.get("/receivedClientOrder/:id",authentication, orderController.receivedClientOrder);
 
 export default routerOrder;

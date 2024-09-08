@@ -317,7 +317,7 @@ class CartController {
             attribute: attribute,
           },
           {
-            quantity: existingProductCart.quantity + quantity,
+            quantity: existingProductCart.quantity + +quantity,
           },
           {
             new: true,
@@ -348,7 +348,7 @@ class CartController {
 
       const newCartItem = await CartItemModel.create({
         product: productId,
-        quantity,
+        quantity:+quantity,
         attribute,
         cart: existingCart._id,
       });
