@@ -113,7 +113,6 @@ class CommentController {
             avatarUrl: 1,
             is_admin: 1,
             is_staff: 1,
-            blocked_at: 1,
           },
         })
         .sort({ createdAt: sort })
