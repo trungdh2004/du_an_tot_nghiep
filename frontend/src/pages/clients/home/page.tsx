@@ -6,7 +6,7 @@ import Slider from "./Slider";
 
 const HomePage = () => {
 	return (
-		<div className="bg-[#f9fafb]">
+		<div className="">
 			<Slider />
 			<Carousel />
 			<ProductByCategory />

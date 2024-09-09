@@ -1,9 +1,10 @@
-import { Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
 import { IAddress } from "./address";
 import { IUser } from "./models";
 import { IAttribute, IProduct } from "./product";
 
 export interface IOrder extends Document {
+    _id:string;
     user:string | IUser
     code:string;
     address:string | IAddress;
@@ -33,6 +34,7 @@ export interface IOrder extends Document {
 
 
 export interface IOrderItem extends Document {
+    _id:string;
     product:string | IProduct;
     status:number;
     quantity:number;
