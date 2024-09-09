@@ -2,13 +2,29 @@ import CommentEditor from "@/components/common/CommentForm";
 import CommentItem from "./CommentItem";
 import FilterComment from "./FilterComment";
 import { useState } from "react";
-
-const Comments = () => {
+import { createComment } from "@/service/comment";
+import { IProductDetail } from "@/types/product";
+import TYPE_COMMENT from "@/config/typeComment";
+type Props = {
+	product: IProductDetail | undefined;
+};
+const Comments = ({ product }: Props) => {
 	const [content, setContent] = useState("");
 	const [open, setOpen] = useState(false);
 
-	const onSubmitComment = () => {
+	const onSubmitComment = async () => {
 		console.log("value:", content);
+		try {
+			const data = await createComment(
+				content,
+				product?._id as string,
+				TYPE_COMMENT.PRODUCT,
+      );
+      setContent("")
+			return data;
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	const handleChange = (content: string) => {
@@ -16,8 +32,8 @@ const Comments = () => {
 	};
 
 	const handleClose = () => {
-		setOpen(false)
-	}
+		setOpen(false);
+	};
 	return (
 		<div>
 			<div className="mb-3 flex items-center gap-2">
