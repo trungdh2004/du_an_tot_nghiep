@@ -1,6 +1,6 @@
 import { formatQuantity } from '@/common/localFunction';
 import { cn } from '@/lib/utils';
-import { fetchOrder } from '@/service/order';
+import { fetchOrder, receivedClientOrder } from '@/service/order';
 import { IItemOrder, IItemOrderList, IOrderList } from '@/types/order';
 import { Item } from '@radix-ui/react-dropdown-menu';
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -49,9 +49,6 @@ const OrderManagements = () => {
     queryKey: ['purchase', status],
     queryFn: async () => {
       const { data } = await fetchOrder({ status: status });
-      // console.log("---------------------", data.data?.content.statusList)
-      // setStatus(data.data?.content.statusList)
-      // console.log("------", data.data.content)
       return data?.data.content;
     },
     staleTime: 5 * 60 * 60,
@@ -63,6 +60,14 @@ const OrderManagements = () => {
     return () => clearTimeout(timer);
   }, [isLoading]);
   // console.log("dladalndalfndalfdjanldkans", statusLists)
+  const handleReceivedClientOrder = async (id: string) => {
+    try {
+      const data = await receivedClientOrder(id);
+      return data
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return (
     <>
       <div className="">
@@ -152,7 +157,7 @@ const OrderManagements = () => {
                           <button className="px-3 py-2 lg:px-8 lg:py-3 text-white bg-red-500 border border-orange-700 hover:bg-red-600 transition-all  duration-300    rounded-sm text-xs lg:text-[16px]">Hủy đơn hàng</button>
                         )}
                         {[4].includes(item.status) && (
-                          <button className="px-3 py-2 lg:px-8 lg:py-3 text-white bg-blue-500 border border-blue-600 hover:bg-blue-600 transition-all  duration-300    rounded-sm text-xs lg:text-[16px]">Đã nhận hàng</button>
+                          <button onClick={() => handleReceivedClientOrder(item._id)} className="px-3 py-2 lg:px-8 lg:py-3 text-white bg-blue-500 border border-blue-600 hover:bg-blue-600 transition-all  duration-300    rounded-sm text-xs lg:text-[16px]">Đã nhận hàng</button>
                         )}
                         {[2, 3].includes(item.status) && (
                           <div className=" text-sm lg:text-base font-medium ">Thời gian dự kiến nhận hàng: <span className="">{item?.estimatedDeliveryDate}</span></div>

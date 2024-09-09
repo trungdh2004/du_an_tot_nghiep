@@ -87,6 +87,7 @@ export const fetchOrderDetail = async (id: string) => {
   const data = await instance.get(`/order/getDetailOrder/${id}`);
   return data;
 }
-export const orderConfirm = async (id: string) => {
-
+export const receivedClientOrder = async (id: string) => {
+  const data = await instance.get(`/order/receivedClientOrder/${id}`);
+  return data;
 }
