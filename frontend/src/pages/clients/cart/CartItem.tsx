@@ -112,16 +112,25 @@ const CartItem = ({
 				)}
 			</div>
 			<div className="flex items-center w-full lg:w-[46.27949%]">
-				<div className="min-w-16 min-h-16 max-w-16 max-h-16 md:min-w-20 md:min-h-20 md:max-w-20 md:max-h-20">
+				<div className="min-w-16 min-h-16 max-w-16 max-h-16 md:min-w-20 md:min-h-20 md:max-w-20 md:max-h-20 relative rounded overflow-hidden">
 					<img
 						src={optimizeCloudinaryUrl(item.thumbnail, 80, 80)}
 						alt={item.name}
 						className="w-full h-full object-cover"
 					/>
+					<div className="absolute inset-x-0 bottom-0 bg-black/45">
+						<p className="text-center text-white text-xs">
+							{!item?.attribute?._id
+								? "Không khả dụng"
+								: !item?.attribute?.quantity
+									? "Hết hàng"
+									: ""}
+						</p>
+					</div>
 				</div>
 				<div
 					className={cn(
-						"px-2.5 py-1.5 sm:w-full md:w-5/6",
+						" px-2.5 py-1.5 sm:w-full md:w-5/6",
 						!item?.attribute?._id || !item?.attribute?.quantity
 							? "w-[75%]"
 							: "w-[78%]",
@@ -198,6 +207,7 @@ const CartItem = ({
 						size="small"
 						defaultValue={item?.quantity}
 						maxTotal={item?.attribute?.quantity}
+						getValue={handleChangeQuantity}
 					/>
 				) : (
 					<span className="text-black opacity-45">{item?.quantity}</span>

@@ -10,11 +10,11 @@ import { HiOutlineTrash } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import CartGroup from "./CartGroup";
+
 type CheckedState = Record<string, boolean>;
+
 const CartPage = () => {
 	const { carts, totalCart, itemCart, setItemCart, setTotalCart } = useCart();
-	console.log(">>>Cart thay đổi");
-
 	const [checkedState, setCheckedState] = useState<CheckedState>({});
 	const [allChecked, setAllChecked] = useState<boolean>(false);
 	const [groupCheckedState, setGroupCheckedState] = useState<CheckedState>({});
@@ -26,15 +26,21 @@ const CartPage = () => {
 		totalAmount: 0,
 	});
 
+	const isItemValid = useCallback((item: any) => {
+		return item?.attribute?._id && item?.attribute?.quantity > 0;
+	}, []);
+
 	useEffect(() => {
 		const isAllChecked = carts?.every((cart) =>
-			cart.items.every((item) => checkedState[item?._id as string]),
+			cart.items.every(
+				(item) => !isItemValid(item) || checkedState[item?._id as string],
+			),
 		);
 		const totals = carts?.reduce(
 			(acc, cart) => {
 				const groupTotals = cart?.items?.reduce(
 					(groupAcc, item) => {
-						if (checkedState[item?._id as string]) {
+						if (isItemValid(item) && checkedState[item?._id as string]) {
 							groupAcc.totalQuantity += 1;
 							groupAcc.totalAmount +=
 								(item?.attribute?.discount || 0) * (item?.quantity || 0);
@@ -52,82 +58,88 @@ const CartPage = () => {
 
 		setTotalSelectedAmount(totals || { totalQuantity: 0, totalAmount: 0 });
 		setAllChecked(isAllChecked || false);
-	}, [checkedState, carts]);
+	}, [checkedState, carts, isItemValid]);
 
 	const totalAttribute = useMemo(() => {
 		if (!carts) return 0;
-		console.log(">>> totalAttribute");
-
 		return carts.reduce((totalItems, cart) => {
-			const groupItemsCount = cart?.items?.length;
+			const groupItemsCount = cart?.items?.filter(isItemValid).length;
 			return totalItems + groupItemsCount;
 		}, 0);
-	}, [carts]);
+	}, [carts, isItemValid]);
 
 	const handleCheckAll = () => {
 		const isChecked = !allChecked;
-		setAllChecked(isChecked);
-
 		const updatedCheckedState: CheckedState = {};
 		const updatedGroupCheckedState: CheckedState = {};
 
 		carts?.forEach((cart) => {
-			updatedGroupCheckedState[cart?.product?._id as string] = isChecked;
-			cart.items.forEach((item) => {
+			const validItems = cart.items.filter(isItemValid);
+			updatedGroupCheckedState[cart?.product?._id as string] =
+				isChecked && validItems.length > 0;
+			validItems.forEach((item) => {
 				updatedCheckedState[item?._id as string] = isChecked;
 			});
 		});
 
 		setCheckedState(updatedCheckedState);
 		setGroupCheckedState(updatedGroupCheckedState);
+		setAllChecked(isChecked);
 	};
 
 	const handleCheckboxGroup = (productId: string) => {
 		const isChecked = !groupCheckedState[productId];
 		const updatedCheckedState = { ...checkedState };
-		const updatedGroupCheckedState = {
-			...groupCheckedState,
-			[productId]: isChecked,
-		};
+		const updatedGroupCheckedState = { ...groupCheckedState };
 
-		carts?.forEach((cart) => {
-			if (cart.product._id === productId) {
-				cart.items.forEach((item) => {
-					updatedCheckedState[item?._id as string] = isChecked;
-				});
-			}
-		});
+		const cart = carts?.find((c) => c.product._id === productId);
+		if (cart) {
+			const validItems = cart.items.filter(isItemValid);
+			updatedGroupCheckedState[productId] = isChecked && validItems.length > 0;
+			validItems.forEach((item) => {
+				updatedCheckedState[item?._id as string] = isChecked;
+			});
+		}
 
 		setCheckedState(updatedCheckedState);
 		setGroupCheckedState(updatedGroupCheckedState);
 	};
 
 	const handleCheckboxItem = (productId: string, itemId: string) => {
-		const updatedCheckedState = {
-			...checkedState,
-			[itemId]: !checkedState[itemId],
-		};
+		const updatedCheckedState = { ...checkedState };
+		const updatedGroupCheckedState = { ...groupCheckedState };
+		const cart = carts?.find((c) => c.product._id === productId);
+		const item = cart?.items.find((i) => i._id === itemId);
 
-		const isGroupChecked = carts
-			?.find((cart) => cart.product._id === productId)
-			?.items.every((item) => updatedCheckedState[item._id as string]);
+		if (item && isItemValid(item)) {
+			updatedCheckedState[itemId] = !checkedState[itemId];
 
-		const updatedGroupCheckedState = {
-			...groupCheckedState,
-			[productId]: !!isGroupChecked,
-		};
+			const validItemsInGroup = (cart as any).items.filter(isItemValid);
 
-		setCheckedState(updatedCheckedState);
-		setGroupCheckedState(updatedGroupCheckedState);
+			if (validItemsInGroup.length === 1) {
+				updatedGroupCheckedState[productId] = updatedCheckedState[itemId];
+			} else {
+				const isGroupChecked = validItemsInGroup.every(
+					(item: any) => updatedCheckedState[item._id as string],
+				);
+				updatedGroupCheckedState[productId] = isGroupChecked;
+			}
+
+			setCheckedState(updatedCheckedState);
+			setGroupCheckedState(updatedGroupCheckedState);
+		}
 	};
+
 	const getAllSelectedItems = useCallback(() => {
-		const selectedItems = carts?.flatMap((cart) =>
+		return carts?.flatMap((cart) =>
 			cart.items
-				.filter((item) => checkedState[item?._id as string])
+				.filter(
+					(item) => isItemValid(item) && checkedState[item?._id as string],
+				)
 				.map((item) => item?._id),
 		);
-		return selectedItems;
-	}, []);
+	}, [carts, checkedState, isItemValid]);
+
 	const handleDelete = async (id: string | string[]) => {
 		try {
 			await deleteCartItem(id);
@@ -154,6 +166,7 @@ const CartPage = () => {
 			setItemCart(null);
 		}
 	};
+
 	const handleSubmitted = () => {
 		console.log("Các đơn hàng mua:", getAllSelectedItems());
 	};

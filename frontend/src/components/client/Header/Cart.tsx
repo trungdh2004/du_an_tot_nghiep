@@ -1,3 +1,4 @@
+import { formatCurrency } from "@/common/func";
 import {
 	HoverCard,
 	HoverCardContent,
@@ -9,9 +10,10 @@ import { cn } from "@/lib/utils";
 import useCart from "@/store/cart.store";
 import { LucideShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
+import CartPreview from "./CartPreview";
 
 const Cart = () => {
-	const { totalCart } = useCart();
+	const { totalCart, carts } = useCart();
 	const { isLoggedIn } = useAuth();
 	const navigateIsLogin = useCurrentRouteAndNavigation();
 	return (
@@ -42,7 +44,24 @@ const Cart = () => {
 					</div>
 				</HoverCardTrigger>
 				<HoverCardContent align="end" className="w-80">
-					xin chào
+					<div className={cn("")}>
+						{!totalCart ? (
+							<div className="py-14 flex items-center justify-center">
+								<div className="flex flex-col items-center justify-center">
+									<div className="w-24 h-24 mx-auto">
+										<img
+											src="/cart-is-empty.png"
+											alt=""
+											className="w-full h-full object-cover"
+										/>
+									</div>
+									<p>Chưa có sản phẩm</p>
+								</div>
+							</div>
+						) : (
+							<CartPreview carts={carts} totalCart={totalCart} />
+						)}
+					</div>
 				</HoverCardContent>
 			</HoverCard>
 		</Link>
