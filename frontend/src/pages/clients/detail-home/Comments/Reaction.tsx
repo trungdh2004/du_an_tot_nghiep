@@ -8,15 +8,16 @@ import {
 import { BiLike } from "react-icons/bi";
 import { AiFillLike } from "react-icons/ai";
 import Actions from "./Actions";
+import { useState } from "react";
 
 interface IProps {
 	handlOpenFeedback: () => void;
-	isLike: boolean;
 }
 
-const Reaction = ({ handlOpenFeedback, isLike }: IProps) => {
+const Reaction = ({ handlOpenFeedback }: IProps) => {
+	const [isLike, setIsLike] = useState<boolean>(false);
 	return (
-		<div className="flex items-center justify-between">
+		<div className="flex items-center justify-between pt-2">
 			<div className="flex items-center gap-2">
 				<div className="">
 					<TooltipProvider>
@@ -27,9 +28,13 @@ const Reaction = ({ handlOpenFeedback, isLike }: IProps) => {
 									className="border-none rounded-full size-9 hover:bg-gray-200"
 								>
 									{isLike ? (
-										<AiFillLike size={20} className="text-blue-500" />
+										<AiFillLike
+											size={20}
+											className="text-blue-500"
+											onClick={() => setIsLike(!isLike)}
+										/>
 									) : (
-										<BiLike size={18} />
+										<BiLike size={18} onClick={() => setIsLike(!isLike)} />
 									)}
 								</Button>
 							</TooltipTrigger>
@@ -46,7 +51,6 @@ const Reaction = ({ handlOpenFeedback, isLike }: IProps) => {
 				</div>
 			</div>
 			<Actions />
-
 		</div>
 	);
 };

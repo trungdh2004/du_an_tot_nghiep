@@ -1,4 +1,5 @@
 import instance from "@/config/instance";
+import { IObjectComment } from "@/types/TypeObjectComment";
 
 export const createComment = (
 	content: string,
@@ -11,4 +12,9 @@ export const createComment = (
 		commentType: commentType,
 	});
 	return data;
+};
+
+export const getListComments = (listObject: IObjectComment) => {
+  const data = instance.post(`/comment/getListComment`, listObject);
+  return data
 };

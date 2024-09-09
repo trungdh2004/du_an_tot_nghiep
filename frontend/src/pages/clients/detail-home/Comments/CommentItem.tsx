@@ -1,20 +1,50 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Actions from "./Actions";
 import Reaction from "./Reaction";
 import SendComment from "./SendComment";
 import CommentEditor from "@/components/common/CommentForm";
-
-const CommentItem = () => {
-	const [content, setContent] = useState("");
+import { Comment, IObjectComment } from "@/types/TypeObjectComment";
+import { format } from "date-fns";
+import TYPE_COMMENT from "@/config/typeComment";
+import { useAuth } from "@/hooks/auth";
+import { createComment } from "@/service/comment";
+type Props = {
+	comment: Comment;
+};
+const CommentItem = ({ comment }: Props) => {
+	const { authUser } = useAuth();
+	const [content, setContent] = useState(``);
+	const [objectComment, setObjectComment] = useState<IObjectComment>({
+		commentId: comment?._id,
+		commentType: TYPE_COMMENT.COMMENT,
+  });
 	const [open, setOpen] = useState(false);
-	const [openFeedback, setOpenFeedback] = useState(false);
-
+  const [openFeedback, setOpenFeedback] = useState(false);
+  useEffect(() => {
+     
+   },[]);
 	const handlOpenFeedback = () => {
 		setOpenFeedback(true);
+		if (comment?.user?._id !== authUser?._id) {
+			setContent(
+				`<span contentEditable="false" class="link-mention">@${comment?.user?.full_name}</span>`,
+			);
+    }
 	};
 
-	const onSubmitComment = () => {
-		console.log("value:", content);
+	const onSubmitComment = async () => {
+    console.log("value:", content);
+    try {
+			const data = await createComment(
+				content,
+				comment?._id as string,
+				TYPE_COMMENT.COMMENT,
+			);
+			setContent("");
+			return data;
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	const handleChange = (content: string) => {
@@ -29,32 +59,36 @@ const CommentItem = () => {
 		<div className="flex items-start gap-1 md:gap-3 w-full">
 			<div className="size-7 md:size-10 rounded-full border">
 				<img
-					src="https://i.pinimg.com/564x/60/bb/74/60bb743859d72a4dc3a245c3ba1786c2.jpg"
+					src={comment?.user?.avatarUrl}
 					alt=""
 					className="w-full h-full object-cover rounded-full"
 				/>
 			</div>
 			<div className="flex-1">
-				<div className="">
+				<div className="flex flex-col gap-2">
 					<div className="flex items-center gap-1">
-						<span className="font-semibold text-base">@toinh2004</span>
-						<span className="text-xs text-gray-400">3 năm trước</span>
+						<span className="font-semibold text-base">
+							{comment?.user?.full_name}
+						</span>
+						<span className="text-xs text-gray-400">
+							{format(new Date(comment?.createdAt), "dd/MM/yyyy HH:mm:ss")}
+						</span>
 					</div>
 					<span className="break-all text-sm">
-						đối với dòng nhạc của a e nghĩ cứ làm lyric video như vầy là đúng
-						mood r . làm mv thấy k hợp lắm với lại bên mình còn chưa có kinh
-						nghiệm lắm nên cứ trau dồi thêm 1 thời gian nữa đến khi đủ sức ra 1
-						mv tốt về cả hình ảnh lẫn âm nhạc a nhé. đợi tác phẩm tiếp theo của
-						a :D
+						<div
+							dangerouslySetInnerHTML={{ __html: comment?.content }}
+						/>
 					</span>
 				</div>
-				<Reaction handlOpenFeedback={handlOpenFeedback} isLike />
+				<Reaction handlOpenFeedback={handlOpenFeedback} />
 				{openFeedback && (
 					<CommentEditor
 						onSubmit={onSubmitComment}
 						avatar="/avatar_25.jpg"
 						handleClose={handleClose}
 						openComment
+						content={content}
+						handleChange={handleChange}
 					/>
 				)}
 			</div>
