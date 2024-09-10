@@ -68,7 +68,7 @@ export const selectShipper = async ({
 };
 
 export const cancelOrder = async (
-  id: string,
+  id: string | boolean,
   note: string,
   cancelBy?: number,
 ) => {
