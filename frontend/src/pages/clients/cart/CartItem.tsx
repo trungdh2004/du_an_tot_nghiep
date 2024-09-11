@@ -1,20 +1,27 @@
 import { formatCurrency } from "@/common/func";
 import { optimizeCloudinaryUrl } from "@/common/localFunction";
 import InputQuantity from "@/components/common/InputQuantity";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useUpdateAttributeItemCart } from "@/hooks/cart";
 import useDebounce from "@/hooks/shared";
+import { cn } from "@/lib/utils";
 import { getCountMyShoppingCart, updateCartItem } from "@/service/cart";
 import useCart from "@/store/cart.store";
 import { ICart, ICartItem } from "@/types/cart";
 import { IListColorAttribute, IListSizeAttribute } from "@/types/product";
 import { AxiosError } from "axios";
 import { useState } from "react";
+import { IoBanOutline } from "react-icons/io5";
 import { toast } from "sonner";
 import Attribute from "./Attribute";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { IoBanOutline } from "react-icons/io5";
+import { Link } from "react-router-dom";
 
 interface CartItemProps {
 	cart?: ICart;
@@ -79,16 +86,10 @@ const CartItem = ({
 		});
 	};
 	return (
-		<div
-			key={item._id}
-			className="item-group flex items-center mt-3 md:mt-5 px-2.5 md:p-5 pb-4"
-		>
+		<div key={item._id} className="item-group flex items-center">
 			<div
 				className={cn(
-					"flex md:flex-row-reverse  md:min-w-[58px] md:pl-5 md:pr-3",
-					item?.attribute?._id && item?.attribute?.quantity
-						? "min-w-9"
-						: "min-w-9 md:min-w-16",
+					"flex md:flex-row-reverse  min-w-[36px] md:min-w-[58px] md:pl-5 md:pr-3",
 				)}
 			>
 				{item?.attribute?._id && item?.attribute?.quantity ? (
@@ -101,13 +102,7 @@ const CartItem = ({
 					/>
 				) : (
 					<>
-						<Badge
-							className="hidden md:block uppercase text-nowrap text-[8px]"
-							variant={"destructive"}
-						>
-							Hết hàng
-						</Badge>
-						<IoBanOutline className="md:hidden text-red-500" />
+						<IoBanOutline className=" text-red-500" />
 					</>
 				)}
 			</div>
@@ -130,23 +125,45 @@ const CartItem = ({
 				</div>
 				<div
 					className={cn(
-						" px-2.5 py-1.5 sm:w-full md:w-5/6",
+						"flex flex-col justify-start px-2.5 py-1.5 sm:w-full md:w-5/6",
 						!item?.attribute?._id || !item?.attribute?.quantity
 							? "w-[75%]"
 							: "w-[78%]",
 					)}
 				>
-					<p className="max-sm:truncate">{item.name}</p>
-					<Attribute
-						isOpen={isOpen}
-						setIsOpen={setIsOpen}
-						errors={errors}
-						setErrors={setErrors}
-						handleChangeAttributes={handleChangeAttributes}
-						attributeAlreadyExists={attributeAlreadyExists}
-						product={listSizeAndColor}
-						attribute={item?.attribute as any}
-					/>
+					<Link
+						to={`/shop/detail/${decodeURI(cart?.product?.slug as string)}`}
+						className="max-sm:truncate"
+					>
+						{item.name}
+					</Link>
+					<div>
+						<Attribute
+							isOpen={isOpen}
+							setIsOpen={setIsOpen}
+							errors={errors}
+							setErrors={setErrors}
+							handleChangeAttributes={handleChangeAttributes}
+							attributeAlreadyExists={attributeAlreadyExists}
+							product={listSizeAndColor}
+							attribute={item?.attribute as any}
+						/>
+						<div
+							className={cn(
+								"text-sm text-left pointer-events-none",
+								(!item?.attribute?.color && !item?.attribute?.size) ||
+									!item?.attribute?.quantity
+									? "text-red-500 max-sm:max-w-44 text-[10px]"
+									: "text-gray-500 ",
+							)}
+						>
+							{!item?.attribute?.color && !item?.attribute?.size
+								? `Phân loại hàng này đã bị xoá, vui lòng lựa chọn một phân loại khác.`
+								: item?.attribute?.quantity
+									? `${(item?.attribute?.color as any)?.name}, ${(item?.attribute?.size as any)?.name}`
+									: `Phân loại hàng này đã hết, vui lòng lựa chọn một phân loại khác.`}
+						</div>
+					</div>
 					<div className="flex lg:hidden">
 						<div className="text-center text-xs space-x-2">
 							<span
@@ -202,7 +219,7 @@ const CartItem = ({
 				</span>
 			</div>
 			<div className="hidden lg:flex w-[15.4265%] text-center items-center justify-center">
-				{item?.attribute?._id ? (
+				{item?.attribute?._id && item?.attribute?.quantity ? (
 					<InputQuantity
 						size="small"
 						defaultValue={item?.quantity}
@@ -226,7 +243,16 @@ const CartItem = ({
 				className="hidden lg:block w-[12.70417%] text-center cursor-pointer"
 				onClick={() => setItemCart(item)}
 			>
-				Xoá
+				<TooltipProvider>
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<Button className="bg-transparent hover:bg-transparent outline-none border-none text-black/75">
+								Xoá
+							</Button>
+						</TooltipTrigger>
+						<TooltipContent>Xoá sản phẩm ra khỏi giỏ hàng</TooltipContent>
+					</Tooltip>
+				</TooltipProvider>
 			</div>
 		</div>
 	);

@@ -100,9 +100,9 @@ const Attribute = ({
 	return (
 		<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
 			<DropdownMenuTrigger asChild className="outline-none">
-				<button className="text-sm text-left text-gray-500 outline-none">
-					<div className="flex items-end gap-1">
-						Phân loại sản phẩm{" "}
+				<button className="text-sm text-left text-gray-500 outline-none inline-block">
+					<div className="flex items-start gap-1 w-min">
+						<span className="text-nowrap">Phân loại sản phẩm</span>{" "}
 						<motion.div
 							initial={false}
 							animate={isOpen ? "open" : "closed"}
@@ -110,20 +110,6 @@ const Attribute = ({
 						>
 							<RiArrowDownSFill size={20} />
 						</motion.div>
-					</div>
-					<div
-						className={cn(
-							"text-sm text-left ",
-							(!attribute?.color && !attribute?.size) || !attribute?.quantity
-								? "text-red-500 max-sm:max-w-44 text-[10px]"
-								: "text-gray-500 ",
-						)}
-					>
-						{!attribute?.color && !attribute?.size
-							? `Phân loại hàng này đã bị xoá, vui lòng lựa chọn một phân loại khác.`
-							: attribute?.quantity
-								? `${attribute?.color?.name}, ${attribute?.size?.name}`
-								: `Phân loại hàng này đã hết, vui lòng lựa chọn một phân loại khác.`}
 					</div>
 				</button>
 			</DropdownMenuTrigger>

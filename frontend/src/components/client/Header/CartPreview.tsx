@@ -1,4 +1,5 @@
 import { formatCurrency } from "@/common/func";
+import { optimizeCloudinaryUrl } from "@/common/localFunction";
 import { ICart } from "@/types/cart";
 import { Link } from "react-router-dom";
 type Props = {
@@ -19,7 +20,7 @@ const CartPreview = ({ totalCart, carts }: Props) => {
 								<div className="flex items-start gap-1">
 									<div className="min-w-10 min-h-10 max-w-10 max-h-10 w-10 h-10">
 										<img
-											src={item?.thumbnail}
+											src={optimizeCloudinaryUrl(item?.thumbnail, 40, 40)}
 											alt=""
 											className="w-full h-full object-cover"
 										/>

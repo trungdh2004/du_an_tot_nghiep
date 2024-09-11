@@ -10,7 +10,7 @@ import { IProductDetail } from "@/types/product";
 import ButtonLoading from "@/components/common/ButtonLoading";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { addProductToCart } from "@/service/cart";
+import { addProductToCart, pagingCart } from "@/service/cart";
 import { AxiosError } from "axios";
 import useCartAnimation from "@/hooks/useCartAnimation";
 import useCart from "@/store/cart.store";
@@ -40,7 +40,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 	const { isLoggedIn } = useAuth();
 	const { startAnimation, RenderAnimation } = useCartAnimation();
 	const navigateIsLogin = useCurrentRouteAndNavigation();
-	const { updateTotalCart } = useCart();
+	const { updateTotalCart, setCarts } = useCart();
 	const [stateInfoProduct, setStateInfoProduct] = useState<IStateInfoProduct>({
 		listColorExist: [],
 		listSizeExist: [],
@@ -132,15 +132,17 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						isLoadingBynow: false,
 						isLoadingShopping: true,
 					});
-					const { data } = await addProductToCart({
+					await addProductToCart({
 						attribute: attributeId,
 						productId: product?._id as string,
 						quantity: purchaseQuantity,
 					});
+					const { data: dataCarts } = await pagingCart({ pageSize: 9999999 });
 					setIsLoadingButton({
 						isLoadingBynow: false,
 						isLoadingShopping: false,
 					});
+					setCarts(dataCarts?.data?.content);
 					document.querySelector(".ablum-detail-product");
 					const itemElement = document.querySelector(
 						".ablum-detail-product",

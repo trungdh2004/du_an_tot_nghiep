@@ -14,7 +14,9 @@ import CartGroup from "./CartGroup";
 type CheckedState = Record<string, boolean>;
 
 const CartPage = () => {
-	const { carts, totalCart, itemCart, setItemCart, setTotalCart } = useCart();
+	const [isModalConfirm, setIsModalConfirm] = useState(false);
+	const { carts, totalCart, itemCart, setItemCart, setTotalCart, setCarts } =
+		useCart();
 	const [checkedState, setCheckedState] = useState<CheckedState>({});
 	const [allChecked, setAllChecked] = useState<boolean>(false);
 	const [groupCheckedState, setGroupCheckedState] = useState<CheckedState>({});
@@ -29,7 +31,11 @@ const CartPage = () => {
 	const isItemValid = useCallback((item: any) => {
 		return item?.attribute?._id && item?.attribute?.quantity > 0;
 	}, []);
-
+	useEffect(() => {
+		if (itemCart) {
+			setIsModalConfirm(true);
+		}
+	}, [itemCart]);
 	useEffect(() => {
 		const isAllChecked = carts?.every((cart) =>
 			cart.items.every(
@@ -144,19 +150,29 @@ const CartPage = () => {
 		try {
 			await deleteCartItem(id);
 			const quantityDecreased = Array.isArray(id)
-				? carts?.reduce((total, obj) => {
-						const sumItems = obj?.items?.reduce((sum, item) => {
-							if (id?.includes(item?._id as string)) {
-								sum += Number(item?.quantity);
-							}
-							return sum;
-						}, 0);
-						return (total += Number(sumItems));
-					}, 0)
-				: (itemCart as any)?.quantity;
-
+				? carts.reduce(
+						(total, cart) =>
+							total +
+							cart.items.reduce(
+								(sum, item) =>
+									id.includes(item._id as string)
+										? sum + Number(item.quantity)
+										: sum,
+								0,
+							),
+						0,
+					)
+				: itemCart?.quantity || 0;
 			const newTotal = totalCart - quantityDecreased;
-
+			const newCarts = carts.map((cart) => ({
+				...cart,
+				items: cart.items.filter((item) =>
+					!Array.isArray(id)
+						? item._id !== id
+						: !id.includes(item._id as string),
+				),
+			}));
+			setCarts(newCarts);
 			setTotalCart(newTotal);
 		} catch (error) {
 			if (error instanceof AxiosError) {
@@ -164,22 +180,30 @@ const CartPage = () => {
 			}
 		} finally {
 			setItemCart(null);
+			setIsModalConfirm(false);
 		}
 	};
 
 	const handleSubmitted = () => {
 		console.log("Các đơn hàng mua:", getAllSelectedItems());
 	};
-
 	return (
 		<>
 			<DialogConfirm
-				open={Boolean(itemCart)}
+				open={Boolean(isModalConfirm)}
 				title="Xác nhận xoá sản phẩm!"
 				content="Bạn chắc chắn muốn xoá bỏ sản phẩm đã chọn ra khỏi giỏ hàng chứ?"
-				handleSubmit={() => handleDelete(itemCart?._id as string)}
+				handleSubmit={() => {
+					if (itemCart?._id) {
+						return handleDelete(itemCart?._id as string);
+					} else {
+						const listId = getAllSelectedItems() as string[];
+						handleDelete(listId);
+					}
+				}}
 				handleClose={() => {
 					setItemCart(null);
+					setIsModalConfirm(false);
 				}}
 			/>
 			<section className="px-0 sm:px-[30px] md:px-[40px] xl:px-[50px] 2xl:px-[60px] w-full bg-gray-100 py-5">
@@ -224,13 +248,11 @@ const CartPage = () => {
 									className="flex items-center justify-end cursor-pointer md:hidden p-1"
 									onClick={() => {
 										const listId = getAllSelectedItems() as string[];
-										if (listId?.length > 0) {
-											handleDelete(listId as string[]);
-										} else {
-											toast.error(
-												"Bạn chưa chọn sản phẩm nào trong giỏ hàng để xoá!",
-											);
-										}
+										listId?.length <= 0
+											? toast.error(
+													"Bạn chưa chọn sản phẩm nào trong giỏ hàng để xoá!",
+												)
+											: setIsModalConfirm(true);
 									}}
 								>
 									<HiOutlineTrash size={20} />
@@ -281,13 +303,11 @@ const CartPage = () => {
 											className="hidden md:block cursor-pointer"
 											onClick={() => {
 												const listId = getAllSelectedItems() as string[];
-												if (listId?.length > 0) {
-													handleDelete(listId as string[]);
-												} else {
-													toast.error(
-														"Bạn chưa chọn sản phẩm nào trong giỏ hàng để xoá!",
-													);
-												}
+												listId?.length <= 0
+													? toast.error(
+															"Bạn chưa chọn sản phẩm nào trong giỏ hàng để xoá!",
+														)
+													: setIsModalConfirm(true);
 											}}
 										>
 											Xoá
