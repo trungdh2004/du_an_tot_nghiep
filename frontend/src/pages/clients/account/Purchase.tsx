@@ -42,16 +42,43 @@ const OrderManagements = () => {
       "name": "Đã hủy",
     },
   ];
+  const statusList = [
+    {
+      "index": 1,
+      "name": "Chờ xác nhận",
+    },
+    {
+      "index": 2,
+      "name": "Chờ lấy hàng",
+    },
+    {
+      "index": 3,
+      "name": "Đang giao hàng",
+    },
+    {
+      "index": 4,
+      "name": "Đã giao hàng",
+    },
+    {
+      "index": 5,
+      "name": "Đã nhận hàng",
+    },
+    {
+      "index": 6,
+      "name": "Đã hủy",
+    },
+  ];
   const handleMenuClick = (item: any) => {
     setActive(item.index);
     setStatus(item.index === 7 ? null : item.index);
   }
+  const handleFetchOrder = async () => {
+    const { data } = await fetchOrder({ status: status });
+    return data?.data.content;
+  }
   const { data: orderData, isLoading } = useQuery({
     queryKey: ['purchase', status],
-    queryFn: async () => {
-      const { data } = await fetchOrder({ status: status });
-      return data?.data.content;
-    },
+    queryFn: handleFetchOrder,
     staleTime: 5 * 60 * 60,
   });
   useEffect(() => {
@@ -95,7 +122,7 @@ const OrderManagements = () => {
                       {/* head-order */}
                       <div className="w-full bg-white box-shadow flex justify-between items-center rounded-sm border border-gray-200 px-5 py-5">
                         <div className="text-sm md:text-base font-semibold">Mã đơn hàng: <span className='text-gray-900 font-medium'>{item?.code} </span></div>
-                        <div className="text-sm md:text-base text-red-500 font-medium">{menuList.find((status) => status.index === item.status)?.name}</div>
+                        <div className="text-sm md:text-base text-blue-500 font-medium ">{statusList.find((status) => status.index === item.status)?.name}</div>
                       </div>
                       {/* end head */}
 
@@ -135,7 +162,7 @@ const OrderManagements = () => {
 
                                 <div className="w-full flex justify-between items-center pt-2">
                                   {/*  */}
-                                  {item.status === 6 && (
+                                  {item.status === 8 && (
                                     <div className="w-full">
                                       <button className="px-5 py-2 md:px-8 lg:py-3 text-white bg-blue-500 border border-blue-500 rounded-sm text-sm lg:text-[18px]">Đánh giá</button>
                                     </div>
@@ -186,8 +213,9 @@ const OrderManagements = () => {
       </div>
       {openId && (
         <CancelConfirm
-          open={!!openId}
+          open={openId}
           handleClose={() => setOpenId(false)}
+          handleFetchOrder={handleFetchOrder}
         />
       )}
     </>

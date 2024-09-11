@@ -21,11 +21,7 @@ type StatusHistoryObject = {
 const PurchaseOrder = () => {
   const [status, setStatus] = useState(null);
   const [statusLists, setStatusLists] = useState<number[]>([0]);
-  const menuList = [
-    {
-      "index": 7,
-      "name": "Tất cả",
-    },
+  const statusList = [
     {
       "index": 1,
       "name": "Chờ xác nhận",
@@ -36,39 +32,21 @@ const PurchaseOrder = () => {
     },
     {
       "index": 3,
-      "name": "Chờ giao hàng",
+      "name": "Đang giao hàng",
+    },
+    {
+      "index": 4,
+      "name": "Đã giao hàng",
     },
     {
       "index": 5,
-      "name": "Đã giao",
+      "name": "Đã nhận hàng",
     },
     {
       "index": 6,
       "name": "Đã hủy",
     },
   ];
-  const statusList = [
-    {
-      index: 1,
-      percent: 35,
-    },
-    {
-      index: 2,
-      percent: 35,
-    },
-    {
-      index: 3,
-      percent: 60,
-    },
-    {
-      index: 4,
-      percent: 80,
-    },
-    {
-      index: 5,
-      percent: 100,
-    },
-  ]
   const [statusOrder, setStatusOrder] = useState<StatusHistoryObject>({});
 
   const { id } = useParams();
@@ -114,13 +92,13 @@ const PurchaseOrder = () => {
           <div className="bg-white py-3 md:py-5 px-2 md:px-5 border-b-2 box-shadow border-dotted border-gray-300  rounded flex justify-between items-center">
             <div className="">
               <Link to={`/account/purchase`}>
-                <button className="text-xs md:text-base  flex  items-center gap-1 text-gray-500 uppercase"><BsChevronLeft size={16} /> Trở lại</button>
+                <button className="text-xs md:text-base font-medium flex  items-center gap-1 text-gray-500 uppercase"><BsChevronLeft size={16} /> Trở lại</button>
               </Link>
             </div>
             <div className="hidden md:flex md:gap-x-3 md:justify-center md:items-center xl:gap-x-5 uppercase ">
-              <p className="flex justify-center items-center gap-1 text-xs md:text-base text-gray-900 ">Mã đơn hàng:  <span className="text-gray-600">{data?.data.code} </span></p>
+              <p className="flex justify-center items-center gap-1 font-medium text-xs md:text-base text-gray-900 ">Mã đơn hàng:  <span className="text-gray-600">{data?.data.code} </span></p>
               <span className="pb-1">|</span>
-              <span className="text-red-500">{menuList.find((item) => item.index === status)?.name}</span>
+              <span className="text-blue-500">{statusList.find((item) => item.index === status)?.name}</span>
             </div>
           </div>
           {/* status */}
@@ -128,7 +106,6 @@ const PurchaseOrder = () => {
             <div
               className={cn(
                 "w-full overflow-x-auto scrollbar-hide border-b-2 box-shadow border-dotted border-gray-300 rounded",
-                // order?.status == "cancelled" && "hidden"
               )}
             >
               <div className="min-w-[963px] py-10 px-6 bg-white border-t border-gray-300 border-dotted rounded">
@@ -262,9 +239,7 @@ const PurchaseOrder = () => {
               <div className="border border-[rgba(224,168,0,.4)] rounded w-full px-5 py-2 text-[rgba(0,0,0,.68)] leading-[160%]">
                 Vui lòng thanh toán <span className="text-red-500">{formatQuantity(data?.data?.totalMoney, "₫")}</span> khi nhận hàng
               </div>
-              <div className="flex justify-end  ">
-                <button className="">Đã nhận hàng</button>
-              </div>
+
             </div>
           </div>
         </div>

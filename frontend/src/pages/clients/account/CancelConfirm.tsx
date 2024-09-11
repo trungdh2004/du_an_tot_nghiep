@@ -27,62 +27,67 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { AiFillExclamationCircle } from 'react-icons/ai'
 import { cancelOrder } from '@/service/order'
 import { toast } from 'sonner'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 const FormSchema = z.object({
-  value: z.number(),
-  label: z.string().min(1, { message: "Vui lòng chọn lý do hủy đơn hàng" }),
+  type: z.string().min(1, { message: "Vui lòng chọn lý do hủy đơn hàng" }),
 });
 
 type Props = {
-  open: boolean,
+  open: string | boolean,
   handleClose: () => void,
-  handleSubmit?: () => void,
+  handleFetchOrder: () => void,
 }
-const CancelConfirm = ({ open, handleClose, handleSubmit }: Props) => {
+interface IRes {
+  note: string,
+  cancelBy: number,
+  open: string,
+}
+const CancelConfirm = ({ open, handleClose, handleFetchOrder }: Props) => {
+  const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   })
   const ListContent = [
-    {
-      value: 1,
-      label: "Muốn nhập/thay dổi mã Voucher"
-    },
-    {
-      value: 2,
-      label: "Muốn thay đổi sản phẩm trong đơn hàng"
-    },
-    {
-      value: 3,
-      label: "Thủ tục thanh toán quá rác rối"
-    },
-    {
-      value: 4,
-      label: "Tìm giá rẻ hơn chỗ khác"
-    },
-    {
-      value: 5,
-      label: "Đổi ý không muốn mua nữa"
-    }
+    "Muốn nhập/thay dổi mã Voucher",
+    "Muốn thay đổi sản phẩm trong đơn hàng",
+    "Thủ tục thanh toán quá rác rối",
+    "Tìm giá rẻ hơn chỗ khác",
+    "Đổi ý không muốn mua nữa",
   ];
-
-  const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    const noteCancel = ListContent.find(item => item.value.toString() === data.type)?.label || "";
-    const handleCancelOrder = async (open: string | boolean, noteCancel: string) => {
-      try {
-        const data = await cancelOrder(open, noteCancel);
-        console.log("huy hang ", data)
-        toast.success("Bạn đã hủy đơn hàng thành công!")
-
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    console.log("adadadad", noteCancel)
-    // Gọi hàm hủy đơn hàng với lý do hủy
+  console.log("id", open)
+  // const handleCancelOrder = async (open: string | boolean, noteCancel: string, cancelBy = 2) => {
+  //   try {
+  //     const data = await cancelOrder(open, noteCancel, cancelBy);
+  //     handleClose();
+  //     handleFetchOrder();
+  //     console.log("huy hang ", data)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
+  const { mutate } = useMutation({
+    mutationFn: async ({ open, note, cancelBy = 1 }: IRes) => {
+      const data = await cancelOrder(open, note, cancelBy);
+    },
+    onSuccess: () => {
+      handleClose();
+      queryClient.invalidateQueries({
+        queryKey: ['purchase']
+      })
+      toast.success("Bạn đã hủy đơn hàng thành công!");
+    },
+    onError: () => {
+      toast.error("Bạn đã hủy đơn hàng thất bại!");
+    },
+  })
+  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    // console.log("data", data.type)
+    mutate({ open: open as string, note: data.type as string, cancelBy: 1 });
   }
   return (
     <>
-      <Dialog open={open} onOpenChange={handleClose}>
+      <Dialog open={!!open} onOpenChange={handleClose}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>Chọn Lý Do Hủy</DialogTitle>
@@ -110,9 +115,9 @@ const CancelConfirm = ({ open, handleClose, handleSubmit }: Props) => {
                             return (
                               <FormItem key={index} className="flex items-center space-x-3 space-y-0">
                                 <FormControl>
-                                  <RadioGroupItem value={item.value} />
+                                  <RadioGroupItem value={item} />
                                 </FormControl>
-                                <FormLabel className="font-normal text-sm md:text-base">{item.label}</FormLabel>
+                                <FormLabel className="font-normal text-sm md:text-base">{item}</FormLabel>
                               </FormItem>
                             )
                           })}
@@ -122,11 +127,10 @@ const CancelConfirm = ({ open, handleClose, handleSubmit }: Props) => {
                     </FormItem>
                   )}
                 />
-                <Button className='w-full bg-red-500 py-3 text-sm md:text-base uppercase text-white rounded-sm' type="submit">Đồng ý</Button>
+                <button className='w-full bg-red-500 py-3 text-sm md:text-base uppercase text-white rounded-sm' type="submit">Đồng ý</button>
               </form>
             </Form>
           </div>
-
           <DialogFooter>
           </DialogFooter>
         </DialogContent>
