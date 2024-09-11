@@ -27,7 +27,10 @@ import { checkVoucher } from "../voucher";
 import { IVoucher } from "../../interface/voucher";
 import AttributeModel from "../../models/products/Attribute.schema";
 import ProductModel from "../../models/products/Product.schema";
-// import { socketNotificationOrderClient } from "../../socket/socketNotifycationClient.service";
+import { socketNotificationOrderClient } from "../../socket/socketNotifycationClient.service";
+import { socketNotificationAdmin } from "../../socket/socketNotifycationServer.service";
+import { TYPE_NOTIFICATION_ADMIN } from "../../config/typeNotification";
+import { formatCurrency } from "../../config/func";
 
 const long = +process.env.LONGSHOP! || 105.62573250208116;
 const lat = +process.env.LATSHOP! || 21.045193948892585;
@@ -317,6 +320,11 @@ class OrderController {
       //     $in: listId,
       //   },
       // });
+      socketNotificationAdmin(
+        `<p>Đơn hàng: <span style="color:blue;font-weight:500;">${newOrder.code}</span> vừa được đặt, vui lòng kiểm tra thông tin</p>`,
+        TYPE_NOTIFICATION_ADMIN.ORDER,
+        newOrder._id
+      );
 
       return res.status(STATUS.OK).json({
         message: "Tạo đơn hàng thành công",
@@ -891,7 +899,7 @@ class OrderController {
         vnp_TxnRef: `${newOrder._id}`,
         vnp_OrderInfo: "Thanh toan cho ma GD:" + newOrder._id,
         vnp_OrderType: ProductCode.Other,
-        vnp_ReturnUrl: `${returnUrl}?status=${stateDeCodeUrl}`, // Đường dẫn nên là của frontend
+        vnp_ReturnUrl: `${returnUrl}?state=${stateDeCodeUrl}`, // Đường dẫn nên là của frontend
         vnp_Locale: VnpLocale.VN,
       });
 
@@ -1064,15 +1072,27 @@ class OrderController {
         bankCode: verify.vnp_BankCode,
       });
 
-      await OrderModel.findByIdAndUpdate(existingOrder._id, {
-        payment: payment._id,
-        status: 1,
-        $push: {
-          statusList: 1,
+      const updateOder = await OrderModel.findByIdAndUpdate(
+        existingOrder._id,
+        {
+          payment: payment._id,
+          status: 1,
+          $push: {
+            statusList: 1,
+          },
+          amountToPay: 0,
+          paymentStatus: true,
         },
-        amountToPay: 0,
-        paymentStatus: true,
-      });
+        { new: true }
+      );
+
+      if (!updateOder) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Xử lí đơn hàng lỗi chúng tôi sẽ hoàn trả tiền sau",
+          url: "/",
+          type: 1,
+        });
+      }
 
       await OrderItemsModel.updateMany(
         {
@@ -1081,6 +1101,19 @@ class OrderController {
         {
           status: 1,
         }
+      );
+
+      socketNotificationAdmin(
+        `<p>Đơn hàng <span style="color:blue;font-weight:500;">${updateOder?.code}</span> vừa được đặt, vui lòng kiểm tra thông tin</p>`,
+        TYPE_NOTIFICATION_ADMIN.ORDER,
+        updateOder?._id
+      );
+      socketNotificationAdmin(
+        `<p>Có giao dịch thanh toán online với số tiền : <span style="color:red;font-weight:500;">${formatCurrency(
+          payment?.amount
+        )}</span>, vui lòng kiểm tra thông tin</p>`,
+        TYPE_NOTIFICATION_ADMIN.PAYMENT,
+        `${payment?._id}`
       );
 
       if (state) {
@@ -1433,59 +1466,59 @@ class OrderController {
         });
       }
 
-      existingOrder.orderItems.map(async (item, index) => {
-        const orderItem = item as IOrderItem;
-        const id = (item as IOrderItem).attribute;
-        const quantity = (item as IOrderItem).quantity;
-        await AttributeModel.findByIdAndUpdate(id, {
-          $inc: { quantity: -quantity },
-        });
-        await ProductModel.findByIdAndUpdate(orderItem?.product, {
-          $inc: { quantity: -quantity },
-        });
-        await OrderItemsModel.findByIdAndUpdate((item as IOrderItem)._id, {
-          status: 2,
-        });
-      });
+      // existingOrder.orderItems.map(async (item, index) => {
+      //   const orderItem = item as IOrderItem;
+      //   const id = (item as IOrderItem).attribute;
+      //   const quantity = (item as IOrderItem).quantity;
+      //   await AttributeModel.findByIdAndUpdate(id, {
+      //     $inc: { quantity: -quantity },
+      //   });
+      //   await ProductModel.findByIdAndUpdate(orderItem?.product, {
+      //     $inc: { quantity: -quantity },
+      //   });
+      //   await OrderItemsModel.findByIdAndUpdate((item as IOrderItem)._id, {
+      //     status: 2,
+      //   });
+      // });
 
-      let futureDateTimeOrder = handleFutureDateTimeOrder(1000);
+      // let futureDateTimeOrder = handleFutureDateTimeOrder(1000);
 
-      if (existingOrder.distance) {
-        futureDateTimeOrder = handleFutureDateTimeOrder(existingOrder.distance);
-      }
+      // if (existingOrder.distance) {
+      //   futureDateTimeOrder = handleFutureDateTimeOrder(existingOrder.distance);
+      // }
 
-      const orderUpdate = await OrderModel.findByIdAndUpdate(
-        existingOrder._id,
-        {
-          status: 2,
-          $push: {
-            statusList: 2,
-          },
-          confirmedDate: Date.now(),
-          estimatedDeliveryDate: futureDateTimeOrder,
-        }
-      );
-
-      await OrderItemsModel.updateMany(
-        {
-          _id: {
-            $in: existingOrder.orderItems,
-          },
-        },
-        {
-          status: 2,
-        },
-        {
-          now: true,
-        }
-      );
-
-      // socketNotificationOrderClient(
-      //   orderUpdate?.code as string,
-      //   2,
-      //   `${user?.id}`,
-      //   orderUpdate?._id as string
+      // const orderUpdate = await OrderModel.findByIdAndUpdate(
+      //   existingOrder._id,
+      //   {
+      //     status: 2,
+      //     $push: {
+      //       statusList: 2,
+      //     },
+      //     confirmedDate: Date.now(),
+      //     estimatedDeliveryDate: futureDateTimeOrder,
+      //   }
       // );
+
+      // await OrderItemsModel.updateMany(
+      //   {
+      //     _id: {
+      //       $in: existingOrder.orderItems,
+      //     },
+      //   },
+      //   {
+      //     status: 2,
+      //   },
+      //   {
+      //     now: true,
+      //   }
+      // );
+
+      socketNotificationOrderClient(
+        existingOrder?.code as string,
+        2,
+        `${existingOrder?.user}`,
+        existingOrder?._id as string
+      );
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập đơn hàng thành công",

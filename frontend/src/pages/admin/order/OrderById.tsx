@@ -11,7 +11,7 @@ const OrderById = () => {
 	const [dataTrackings, setDataTracking] = useState([]);
 	useEffect(() => {
 		handleGetOrderById();
-	}, []);
+	}, [id]);
 	const handleGetOrderById = async () => {
 		try {
 			const data = await getOrderById(id as string);

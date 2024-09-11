@@ -1,10 +1,11 @@
-import { getItemLocal } from "@/common/localStorage";
 import LoadingFixed from "@/components/LoadingFixed";
-import instance from "@/config/instance";
 import { currentAccount } from "@/service/account";
 import { getCountMyShoppingCart, pagingCart } from "@/service/cart";
 import useCart from "@/store/cart.store";
-import { AxiosError } from "axios";
+import {
+	ClientToServerEvents,
+	ServerToClientEvents,
+} from "@/types/socket.interface";
 import {
 	createContext,
 	Dispatch,
@@ -13,7 +14,7 @@ import {
 	useEffect,
 	useState,
 } from "react";
-import { toast } from "sonner";
+import { io, Socket } from "socket.io-client";
 export interface IUser {
 	avatarUrl?: string;
 	blocked_at?: boolean;
@@ -27,11 +28,13 @@ export interface IUser {
 	_id?: string;
 	is_shipper?: boolean;
 }
+
 interface AuthContextType {
 	authUser?: IUser | undefined; // thông tin người dùng
 	setAuthUser?: Dispatch<SetStateAction<IUser | undefined>>; // set thông tin người dùng
 	isLoggedIn?: boolean; // trạng thái đăng nhập
 	setIsLoggedIn?: Dispatch<SetStateAction<boolean>>; // set trạng thái đăng nhập
+	socket?: Socket<ServerToClientEvents, ClientToServerEvents>;
 }
 
 const AuthContext = createContext<AuthContextType>({});
@@ -43,21 +46,17 @@ interface AuthProviderProps {
 const AuthProvider = ({ children }: AuthProviderProps) => {
 	const { setCarts, setTotalCart } = useCart();
 	const [authUser, setAuthUser] = useState<IUser | undefined>(undefined);
+	const [socket, setSocket] =
+		useState<Socket<ServerToClientEvents, ClientToServerEvents>>();
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
-	const value = { authUser, setAuthUser, isLoggedIn, setIsLoggedIn };
+	const value = { authUser, setAuthUser, isLoggedIn, setIsLoggedIn, socket };
 	useEffect(() => {
 		setIsLoggedIn(true);
 		(async () => {
 			try {
-				const [account, carts, cartCount] = await Promise.all([
-					currentAccount(),
-					pagingCart({ pageSize: 999999999999999 }),
-					getCountMyShoppingCart(),
-				]);
-				setCarts(carts?.data?.data?.content);
-				setTotalCart(cartCount?.data?.count);
-				setAuthUser(account?.data?.data);
+				const { data } = await currentAccount();
+				setAuthUser(data?.data);
 			} catch (error) {
 				setTotalCart(0);
 				setCarts([]);
@@ -67,6 +66,12 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 				setIsLoading(false);
 			}
 		})();
+
+		return () => {
+			if (socket) {
+				socket.emit("disconnect", authUser?._id);
+			}
+		};
 	}, []);
 	if (isLoading) {
 		return <LoadingFixed />;
