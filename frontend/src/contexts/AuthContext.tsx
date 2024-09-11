@@ -56,17 +56,19 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 				setAuthUser(data?.data);
 				if (data.data._id) {
 					const role = data.data.is_admin || data.data.is_staff;
-
+					
 					const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
 						process.env.SERVER_SOCKET_URL!,
 						{
 							query: {
 								userId: data.data._id,
-								role: role,
+								role: role ? "admin" : "user",
 							},
 						},
 					);
 					setSocket(socket);
+					console.log({socket});
+					
 				}
 			} catch (error) {
 				setAuthUser(undefined);
@@ -75,6 +77,12 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 				setIsLoading(false);
 			}
 		})();
+
+		return () => {
+			if(socket) {
+				socket.emit("disconnect",authUser?._id)
+			}
+		}
 	}, []);
 	if (isLoading) {
 		return <LoadingFixed />;

@@ -11,4 +11,9 @@ routerNotification.delete("/delete/:id",authentication,notificationController.ha
 
 routerNotification.get("/watchedAll",authentication,notificationController.handleWatchedAll);
 
+routerNotification.get("/pagingNotificationAdmin",authentication,notificationController.pagingNotificationAdmin);
+
+routerNotification.put("/watchedNotificationAdmin/:id",authentication,notificationController.handleWatchedAdmin);
+
+
 export default routerNotification;

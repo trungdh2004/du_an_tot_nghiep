@@ -33,7 +33,7 @@ export const socketNotificationOrderClient = async (
     if (status === 4) {
       message = `Đơn hàng có mã :<strong>${code}</strong> đã giao thành công !!`;
     }
-
+    
     const newNotification = await NotificationModel.create({
       message: message,
       receiver: [userId],
@@ -43,7 +43,11 @@ export const socketNotificationOrderClient = async (
       recipientType: "single",
     });
 
+    
+
     if (newNotification) {
+      console.log({socket});
+      
       io.to(socket).emit("notification", newNotification);
     }
   } catch (error) {

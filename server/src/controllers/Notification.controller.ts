@@ -3,6 +3,7 @@ import { RequestModel } from "../interface/models";
 import NotificationModel from "../models/Notification.schema";
 import { formatDataPaging } from "../common/pagingData";
 import STATUS from "../utils/status";
+import NotificationAdminModel from "../models/NotificationAdmin.schema";
 
 class NotificationController {
   async pagingNotification(req: RequestModel, res: Response) {
@@ -180,6 +181,95 @@ class NotificationController {
       return res.status(STATUS.OK).json({
         message: "Đã đọc tất cả thành công",
       });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+
+
+  async pagingNotificationAdmin(req: RequestModel, res: Response) {
+    try {
+      const user = req.user;
+      const pageIndex = Number(req.query.page) || 1;
+      let limit = 10;
+      let skip = (pageIndex - 1) * limit || 0;
+      const listNotification = await NotificationAdminModel.find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit);
+
+      const countNotification = await NotificationAdminModel.countDocuments();
+
+      const countNotificationNotRead = await NotificationAdminModel.countDocuments({
+        readOnly:{
+          $nin:[user?.id]
+        }
+      });
+
+      const result = formatDataPaging({
+        limit,
+        pageIndex,
+        data: listNotification,
+        count: countNotification,
+      });
+
+      return res.status(STATUS.OK).json({
+        ...result,
+        countNotificationNotRead,
+      });
+    } catch (error) {}
+  }
+
+  async handleWatchedAdmin(req: RequestModel, res: Response) {
+    try {
+      const { id } = req.params;
+      const user = req.user;
+      const { isRead } = req.body;
+
+      if (!id)
+        return res
+          .status(STATUS.BAD_REQUEST)
+          .json({ message: "Bạn chưa chọn thông báo" });
+
+      if (!user) {
+        return res
+          .status(STATUS.BAD_REQUEST)
+          .json({ message: "Bạn chưa đăng nhập" });
+      }
+
+      const existingNotification = await NotificationAdminModel.findById(id);
+
+      if (!existingNotification)
+        return res
+          .status(STATUS.BAD_REQUEST)
+          .json({ message: "Không có thông báo nào" });
+      
+      let queryRead = {}
+
+      if(isRead) {
+        queryRead= {
+          $push : {
+            readOnly:user?.id
+          }
+        }
+      }else {
+        queryRead= {
+          $pull : {
+            readOnly:user?.id
+          }
+        }
+      }
+
+      const newNotification = await NotificationAdminModel.findByIdAndUpdate(
+        id,
+        queryRead,
+        { new: true }
+      );
+
+      return res.status(STATUS.OK).json(newNotification);
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
