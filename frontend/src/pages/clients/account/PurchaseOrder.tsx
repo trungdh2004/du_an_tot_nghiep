@@ -98,15 +98,7 @@ const PurchaseOrder = () => {
       })
     }
   })
-  // const handleReceivedClientOrder = async (id: string) => {
-  //   try {
-  //     const data = await receivedClientOrder(id);
-  //     return data
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
-  // console.log("date", paymentMethod)
+
   return (
     <>
       <div className="w-full px-0 lg:px-20">
@@ -179,6 +171,14 @@ const PurchaseOrder = () => {
             </div>
             {/*  */}
 
+          </div>
+
+          {/*  */}
+          <div className={cn(statusLists.find(item => item === 6) ? "block" : "hidden")}>
+            <div className="bg-[#FFFCF5] px-5 py-6 mt-1 mb-4">
+              <h3 className="text-sm md:text-[18px] text-red-500 font-medium pb-2 uppercase">Đơn hàng đã hủy</h3>
+              <span className="text-[#000000]">{data?.data?.cancelOrderDate && format(data?.data?.cancelOrderDate || "", "hh:mm dd/MM/yyyy")}</span>
+            </div>
           </div>
           {/* information */}
           <div className="">
@@ -254,20 +254,20 @@ const PurchaseOrder = () => {
                 <div className="w-[65%] md:w-[75%] flex flex-col text-right ">
                   <span className="py-2 md:py-4 px-3 border-b-2 border-r-2  border-dotted text-sm md:text-base rounded text-[rgba(0,0,0,.68)] leading-[160%]">Tổng tiền hàng</span>
                   <span className="py-2 md:py-4 px-3 border-b-2  border-r-2 border-dotted text-sm md:text-base rounded text-[rgba(0,0,0,.68)] leading-[160%]">Phí vận chuyển</span>
-                  <span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted text-sm md:text-base rounded text-[rgba(0,0,0,.68)] leading-[160%]">Giảm giá phí vận chuyển                  </span>
-                  <span className="py-3 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm lg:text-lg text-[rgba(0,0,0,.68)] leading-[160%]">Thành tiền</span>
+                  <span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted text-sm md:text-base rounded text-[rgba(0,0,0,.68)] leading-[160%]">Voucher</span>
+                  <span className="py-3 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-lg text-[rgba(0,0,0,.68)] leading-[160%]">Thành tiền</span>
                 </div>
                 <div className="w-[35%] md:w-[25%] flex flex-col text-right">
-                  <span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-base text-[rgba(0,0,0,.68)] leading-[160%]">{formatQuantity(data?.data?.totalMoney, "₫")}</span>
-                  <span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-base text-[rgba(0,0,0,.68)] leading-[160%]">₫5.000</span>
-                  <span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-base  text-[rgba(0,0,0,.68)] leading-[160%]">-₫5.000 </span>
-                  <span className="py-3 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-red-500 text-sm lg:text-lg leading-[160%]">{formatQuantity(data?.data?.totalMoney, "₫")}</span>
+                  <span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-base text-[rgba(0,0,0,.68)] leading-[160%]">{formatQuantity(data?.data?.totalMoney - data?.data?.shippingCost, "₫")}</span>
+                  <span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-base  text-[rgba(0,0,0,.68)] leading-[160%]"> {formatQuantity(data?.data?.shippingCost, "₫")}</span>
+                  <span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-base  text-[rgba(0,0,0,.68)] leading-[160%]"> {data?.data?.voucherAmount}</span>
+                  <span className="py-3 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-red-500 text-sm md:text-lg leading-[160%]">{formatQuantity(data?.data?.totalMoney, "₫")}</span>
                 </div>
               </div>
               <div className="py-5">
                 <div className={cn((paymentMethod === 1 ? "block" : "hidden"))}>
                   <div className="text-xs md:text-base border border-[rgba(224,168,0,.4)] rounded w-full px-5 py-2 text-[rgba(0,0,0,.68)] leading-[160%]">
-                    Vui lòng thanh toán <span className="text-red-500">{formatQuantity(data?.data?.totalMoney, "₫")}</span> khi nhận hàng.
+                    Vui lòng thanh toán <span className="text-red-500">{formatQuantity(data?.data?.amountToPay, "₫")}</span> khi nhận hàng.
                   </div>
                 </div>
                 <div className={cn((paymentMethod === 2 ? "block" : "hidden"))}>

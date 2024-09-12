@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { cancelOrder, fetchOrder, receivedClientOrder } from '@/service/order';
 import { IItemOrder, IItemOrderList, IOrderList } from '@/types/order';
 import { Item } from '@radix-ui/react-dropdown-menu';
-import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import LoadingTable from './LoadingTable';
 import { Link } from 'react-router-dom';
@@ -88,14 +88,29 @@ const OrderManagements = () => {
     }, 5000);
     return () => clearTimeout(timer);
   }, [isLoading]);
-  const handleReceivedClientOrder = async (id: string) => {
-    try {
-      const data = await receivedClientOrder(id);
-      return data
-    } catch (error) {
-      console.log(error)
+  const { mutate } = useMutation({
+    mutationFn: async (id: string) => {
+      try {
+        const data = await receivedClientOrder(id);
+        return data
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['purchase']
+      })
     }
-  }
+  })
+  // const handleReceivedClientOrder = async (id: string) => {
+  //   try {
+  //     const data = await receivedClientOrder(id);
+  //     return data
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
   return (
     <>
@@ -105,7 +120,7 @@ const OrderManagements = () => {
             <div className="sticky top-0">
               <ul className="flex scroll-custom  no-scrollbar text-base bg-white md:border md:border-gray-200 rounded box-shadow scroll-custom overflow-x-auto">
                 {menuList.map((item: any) => (
-                  <li key={item.index} onClick={() => handleMenuClick(item)} className={cn(`flex-1 text-nowrap px-5 cursor-pointer font-medium flex justify-center py-5 border-b-2 border-gray-200 hover:border-b-2
+                  <li key={item.index} onClick={() => handleMenuClick(item)} className={cn(`flex-1 text-nowrap text-sm md:text-base px-5 cursor-pointer font-medium flex justify-center py-3 md:py-5 border-b-2 border-gray-200 hover:border-b-2
                                  hover:border-blue-500 hover:text-blue-500 transition-all duration-300 `, active === item.index && `border-blue-500 text-blue-500`)}>
                     {item.name}
                   </li>
@@ -187,16 +202,16 @@ const OrderManagements = () => {
                             className="px-3 py-2 lg:px-8 lg:py-3 text-white bg-red-500 border border-orange-700 hover:bg-red-600 transition-all  duration-300    rounded-sm text-xs lg:text-[16px]">Hủy đơn hàng</button>
                         )}
                         {[4].includes(item.status) && (
-                          <button onClick={() => handleReceivedClientOrder(item._id)} className="max-w-[200px] px-3 py-2 lg:px-8 lg:py-3 text-white bg-blue-500 border border-blue-600 hover:bg-blue-600 transition-all  duration-300    rounded-sm text-xs lg:text-[16px]">Đã nhận hàng</button>
+                          <button onClick={() => mutate(item._id)} className="max-w-[200px] px-3 py-2 lg:px-8 lg:py-3 text-white bg-blue-500 border border-blue-600 hover:bg-blue-600 transition-all  duration-300    rounded-sm text-xs lg:text-[16px]">Đã nhận hàng</button>
                         )}
                         {[2, 3].includes(item.status) && (
-                          <div className=" text-xs lg:text-base font-medium ">Thời gian nhận hàng dự kiến: <span className="">{format(item?.estimatedDeliveryDate || "", "dd/MM/yyyy")}</span></div>
+                          <div className=" text-sm lg:text-base font-medium ">Thời gian nhận hàng dự kiến: <span className="">{format(item?.estimatedDeliveryDate || "", "dd/MM/yyyy")}</span></div>
 
                         )}
                         {[5].includes(item.status) && (
-                          <div className=" text-xs lg:text-base font-medium ">Đã nhận hàng: <span className="">{format(item?.shippedDate || "", "hh:mm  dd/MM/yyyy")}</span></div>
+                          <div className=" text-sm lg:text-base font-medium ">Đã nhận hàng: <span className="">{format(item?.shippedDate || "", "hh:mm  dd/MM/yyyy")}</span></div>
                         )}
-                        <div className="text-xs lg:text-base font-medium">Thành tiền:  <span className="text-xs lg:text-[18px] font-medium lg:font-semibold text-red-500">{formatQuantity(item.totalMoney, "₫")}</span></div>
+                        <div className="text-sm lg:text-base font-medium">Thành tiền:  <span className="text-xs lg:text-[18px] font-medium lg:font-semibold text-red-500">{formatQuantity(item.totalMoney, "₫")}</span></div>
                       </div>
                     </div>
                   </div>
