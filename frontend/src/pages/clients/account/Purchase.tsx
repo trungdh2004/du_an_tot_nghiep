@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import LoadingTable from './LoadingTable';
 import { Link } from 'react-router-dom';
 import CancelConfirm from './CancelConfirm';
+import { format } from 'date-fns';
 
 const OrderManagements = () => {
   const queryClient = useQueryClient();
@@ -120,9 +121,9 @@ const OrderManagements = () => {
                   <div key={item._id} className="my-5">
                     <div className="">
                       {/* head-order */}
-                      <div className="w-full bg-white box-shadow flex justify-between items-center rounded-sm border border-gray-200 px-5 py-5">
-                        <div className="text-sm md:text-base font-semibold">Mã đơn hàng: <span className='text-gray-900 font-medium'>{item?.code} </span></div>
-                        <div className="text-sm md:text-base text-blue-500 font-medium ">{statusList.find((status) => status.index === item.status)?.name}</div>
+                      <div className="w-full bg-white box-shadow flex justify-between items-center rounded-sm border border-gray-200 px-2 md:px-5 py-5">
+                        <div className="text-xs md:text-base font-semibold">Mã đơn hàng: <span className='text-gray-900 font-medium'>{item?.code} </span></div>
+                        <div className="text-xs md:text-base text-blue-500 font-medium ">{statusList.find((status) => status.index === item.status)?.name}</div>
                       </div>
                       {/* end head */}
 
@@ -131,7 +132,7 @@ const OrderManagements = () => {
                         {item?.itemList?.map((itemOrderList: IItemOrderList) => {
                           // console.log("itemOrderList: ", itemOrderList)
                           return (
-                            <div key={itemOrderList.productId} className="w-full bg-white box-shadow  border border-gray-200 rounded-sm px-4 lg:px-8 py-2 ">
+                            <div key={itemOrderList.productId} className="w-full bg-white box-shadow  border border-gray-200 rounded-sm px-2 lg:px-8 py-2 ">
                               <div className="py-4 space-y-4">
                                 {itemOrderList?.items?.map((itemOrder: IItemOrder) => {
                                   // console.log("itemOrderList: ", itemOrder)
@@ -178,21 +179,24 @@ const OrderManagements = () => {
                         })}
                       </Link>
                     </div>
-                    <div className="bg-[#FFFCF5] box-shadow border border-gray-200 px-4 lg:px-8 py-3 md:py-6">
-                      <div className="flex justify-between items-center">
+                    <div className="bg-[#FFFCF5] box-shadow border border-gray-200 px-2 md:px-4 lg:px-8 py-3 md:py-6">
+                      <div className="flex flex-col items-end md:flex-row gap-y-2 md:justify-between md:items-center">
                         {/* change */}
                         {[1].includes(item.status) && (
                           <button onClick={() => setOpenId(item._id)}
                             className="px-3 py-2 lg:px-8 lg:py-3 text-white bg-red-500 border border-orange-700 hover:bg-red-600 transition-all  duration-300    rounded-sm text-xs lg:text-[16px]">Hủy đơn hàng</button>
                         )}
                         {[4].includes(item.status) && (
-                          <button onClick={() => handleReceivedClientOrder(item._id)} className="px-3 py-2 lg:px-8 lg:py-3 text-white bg-blue-500 border border-blue-600 hover:bg-blue-600 transition-all  duration-300    rounded-sm text-xs lg:text-[16px]">Đã nhận hàng</button>
+                          <button onClick={() => handleReceivedClientOrder(item._id)} className="max-w-[200px] px-3 py-2 lg:px-8 lg:py-3 text-white bg-blue-500 border border-blue-600 hover:bg-blue-600 transition-all  duration-300    rounded-sm text-xs lg:text-[16px]">Đã nhận hàng</button>
                         )}
                         {[2, 3].includes(item.status) && (
-                          <div className=" text-sm lg:text-base font-medium ">Thời gian dự kiến nhận hàng: <span className="">{item?.estimatedDeliveryDate}</span></div>
+                          <div className=" text-xs lg:text-base font-medium ">Thời gian nhận hàng dự kiến: <span className="">{format(item?.estimatedDeliveryDate || "", "dd/MM/yyyy")}</span></div>
 
                         )}
-                        <div className="text-sm lg:text-base font-medium">Thành tiền: <span className="text-sm lg:text-[18px] font-medium lg:font-semibold text-red-500">{formatQuantity(item.totalMoney, "₫")}</span></div>
+                        {[5].includes(item.status) && (
+                          <div className=" text-xs lg:text-base font-medium ">Đã nhận hàng: <span className="">{format(item?.shippedDate || "", "hh:mm  dd/MM/yyyy")}</span></div>
+                        )}
+                        <div className="text-xs lg:text-base font-medium">Thành tiền:  <span className="text-xs lg:text-[18px] font-medium lg:font-semibold text-red-500">{formatQuantity(item.totalMoney, "₫")}</span></div>
                       </div>
                     </div>
                   </div>

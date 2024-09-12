@@ -132,15 +132,15 @@ const BlogPage = () => {
                       <img src={item.thumbnail_url || "/no-image.png"} className='w-full h-full object-cover' alt="" />
                     </div>
                     {/* card-content */}
-                    <div className="px-4 pt-2">
+                    <div className="px-4 pt-2 bg-white">
                       <div className="flex items-center gap-1 pb-2">
-                        <img src={item.user_id.avatarUrl} className='w-[40px] h-[40px] border-[3px] border-white rounded-full' alt="" />
+                        <img src={item.user_id.avatarUrl || "/avatar_25.jpg"} className='w-[40px] h-[40px] border-[3px] border-white rounded-full' alt="" />
                         <div className="">
                           <h3 className="text-sm font-medium">{item.user_id.full_name}</h3>
                           {/* <p className="text-xs text-[#212B36] opacity-50 ">{format(item.published_at || item.createdAt || "", "dd-MM-yyyy")}</p> */}
                         </div>
                       </div>
-                      <div className="flex justify-between items-center">
+                      <div className="flex justify-between items-center ">
                         <Link to={`/blogDetail/${item._id}`} className="line-clamp-1 text-[#212B36] text-[18px] font-semibold hover:underline transition-all duration-300">{item.title || "Bài viết chưa có tiêu đề"}</Link>
                       </div>
                       <p className="text-xs pt-1 text-gray-400 line-clamp-2">{item.meta_description}</p>

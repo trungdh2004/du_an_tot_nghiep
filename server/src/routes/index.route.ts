@@ -17,15 +17,14 @@ import routerOrder from "./order.route";
 import routerVoucher from "./voucher.route";
 import routerShipper from "./shipper.route";
 import routerDashboard from "./dashboard.route";
-// import { TestSocket } from "../controllers/test";
-// import routerTest from "./test.route";
-// import routerNotification from "./notification.route";
+import routerNotification from "./notification.route";
 import routerComment from "./comment.route";
+// import routerTest from "./test.route";
 
 const router = Router();
 
 router.use("/auth", routerAuth);
-router.use("/address", authentication, routerAddress);
+router.use("/address", routerAddress);
 router.use("/category", routerCategory);
 router.use("/categoryActive", routerCategoryActive);
 router.use("/color", routerColor);
