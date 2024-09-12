@@ -1739,6 +1739,7 @@ class OrderController {
           $push: {
             statusList: 5,
           },
+          deliveredDate:Date.now()
         },
         { new: true }
       );
