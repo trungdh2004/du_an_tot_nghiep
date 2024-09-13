@@ -76,7 +76,17 @@ const CartPage = () => {
 			},
 			{ totalQuantity: 0, totalAmount: 0 },
 		);
-
+		if (
+			discountCode?.currentVoucherCode &&
+			totals.totalAmount < discountCode?.currentVoucherCode?.minimumOrderValue
+		) {
+			setDiscountCode((prev) => ({
+				...prev,
+				currentVoucherCode: null,
+				error:
+					"Giá trị tối thiểu của đơn hàng không đạt điều kiện để sử dụng voucher này",
+			}));
+		}
 		setTotalSelectedAmount(totals || { totalQuantity: 0, totalAmount: 0 });
 		setAllChecked(isAllChecked || false);
 	}, [checkedState, carts, isItemValid]);
@@ -327,7 +337,7 @@ const CartPage = () => {
 							))}
 							<div className="sticky bottom-0 bg-white shadow-[0px_-3px_5px_#0000000f] py-5 w-full">
 								<div className="border-b border-gray-300 border-dotted py-3 px-1.5 md:px-6 w-full">
-									<div className="block pl-10 mb-2 text-sm text-red-500 text-end md:hidden">
+									<div className="block mb-2 text-[11px] text-red-500 text-end md:hidden">
 										{discountCode?.error}
 									</div>
 									<div className="w-full pl-2 md:pl-6">
