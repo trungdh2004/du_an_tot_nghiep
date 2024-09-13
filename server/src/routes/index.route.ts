@@ -40,12 +40,9 @@ router.use("/order", routerOrder);
 router.use("/voucher", routerVoucher);
 router.use("/shipper", routerShipper);
 router.use("/dashboard", routerDashboard);
-router.use("/notification", routerNotification);
+// router.use("/notification", routerNotification);
 router.use("/comment", routerComment);
 
-
-
 // router.use("/test", routerTest);
-
 
 export default router;

@@ -14,7 +14,7 @@ interface LabelCheckedProps {
 	fontSize?: number;
 	children?: React.ReactNode;
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-	size?: "small" | "medium" | "large" | "responsive";
+	size?: "small" | "medium" | "large" | "responsive" | "mobile";
 }
 
 const LabelChecked: React.FC<LabelCheckedProps> = memo(
@@ -54,14 +54,15 @@ const LabelChecked: React.FC<LabelCheckedProps> = memo(
 			medium: "h-12 text-base",
 			large: "h-14 text-lg",
 			responsive: "h-9 text-sm sm:h-12 sm:text-base md:h-12 md:text-lg",
+			mobile: "h-8 text-xs !max-w-20",
 		};
 
 		const labelClasses = cn(
 			"relative overflow-hidden flex items-center justify-start border border-solid border-[#ccc] cursor-pointer rounded bg-white",
 			"hover:text-blue-500 hover:border-blue-500",
 			"has-[:checked]:text-blue-500 has-[:checked]:border-blue-500",
+			"w-full  md:max-w-28 lg:w-28",
 			sizeClasses[size],
-			"w-full max-w-28 lg:w-28",
 			disabled && "pointer-events-none opacity-70 bg-black/5",
 			className,
 		);
@@ -70,6 +71,7 @@ const LabelChecked: React.FC<LabelCheckedProps> = memo(
 			"color shadow-md rounded-full flex-shrink-0",
 			size === "small" ? "w-5 h-5" : "w-6 h-6",
 			size === "responsive" && "w-5 h-5 sm:w-5 sm:h-5 md:w-6 md:h-6",
+			size === "mobile" && "w-3.5 h-3.5",
 		);
 
 		const textClasses = cn(

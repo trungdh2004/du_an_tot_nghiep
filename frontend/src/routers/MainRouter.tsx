@@ -1,15 +1,13 @@
 import MainLayout from "@/layout/MainLayout";
+import UserIndex from "@/pages/admin/users/UserIndex";
 import Address from "@/pages/clients/address/Address";
 import NotFound from "@/pages/NotFound";
-import UserIndex from "@/pages/admin/users/UserIndex";
-// import TestComponent from "@/pages/clients/Test";
-import BlogPage from "@/pages/clients/blogs/BLogPage";
-import HomePage from "@/pages/clients/home/page";
 import BlogDetail from "@/pages/clients/blogs/BlogDetail";
+import BlogPage from "@/pages/clients/blogs/BLogPage";
 import DetailProduct from "@/pages/clients/detail-home/page";
+import HomePage from "@/pages/clients/home/page";
 import ShopProduct from "@/pages/clients/shop/ShopProduct";
-// import OrderProcessing from "@/pages/clients/OrderProcessing";
-import CartIndex from "@/pages/clients/cart/CartIndex";
+import CartPage from "@/pages/clients/cart/CartPage";
 import OrderProcessing from "@/pages/clients/order/OrderProcessing";
 const MainRouter = [
 	{
@@ -22,13 +20,13 @@ const MainRouter = [
 			{ path: "blogs", element: <BlogPage /> },
 			{ path: "blogDetail/:id", element: <BlogDetail /> },
 			{ path: "table", element: <UserIndex /> },
-			{ path: "cart", element: <CartIndex /> },
+			{ path: "cart", element: <CartPage /> },
 			{ path: "shop", element: <ShopProduct /> },
 			{ path: "*", element: <NotFound /> },
 		],
 	},
 	// { path: "orderProcessing", element: <OrderProcessing /> },
-  { path: "*", element: <NotFound /> },
-  {path:"orderprocessing", element:<OrderProcessing /> },
+	{ path: "*", element: <NotFound /> },
+	{ path: "orderprocessing", element: <OrderProcessing /> },
 ];
 export default MainRouter;
