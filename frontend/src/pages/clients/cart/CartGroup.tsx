@@ -102,7 +102,10 @@ const CartGroup = ({
 					);
 
 					return (
-						<div className="relative w-full overflow-hidden bg-gray-50 shadow-sm">
+						<div
+							className="relative w-full overflow-hidden bg-gray-50 shadow-sm"
+							key={item?._id}
+						>
 							<div className="absolute inset-y-0 right-0 w-20 bg-red-500 flex items-center justify-center">
 								<button className="text-white w-full h-full">Xoá</button>
 							</div>

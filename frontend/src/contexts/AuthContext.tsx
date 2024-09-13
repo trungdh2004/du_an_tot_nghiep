@@ -56,6 +56,12 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 		(async () => {
 			try {
 				const { data } = await currentAccount();
+				const [carts, totalCountCart] = await Promise.all([
+					pagingCart({ pageSize: 9999999999999 }),
+					getCountMyShoppingCart(),
+				]);
+				setCarts(carts?.data?.data?.content);
+				setTotalCart(totalCountCart?.data?.count);
 				setAuthUser(data?.data);
 			} catch (error) {
 				setTotalCart(0);

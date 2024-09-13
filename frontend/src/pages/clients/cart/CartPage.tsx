@@ -2,14 +2,18 @@ import { formatCurrency } from "@/common/func";
 import DialogConfirm from "@/components/common/DialogConfirm";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
 import { deleteCartItem } from "@/service/cart";
 import useCart from "@/store/cart.store";
 import { AxiosError } from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { HiOutlineTrash } from "react-icons/hi";
+import { IoClose } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import CartGroup from "./CartGroup";
+import { takeApplyDiscountCode } from "@/service/voucher";
+import { IVoucher } from "@/types/voucher";
 
 type CheckedState = Record<string, boolean>;
 
@@ -27,7 +31,15 @@ const CartPage = () => {
 		totalQuantity: 0,
 		totalAmount: 0,
 	});
-
+	const [discountCode, setDiscountCode] = useState<{
+		applyCode: string;
+		currentVoucherCode: IVoucher | null;
+		error: string;
+	}>({
+		applyCode: "",
+		currentVoucherCode: null,
+		error: "",
+	});
 	const isItemValid = useCallback((item: any) => {
 		return item?.attribute?._id && item?.attribute?.quantity > 0;
 	}, []);
@@ -183,7 +195,24 @@ const CartPage = () => {
 			setIsModalConfirm(false);
 		}
 	};
-
+	const handleApplyDiscount = async () => {
+		try {
+			const { data } = await takeApplyDiscountCode({
+				code: discountCode?.applyCode,
+				totalMoney: totalSelectedAmount.totalAmount,
+			});
+			setDiscountCode((prev) => ({ ...prev, currentVoucherCode: data?.data }));
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				toast.error(error?.response?.data?.message);
+				setDiscountCode({
+					applyCode: "",
+					currentVoucherCode: null,
+					error: error?.response?.data?.message,
+				});
+			}
+		}
+	};
 	const handleSubmitted = () => {
 		console.log("Các đơn hàng mua:", getAllSelectedItems());
 	};
@@ -271,10 +300,77 @@ const CartPage = () => {
 								/>
 							))}
 							<div className="sticky bottom-0 bg-white shadow-[0px_-3px_5px_#0000000f] py-5 w-full">
-								<div className="flex items-center justify-end border-b border-gray-300 border-dotted py-3 px-1.5 md:px-6">
-									<div className="flex items-end gap-5">
-										<p>Nguyen Huy Toi Voucher</p>
-										<div className="text-blue-500">Chọn hoặc nhập mã</div>
+								<div className="border-b border-gray-300 border-dotted py-3 px-1.5 md:px-6">
+									<div className="text-end text-red-500 text-sm pl-10 mb-1">
+										{discountCode?.error}
+									</div>
+									<div className="flex items-center justify-end ">
+										<div className="flex items-center gap-5">
+											<p>Nguyen Huy Toi Voucher</p>
+											<div
+												className={cn(
+													"hidden bg-red-500 text-white px-2.5 py-1 rounded-xl items-center gap-2",
+													discountCode?.currentVoucherCode && "flex",
+												)}
+											>
+												Giảm{" "}
+												{discountCode?.currentVoucherCode?.discountType == 1
+													? formatCurrency(
+															discountCode?.currentVoucherCode?.discountValue,
+														)
+													: `${discountCode?.currentVoucherCode?.discountValue}%`}
+												<button
+													onClick={() =>
+														setDiscountCode({
+															applyCode: "",
+															currentVoucherCode: null,
+															error: "",
+														})
+													}
+													className="size-5 bg-black/20 rounded-full flex items-center justify-center"
+												>
+													<IoClose className="text-white" />
+												</button>
+											</div>
+											<div className="flex items-center gap-2">
+												<div className="relative">
+													<input
+														onChange={(e) =>
+															setDiscountCode({
+																applyCode: (e.target as HTMLInputElement).value,
+																currentVoucherCode: null,
+																error: "",
+															})
+														}
+														value={discountCode?.applyCode}
+														type="text"
+														className="outline-none border border-gray-200 bg-gray-100 h-10 p-1.5 "
+													/>
+													<button
+														onClick={() =>
+															setDiscountCode({
+																applyCode: "",
+																currentVoucherCode: null,
+																error: "",
+															})
+														}
+														className="absolute top-1/2 -translate-y-1/2 right-1.5 size-5 bg-black/30 rounded-full flex items-center justify-center"
+													>
+														<IoClose className="text-white" />
+													</button>
+												</div>
+												<Button
+													onClick={handleApplyDiscount}
+													className={cn(
+														"bg-red-500 hover:bg-red-600 text-white px-5",
+														discountCode?.applyCode?.length < 9 &&
+															"pointer-events-none bg-black/35",
+													)}
+												>
+													Áp dụng
+												</Button>
+											</div>
+										</div>
 									</div>
 								</div>
 								<div className="flex items-center justify-between  mt-5 w-full px-2 md:px-6">
