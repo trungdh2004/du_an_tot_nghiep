@@ -1741,6 +1741,7 @@ class OrderController {
           $push: {
             statusList: 5,
           },
+          deliveredDate:Date.now()
         },
         { new: true }
       );
@@ -1759,7 +1760,7 @@ class OrderController {
         }
       );
 
-      return res.status(STATUS.BAD_REQUEST).json({
+      return res.status(STATUS.OK).json({
         message: "Cập nhập thành công",
       });
     } catch (error: any) {
