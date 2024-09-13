@@ -9,15 +9,18 @@ import { AxiosError } from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { HiOutlineTrash } from "react-icons/hi";
 import { IoClose } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import CartGroup from "./CartGroup";
 import { takeApplyDiscountCode } from "@/service/voucher";
 import { IVoucher } from "@/types/voucher";
+import { VoucherIcon } from "@/assets/svg";
+import { createStateUrlCart } from "@/service/order";
 
 type CheckedState = Record<string, boolean>;
 
 const CartPage = () => {
+	const navigate = useNavigate();
 	const [isModalConfirm, setIsModalConfirm] = useState(false);
 	const { carts, totalCart, itemCart, setItemCart, setTotalCart, setCarts } =
 		useCart();
@@ -205,16 +208,39 @@ const CartPage = () => {
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				toast.error(error?.response?.data?.message);
-				setDiscountCode({
-					applyCode: "",
+				setDiscountCode((prev) => ({
+					...prev,
 					currentVoucherCode: null,
 					error: error?.response?.data?.message,
-				});
+				}));
 			}
 		}
 	};
-	const handleSubmitted = () => {
-		console.log("Các đơn hàng mua:", getAllSelectedItems());
+	const handleSubmitted = async () => {
+		try {
+			const listId = getAllSelectedItems() as string[];
+			const payload = {
+				listId,
+				voucher: discountCode?.currentVoucherCode?._id || null,
+			};
+			if (listId.length <= 0) {
+				return toast.error("Bạn chưa chọn sản phẩm nào để đặt hàng!");
+			}
+			if (
+				discountCode?.currentVoucherCode &&
+				discountCode?.currentVoucherCode?.minimumOrderValue >
+					totalSelectedAmount?.totalAmount
+			) {
+				payload.voucher = null;
+			}
+
+			const { data } = await createStateUrlCart(payload);
+			navigate(`/order?state=${data?.url}`);
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				toast.error(error?.response?.data?.message);
+			}
+		}
 	};
 	return (
 		<>
@@ -246,7 +272,7 @@ const CartPage = () => {
 						</p>
 						<Link
 							to={"/shop"}
-							className="px-10 py-2 bg-red-500 hover:bg-red-600 text-white rounded"
+							className="px-10 py-2 text-white bg-red-500 rounded hover:bg-red-600"
 						>
 							Mua ngay
 						</Link>
@@ -274,7 +300,7 @@ const CartPage = () => {
 							<div className="w-[12.70417%] text-end md:text-center block">
 								<span className="hidden md:inline-block">Thao tác</span>
 								<div
-									className="flex items-center justify-end cursor-pointer md:hidden p-1"
+									className="flex items-center justify-end p-1 cursor-pointer md:hidden"
 									onClick={() => {
 										const listId = getAllSelectedItems() as string[];
 										listId?.length <= 0
@@ -300,52 +326,32 @@ const CartPage = () => {
 								/>
 							))}
 							<div className="sticky bottom-0 bg-white shadow-[0px_-3px_5px_#0000000f] py-5 w-full">
-								<div className="border-b border-gray-300 border-dotted py-3 px-1.5 md:px-6">
-									<div className="text-end text-red-500 text-sm pl-10 mb-1">
+								<div className="border-b border-gray-300 border-dotted py-3 px-1.5 md:px-6 w-full">
+									<div className="block pl-10 mb-2 text-sm text-red-500 text-end md:hidden">
 										{discountCode?.error}
 									</div>
-									<div className="flex items-center justify-end ">
-										<div className="flex items-center gap-5">
-											<p>Nguyen Huy Toi Voucher</p>
-											<div
-												className={cn(
-													"hidden bg-red-500 text-white px-2.5 py-1 rounded-xl items-center gap-2",
-													discountCode?.currentVoucherCode && "flex",
-												)}
-											>
-												Giảm{" "}
-												{discountCode?.currentVoucherCode?.discountType == 1
-													? formatCurrency(
-															discountCode?.currentVoucherCode?.discountValue,
-														)
-													: `${discountCode?.currentVoucherCode?.discountValue}%`}
-												<button
-													onClick={() =>
-														setDiscountCode({
-															applyCode: "",
-															currentVoucherCode: null,
-															error: "",
-														})
-													}
-													className="size-5 bg-black/20 rounded-full flex items-center justify-center"
-												>
-													<IoClose className="text-white" />
-												</button>
+									<div className="w-full pl-2 md:pl-6">
+										<div className="flex items-center justify-between gap-5">
+											<div className="flex items-center gap-1">
+												<VoucherIcon height={24} width={24} />
+												<span className="text-xs md:text-sm">Mã giảm giá</span>
 											</div>
-											<div className="flex items-center gap-2">
-												<div className="relative">
-													<input
-														onChange={(e) =>
-															setDiscountCode({
-																applyCode: (e.target as HTMLInputElement).value,
-																currentVoucherCode: null,
-																error: "",
-															})
-														}
-														value={discountCode?.applyCode}
-														type="text"
-														className="outline-none border border-gray-200 bg-gray-100 h-10 p-1.5 "
-													/>
+											<div className="flex items-center gap-5">
+												<div className="hidden text-sm text-red-500 text-end md:inline-block">
+													{discountCode?.error}
+												</div>
+												<div
+													className={cn(
+														"hidden bg-red-500 text-white px-2.5 py-1 rounded-xl items-center gap-2",
+														discountCode?.currentVoucherCode && "flex",
+													)}
+												>
+													Giảm{" "}
+													{discountCode?.currentVoucherCode?.discountType == 1
+														? formatCurrency(
+																discountCode?.currentVoucherCode?.discountValue,
+															)
+														: `${discountCode?.currentVoucherCode?.discountValue}%`}
 													<button
 														onClick={() =>
 															setDiscountCode({
@@ -354,27 +360,61 @@ const CartPage = () => {
 																error: "",
 															})
 														}
-														className="absolute top-1/2 -translate-y-1/2 right-1.5 size-5 bg-black/30 rounded-full flex items-center justify-center"
+														className="flex items-center justify-center rounded-full size-5 bg-black/20"
 													>
 														<IoClose className="text-white" />
 													</button>
 												</div>
-												<Button
-													onClick={handleApplyDiscount}
-													className={cn(
-														"bg-red-500 hover:bg-red-600 text-white px-5",
-														discountCode?.applyCode?.length < 9 &&
-															"pointer-events-none bg-black/35",
-													)}
-												>
-													Áp dụng
-												</Button>
+												<div className="flex items-center gap-2">
+													<div className="relative">
+														<input
+															onChange={(e) =>
+																setDiscountCode({
+																	applyCode: (e.target as HTMLInputElement)
+																		.value,
+																	currentVoucherCode: null,
+																	error: "",
+																})
+															}
+															value={discountCode?.applyCode}
+															type="text"
+															className="max-sm:w-36 outline-none border border-gray-200 bg-gray-100 h-8 md:h-10 p-1.5 "
+														/>
+														<button
+															onClick={() =>
+																setDiscountCode((prev) => ({
+																	...prev,
+																	applyCode: "",
+																	error: "",
+																}))
+															}
+															className="absolute top-1/2 -translate-y-1/2 right-1.5 size-5 bg-black/30 rounded-full flex items-center justify-center"
+														>
+															<IoClose className="text-white" />
+														</button>
+													</div>
+													<Button
+														onClick={handleApplyDiscount}
+														disabled={
+															discountCode?.applyCode?.length < 9 ||
+															getAllSelectedItems()?.length <= 0
+														}
+														className={cn(
+															"max-sm:h-8 bg-red-500 hover:bg-red-600 text-white px-5",
+															(discountCode?.applyCode?.length < 9 ||
+																getAllSelectedItems()?.length <= 0) &&
+																"pointer-events-none bg-black/35",
+														)}
+													>
+														Áp dụng
+													</Button>
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
-								<div className="flex items-center justify-between  mt-5 w-full px-2 md:px-6">
-									<div className="flex items-center  gap-10 px-2  md:px-6">
+								<div className="flex items-center justify-between w-full px-2 mt-5 md:px-6">
+									<div className="flex items-center gap-10 px-2 md:px-6">
 										<div className="flex items-center gap-5 text-sm">
 											<Checkbox
 												id="checkedAllFotter"
@@ -384,19 +424,19 @@ const CartPage = () => {
 											/>
 											<label
 												htmlFor="checkedAllFotter"
-												className="whitespace-nowrap text-base md:hidden"
+												className="text-base whitespace-nowrap md:hidden"
 											>
 												Tất cả
 											</label>
 											<label
 												htmlFor="checkedAllFotter"
-												className="whitespace-nowrap text-base hidden md:inline-block"
+												className="hidden text-base whitespace-nowrap md:inline-block"
 											>
 												Chọn tất cả ({totalAttribute})
 											</label>
 										</div>
 										<div
-											className="hidden md:block cursor-pointer"
+											className="hidden cursor-pointer md:block"
 											onClick={() => {
 												const listId = getAllSelectedItems() as string[];
 												listId?.length <= 0
@@ -409,15 +449,15 @@ const CartPage = () => {
 											Xoá
 										</div>
 									</div>
-									<div className="flex justify-end items-end md:items-center md:gap-5 flex-col gap-3 md:flex-row ">
+									<div className="flex flex-col items-end justify-end gap-3 md:items-center md:gap-5 md:flex-row ">
 										<div className="flex items-center justify-end">
-											<p className=" text-xs md:text-lg text-start md:text-end ">
+											<p className="text-xs md:text-lg text-start md:text-end">
 												Tổng thanh toán{" "}
 												<span className="hidden md:inline-block">
 													({totalSelectedAmount.totalQuantity} sản phẩm)
 												</span>
 												:{" "}
-												<span className="text-red-500 md:text-lg font-medium">
+												<span className="font-medium text-red-500 md:text-lg">
 													{formatCurrency(totalSelectedAmount.totalAmount)}
 												</span>
 											</p>
