@@ -11,6 +11,10 @@ import ShopProduct from "@/pages/clients/shop/ShopProduct";
 // import OrderProcessing from "@/pages/clients/OrderProcessing";
 import CartIndex from "@/pages/clients/cart/CartIndex";
 import OrderProcessing from "@/pages/clients/order/OrderProcessing";
+import TestComponent from "@/pages/clients/Test";
+import AccountLayout from "@/layout/AcountLayout";
+import AccountIndex from "@/pages/clients/account/AccountIndex";
+import { Navigate } from "react-router-dom";
 const MainRouter = [
 	{
 		path: "/",
@@ -24,11 +28,24 @@ const MainRouter = [
 			{ path: "table", element: <UserIndex /> },
 			{ path: "cart", element: <CartIndex /> },
 			{ path: "shop", element: <ShopProduct /> },
-			{ path: "*", element: <NotFound /> },
+			{
+				path: "/account",
+				element: <AccountLayout />,
+				children: [
+					{
+						path: "",
+						element: <Navigate to={"/account/profile"} />,
+					},
+					{
+						path: "profile",
+						element: <AccountIndex />,
+					},
+				],
+			},
 		],
 	},
-	// { path: "orderProcessing", element: <OrderProcessing /> },
-  { path: "*", element: <NotFound /> },
-  {path:"orderprocessing", element:<OrderProcessing /> },
+	// { path: "testComponent", element: <TestComponent /> },
+	{ path: "*", element: <NotFound /> },
+	{ path: "orderprocessing", element: <OrderProcessing /> },
 ];
 export default MainRouter;

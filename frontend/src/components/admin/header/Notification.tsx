@@ -58,7 +58,7 @@ const Notification = ({
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
 				style={{ boxShadow: "0 -4px 32px rgba(0, 0, 0, .2)" }}
-				className="max-sm:w-320px w-[400px] py-2 px-1 sm:px-2 *:cursor-pointer  text-[#1d2129] rounded-lg border-none"
+				className="max-sm:w-[300px] w-[400px] py-2 px-1 sm:px-2 *:cursor-pointer  text-[#1d2129] rounded-lg border-none"
 				side="bottom"
 				align="end"
 			>
