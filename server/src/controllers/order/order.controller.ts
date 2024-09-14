@@ -888,9 +888,9 @@ class OrderController {
 
       const ipAddress = String(
         req.headers["x-forwarded-for"] ||
-          req.connection.remoteAddress ||
-          req.socket.remoteAddress ||
-          req.ip
+        req.connection.remoteAddress ||
+        req.socket.remoteAddress ||
+        req.ip
       );
 
       const paymentUrl = vnpay.buildPaymentUrl({
@@ -1358,9 +1358,8 @@ class OrderController {
               status: 4,
               date: existingOrder?.shippedDate,
               message: "Đơn hàng giao thành công",
-              sub: `Người nhận: ${
-                (existingOrder?.address as IAddress).username
-              }`,
+              sub: `Người nhận: ${(existingOrder?.address as IAddress).username
+                }`,
             };
           } else if (item === 3) {
             return {
@@ -1440,11 +1439,9 @@ class OrderController {
 
       if (checkAttribute) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message: `Sản phẩm '${
-            ((checkAttribute as IOrderItem).product as IProduct)?.name
-          }' đã không còn loại hàng (${
-            (checkAttribute as IOrderItem).color.name
-          } - ${(checkAttribute as IOrderItem).size})`,
+          message: `Sản phẩm '${((checkAttribute as IOrderItem).product as IProduct)?.name
+            }' đã không còn loại hàng (${(checkAttribute as IOrderItem).color.name
+            } - ${(checkAttribute as IOrderItem).size})`,
         });
       }
 
@@ -1458,11 +1455,9 @@ class OrderController {
 
       if (checkQuantity) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message: `Sản phẩm '${
-            ((checkQuantity as IOrderItem).product as IProduct)?.name
-          }' đã hết hàng loại hàng (${
-            (checkQuantity as IOrderItem).color.name
-          } - ${(checkQuantity as IOrderItem).size})`,
+          message: `Sản phẩm '${((checkQuantity as IOrderItem).product as IProduct)?.name
+            }' đã hết hàng loại hàng (${(checkQuantity as IOrderItem).color.name
+            } - ${(checkQuantity as IOrderItem).size})`,
         });
       }
 
@@ -1604,8 +1599,8 @@ class OrderController {
       } else if (status === 8) {
         queryStatus = {
           status: {
-            $in: [4, 5],
-          },
+            $in: [4, 5]
+          }
         };
       } else {
         queryStatus = {
@@ -1641,46 +1636,46 @@ class OrderController {
       const convestOrder =
         listOrder.length > 0
           ? listOrder?.map((order: IOrder, index) => {
-              if (order.orderItems.length > 0) {
-                const mapItemOrder = order.orderItems.reduce(
-                  (acc: IAccOrderClient[], item) => {
-                    const accCheck = acc.find(
-                      (row) =>
-                        row.productId.toString() ===
-                        (
-                          (item as IOrderItem).product as IProductSelectOrder
-                        )._id.toString()
-                    );
-                    if (accCheck) {
-                      const totalMoney =
-                        accCheck.totalMoney + (item as IOrderItem).totalMoney;
-                      accCheck.items.push(item as IOrderItem);
-                      accCheck.totalMoney = totalMoney;
-                      return acc;
-                    }
-
-                    acc.push({
-                      productId: (
+            if (order.orderItems.length > 0) {
+              const mapItemOrder = order.orderItems.reduce(
+                (acc: IAccOrderClient[], item) => {
+                  const accCheck = acc.find(
+                    (row) =>
+                      row.productId.toString() ===
+                      (
                         (item as IOrderItem).product as IProductSelectOrder
-                      )._id,
-                      product: (item as IOrderItem)
-                        .product as IProductSelectOrder,
-                      totalMoney: (item as IOrderItem).totalMoney,
-                      items: [item as IOrderItem],
-                      is_evaluate: (item as IOrderItem).is_evaluate,
-                    });
+                      )._id.toString()
+                  );
+                  if (accCheck) {
+                    const totalMoney =
+                      accCheck.totalMoney + (item as IOrderItem).totalMoney;
+                    accCheck.items.push(item as IOrderItem);
+                    accCheck.totalMoney = totalMoney;
                     return acc;
-                  },
-                  []
-                );
-                return {
-                  ...order,
-                  itemList: mapItemOrder,
-                };
-              }
+                  }
 
-              return [];
-            })
+                  acc.push({
+                    productId: (
+                      (item as IOrderItem).product as IProductSelectOrder
+                    )._id,
+                    product: (item as IOrderItem)
+                      .product as IProductSelectOrder,
+                    totalMoney: (item as IOrderItem).totalMoney,
+                    items: [item as IOrderItem],
+                    is_evaluate: (item as IOrderItem).is_evaluate,
+                  });
+                  return acc;
+                },
+                []
+              );
+              return {
+                ...order,
+                itemList: mapItemOrder,
+              };
+            }
+
+            return [];
+          })
           : [];
 
       const countOrder = await OrderModel.countDocuments({
@@ -1741,7 +1736,7 @@ class OrderController {
           $push: {
             statusList: 5,
           },
-          deliveredDate:Date.now()
+          deliveredDate: Date.now()
         },
         { new: true }
       );
@@ -1914,9 +1909,8 @@ class OrderController {
               status: 4,
               date: existingOrder?.shippedDate,
               message: "Đơn hàng giao thành công",
-              sub: `Người nhận: ${
-                (existingOrder?.address as IAddress).username
-              }`,
+              sub: `Người nhận: ${(existingOrder?.address as IAddress).username
+                }`,
             };
           } else if (item === 3) {
             return {

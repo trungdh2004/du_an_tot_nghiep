@@ -13,37 +13,53 @@ import TestComponent from "@/pages/clients/Test";
 import AccountLayout from "@/layout/AcountLayout";
 import AccountIndex from "@/pages/clients/account/AccountIndex";
 import { Navigate } from "react-router-dom";
+import OrderManagements from "@/pages/clients/account/Purchase";
+import PurchaseOrder from "@/pages/clients/account/PurchaseOrder";
 const MainRouter = [
-	{
-		path: "/",
-		element: <MainLayout />,
-		children: [
-			{ path: "", element: <HomePage /> },
-			{ path: "/shop/detail/:slug", element: <DetailProduct /> },
-			{ path: "address", element: <Address /> },
-			{ path: "blogs", element: <BlogPage /> },
-			{ path: "blogDetail/:id", element: <BlogDetail /> },
-			{ path: "table", element: <UserIndex /> },
-			{ path: "cart", element: <CartPage /> },
-			{ path: "shop", element: <ShopProduct /> },
-			{
-				path: "/account",
-				element: <AccountLayout />,
-				children: [
-					{
-						path: "",
-						element: <Navigate to={"/account/profile"} />,
-					},
-					{
-						path: "profile",
-						element: <AccountIndex />,
-					},
-				],
-			},
-		],
-	},
-	// { path: "orderProcessing", element: <OrderProcessing /> },
-	{ path: "*", element: <NotFound /> },
-	{ path: "/orderprocessing", element: <OrderProcessing /> },
+  {
+    path: "/",
+    element: <MainLayout />,
+    children: [
+      { path: "", element: <HomePage /> },
+      { path: "/shop/detail/:slug", element: <DetailProduct /> },
+      { path: "address", element: <Address /> },
+      { path: "blogs", element: <BlogPage /> },
+      { path: "blogDetail/:id", element: <BlogDetail /> },
+      { path: "table", element: <UserIndex /> },
+      { path: "cart", element: <CartPage /> },
+      { path: "shop", element: <ShopProduct /> },
+      {
+        path: "account",
+        element: <AccountLayout />,
+        children: [
+          {
+            path: '/account/purchase',
+            element: <OrderManagements />
+          },
+          {
+            path: '/account/purchase/order/:id',
+            element: <PurchaseOrder />
+          },
+        ]
+      },
+      {
+        path: "/account",
+        element: <AccountLayout />,
+        children: [
+          {
+            path: "",
+            element: <Navigate to={"/account/profile"} />,
+          },
+          {
+            path: "profile",
+            element: <AccountIndex />,
+          },
+        ],
+      },
+    ],
+  },
+  // { path: "orderProcessing", element: <OrderProcessing /> },
+  { path: "*", element: <NotFound /> },
+  { path: "/orderprocessing", element: <OrderProcessing /> },
 ];
 export default MainRouter;

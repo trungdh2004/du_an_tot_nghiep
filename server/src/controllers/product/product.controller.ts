@@ -58,7 +58,7 @@ class ProductController {
 
       const quantity = dataAttributes.reduce((acc, item) => {
         return acc + item.quantity
-      },0)
+      }, 0)
 
       const product = await ProductModel.create({
         name,
@@ -95,7 +95,7 @@ class ProductController {
         });
 
       const product = await ProductModel.findOne({
-        slug:slug
+        slug: slug
       })
         .populate([
           {
@@ -136,7 +136,7 @@ class ProductController {
               colorName: (item.color as IColor).name as string,
               list: [item],
               quantity: item.quantity,
-              colorCode:(item.color as IColor).code as string,
+              colorCode: (item.color as IColor).code as string,
             };
             acc.push(group);
             return acc;
@@ -226,7 +226,7 @@ class ProductController {
 
       let slugProduct = existingProduct.slug
 
-      if(existingProduct.name.toLocaleLowerCase() !== name.toLocaleLowerCase()) {
+      if (existingProduct.name.toLocaleLowerCase() !== name.toLocaleLowerCase()) {
         slugProduct = generateSlugs(name)
       }
 
@@ -265,8 +265,8 @@ class ProductController {
 
       if (listNew.length > 0) {
         const listNewAttributes = await AttributeModel.create<IAttribute[]>(
-          listNew.map((item:IAttribute) => {
-            const {_id,...value} = item;
+          listNew.map((item: IAttribute) => {
+            const { _id, ...value } = item;
             return value
           })
         );
@@ -282,10 +282,10 @@ class ProductController {
         });
       }
 
-      const quantity = attributes.reduce((acc:number, item:IAttribute) => {
+      const quantity = attributes.reduce((acc: number, item: IAttribute) => {
         return acc + item.quantity
-      },0)
-      
+      }, 0)
+
       const newProduct = await ProductModel.findByIdAndUpdate(
         existingProduct?._id,
         {
@@ -408,7 +408,7 @@ class ProductController {
       });
 
       await CartItemModel.deleteOne({
-        product:existingProduct._id,
+        product: existingProduct._id,
       })
 
       return res.status(STATUS.OK).json({
@@ -470,7 +470,7 @@ class ProductController {
       );
 
       await CartItemModel.deleteMany({
-        product:{
+        product: {
           $in: listId
         }
       })
@@ -645,7 +645,7 @@ class ProductController {
         }
       }
 
-      if(rating) {
+      if (rating) {
 
       }
 

@@ -77,7 +77,9 @@ const User = () => {
 				<DropdownMenuItem>Địa chỉ</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem>Yêu thích</DropdownMenuItem>
-				<DropdownMenuItem>Đơn hàng</DropdownMenuItem>
+				<DropdownMenuItem>
+					<Link to="/purchase">Đơn hàng</Link>
+				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					onClick={handleLogout}
