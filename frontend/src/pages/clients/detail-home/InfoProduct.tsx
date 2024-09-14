@@ -10,9 +10,12 @@ import { IProductDetail } from "@/types/product";
 import ButtonLoading from "@/components/common/ButtonLoading";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { addProductToCart } from "@/service/cart";
+import { addProductToCart, pagingCart } from "@/service/cart";
 import { AxiosError } from "axios";
 import useCartAnimation from "@/hooks/useCartAnimation";
+import useCart from "@/store/cart.store";
+import { useCurrentRouteAndNavigation } from "@/hooks/router";
+import { useAuth } from "@/hooks/auth";
 
 type Props = {
 	product?: IProductDetail;
@@ -34,7 +37,10 @@ interface IStateInfoProduct {
 }
 
 const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
+	const { isLoggedIn } = useAuth();
 	const { startAnimation, RenderAnimation } = useCartAnimation();
+	const navigateIsLogin = useCurrentRouteAndNavigation();
+	const { updateTotalCart, setCarts } = useCart();
 	const [stateInfoProduct, setStateInfoProduct] = useState<IStateInfoProduct>({
 		listColorExist: [],
 		listSizeExist: [],
@@ -112,6 +118,9 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 		setTotalQuantity(product?.quantity || 0);
 	}, [product, handleStateInfoProduct]);
 	const handleOrderProduct = async (action: "add-to-cart" | "buy-now") => {
+		if (!isLoggedIn) {
+			return navigateIsLogin();
+		}
 		if (!attributeId) {
 			setIsErrorAttribute(true);
 			return;
@@ -123,22 +132,23 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						isLoadingBynow: false,
 						isLoadingShopping: true,
 					});
-					const { data } = await addProductToCart({
+					await addProductToCart({
 						attribute: attributeId,
 						productId: product?._id as string,
 						quantity: purchaseQuantity,
 					});
+					const { data: dataCarts } = await pagingCart({ pageSize: 9999999 });
 					setIsLoadingButton({
 						isLoadingBynow: false,
 						isLoadingShopping: false,
 					});
+					setCarts(dataCarts?.data?.content);
 					document.querySelector(".ablum-detail-product");
 					const itemElement = document.querySelector(
 						".ablum-detail-product",
 					) as HTMLDivElement;
 					startAnimation(itemElement, product?.thumbnail as string);
-					toast.message(data?.message);
-					console.log("Add to cart");
+					updateTotalCart(purchaseQuantity);
 				} catch (error) {
 					if (error instanceof AxiosError) {
 						toast.error(error?.response?.data?.message);
@@ -158,17 +168,17 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 		<>
 			{RenderAnimation()}
 			<div className="w-full pt-10">
-				<div className="space-y-3 md:space-y-5 w-full">
+				<div className="w-full space-y-3 md:space-y-5">
 					<div className="space-y-0.5 p-1.5 w-full">
-						<p className="uppercase text-xs">
+						<p className="text-xs uppercase">
 							Danh mục: <span>{product?.category?.name}</span>
 						</p>
-						<h2 className="uppercase text-xl  text-wrap w-full">
+						<h2 className="w-full text-xl uppercase text-wrap">
 							{product?.name}
 						</h2>
 						<div className="flex items-center capitalize text-sm text-[#767676] [&>p]:px-4  [&>*]:border-r [&>*]:border-[#00000024]">
 							<div className="flex items-end gap-1 pr-4">
-								<span className="border-b border-blue-500 text-blue-500 font-medium">
+								<span className="font-medium text-blue-500 border-b border-blue-500">
 									3.5
 								</span>
 								<div className="pb-0.5 flex w-max">
@@ -182,23 +192,23 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 								</div>
 							</div>
 							<p className="flex items-center gap-1 text-nowrap max-md:border-none">
-								<span className="text-black font-medium">7</span>
+								<span className="font-medium text-black">7</span>
 								Đánh giá
 							</p>
-							<p className="hidden md:flex items-center gap-1 text-nowrap">
-								<span className="text-black font-medium">
+							<p className="items-center hidden gap-1 md:flex text-nowrap">
+								<span className="font-medium text-black">
 									{product?.quantitySold}
 								</span>
 								Đã bán
 							</p>
-							<p className="hidden md:flex items-center gap-1 border-none text-nowrap">
-								<span className="text-black font-medium">7</span>
+							<p className="items-center hidden gap-1 border-none md:flex text-nowrap">
+								<span className="font-medium text-black">7</span>
 								Lượt xem
 							</p>
 						</div>
 					</div>
 					<div className="flex items-end gap-5 bg-[#fafafa] py-4 px-5 w-full">
-						<span className="text-gray-500 text-base line-through">
+						<span className="text-base text-gray-500 line-through">
 							{formatCurrency(900000)}
 						</span>
 						<p className="text-2xl font-medium text-blue-500">
@@ -229,8 +239,8 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 								setExitsListColor={setExitsListColor}
 								setTotalQuantity={setTotalQuantity}
 							/>
-							<div className="flex max-md:flex-col max-md:gap-3 items-start md:items-center">
-								<h3 className="font-normal text-base text-gray-500 min-w-28 max-w-28">
+							<div className="flex items-start max-md:flex-col max-md:gap-3 md:items-center">
+								<h3 className="text-base font-normal text-gray-500 min-w-28 max-w-28">
 									Số lượng
 								</h3>
 								<div className="flex items-center gap-3">
@@ -242,7 +252,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 										className="bg-white"
 										size="responsive"
 									/>
-									<span className="text-gray-600 text-sm md:text-base">
+									<span className="text-sm text-gray-600 md:text-base">
 										{totalQuantity} sản phẩm có sẵn
 									</span>
 								</div>
@@ -258,7 +268,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						</div>
 						<div className="flex items-center gap-3 p-1.5 w-full">
 							<Button
-								className="bg-blue-500 hover:bg-blue-700 px-5"
+								className="px-5 bg-blue-500 hover:bg-blue-700"
 								onClick={() => handleOrderProduct("buy-now")}
 							>
 								{isLoadingButton.isLoadingBynow ? (

@@ -8,6 +8,7 @@ import OrderModel from "../../models/order/Order.schema";
 import { formatDataPaging } from "../../common/pagingData";
 import ProductModel from "../../models/products/Product.schema";
 import OrderItemsModel from "../../models/order/OrderProduct.schema";
+import { socketNotificationOrderClient } from "../../socket/socketNotifycationClient.service";
 
 class ShipperController {
   async registerShipper(req: RequestModel, res: Response) {
@@ -342,6 +343,9 @@ class ShipperController {
         });
       });
 
+      socketNotificationOrderClient(updateOrder?.code as string, 3, `${updateOrder?.user}`, updateOrder?._id as string);
+
+
       return res.status(STATUS.OK).json({
         message: "Cập nhập đơn hàng đang giao",
         data: updateOrder,
@@ -408,6 +412,9 @@ class ShipperController {
           status: 4,
         });
       });
+
+      socketNotificationOrderClient(updateOrder?.code as string, 4, `${updateOrder?.user}`, updateOrder?._id as string);
+
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập đơn hàng giao thành công",

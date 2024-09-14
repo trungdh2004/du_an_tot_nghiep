@@ -4,6 +4,8 @@ import ProductModel from "../../models/products/Product.schema";
 import { RequestModel } from "../../interface/models";
 import CommentModel from "../../models/comment/comment.model";
 import { formatDataPaging } from "../../common/pagingData";
+import TYPE_COMMENT from "../../config/typeComment";
+import BlogsModel from "../../models/Blogs.schema";
 
 class CommentController {
   async createComment(req: RequestModel, res: Response) {
@@ -15,6 +17,50 @@ class CommentController {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn truyền thiếu dữ liệu",
         });
+      }
+
+      console.log("commentType", commentType);
+
+      const valuesType = Object.values(TYPE_COMMENT);
+
+      if (!valuesType.includes(commentType.toString())) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn truyền kiểu bình luận sai",
+        });
+      }
+
+      if (commentType === TYPE_COMMENT.COMMENT) {
+        const existingComment = await CommentModel.findById(commentId);
+
+        if (!existingComment) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Không có bình luận nào",
+          });
+        }
+
+        await CommentModel.findByIdAndUpdate(existingComment._id, {
+          $inc: {
+            replies_count: +1,
+          },
+        });
+      }
+      if (commentType === TYPE_COMMENT.PRODUCT) {
+        const existingComment = await ProductModel.findById(commentId);
+
+        if (!existingComment) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Không có sản phẩm nào",
+          });
+        }
+      }
+      if (commentType === TYPE_COMMENT.BLOGS) {
+        const existingComment = await BlogsModel.findById(commentId);
+
+        if (!existingComment) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Không có bài viết nào",
+          });
+        }
       }
 
       const newComment = await CommentModel.create({
@@ -48,7 +94,7 @@ class CommentController {
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
 
-      if (!commentId || !commentType) {
+      if (!commentId && !commentType) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn chưa truyền giá trị",
         });
@@ -67,7 +113,6 @@ class CommentController {
             avatarUrl: 1,
             is_admin: 1,
             is_staff: 1,
-            blocked_at: 1,
           },
         })
         .sort({ createdAt: sort })
@@ -117,7 +162,15 @@ class CommentController {
 
       let queryMongoose = {};
 
+      const check = existingComment.reactions.find(
+        (comment) => comment.toString() === user?.id.toString()
+      );
       if (is_reacted) {
+        if (check) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Bạn đã thích bình luận",
+          });
+        }
         queryMongoose = {
           $addToSet: {
             reactions: user?.id,
@@ -125,15 +178,16 @@ class CommentController {
           $inc: { reactions_count: 1 },
         };
       } else {
-        const check = existingComment.reactions.find(
-          (comment) => comment.toString() === user?.id.toString()
-        );
-
+        if (!check) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Bạn chưa thích bình luận",
+          });
+        }
         queryMongoose = {
           $pull: {
             reactions: user?.id,
           },
-          $inc: { reactions_count: check ? 0 : -1 },
+          $inc: { reactions_count: -1 },
         };
       }
 
@@ -170,9 +224,17 @@ class CommentController {
           message: "Không có bình luận nào",
         });
 
-      if (existingComment.user.toString() === user?.id.toString()) {
+      if (existingComment.user.toString() !== user?.id.toString()) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn không có quyền xóa",
+        });
+      }
+
+      if (existingComment.commentType === TYPE_COMMENT.COMMENT) {
+        await CommentModel.findByIdAndUpdate(existingComment.comment_id, {
+          $inc: {
+            replies_count: -1,
+          },
         });
       }
 

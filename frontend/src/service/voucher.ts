@@ -1,9 +1,9 @@
 import instance from "@/config/instance";
 
-export const checkVoucher = async (checkVoucher: {
+const url = "voucher";
+export const takeApplyDiscountCode = (payload: {
 	code: string;
 	totalMoney: number;
 }) => {
-	const data = await instance.post(`/voucher/getCheck`, checkVoucher);
-	return data;
+	return instance.post(`${url}/getCheck`, payload);
 };

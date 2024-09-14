@@ -1,18 +1,20 @@
-interface VoucherCheck {
-	_id: string;
-	name: string;
-	description: string;
+
+export interface IVoucher {
 	code: string;
-	startDate: string;
-	endDate: string;
+	createdAt: string;
+	description: string;
 	discountType: number;
 	discountValue: number;
-	usageLimit: number;
+	endDate: string;
 	minimumOrderValue: number;
-	usageCount: number;
+	modifiedBy: string;
+	modifiedDate: string;
+	name: string;
+	startDate: string;
 	status: number;
-	version: number;
-	modifiedDate: string | null;
-	modifiedBy: string | null;
+	updatedAt: string;
+	usageCount: number;
+	usageLimit: number;
 	user: string;
+	_id: string;
 }

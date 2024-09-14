@@ -21,9 +21,9 @@ const CommentProSchema = new mongoose.Schema(
       required: true,
     },
     user: {
-      type: String,
-      unique: true,
-      index: true,
+      type: mongoose.Types.ObjectId,
+      required: true,
+      ref:"User"
     },
     commentType: {
       type: String,
