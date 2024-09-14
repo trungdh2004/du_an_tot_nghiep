@@ -10,22 +10,26 @@ interface Props {
 	handleCheckout: () => void;
 	setOrderCheckout: (order: any) => void;
 	orderCheckout: ObjectCheckoutOrder;
+	moneyVoucher: number | null;
 }
 const PaymentMethod = ({
 	data,
 	handleCheckout,
 	setOrderCheckout,
 	orderCheckout,
+	moneyVoucher,
 }: Props) => {
 	const [paymentMethod, setPaymentMethod] = useState<string>("1");
 	const arrayTotal = data?.data?.map((product: any) => {
 		return product.totalAmount;
 	});
+	console.log(data?.data);
 
 	const totalCost = arrayTotal?.reduce(
 		(acc: number, value: number) => acc + value,
 		0,
-  );
+	);
+	console.log(orderCheckout);
 
 	return (
 		<div className="py-2 pb-14">
@@ -102,32 +106,42 @@ const PaymentMethod = ({
 							</p>
 							<span className="">{formatCurrency(totalCost)}</span>
 						</div>
-						<div className="flex justify-between">
-							<p className="lg:text-base md:text-base text-sm">
-								Phí vận chuyển
-							</p>
-							<span className="">
-								{totalCost != 0
-									? formatCurrency(orderCheckout?.shippingCost as number)
-									: formatCurrency(0)}
-							</span>
-						</div>
-						<div className="flex justify-between gap-3">
-							<p className="lg:text-base md:text-base text-sm">
-								Giảm giá phí vận chuyển
-							</p>
-							<span className="">{formatCurrency(3000)}</span>
-						</div>
+						{orderCheckout.addressId !== undefined && (
+							<div className="flex justify-between">
+								<p className="lg:text-base md:text-base text-sm">
+									Phí vận chuyển
+								</p>
+								<span className="">
+									{totalCost != 0
+										? formatCurrency(orderCheckout?.shippingCost as number)
+										: formatCurrency(0)}
+								</span>
+							</div>
+						)}
+
+						{orderCheckout?.voucher !== null && (
+							<div className="flex justify-between gap-3">
+								<p className="lg:text-base md:text-base text-sm">Giảm giá</p>
+								<span className="">
+									{formatCurrency(moneyVoucher as number)}
+								</span>
+							</div>
+						)}
+
 						<div className="flex items-center justify-between gap-2">
 							<p className="lg:text-base md:text-base text-sm">
 								Tổng thanh toán :
 							</p>
 							<span className="lg:text-2xl md:text-xl text-xl text-[#f78138]">
-								{totalCost != 0
-									? formatCurrency(
-											totalCost + (orderCheckout?.shippingCost as number),
-										)
-									: formatCurrency(0)}
+								{orderCheckout.addressId === undefined
+									? formatCurrency(0)
+									: totalCost != 0
+										? formatCurrency(
+												totalCost +
+													(orderCheckout?.shippingCost as number) -
+													(moneyVoucher as number),
+											)
+										: formatCurrency(0)}
 							</span>
 						</div>
 					</div>
@@ -145,10 +159,17 @@ const PaymentMethod = ({
 				<div className="lg:hidden md:hidden fixed flex bottom-0 z-[10] h-[50px] w-full bg-white items-center justify-end gap-3 border border-gray-200 ">
 					<div className="flex flex-col items-center pt-1">
 						<p className="text-sm">Tổng thanh toán</p>
+
 						<span className="text-base self-end text-[#f78138]">
-							{formatCurrency(
-								totalCost + (orderCheckout?.shippingCost as number),
-							)}
+							{orderCheckout.addressId === undefined
+								? formatCurrency(0)
+								: totalCost != 0
+									? formatCurrency(
+											totalCost +
+												(orderCheckout?.shippingCost as number) -
+												(moneyVoucher as number),
+										)
+									: formatCurrency(0)}
 						</span>
 					</div>
 					<Button

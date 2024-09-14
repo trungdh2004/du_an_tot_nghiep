@@ -11,6 +11,7 @@ import app from "@/config/initializeFirebase";
 import { useAuth } from "@/hooks/auth";
 import { cn } from "@/lib/utils";
 import { logOut } from "@/service/account";
+import useCart from "@/store/cart.store";
 import { AxiosError } from "axios";
 import { getAuth, signOut } from "firebase/auth";
 import { LucideUser } from "lucide-react";
@@ -18,6 +19,7 @@ import { Link } from "react-router-dom";
 import { toast } from "sonner";
 const User = () => {
 	const { authUser, setAuthUser, setIsLoggedIn } = useAuth();
+	const { setCarts, updateTotalCart } = useCart();
 	const handleLogout = async () => {
 		try {
 			const data = await logOut();
@@ -25,6 +27,8 @@ const User = () => {
 			setIsLoggedIn?.(false);
 			removeItemLocal("token");
 			signOut(getAuth(app));
+			updateTotalCart(0);
+			setCarts([]);
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				toast.error(error.response?.data?.message);
@@ -37,6 +41,7 @@ const User = () => {
 				<LucideUser strokeWidth={1.5} size={20} />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
+				align="end"
 				style={{ boxShadow: "0 -4px 32px rgba(0, 0, 0, .2)" }}
 				className="py-2 px-4 *:cursor-pointer  text-[#1d2129] rounded-lg border-none"
 			>

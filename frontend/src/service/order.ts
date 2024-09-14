@@ -78,6 +78,12 @@ export const cancelOrder = async (
   });
   return data;
 };
+export const createStateUrlCart = (payload: {
+  listId: string[];
+  voucher: string | null;
+}) => {
+  return instance.post(`/order/createStateUrlCart`, payload);
+};
 export const fetchOrder = async (obj: { status: null | number }) => {
   const data = await instance.post(`/order/pagingOrderClient`, obj);
   return data;

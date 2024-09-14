@@ -1,5 +1,8 @@
+
 import LoadingFixed from "@/components/LoadingFixed";
 import { currentAccount } from "@/service/account";
+import { getCountMyShoppingCart, pagingCart } from "@/service/cart";
+import useCart from "@/store/cart.store";
 import {
   ClientToServerEvents,
   ServerToClientEvents,
@@ -42,6 +45,7 @@ interface AuthProviderProps {
 }
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
+  const { setCarts, setTotalCart } = useCart();
   const [authUser, setAuthUser] = useState<IUser | undefined>(undefined);
   const [socket, setSocket] =
     useState<Socket<ServerToClientEvents, ClientToServerEvents>>();
@@ -53,24 +57,16 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     (async () => {
       try {
         const { data } = await currentAccount();
+        const [carts, totalCountCart] = await Promise.all([
+          pagingCart({ pageSize: 9999999999999 }),
+          getCountMyShoppingCart(),
+        ]);
+        setCarts(carts?.data?.data?.content);
+        setTotalCart(totalCountCart?.data?.count);
         setAuthUser(data?.data);
-        if (data.data._id) {
-          const role = data.data.is_admin || data.data.is_staff;
-
-          const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
-            process.env.SERVER_SOCKET_URL!,
-            {
-              query: {
-                userId: data.data._id,
-                role: role ? "admin" : "user",
-              },
-            },
-          );
-          setSocket(socket);
-          console.log({ socket });
-
-        }
       } catch (error) {
+        setTotalCart(0);
+        setCarts([]);
         setAuthUser(undefined);
         setIsLoggedIn(false);
       } finally {
@@ -80,9 +76,9 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 
     return () => {
       if (socket) {
-        socket.emit("disconnect", authUser?._id)
+        socket.emit("disconnect", authUser?._id);
       }
-    }
+    };
   }, []);
   if (isLoading) {
     return <LoadingFixed />;
