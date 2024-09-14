@@ -1,4 +1,5 @@
 import instance from "@/config/instance";
+
 const url = "voucher";
 export const takeApplyDiscountCode = (payload: {
 	code: string;

@@ -13,8 +13,6 @@ const OrderProcessing = () => {
 		const fetchData = async () => {
 			try {
 				const data = await returnUrlVnPay(searchParams.toString());
-				console.log("data", data);
-
 				if (data?.data?.type === 3) {
 					navigate("/order/success");
 					return data;

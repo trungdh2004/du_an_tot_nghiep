@@ -1,3 +1,4 @@
+
 export interface IVoucher {
 	code: string;
 	createdAt: string;
