@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { MdEdit } from "react-icons/md";
 import { FaRegUser } from "react-icons/fa";
 import { motion, Variants } from "framer-motion";
@@ -19,6 +19,7 @@ const itemVariants: Variants = {
 const AccountLayout = () => {
 	const [isOpen, setIsOpen] = useState(true);
 	const isMobile = useMediaQuery("(max-width: 1024px)");
+	const router = useNavigate()
 
 	useEffect(() => {
 		if (isMobile) {
@@ -103,18 +104,22 @@ const AccountLayout = () => {
 									{sidebarAccount?.map((item) => {
 										const isCheck = location.includes(item.path);
 										return (
-											<Link to={item.path}>
-												<motion.li
-													variants={itemVariants}
-													className={cn(
-														"w-full px-2 py-1 h-10 hover:bg-slate-50/40 cursor-pointer lg:rounded-md flex items-center hover:text-blue-500",
-														isCheck && "text-blue-500 bg-slate-50/40",
-													)}
-												>
-													{<item.icon size={20} className="mr-4" />}{" "}
-													<span>{item.name}</span>
-												</motion.li>
-											</Link>
+											<motion.li
+												variants={itemVariants}
+												className={cn(
+													"w-full px-2 py-1 h-10 hover:bg-slate-50/40 cursor-pointer lg:rounded-md flex items-center hover:text-blue-500",
+													isCheck && "text-blue-500 bg-slate-50/40",
+												)}
+												onClick={() => {
+													if(isMobile) {
+														setIsOpen(false)
+													}
+													router(item.path)
+												}}
+											>
+												{<item.icon size={20} className="mr-4" />}{" "}
+												<span>{item.name}</span>
+											</motion.li>
 										);
 									})}
 								</motion.ul>

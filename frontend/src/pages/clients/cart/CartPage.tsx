@@ -271,7 +271,7 @@ const CartPage = () => {
 					setIsModalConfirm(false);
 				}}
 			/>
-			<section className="px-0 sm:px-[30px] md:px-[40px] xl:px-[50px] 2xl:px-[60px] w-full bg-gray-100 py-5">
+			<section className="px-0 sm:px-[30px] md:px-[40px] xl:px-[50px] 2xl:px-[60px] w-full  py-5">
 				{carts?.length <= 0 ? (
 					<div className="flex flex-col items-center justify-center gap-3 h-[21rem]">
 						<div className="w-28">

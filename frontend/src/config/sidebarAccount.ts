@@ -26,7 +26,7 @@ const sidebarAccount = [
     },
     {
         name:"Đơn hàng",
-        path:"/account/password",
+        path:"/account/purchase",
         icon: CgMenuBoxed
     },
     {

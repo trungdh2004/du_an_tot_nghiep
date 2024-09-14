@@ -220,7 +220,7 @@ const PurchaseOrder = () => {
               </div>
             </div>
             {/* product */}
-            <div className="box-shadow ">
+            <div className="box-shadow bg-white">
               <div className="w-full bg-white">
                 {data?.data?.orderItems?.map((itemOrder: IOrderItemDetail, index: number) => {
                   return (
@@ -250,7 +250,7 @@ const PurchaseOrder = () => {
                   )
                 })}
               </div>
-              <div className="flex border-t border-gray-200">
+              <div className="flex border-t border-gray-200 ">
                 <div className="w-[65%] md:w-[75%] flex flex-col text-right ">
                   <span className="py-2 md:py-4 px-3 border-b-2 border-r-2  border-dotted text-sm md:text-base rounded text-[rgba(0,0,0,.68)] leading-[160%]">Tổng tiền hàng</span>
                   <span className="py-2 md:py-4 px-3 border-b-2  border-r-2 border-dotted text-sm md:text-base rounded text-[rgba(0,0,0,.68)] leading-[160%]">Phí vận chuyển</span>

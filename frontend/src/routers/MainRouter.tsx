@@ -29,20 +29,6 @@ const MainRouter = [
       { path: "cart", element: <CartPage /> },
       { path: "shop", element: <ShopProduct /> },
       {
-        path: "account",
-        element: <AccountLayout />,
-        children: [
-          {
-            path: '/account/purchase',
-            element: <OrderManagements />
-          },
-          {
-            path: '/account/purchase/order/:id',
-            element: <PurchaseOrder />
-          },
-        ]
-      },
-      {
         path: "/account",
         element: <AccountLayout />,
         children: [
@@ -53,6 +39,14 @@ const MainRouter = [
           {
             path: "profile",
             element: <AccountIndex />,
+          },
+          {
+            path: 'purchase',
+            element: <OrderManagements />
+          },
+          {
+            path: 'purchase/order/:id',
+            element: <PurchaseOrder />
           },
         ],
       },
