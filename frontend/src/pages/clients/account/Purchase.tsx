@@ -103,14 +103,6 @@ const OrderManagements = () => {
       })
     }
   })
-  // const handleReceivedClientOrder = async (id: string) => {
-  //   try {
-  //     const data = await receivedClientOrder(id);
-  //     return data
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
 
   return (
     <>
@@ -131,6 +123,7 @@ const OrderManagements = () => {
               {isLoading && (<div className=''><LoadingTable /></div>)}
             </div>
             {!isLoading && orderData && orderData?.map((item: IOrderList) => {
+              // console.log("1111111", item.status)
               return (
                 <>
                   <div key={item._id} className="my-5">
@@ -138,7 +131,7 @@ const OrderManagements = () => {
                       {/* head-order */}
                       <div className="w-full bg-white box-shadow flex justify-between items-center rounded-sm border border-gray-200 px-2 md:px-5 py-5">
                         <div className="text-xs md:text-base font-semibold">Mã đơn hàng: <span className='text-gray-900 font-medium'>{item?.code} </span></div>
-                        <div className="text-xs md:text-base text-blue-500 font-medium ">{statusList.find((status) => status.index === item.status)?.name}</div>
+                        <div className={cn(item.status == 6 ? "text-red-500 text-xs md:text-base font-medium" : "text-xs md:text-base text-blue-500 font-medium ")}>{statusList.find((status) => status.index === item.status)?.name}</div>
                       </div>
                       {/* end head */}
 

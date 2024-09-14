@@ -98,7 +98,7 @@ const PurchaseOrder = () => {
       })
     }
   })
-
+  console.log("adadadadadasdasd",)
   return (
     <>
       <div className="w-full px-0 lg:px-20">
@@ -115,7 +115,7 @@ const PurchaseOrder = () => {
             <div className="flex md:gap-x-3 md:justify-center md:items-center xl:gap-x-5 uppercase ">
               <p className="hidden md:flex justify-center items-center gap-1 font-medium text-xs md:text-base text-gray-900 ">Mã đơn hàng:  <span className="text-gray-600">{data?.data.code} </span></p>
               <span className="hidden md:block pb-1">|</span>
-              <span className="text-xs md:text-base text-blue-500">{statusIndex.find((item) => item.index === status)?.name}</span>
+              <span className={cn(statusLists.find(item => item === 6) ? "text-red-500 text-xs md:text-base font-medium" : "text-xs md:text-base font-medium text-blue-500")}>{statusIndex.find((item) => item.index === status)?.name}</span>
             </div>
           </div>
           {/* status */}
