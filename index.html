@@ -1,28 +1,206 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
-    <script>
-        function randomThreeConsecutiveNumbers(a) {
-            if(a < 3) {
-                return 0
-            }
-            const start = Math.floor(Math.random() * (a - 3));
-            
-            return start
-        }
+    <style>
+      body {
+        width: 100%;
+        height: 100vh;
+        background-color: rgb(0, 0, 0);
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        console.log("1",randomThreeConsecutiveNumbers(10));
-        console.log("2",randomThreeConsecutiveNumbers(3));
-        console.log("3",randomThreeConsecutiveNumbers(2));
-        console.log("4",randomThreeConsecutiveNumbers(7));
-        console.log("5",randomThreeConsecutiveNumbers(8));
-        console.log("6",randomThreeConsecutiveNumbers(4));
-        
+      .root {
+        width: 100%;
+        height: 100vh;
+        position: relative;
+        overflow: hidden;
+      }
+      .than {
+        width: 20px;
+        height: 80px;
+        background-color: blue;
+        position: absolute;
+        top: 110px;
+        left: 50%;
+        z-index: 10;
+      }
+      .lua {
+        position: absolute;
+        top: -20px;
+        left: 2px;
+        background-color: white;
+        width: 20px;
+        height: 20px;
+        transform: rotate(-45deg);
+        border-radius: 100% 0% 50% 50% / 50% 0% 100% 50%;
+        animation: animationLua 2s linear infinite;
+      }
+
+      img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .chu {
+        font-size: 28px;
+        font-weight: 600;
+        color: white;
+        position: absolute;
+        bottom: 10px;
+        width: 100%;
+        text-align: center;
+        bottom: 20px;
+        opacity: 0;
+        transition: 2;
+      }
+      @keyframes animationLua {
+        0% {
+          transform: rotate(-0deg);
+        }
+        33% {
+          transform: rotate(-45deg);
+        }
+        66% {
+          transform: rotate(-90deg);
+        }
+        100% {
+          transform: rotate(-0deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="root">
+      <div
+        id="fireworks-container"
+        style="
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 100;
+        "
+      ></div>
+      <div class="than">
+        <div class="boclua">
+          <div class="lua"></div>
+        </div>
+      </div>
+      <span tooltip="Reset mật khẩu">hihi</span>
+      <img
+        src="https://res.cloudinary.com/dundmo7q8/image/upload/v1725808887/fno1i15yrh4tmkwlwalo.png"
+        alt=""
+      />
+      <div class="chu">Chúc mừng sinh nhật Nguyễn Văn Tuyên</div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/fireworks-js/dist/fireworks.min.js"></script>
+
+    <script>
+      const container = document.getElementById("fireworks-container");
+      // Khởi tạo hiệu ứng pháo hoa
+      const fireworks = new Fireworks(container, {
+        speed: 3,
+        acceleration: 1.05,
+        friction: 0.97,
+        gravity: 1.5,
+        particles: 100,
+        trace: 3,
+        explosion: 5,
+        boundaries: {
+          top: 50,
+          bottom: container.clientHeight,
+          left: 50,
+          right: container.clientWidth,
+        },
+      });
+
+      let tat = false;
+      const luane = document.querySelector(".boclua");
+      const chu = document.querySelector(".chu");
+
+      console.log(luane);
+
+      async function detectSpeech() {
+        try {
+          // Yêu cầu quyền truy cập vào micro
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+          });
+
+          // Tạo ngữ cảnh âm thanh (AudioContext)
+          const audioContext = new (window.AudioContext ||
+            window.webkitAudioContext)();
+
+          // Tạo một nguồn từ dòng âm thanh (stream)
+          const source = audioContext.createMediaStreamSource(stream);
+
+          // Tạo một đối tượng AnalyserNode để phân tích âm thanh
+          const analyser = audioContext.createAnalyser();
+          analyser.fftSize = 256; // Đặt kích thước FFT (Fast Fourier Transform)
+
+          // Nối nguồn âm thanh vào AnalyserNode
+          source.connect(analyser);
+
+          // Tạo một mảng để chứa dữ liệu tần số
+          const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+          function checkAudioLevel() {
+            // Lấy dữ liệu tần số
+            analyser.getByteFrequencyData(dataArray);
+
+            // Tính toán mức độ âm thanh trung bình
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) {
+              sum += dataArray[i];
+            }
+            const average = sum / dataArray.length;
+
+            // In ra console mức độ âm thanh
+            // console.log("Mức độ âm thanh: ", average);
+
+            const width = 150 - average;
+            if (width < 10) {
+              tat = true;
+            }
+
+            if (tat) {
+              luane.style.transform = `scale(0)`;
+              fireworks.start();
+              chu.style.opacity = '1'
+            } else {
+              // console.log("width ", `scale(${width / 100})`);
+              luane.style.transform = `scale(${width / 150})`;
+            }
+
+            // Xác định có người nói chuyện hay không dựa trên mức độ âm thanh
+            if (average > 100) {
+              // Ngưỡng để xác định có âm thanh (điều chỉnh ngưỡng này tùy thuộc vào môi trường)
+              console.log("Có người đang nói chuyện!");
+            } else {
+              console.log("Không có người nói chuyện.");
+            }
+
+            // Gọi lại hàm này để liên tục kiểm tra mức độ âm thanh
+            requestAnimationFrame(checkAudioLevel);
+          }
+
+          // Bắt đầu kiểm tra âm thanh
+          checkAudioLevel();
+        } catch (error) {
+          console.error("Không thể truy cập micro:", error);
+        }
+      }
+
+      // Gọi hàm để bắt đầu phát hiện âm thanh
+      detectSpeech();
     </script>
-</body>
+  </body>
 </html>

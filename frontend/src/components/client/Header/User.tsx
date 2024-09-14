@@ -37,6 +37,7 @@ const User = () => {
 				<LucideUser strokeWidth={1.5} size={20} />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
+				align="end"
 				style={{ boxShadow: "0 -4px 32px rgba(0, 0, 0, .2)" }}
 				className="py-2 px-4 *:cursor-pointer  text-[#1d2129] rounded-lg border-none"
 			>
