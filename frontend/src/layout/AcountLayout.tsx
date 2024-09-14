@@ -33,8 +33,8 @@ const AccountLayout = () => {
 	return (
 		<>
 			<div className="padding max-md:px-0 min-h-[calc(100vh-60px)] ">
-				<div className="flex flex-col  lg:flex-row w-full gap-2 lg:gap-8 py-2 lg:py-12 px-0  ">
-					<div className="block w-full lg:w-[250px] ">
+				<div className="flex flex-col  lg:flex-row w-full gap-2 lg:gap-8 py-2 lg:py-12 px-0 relative">
+					<div className="block w-full lg:w-[250px] sticky top-0">
 						<div>
 							<motion.nav
 								initial={false}
@@ -126,7 +126,7 @@ const AccountLayout = () => {
 							</motion.nav>
 						</div>
 					</div>
-					<div className="flex-1 w-full">
+					<div className="flex-1 w-full border-l">
 						<Outlet />
 					</div>
 				</div>

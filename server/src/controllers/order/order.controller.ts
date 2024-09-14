@@ -315,11 +315,11 @@ class OrderController {
           message: "Tạo đơn hàng thất bại",
         });
       }
-      // await CartItemModel.deleteMany({
-      //   _id: {
-      //     $in: listId,
-      //   },
-      // });
+      await CartItemModel.deleteMany({
+        _id: {
+          $in: listId,
+        },
+      });
       socketNotificationAdmin(
         `<p>Đơn hàng: <span style="color:blue;font-weight:500;">${newOrder.code}</span> vừa được đặt, vui lòng kiểm tra thông tin</p>`,
         TYPE_NOTIFICATION_ADMIN.ORDER,
@@ -590,19 +590,13 @@ class OrderController {
               voucherMain = data.voucher as IVoucher;
             }
             if (!data.check) {
-              return res.status(STATUS.BAD_REQUEST).json({
-                message: data.message,
-              });
+              voucherMain = null
             }
           } else {
-            return res.status(STATUS.BAD_REQUEST).json({
-              message: "Bạn đã sử dụng voucher",
-            });
+            voucherMain = null
           }
         } else {
-          return res.status(STATUS.BAD_REQUEST).json({
-            message: "Không có voucher",
-          });
+          voucherMain = null
         }
       }
 
@@ -657,9 +651,7 @@ class OrderController {
       }, 0);
       if (voucherMain) {
         if (voucherMain.minimumOrderValue > checkTotalMoney) {
-          return res.status(STATUS.BAD_REQUEST).json({
-            message: "Đơn hàng không đạt đủ điều kiện voucher",
-          });
+          voucherMain = null
         }
       }
 
@@ -1461,52 +1453,52 @@ class OrderController {
         });
       }
 
-      // existingOrder.orderItems.map(async (item, index) => {
-      //   const orderItem = item as IOrderItem;
-      //   const id = (item as IOrderItem).attribute;
-      //   const quantity = (item as IOrderItem).quantity;
-      //   await AttributeModel.findByIdAndUpdate(id, {
-      //     $inc: { quantity: -quantity },
-      //   });
-      //   await ProductModel.findByIdAndUpdate(orderItem?.product, {
-      //     $inc: { quantity: -quantity },
-      //   });
-      //   await OrderItemsModel.findByIdAndUpdate((item as IOrderItem)._id, {
-      //     status: 2,
-      //   });
-      // });
+      existingOrder.orderItems.map(async (item, index) => {
+        const orderItem = item as IOrderItem;
+        const id = (item as IOrderItem).attribute;
+        const quantity = (item as IOrderItem).quantity;
+        await AttributeModel.findByIdAndUpdate(id, {
+          $inc: { quantity: -quantity },
+        });
+        await ProductModel.findByIdAndUpdate(orderItem?.product, {
+          $inc: { quantity: -quantity },
+        });
+        await OrderItemsModel.findByIdAndUpdate((item as IOrderItem)._id, {
+          status: 2,
+        });
+      });
 
-      // let futureDateTimeOrder = handleFutureDateTimeOrder(1000);
+      let futureDateTimeOrder = handleFutureDateTimeOrder(1000);
 
-      // if (existingOrder.distance) {
-      //   futureDateTimeOrder = handleFutureDateTimeOrder(existingOrder.distance);
-      // }
+      if (existingOrder.distance) {
+        futureDateTimeOrder = handleFutureDateTimeOrder(existingOrder.distance);
+      }
 
-      // const orderUpdate = await OrderModel.findByIdAndUpdate(
-      //   existingOrder._id,
-      //   {
-      //     status: 2,
-      //     $push: {
-      //       statusList: 2,
-      //     },
-      //     confirmedDate: Date.now(),
-      //     estimatedDeliveryDate: futureDateTimeOrder,
-      //   }
-      // );
+      const orderUpdate = await OrderModel.findByIdAndUpdate(
+        existingOrder._id,
+        {
+          status: 2,
+          $push: {
+            statusList: 2,
+          },
+          confirmedDate: Date.now(),
+          estimatedDeliveryDate: futureDateTimeOrder,
+        }
+      );
 
-      // await OrderItemsModel.updateMany(
-      //   {
-      //     _id: {
-      //       $in: existingOrder.orderItems,
-      //     },
-      //   },
-      //   {
-      //     status: 2,
-      //   },
-      //   {
-      //     now: true,
-      //   }
-      // );
+      await OrderItemsModel.updateMany(
+        {
+          _id: {
+            $in: existingOrder.orderItems,
+          },
+        },
+        {
+          status: 2,
+        },
+        {
+          now: true,
+        }
+      );
 
       socketNotificationOrderClient(
         existingOrder?.code as string,
