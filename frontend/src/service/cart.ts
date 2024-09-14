@@ -5,11 +5,30 @@ type addToCartType = {
 	quantity: number;
 	attribute: string;
 };
-export const pagingCart = () => {
+type pagingCart = {
+	pageSize: number;
+};
+export const pagingCart = (payload: pagingCart) => {
 	const uri = `${endpoint}/pagingCart`;
-	return instance.get(uri);
+	return instance.post(uri, payload);
 };
 export const addProductToCart = (data: addToCartType) => {
 	const uri = `${endpoint}/addProductCart`;
 	return instance.post(uri, data);
+};
+export const getCountMyShoppingCart = () => {
+	const uri = `${endpoint}/countCart`;
+	return instance.get(uri);
+};
+export const deleteCartItem = (listId: string | string[]) => {
+	const uri = `${endpoint}/deleteProductCart`;
+	listId = Array.isArray(listId) ? listId : [listId];
+	return instance.post(uri, { listId });
+};
+export const updateCartItem = (
+	id: string,
+	payload: { quantity?: number; attribute?: string },
+) => {
+	const uri = `${endpoint}/updateProductCart/${id}`;
+	return instance.put(uri, payload);
 };

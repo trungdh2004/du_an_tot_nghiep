@@ -1109,7 +1109,9 @@ class OrderController {
         updateOder?._id
       );
       socketNotificationAdmin(
-        `<p>Có giao dịch thanh toán online với số tiền : <span style="color:red;font-weight:500;">${formatCurrency(payment?.amount)}</span>, vui lòng kiểm tra thông tin</p>`,
+        `<p>Có giao dịch thanh toán online với số tiền : <span style="color:red;font-weight:500;">${formatCurrency(
+          payment?.amount
+        )}</span>, vui lòng kiểm tra thông tin</p>`,
         TYPE_NOTIFICATION_ADMIN.PAYMENT,
         `${payment?._id}`
       );

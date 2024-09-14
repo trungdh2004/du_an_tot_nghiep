@@ -424,10 +424,10 @@ class CartController {
 
       if (attribute) {
         const checkCartItem = await CartItemModel.findOne({
-          attribute: attribute
-        })
+          attribute: attribute,
+        });
 
-        if(checkCartItem) {
+        if (checkCartItem) {
           return res.status(STATUS.BAD_REQUEST).json({
             message: "Loại hàng này đã có ở giỏ hàng",
           });
@@ -493,13 +493,12 @@ class CartController {
         _id: updatedProduct._id,
         price: (updatedProduct.product as IProduct).price,
         name: (updatedProduct.product as IProduct).name,
-        productId:(updatedProduct.product as IProduct)._id,
+        productId: (updatedProduct.product as IProduct)._id,
         quantitySold: (updatedProduct.product as IProduct).quantitySold,
         discount: (updatedProduct.product as IProduct).discount,
-        thumbnail:(updatedProduct.product as IProduct).thumbnail,
+        thumbnail: (updatedProduct.product as IProduct).thumbnail,
         attribute: updatedProduct.attribute,
       };
-
 
       return res.status(STATUS.OK).json({
         message: "Thay đổi thành công",

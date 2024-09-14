@@ -23,8 +23,11 @@ import {
 } from "../../components/ui/form";
 import { Input } from "../../components/ui/input";
 import SignInWithFacebookOrGoogle from "./SignInWithFacebookOrGoogle";
+import useCart from "@/store/cart.store";
+import { getCountMyShoppingCart, pagingCart } from "@/service/cart";
 const Login = () => {
 	const routerHistory = useRouterHistory();
+	const { setCarts, setTotalCart } = useCart();
 	const { setAuthUser, setIsLoggedIn } = useAuth();
 	const formSchema = z.object({
 		email: z
@@ -50,18 +53,26 @@ const Login = () => {
 			setAuthUser?.(data?.user);
 			setIsLoggedIn?.(true);
 			instance.defaults.headers.common.Authorization = `Bearer ${data?.accessToken}`;
+			const [carts, totalCountCart] = await Promise.all([
+				pagingCart({ pageSize: 9999999999999 }),
+				getCountMyShoppingCart(),
+			]);
+			setCarts(carts?.data?.data?.content);
+			setTotalCart(totalCountCart?.data?.count);
 			toast.success(data?.message);
 			routerHistory();
 		} catch (error) {
 			setAuthUser?.(undefined);
 			setIsLoggedIn?.(false);
+			setCarts([]);
+			setTotalCart(0);
 			if (error instanceof AxiosError) {
 				toast.error(error.response?.data?.message);
 			}
 		}
 	};
 	return (
-		<div className="">
+		<div className="h-full">
 			<OverlayViolet />
 
 			<div className="absolute left-3 top-3  flex justify-between items-center pr-5">
@@ -72,7 +83,7 @@ const Login = () => {
 					<IoIosArrowRoundBack size={20} className="mr-4" /> Trang chủ
 				</Link>
 			</div>
-			<div className="dark:bg-slate-800 w-full max-w-xs md:max-w-sm mx-auto mt-12  px-8 py-9 bg-white shadow-md border border-gray-200 rounded-2xl">
+			<div className="dark:bg-slate-800 w-full  max-w-xs md:max-w-sm mx-auto my-auto mt-24 md:mt-12  px-8 py-9 bg-white shadow-md border border-gray-200 rounded-2xl">
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)}>
 						<div className=" space-y-5 ">

@@ -12,7 +12,7 @@ import {
 	createOrderVNPayPayment,
 	pagingOrder,
 } from "@/service/order";
-import { ObjectCheckoutOrder } from "@/types/ObjectCheckoutOrder";
+import { ObjectCheckoutOrder, ResponseData } from "@/types/ObjectCheckoutOrder";
 import { toast } from "sonner";
 
 const OrderPage = () => {
@@ -21,6 +21,7 @@ const OrderPage = () => {
 	const stateOrder = JSON.parse(paramsObject.state);
 	const [orderParams, setOrderParams] = useState<any | {}>(stateOrder || {});
 	const [order, setOrder] = useState<any>({});
+	console.log(order);
 
 	const { mutate } = useMutation({
 		mutationKey: ["orderPagingCart"],
@@ -56,14 +57,14 @@ const OrderPage = () => {
 			return {
 				listId: orderParams.listId,
 				addressId: order?.address?._id,
-				voucher: "",
+				voucher: null,
 				paymentMethod: 1,
 				note: "",
 				shippingCost: order?.shippingCost,
 			};
 		},
 	);
-
+	const [moneyVoucher, setMoneyVoucher] = useState<number | null>(null);
 	useEffect(() => {
 		if (order?.address) {
 			setOrderCheckout((prev) => ({
@@ -75,11 +76,15 @@ const OrderPage = () => {
 	}, [order]);
 
 	const navigate = useNavigate();
-  const handleCheckout = () => {
-    if (!orderCheckout.addressId) {
-      toast.error("Vui lòng chọn địa chỉ giao hàng");
-      return;
-    }
+	const handleCheckout = () => {
+		if (order.data.length === 0) {
+			toast.error("Vui lòng mua thêm hàng");
+			return;
+		}
+		if (!orderCheckout.addressId) {
+			toast.error("Vui lòng chọn địa chỉ giao hàng");
+			return;
+		}
 		if (orderCheckout.paymentMethod === 1) {
 			try {
 				(async () => {
@@ -117,16 +122,21 @@ const OrderPage = () => {
 				<div className="lg:px-[130px] md:px-[65px] px-0">
 					<AddressOrder
 						data={order}
-            handleChangeAddress={handleChangeAddress}
+						handleChangeAddress={handleChangeAddress}
 					/>
 					<ProductOrder data={order} />
-					<Vorcher />
+					<Vorcher
+						data={order}
+						setOrderCheckout={setOrderCheckout}
+						setMoneyVoucher={setMoneyVoucher}
+					/>
 					<NoteOrder setOrderCheckout={setOrderCheckout} />
 					<PaymentMethod
 						data={order}
 						handleCheckout={handleCheckout}
 						setOrderCheckout={setOrderCheckout}
 						orderCheckout={orderCheckout}
+						moneyVoucher={moneyVoucher}
 					/>
 				</div>
 			</div>
