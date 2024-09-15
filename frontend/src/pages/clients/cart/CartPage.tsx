@@ -82,9 +82,24 @@ const CartPage = () => {
 		) {
 			setDiscountCode((prev) => ({
 				...prev,
+				applyCode: "",
 				currentVoucherCode: null,
 				error:
 					"Giá trị tối thiểu của đơn hàng không đạt điều kiện để sử dụng voucher này",
+			}));
+		} else if (
+			discountCode?.currentVoucherCode &&
+			totals.totalAmount >= discountCode?.currentVoucherCode?.minimumOrderValue
+		) {
+			setDiscountCode((prev) => ({
+				...prev,
+				error: "",
+			}));
+		} else {
+			setDiscountCode((prev) => ({
+				...prev,
+				applyCode: "",
+				error: "",
 			}));
 		}
 		setTotalSelectedAmount(totals || { totalQuantity: 0, totalAmount: 0 });
@@ -337,22 +352,21 @@ const CartPage = () => {
 							))}
 							<div className="sticky bottom-0 bg-white shadow-[0px_-3px_5px_#0000000f] py-5 w-full">
 								<div className="border-b border-gray-300 border-dotted py-3 px-1.5 md:px-6 w-full">
-									<div className="block mb-2 text-[11px] text-red-500 text-end md:hidden">
+									<div className="block mb-2 pl-2 md:pl-6 text-[11px] text-red-500 text-start md:hidden">
 										{discountCode?.error}
 									</div>
 									<div className="w-full pl-2 md:pl-6">
-										<div className="flex items-center justify-between gap-5">
-											<div className="flex items-center gap-1">
-												<VoucherIcon height={24} width={24} />
-												<span className="text-xs md:text-sm">Mã giảm giá</span>
-											</div>
-											<div className="flex items-center gap-5">
-												<div className="hidden text-sm text-red-500 text-end md:inline-block">
-													{discountCode?.error}
+										<div className="flex items-start justify-between gap-5 md:items-center max-sm:flex-col">
+											<div className="flex items-center justify-between max-sm:w-full">
+												<div className="flex items-center gap-1">
+													<VoucherIcon height={24} width={24} />
+													<span className="text-xs md:text-sm text-nowrap">
+														Mã giảm giá
+													</span>
 												</div>
 												<div
 													className={cn(
-														"hidden bg-red-500 text-white px-2.5 py-1 rounded-xl items-center gap-2",
+														"hidden  justify-between text-nowrap bg-red-500 text-xs md:text-sm text-white px-2.5 py-1 rounded-xl items-center gap-2",
 														discountCode?.currentVoucherCode && "flex",
 													)}
 												>
@@ -375,20 +389,51 @@ const CartPage = () => {
 														<IoClose className="text-white" />
 													</button>
 												</div>
-												<div className="flex items-center gap-2">
-													<div className="relative">
+											</div>
+											<div className="flex items-center w-full gap-5 md:justify-end md:gap-3 max-sm:flex-col">
+												<div className="hidden text-sm text-red-500 text-end md:inline-block">
+													{discountCode?.error}
+												</div>
+												<div
+													className={cn(
+														"hidden max-sm:w-full justify-between text-nowrap bg-red-500 text-xs md:text-sm text-white px-2.5 py-1 rounded-xl items-center gap-2",
+														discountCode?.currentVoucherCode &&
+															"hidden md:flex",
+													)}
+												>
+													Giảm{" "}
+													{discountCode?.currentVoucherCode?.discountType == 1
+														? formatCurrency(
+																discountCode?.currentVoucherCode?.discountValue,
+															)
+														: `${discountCode?.currentVoucherCode?.discountValue}%`}
+													<button
+														onClick={() =>
+															setDiscountCode({
+																applyCode: "",
+																currentVoucherCode: null,
+																error: "",
+															})
+														}
+														className="flex items-center justify-center rounded-full size-5 bg-black/20"
+													>
+														<IoClose className="text-white" />
+													</button>
+												</div>
+												<div className="flex items-center w-full gap-2 md:w-min md:justify-end max-sm:flex-col">
+													<div className="relative w-full md:w-52 ">
 														<input
 															onChange={(e) =>
 																setDiscountCode({
-																	applyCode: (e.target as HTMLInputElement)
-																		.value,
+																	applyCode: e.target.value,
 																	currentVoucherCode: null,
 																	error: "",
 																})
 															}
+															placeholder="Nhập mã giảm giá"
 															value={discountCode?.applyCode}
 															type="text"
-															className="max-sm:w-36 outline-none border border-gray-200 bg-gray-100 h-8 md:h-10 p-1.5 "
+															className="w-full outline-none border border-gray-200 bg-gray-100 h-8 md:h-10 p-1.5"
 														/>
 														<button
 															onClick={() =>
@@ -410,7 +455,7 @@ const CartPage = () => {
 															getAllSelectedItems()?.length <= 0
 														}
 														className={cn(
-															"max-sm:h-8 bg-red-500 hover:bg-red-600 text-white px-5",
+															"h-8 md:h-10 w-full md:w-40 bg-red-500 hover:bg-red-600 text-white px-5",
 															(discountCode?.applyCode?.length < 9 ||
 																getAllSelectedItems()?.length <= 0) &&
 																"pointer-events-none bg-black/35",

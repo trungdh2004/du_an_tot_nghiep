@@ -54,7 +54,7 @@ const InputQuantity: React.FC<InputQuantityProps> = ({
 		small: "h-8 text-sm",
 		medium: "h-10 text-base",
 		large: "h-12 text-lg",
-		mobile: "h-6 text-sm",
+		mobile: "h-5 text-sm",
 		responsive:
 			"h-8 text-sm sm:h-9 sm:text-base md:h-10 md:text-base lg:h-12 lg:text-lg",
 	};
