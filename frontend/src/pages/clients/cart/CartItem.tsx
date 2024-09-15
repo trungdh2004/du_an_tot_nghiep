@@ -86,7 +86,7 @@ const CartItem = ({
 		});
 	};
 	return (
-		<div key={item._id} className="item-group flex items-center">
+		<div key={item._id} className="flex items-center item-group">
 			<div
 				className={cn(
 					"flex md:flex-row-reverse  min-w-[36px] md:min-w-[58px] md:pl-5 md:pr-3",
@@ -102,19 +102,19 @@ const CartItem = ({
 					/>
 				) : (
 					<>
-						<IoBanOutline className=" text-red-500" />
+						<IoBanOutline className="text-red-500 " />
 					</>
 				)}
 			</div>
 			<div className="flex items-center w-full lg:w-[46.27949%]">
-				<div className="min-w-16 min-h-16 max-w-16 max-h-16 md:min-w-20 md:min-h-20 md:max-w-20 md:max-h-20 relative rounded overflow-hidden">
+				<div className="relative overflow-hidden rounded min-w-14 min-h-14 max-w-14 max-h-14 md:min-w-20 md:min-h-20 md:max-w-20 md:max-h-20">
 					<img
 						src={optimizeCloudinaryUrl(item.thumbnail, 80, 80)}
 						alt={item.name}
-						className="w-full h-full object-cover"
+						className="object-cover w-full h-full"
 					/>
 					<div className="absolute inset-x-0 bottom-0 bg-black/45">
-						<p className="text-center text-white text-xs">
+						<p className="text-xs text-center text-white">
 							{!item?.attribute?._id
 								? "Không khả dụng"
 								: !item?.attribute?.quantity
@@ -127,8 +127,8 @@ const CartItem = ({
 					className={cn(
 						"flex flex-col justify-start px-2.5 py-1.5 sm:w-full md:w-5/6",
 						!item?.attribute?._id || !item?.attribute?.quantity
-							? "w-[75%]"
-							: "w-[78%]",
+							? "w-[70%]"
+							: "w-[73%]",
 					)}
 				>
 					<Link
@@ -137,7 +137,7 @@ const CartItem = ({
 					>
 						{item.name}
 					</Link>
-					<div>
+					<div className="inline-block">
 						<Attribute
 							isOpen={isOpen}
 							setIsOpen={setIsOpen}
@@ -165,10 +165,10 @@ const CartItem = ({
 						</div>
 					</div>
 					<div className="flex lg:hidden">
-						<div className="text-center text-xs space-x-2">
+						<div className="space-x-2 text-xs text-center">
 							<span
 								className={cn(
-									"line-through text-black/50 text-[10px]",
+									"line-through text-black/50 text-[8px]",
 									!item?.attribute?._id ||
 										(!item?.attribute?.quantity && "hidden"),
 								)}
@@ -179,7 +179,7 @@ const CartItem = ({
 								className={cn(
 									!item?.attribute?._id || !item?.attribute?.quantity
 										? "text-gray-700"
-										: "text-red-500",
+										: "text-red-500 font-bold",
 								)}
 							>
 								{formatCurrency(item?.attribute?.discount || 0)}
@@ -189,7 +189,7 @@ const CartItem = ({
 							{item?.attribute?._id && item?.attribute?.quantity ? (
 								<InputQuantity
 									size="mobile"
-									className="w-24"
+									className="w-20"
 									defaultValue={item?.quantity}
 									maxTotal={item?.attribute?.quantity}
 									getValue={handleChangeQuantity}
@@ -246,7 +246,7 @@ const CartItem = ({
 				<TooltipProvider>
 					<Tooltip>
 						<TooltipTrigger asChild>
-							<Button className="bg-transparent hover:bg-transparent outline-none border-none text-black/75">
+							<Button className="bg-transparent border-none outline-none hover:bg-transparent text-black/75">
 								Xoá
 							</Button>
 						</TooltipTrigger>

@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "usehooks-ts";
+import useCart from "@/store/cart.store";
 
 interface CartGroupProps {
 	cart: ICart;
@@ -25,7 +26,7 @@ const CartGroup = ({
 	const isMobile = useMediaQuery("(max-width: 768px)");
 	const [editingItemId, setEditingItemId] = useState<string | null>(null);
 	const [isEditing, setIsEditing] = useState(false);
-
+	const { setItemCart } = useCart();
 	const toggleEdit = useCallback(
 		(id: string) => {
 			setIsEditing((prev) => !prev);
@@ -48,8 +49,8 @@ const CartGroup = ({
 	);
 
 	return (
-		<div className="bg-white mb-3">
-			<div className="flex items-center border-b border-gray-200 h-14 px-3 md:px-5 py-2">
+		<div className="mb-3 bg-white">
+			<div className="flex items-center px-3 py-2 border-b border-gray-200 h-14 md:px-5">
 				<div className="group flex md:flex-row-reverse min-w-[36px] md:min-w-[58px] md:pl-5 md:pr-3">
 					<Checkbox
 						checked={groupChecked}
@@ -68,7 +69,7 @@ const CartGroup = ({
 					</Link>
 					<button
 						onClick={() => toggleEdit(cart?.product?._id as string)}
-						className="md:hidden text-blue-500 text-sm"
+						className="text-sm text-blue-500 md:hidden"
 					>
 						{editingItemId == cart?.product?._id ? "Xong" : "Sửa"}
 					</button>
@@ -103,11 +104,14 @@ const CartGroup = ({
 
 					return (
 						<div
-							className="relative w-full overflow-hidden bg-gray-50 shadow-sm"
+							className="relative w-full overflow-hidden shadow-sm bg-gray-50"
 							key={item?._id}
 						>
-							<div className="absolute inset-y-0 right-0 w-20 bg-red-500 flex items-center justify-center">
-								<button className="text-white w-full h-full">Xoá</button>
+							<div
+								onClick={() => setItemCart(item)}
+								className="absolute inset-y-0 top-[1.5px] bottom-[1.5px] right-0 w-20 bg-red-500 flex items-center justify-center"
+							>
+								<button className="w-full h-full text-white">Xoá</button>
 							</div>
 
 							<motion.div
@@ -123,7 +127,7 @@ const CartGroup = ({
 									stiffness: 300,
 									damping: 30,
 								}}
-								className="bg-white relative p-3 md:px-5"
+								className="relative p-3 bg-white md:px-5"
 							>
 								<CartItem
 									cart={cart}

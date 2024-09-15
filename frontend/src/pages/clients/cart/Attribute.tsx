@@ -100,7 +100,7 @@ const Attribute = ({
 	return (
 		<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
 			<DropdownMenuTrigger asChild className="outline-none">
-				<button className="text-sm text-left text-gray-500 outline-none inline-block">
+				<button className="inline-block text-sm text-left text-gray-500 outline-none">
 					<div className="flex items-start gap-1 w-min">
 						<span className="text-nowrap">Phân loại sản phẩm</span>{" "}
 						<motion.div
@@ -114,8 +114,9 @@ const Attribute = ({
 				</button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
-				className="min-w-80 p-1.5"
-				align={!attribute?.color && !attribute?.size ? "end" : "center"}
+				className="min-w-72 p-1.5"
+				// align={!attribute?.color && !attribute?.size ? "end" : "center"}
+				align="start"
 			>
 				<div
 					className={cn(
