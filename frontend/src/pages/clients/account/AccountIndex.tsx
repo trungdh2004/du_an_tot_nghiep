@@ -15,20 +15,55 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import instance from '@/config/instance'
+import { toast } from 'sonner'
 const AccountIndex = () => {
+  const queryClient = useQueryClient();
+  const [userId, setUserId] = useState('')
   const { authUser, setAuthUser } = useContext(AuthContext);
-  const [date, setDate] = useState()
-  // console.log("adadadada", authUser);
   const form = useForm();
-  useEffect(() => {
-    if (authUser) {
-      form.setValue('full_name', authUser.full_name);
-      form.setValue('email', authUser.email);
-      form.setValue('avatar', authUser.avatarUrl);
-    }
-  }, [authUser, form.setValue])
+  const { data } = useQuery({
+    queryKey: ['profile', form.reset],
+    queryFn: async () => {
+      try {
+        const { data } = await instance.get(`/auth/current-user`);
+        console.log("data", data.data);
+        setUserId(data.data.id)
+        form.reset(data.data)
+        return data.data;
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    staleTime: 5 * 60 * 60
+  })
+  const { mutate } = useMutation({
+    mutationFn: async () => {
+      const { data } = await instance.put(`/auth/changeUser/${userId}`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['profile'],
+      })
+      toast.success("Cập nhật thông tin thành công!");
+    },
+    onError: (error) => {
+      console.log(error)
+      toast.error("Cập nhật thông tin thất bại!");
+    },
+  })
+  const [date, setDate] = useState()
+  // useEffect(() => {
+  //   if (authUser) {
+  //     form.setValue('full_name', authUser.full_name);
+  //     form.setValue('email', authUser.email);
+  //     form.setValue('avatar', authUser.avatarUrl);
+  //   }
+  // }, [authUser, form.setValue])
   const onSubmit = (data: any) => {
-    console.log("data", data)
+    mutate(data)
   }
   return (
     <div className='w-full bg-white px-8 '>
@@ -37,13 +72,9 @@ const AccountIndex = () => {
         <span className="text-sm md:text-base text-gray-700">Quản lý thông tin hồ sơ để bảo mật tài khoản của bạn</span>
       </div>
       <div className="pt-8 pb-12 px-10">
-        <form>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex">
             <div className="w-[65%] pr-24">
-              <div className="flex items-center pb-10">
-                <Label className='w-[40%] text-right text-[rgba(85,85,85,.8)] pr-4'>Tên đăng nhập</Label>
-                <Input type="text" className=' px-3 py-2 ' placeholder='' />
-              </div>
               <div className="flex items-center pb-8">
                 <Label className='w-[40%] text-right text-[rgba(85,85,85,.8)] pr-4'>Tên</Label>
                 <Input type="text" className=' px-3 py-2 ' placeholder='' {...form.register('full_name')} />
@@ -54,7 +85,7 @@ const AccountIndex = () => {
               </div>
               <div className="flex items-center pb-8">
                 <Label className='w-[40%] text-right text-[rgba(85,85,85,.8)] pr-4'>Số điện thoại</Label>
-                <Input type="text" className=' px-3 py-2 ' placeholder='' />
+                <Input type="text" className=' px-3 py-2 ' placeholder='' {...form.register('phone')} />
               </div>
               <div className="flex items-center pb-8">
                 <Label className='w-[40%] text-right text-[rgba(85,85,85,.8)] pr-4'>Giới tính</Label>
@@ -117,7 +148,7 @@ const AccountIndex = () => {
             </div>
           </div>
           <div className="w-[40%] flex justify-center ">
-            <button className='text-white bg-blue-500 px-5 py-2 border rounded-sm'>Lưu</button>
+            <button type='submit' className='text-white bg-blue-500 px-5 py-2 border rounded-sm'>Lưu</button>
           </div>
         </form>
       </div>
