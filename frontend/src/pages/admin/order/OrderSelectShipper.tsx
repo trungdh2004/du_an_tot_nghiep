@@ -1,5 +1,3 @@
-import { pagingShipperOrder } from "@/service/shipper";
-import { SearchShipperOrder } from "@/types/shipper.interface";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
@@ -28,9 +26,7 @@ const OrderSelectShipper = ({
 	setPageIndex,
 }: Props) => {
 	const [shipper, setShipper] = useState<string | undefined>(undefined);
-	console.log(dataOrderId);
 	const id = dataOrderId._id;
-	console.log(shipper);
 	const handleSelectShipper = async () => {
 		try {
 			const data = await selectShipper({ id, shipper });

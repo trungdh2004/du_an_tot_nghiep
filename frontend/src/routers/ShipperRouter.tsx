@@ -4,6 +4,9 @@ import ShipperIndex from "@/pages/shipper/ShipperIndex";
 import ShipperPending from "@/pages/shipper/ShipperPending";
 import ShipperTranSport from "@/pages/shipper/ShipperTranSport";
 import PrivateRouterShipper from "./PrivateRouterShipper";
+import OrderNewIndex from "@/pages/shipper/OrderNew/OrderNewIndex";
+import OrderSusccesIndex from "@/pages/shipper/OrderSuscces/OrderSusccesIndex";
+import OrderDashboardIndex from "@/pages/shipper/OrderDashboard/OrderDashboardIndex";
 
 const ShipperRouter = [
 	{
@@ -13,7 +16,19 @@ const ShipperRouter = [
 			{
 				path:"",
 				element:<ShipperIndex />
-			}
+			},
+			{
+				path:"orderNew",
+				element:<OrderNewIndex />
+			},
+			{
+				path:"orderSuccess",
+				element:<OrderSusccesIndex />
+			},
+			{
+				path:"dashboard",
+				element:<OrderDashboardIndex />
+			},
 		],
 	},
 	{

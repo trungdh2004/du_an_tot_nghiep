@@ -262,7 +262,7 @@ class DashboardController {
     try {
       const toDay = new Date();
 
-      const startOfDay = new Date(
+      const endOfDay = new Date(
         toDay.getUTCFullYear(),
         toDay.getUTCMonth(),
         toDay.getUTCDate(),
@@ -270,7 +270,7 @@ class DashboardController {
         59,
         59
       );
-      const endOfDay = new Date(
+      const startOfDay = new Date(
         toDay.getUTCFullYear(),
         toDay.getUTCMonth(),
         toDay.getUTCDate(),
@@ -278,6 +278,9 @@ class DashboardController {
         0,
         0
       );
+
+      console.log({startOfDay,endOfDay});
+      
 
       const countNew = await OrderModel.countDocuments({
         status: 1,
@@ -288,14 +291,14 @@ class DashboardController {
       });
       const countConfirm = await OrderModel.countDocuments({
         status: 2,
-        orderDate: {
+        confirmedDate: {
           $gte: startOfDay, // Lớn hơn hoặc bằng thời gian bắt đầu của ngày đó
           $lt: endOfDay,
         },
       });
       const countShipping = await OrderModel.countDocuments({
         status: 3,
-        orderDate: {
+        shippingDate: {
           $gte: startOfDay, // Lớn hơn hoặc bằng thời gian bắt đầu của ngày đó
           $lt: endOfDay,
         },
@@ -304,14 +307,24 @@ class DashboardController {
         status: {
           $in:[4,5]
         },
-        orderDate: {
-          $gte: startOfDay, // Lớn hơn hoặc bằng thời gian bắt đầu của ngày đó
-          $lt: endOfDay,
-        },
+        $or:[
+          {
+            shippedDate: {
+              $gte: startOfDay, // Lớn hơn hoặc bằng thời gian bắt đầu của ngày đó
+              $lt: endOfDay,
+            },
+          },
+          {
+            deliveredDate: {
+              $gte: startOfDay, // Lớn hơn hoặc bằng thời gian bắt đầu của ngày đó
+              $lt: endOfDay,
+            },
+          }
+        ]
       });
       const countCancel = await OrderModel.countDocuments({
         status: 6,
-        orderDate: {
+        cancelOrderDate: {
           $gte: startOfDay, // Lớn hơn hoặc bằng thời gian bắt đầu của ngày đó
           $lt: endOfDay,
         },

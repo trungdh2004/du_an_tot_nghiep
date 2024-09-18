@@ -9,6 +9,7 @@ import { formatDataPaging } from "../../common/pagingData";
 import ProductModel from "../../models/products/Product.schema";
 import OrderItemsModel from "../../models/order/OrderProduct.schema";
 import { socketNotificationOrderClient } from "../../socket/socketNotifycationClient.service";
+import { resolveSoa } from "dns";
 
 class ShipperController {
   async registerShipper(req: RequestModel, res: Response) {
@@ -222,11 +223,12 @@ class ShipperController {
   async getListOrderShipperMap(req: RequestShipper, res: Response) {
     try {
       const shipper = req.shipper;
-      const { status = 2 } = req.params;
 
       const listOrder = await OrderModel.find({
         shipper: shipper?.id,
-        status: status,
+        status:{
+          $in:[2,3]
+        }
       })
         .populate(["address"])
         .select({
@@ -465,6 +467,55 @@ class ShipperController {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
       });
+    }
+  }
+
+  async pagingOrderShipper(req:RequestShipper, res:Response){
+    try {
+      const shipper = req.shipper;
+      const pageIndex = Number(req.query.page) || 1;
+      const {status = 2} = req.body 
+
+      let limit = 10;
+      let skip = (pageIndex - 1) * limit || 0;
+
+      let queryStatus = {}
+
+
+      if(status === 4) {
+        queryStatus = {
+          statusList:{
+            $in:[4]
+          }
+        }
+      }else {
+        queryStatus = {
+          status: status
+        }
+      }
+
+      const listOrder = await OrderModel.find({
+        ...queryStatus,
+        shipper: shipper?.id
+      }).sort({confirmedDate:-1}).skip(skip).limit(limit).populate("address")
+
+      const count = await OrderModel.countDocuments({
+        status: status,
+        shipper: shipper?.id
+      })
+
+      const result = formatDataPaging({
+        limit,
+        pageIndex,
+        data: listOrder,
+        count: count,
+      });
+
+      return res.status(STATUS.OK).json(result)
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      })
     }
   }
 }

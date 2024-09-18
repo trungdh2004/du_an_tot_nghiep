@@ -78,7 +78,7 @@ const User = () => {
 				<DropdownMenuSeparator />
 				<DropdownMenuItem>Yêu thích</DropdownMenuItem>
 				<DropdownMenuItem>
-					<Link to="/purchase">Đơn hàng</Link>
+					<Link to="/account/purchase">Đơn hàng</Link>
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem

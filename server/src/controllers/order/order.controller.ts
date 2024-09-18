@@ -27,7 +27,7 @@ import { checkVoucher } from "../voucher";
 import { IVoucher } from "../../interface/voucher";
 import AttributeModel from "../../models/products/Attribute.schema";
 import ProductModel from "../../models/products/Product.schema";
-import { socketNotificationOrderClient } from "../../socket/socketNotifycationClient.service";
+import { socketNewOrderShipperClient, socketNotificationOrderClient } from "../../socket/socketNotifycationClient.service";
 import { socketNotificationAdmin } from "../../socket/socketNotifycationServer.service";
 import { TYPE_NOTIFICATION_ADMIN } from "../../config/typeNotification";
 import { formatCurrency } from "../../config/func";
@@ -1560,7 +1560,9 @@ class OrderController {
 
       const updateOrder = await OrderModel.findByIdAndUpdate(id, {
         shipper: existingShipper._id,
-      });
+      },{new:true}).populate("address")
+
+      socketNewOrderShipperClient(updateOrder,`${existingShipper.user}`)
 
       return res.status(STATUS.OK).json({
         message: "Chọn shipper thành công",
