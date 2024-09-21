@@ -30,4 +30,6 @@ routerVoucher.put(
   authentication,
   VoucherController.startAction
 );
+routerVoucher.post("/deleteList", authentication, VoucherController.deleteList);
+
 export default routerVoucher;
