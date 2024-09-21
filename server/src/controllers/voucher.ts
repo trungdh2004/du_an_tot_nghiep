@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
-import { generateOrderCode, generateVoucherCode } from "../middlewares/generateSlug";
+import {
+  generateOrderCode,
+  generateVoucherCode,
+} from "../middlewares/generateSlug";
 import VoucherModel from "../models/order/Voucher.schema";
 import STATUS from "../utils/status";
 import { RequestModel } from "../interface/models";
@@ -19,43 +22,42 @@ const generateCode = async (code: string): Promise<string> => {
   return code;
 };
 
-export const checkVoucher =  (voucher: IVoucher) => {
+export const checkVoucher = (voucher: IVoucher) => {
   if (voucher.status === 0) {
     return {
       message: "Voucher không hoạt động",
-      check:false
-    }
+      check: false,
+    };
   }
 
   const dateNow = new Date().getTime();
   const stopVoucher = voucher.endDate;
   const startDateVoucher = voucher.startDate;
 
-
   if (dateNow < new Date(startDateVoucher).getTime()) {
     return {
       message: "Voucher chưa đến thời gian sử dụng",
-      check:false
-    }
+      check: false,
+    };
   }
   if (dateNow > new Date(stopVoucher).getTime()) {
     return {
       message: "Voucher đã hết hạn",
-      check:false
-    }
+      check: false,
+    };
   }
 
   if (voucher.usageCount >= voucher.usageLimit) {
     return {
       message: "Voucher đã hết lượt sử dụng",
-      check:false
-    }
+      check: false,
+    };
   }
 
   return {
-    check :true,
-    voucher
-  }
+    check: true,
+    voucher,
+  };
 };
 
 class VoucherController {
@@ -77,7 +79,7 @@ class VoucherController {
         discountType,
         discountValue,
         usageLimit,
-        minimumOrderValue
+        minimumOrderValue,
       } = req.body;
 
       let code = generateVoucherCode();
@@ -93,7 +95,7 @@ class VoucherController {
         usageLimit,
         code,
         user: user?.id,
-        minimumOrderValue
+        minimumOrderValue,
       });
 
       return res.status(STATUS.OK).json({
@@ -109,7 +111,7 @@ class VoucherController {
 
   async getVoucherCode(req: RequestModel, res: Response) {
     try {
-      const { code ,totalMoney = 0} = req.body;
+      const { code, totalMoney = 0 } = req.body;
       const user = req.user;
 
       if (!code)
@@ -154,10 +156,10 @@ class VoucherController {
         });
       }
 
-      if(existingVoucher.minimumOrderValue > totalMoney) {
+      if (existingVoucher.minimumOrderValue > totalMoney) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Sản phẩm chọn không đạt đủ điều kiện đơn hàng"
-        })
+          message: "Sản phẩm chọn không đạt đủ điều kiện đơn hàng",
+        });
       }
 
       const existingOrderVoucher = await OrderModel.findOne({
@@ -257,7 +259,7 @@ class VoucherController {
         discountType,
         discountValue,
         usageLimit,
-        minimumOrderValue
+        minimumOrderValue,
       } = req.body;
       const { id } = req.params;
       const { error } = voucherValidation.validate(req.body);
@@ -275,7 +277,7 @@ class VoucherController {
 
       const existingVoucher = await VoucherModel.findById(id);
 
-      if (existingVoucher) {
+      if (!existingVoucher) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có voucher nào",
         });
@@ -289,11 +291,11 @@ class VoucherController {
         discountType,
         discountValue,
         usageLimit,
-        minimumOrderValue
+        minimumOrderValue,
       });
 
       return res.status(STATUS.OK).json({
-        message: "Tạo thành công",
+        message: "Cập nhập thành công",
         data: newVoucher,
       });
     } catch (error: any) {
@@ -307,7 +309,7 @@ class VoucherController {
     try {
       const { id } = req.params;
 
-      if (id)
+      if (!id)
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn chưa nhập id",
         });
@@ -348,10 +350,20 @@ class VoucherController {
       let skip = (pageIndex - 1) * limit || 0;
       let queryKeyword = keyword
         ? {
-            name: {
-              $regex: keyword,
-              $options: "i",
-            },
+            $or: [
+              {
+                name: {
+                  $regex: keyword,
+                  $options: "i",
+                },
+              },
+              {
+                code: {
+                  $regex: keyword,
+                  $options: "i",
+                },
+              },
+            ],
           }
         : {};
       let queryStartDate = {};
@@ -406,6 +418,7 @@ class VoucherController {
         ...queryDiscountType,
         ...queryUsageLimit,
         ...queryStartDate,
+        ...queryKeyword,
       })
         .sort(querySort)
         .skip(skip)
