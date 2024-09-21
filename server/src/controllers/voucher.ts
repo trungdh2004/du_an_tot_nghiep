@@ -350,10 +350,20 @@ class VoucherController {
       let skip = (pageIndex - 1) * limit || 0;
       let queryKeyword = keyword
         ? {
-            name: {
-              $regex: keyword,
-              $options: "i",
-            },
+            $or: [
+              {
+                name: {
+                  $regex: keyword,
+                  $options: "i",
+                },
+              },
+              {
+                code: {
+                  $regex: keyword,
+                  $options: "i",
+                },
+              },
+            ],
           }
         : {};
       let queryStartDate = {};
