@@ -10,4 +10,5 @@ routerVoucher.get("/findOneVoucher/:id", authentication,VoucherController.findOn
 routerVoucher.post("/paging", authentication,VoucherController.pagingVoucher);
 routerVoucher.put("/stopAction/:id", authentication,VoucherController.stopAction);
 routerVoucher.put("/startAction/:id", authentication,VoucherController.startAction);
+routerVoucher.post("/deleteList", authentication,VoucherController.deleteList);
 export default routerVoucher;
