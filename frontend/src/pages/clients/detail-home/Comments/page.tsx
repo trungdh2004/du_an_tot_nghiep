@@ -5,15 +5,21 @@ import { useEffect, useState } from "react";
 import { createComment, getListComments } from "@/service/comment";
 import { IProductDetail } from "@/types/product";
 import TYPE_COMMENT from "@/config/typeComment";
-import { Comment, IObjectComment } from "@/types/TypeObjectComment";
+import { Comment, IObjectComment, IPageComment } from "@/types/TypeObjectComment";
+import { useAuth } from "@/hooks/auth";
 type Props = {
 	product: IProductDetail | undefined;
 };
+
 const Comments = ({ product }: Props) => {
+  const { isLoggedIn } = useAuth();
+  console.log(isLoggedIn);
+  
 	const [content, setContent] = useState("");
 	const [open, setOpen] = useState(false);
 	const [pageIndex, setPageIndex] = useState(1);
 	const [comment, setComment] = useState<Comment[]>([]);
+	const [check, setCheck] = useState<IPageComment | null>(null);
 	const [objectComment, setObjectComment] = useState<IObjectComment>({
 		commentId: product?._id,
 		commentType: TYPE_COMMENT.PRODUCT,
@@ -25,15 +31,15 @@ const Comments = ({ product }: Props) => {
 		(async () => {
 			try {
 				const { data } = await getListComments(objectComment);
-				setComment(data.content);
-				console.log(data.content);
-				console.log(data);
+				setComment((prevComments) => [...prevComments, ...data.content]);
+				setCheck(data);
 				return data;
 			} catch (error) {
 				console.log(error);
 			}
 		})();
 	}, [objectComment]);
+
 	const onSubmitComment = async () => {
 		console.log("value:", content);
 		try {
@@ -64,8 +70,8 @@ const Comments = ({ product }: Props) => {
 					{comment?.length} bình luận
 				</h3>
 				<FilterComment />
-			</div>
-			<CommentEditor
+      </div>
+      <CommentEditor
 				onSubmit={onSubmitComment}
 				avatar="/avatar_25.jpg"
 				handleChange={handleChange}
@@ -73,15 +79,27 @@ const Comments = ({ product }: Props) => {
 				content={content}
 				handleOpen={() => setOpen(true)}
 				openComment={open}
-			/>
+      />
+			
 			<div className="space-y-5 mt-10">
 				{comment?.map((comment: any) => {
 					return <CommentItem comment={comment} />;
 				})}
-				{/* <CommentItem />
-				<CommentItem />
-				<CommentItem />
-				<CommentItem /> */}
+				{(check?.pageIndex as number) !== (check?.totalPage as number) && (
+					<div
+						className="cursor-pointer"
+						onClick={() => {
+							setObjectComment((prev) => ({
+								...prev,
+								pageIndex: pageIndex + 1,
+							}));
+						}}
+					>
+						<h3 className="font-bold text-sm text-slate-600 hover:underline pl-9">
+							Xem thêm bình luận
+						</h3>
+					</div>
+				)}
 			</div>
 		</div>
 	);

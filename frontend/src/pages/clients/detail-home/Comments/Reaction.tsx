@@ -6,16 +6,29 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { BiLike } from "react-icons/bi";
-import { AiFillLike } from "react-icons/ai";
+import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import Actions from "./Actions";
 import { useState } from "react";
+import { Comment } from "@/types/TypeObjectComment";
+import { useAuth } from "@/hooks/auth";
 
 interface IProps {
 	handlOpenFeedback: () => void;
+	handleLike: () => void;
+	handleDislike: () => void;
+	comment: Comment;
 }
 
-const Reaction = ({ handlOpenFeedback }: IProps) => {
-	const [isLike, setIsLike] = useState<boolean>(false);
+const Reaction = ({
+	handlOpenFeedback,
+	handleLike,
+	handleDislike,
+	comment,
+}: IProps) => {
+  const { authUser } = useAuth();
+  console.log(comment);
+  
+	const checkLike = comment?.reactions.includes(authUser?._id);
 	return (
 		<div className="flex items-center justify-between pt-2">
 			<div className="flex items-center gap-2">
@@ -23,20 +36,23 @@ const Reaction = ({ handlOpenFeedback }: IProps) => {
 					<TooltipProvider>
 						<Tooltip>
 							<TooltipTrigger asChild>
-								<Button
-									variant="outline"
-									className="border-none rounded-full size-9 hover:bg-gray-200"
-								>
-									{isLike ? (
-										<AiFillLike
-											size={20}
-											className="text-blue-500"
-											onClick={() => setIsLike(!isLike)}
-										/>
-									) : (
-										<BiLike size={18} onClick={() => setIsLike(!isLike)} />
-									)}
-								</Button>
+								{checkLike ? (
+									<AiFillLike
+										size={20}
+										className="text-blue-500 cursor-pointer"
+										onClick={() => {
+											handleDislike();
+										}}
+									/>
+								) : (
+									<AiOutlineLike
+										onClick={() => {
+											handleLike();
+										}}
+										className="cursor-pointer"
+										size={20}
+									/>
+								)}
 							</TooltipTrigger>
 							<TooltipContent side="bottom">
 								<p>Thích</p>
@@ -49,7 +65,16 @@ const Reaction = ({ handlOpenFeedback }: IProps) => {
 						Phản hồi
 					</span>
 				</div>
+				{comment?.reactions_count > 0 && (
+					<div className="flex gap-1">
+						<div className="bg-white p-1 rounded-full w-6">
+							<AiFillLike className="text-blue-400" />
+						</div>
+						<span className="text-sm">{comment?.reactions_count}</span>
+					</div>
+				)}
 			</div>
+
 			<Actions />
 		</div>
 	);

@@ -28,3 +28,11 @@ export interface Comment {
 	user: User;
 	_id: string;
 }
+
+export interface IPageComment {
+	pageIndex: number;
+	pageSize: number;
+	totalPage: number;
+	totalOptionPage: number;
+	totalAllOptions: number;
+}

@@ -23,7 +23,7 @@ const HeaderAdmin = () => {
 
 			<div className="flex items-center gap-2">
 				<div className="p-1 hover:bg-gray-100 rounded-full cursor-pointer">
-					<Notification />
+					{/* <Notification /> */}
 				</div>
 				<div className="p-1 hover:bg-gray-100 rounded-full cursor-pointer">
 					<User />
