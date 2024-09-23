@@ -49,16 +49,20 @@ const PurchaseOrder = () => {
       "name": "Đã hủy",
     },
   ];
+  const [statusOrder, setStatusOrder] = useState<StatusHistoryObject>({});
+
   const { id } = useParams();
   const { data, isLoading } = useQuery({
     queryKey: ['purchaseDetail', id],
     queryFn: async () => {
       const { data } = await fetchOrderDetail(id as string);
       setStatus(data?.data.status);
-      // setStatusLists(data?.data?.statusList);
-      // setPaymentMethod(data?.data?.paymentMethod);
+      setStatusLists(data?.data?.statusList);
+      setPaymentMethod(data?.data?.paymentMethod);
+      // handleStatus(data?.data.status)
       return data;
     }, staleTime: 5 * 60 * 60,
+
   });
   const steps = [
     {
@@ -77,7 +81,7 @@ const PurchaseOrder = () => {
   ];
   // console.log("statusLists", statusLists);
   const isStatusList = (stepStatus: number) => {
-    return data?.data?.statusList.some((status: number) => status === stepStatus)
+    return statusLists.some((status: number) => status === stepStatus)
   }
   const { mutate } = useMutation({
     mutationFn: async (id: string) => {
@@ -94,6 +98,7 @@ const PurchaseOrder = () => {
       })
     }
   })
+  console.log("adadadadadasdasd",)
   return (
     <>
       <div className="w-full px-0 lg:px-20">
