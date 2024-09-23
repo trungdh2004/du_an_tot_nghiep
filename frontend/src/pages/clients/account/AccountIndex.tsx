@@ -1,35 +1,67 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { AuthContext } from '@/contexts/AuthContext'
-import { useForm } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
 import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from "@/components/ui/form"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import instance from '@/config/instance'
+import { cn } from "@/lib/utils"
+import { uploadFileService } from '@/service/upload'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 import { toast } from 'sonner'
+
+
+import { z } from "zod"
+import { vi } from 'date-fns/locale'
+import { zodResolver } from '@hookform/resolvers/zod'
+
+const formSchema = z.object({
+  full_name: z.string().min(1, { message: "Vui lòng nhập tên của bạn!" }).max(50),
+  phone: z.string()
+    .length(10, { message: "Số điện thoại không đúng định dạng!" })
+    .regex(/^[0-9]+$/, { message: "Số điện thoại không đúng định dạng!" }),
+  birthDay: z.date().optional()
+})
 const AccountIndex = () => {
   const queryClient = useQueryClient();
-  const [userId, setUserId] = useState('')
-  const { authUser, setAuthUser } = useContext(AuthContext);
-  const form = useForm();
+  const [userId, setUserId] = useState<string>();
+  const [previewUrl, setPreviewUrl] = useState({
+    isLoading: false,
+    url: "",
+  });
+  const [date, setDate] = useState<string>()
+  // console.log("birthDay", date)
+  // console.log("id", userId);
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+  });
   const { data } = useQuery({
     queryKey: ['profile', form.reset],
     queryFn: async () => {
       try {
         const { data } = await instance.get(`/auth/current-user`);
-        console.log("data", data.data);
-        setUserId(data.data.id)
+        // console.log("data", data.data?._id);
+        setUserId(data.data._id)
+        setPreviewUrl({
+          url: data.data.avatarUrl,
+          isLoading: false,
+        })
         form.reset(data.data)
         return data.data;
       } catch (error) {
@@ -37,11 +69,11 @@ const AccountIndex = () => {
       }
     },
     staleTime: 5 * 60 * 60
-  })
+  });
+  // const { preview, setPreviewImage, uploadFile } = useUploadFile();
   const { mutate } = useMutation({
-    mutationFn: async () => {
-      const { data } = await instance.put(`/auth/changeUser/${userId}`);
-      return data;
+    mutationFn: async (data: any) => {
+      return await instance.put(`/auth/changeUser/${userId}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -54,16 +86,34 @@ const AccountIndex = () => {
       toast.error("Cập nhật thông tin thất bại!");
     },
   })
-  const [date, setDate] = useState()
-  // useEffect(() => {
-  //   if (authUser) {
-  //     form.setValue('full_name', authUser.full_name);
-  //     form.setValue('email', authUser.email);
-  //     form.setValue('avatar', authUser.avatarUrl);
-  //   }
-  // }, [authUser, form.setValue])
-  const onSubmit = (data: any) => {
-    mutate(data)
+  const handleUploadFile = async (file: File) => {
+    try {
+      // setOpen();
+      const formdata = new FormData();
+      formdata.append("image", file);
+      const { data } = await uploadFileService(formdata);
+      URL.revokeObjectURL(previewUrl.url);
+      setPreviewUrl({
+        url: data.path,
+        isLoading: false,
+      });
+      return data.path;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      // setClose();
+    }
+  };
+
+  const onSubmit = async (formData: any) => {
+    try {
+      const newAvatarUrl = previewUrl.url
+      console.log("date", formData.birthDay)
+      mutate({ ...formData, avatarUrl: newAvatarUrl });
+      console.log("formData", formData)
+    } catch (error) {
+      console.log(error)
+    }
   }
   return (
     <div className='w-full bg-white px-8 '>
@@ -71,86 +121,167 @@ const AccountIndex = () => {
         <h3 className="text-base md:text-lg text-[#333333] font-medium">Hồ Sơ Của Tôi</h3>
         <span className="text-sm md:text-base text-gray-700">Quản lý thông tin hồ sơ để bảo mật tài khoản của bạn</span>
       </div>
-      <div className="pt-8 pb-12 px-10">
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="flex">
-            <div className="w-[65%] pr-24">
-              <div className="flex items-center pb-8">
-                <Label className='w-[40%] text-right text-[rgba(85,85,85,.8)] pr-4'>Tên</Label>
-                <Input type="text" className=' px-3 py-2 ' placeholder='' {...form.register('full_name')} />
+      <div className="pt-8 pb-12  xl:px-10">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="flex flex-col md:flex-row">
+              <div className="order-2 md:order-1 w-full md:w-[65%] md:pr-8 xl:pr-24">
+                <FormField
+                  control={form.control}
+                  name="full_name"
+                  render={({ field }) => (
+                    <FormItem className='flex flex-col md:flex-row md:items-center pb-5 '>
+                      <FormLabel className='w-full md:w-[40%] md:text-right text-sm md:text-base text-[rgba(85,85,85,.8)] pr-4'>Tên</FormLabel>
+                      <div className=" w-full">
+                        <FormControl>
+                          <Input placeholder="" {...field} className='text-sm md:text-base' />
+                        </FormControl>
+                        <FormMessage className='pt-3' />
+                      </div>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem className='flex flex-col md:flex-row md:items-center pb-5 '>
+                      <FormLabel className='w-full md:w-[40%] md:text-right text-sm md:text-base text-[rgba(85,85,85,.8)] pr-4'>Email</FormLabel>
+                      <FormControl>
+                        <Input readOnly placeholder="" {...field} className='text-sm md:text-base' />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem className='flex flex-col md:flex-row md:items-center pb-5 '>
+                      <FormLabel className='w-full md:w-[40%] md:text-right text-sm md:text-base text-[rgba(85,85,85,.8)] pr-4'>Số điện thoại</FormLabel>
+                      <div className=" w-full">
+                        <FormControl>
+                          <Input placeholder="" {...field} className='text-sm md:text-base' />
+                        </FormControl>
+                        <FormMessage className='pt-3' />
+                      </div>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="birthDay"
+                  render={({ field }) => (
+                    <FormItem className='flex flex-col md:flex-row md:items-center pb-5 '>
+                      <FormLabel className='w-full md:w-[40%] md:text-right text-sm md:text-base text-[rgba(85,85,85,.8)] pr-4'>Ngày sinh</FormLabel>
+                      <FormControl>
+                        <div className='w-full'>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className={cn(
+                                    "w-full pl-3 text-left font-normal hover:bg-white",
+                                    !field.value && "text-muted-foreground",
+                                  )}
+                                >
+                                  {field.value ? (
+                                    format(field.value, "dd/MM/yyyy")
+                                  ) : (
+                                    <span>Ngày sinh</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) =>
+                                  date > new Date() ||
+                                  date < new Date("1900-01-01")
+                                }
+                                initialFocus
+                                locale={vi}
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-              <div className="flex items-center pb-8">
-                <Label className='w-[40%] text-right text-[rgba(85,85,85,.8)] pr-4'>Email</Label>
-                <Input type="email" readOnly className=' px-3 py-2 ' placeholder='' {...form.register('email')} />
-              </div>
-              <div className="flex items-center pb-8">
-                <Label className='w-[40%] text-right text-[rgba(85,85,85,.8)] pr-4'>Số điện thoại</Label>
-                <Input type="text" className=' px-3 py-2 ' placeholder='' {...form.register('phone')} />
-              </div>
-              <div className="flex items-center pb-8">
-                <Label className='w-[40%] text-right text-[rgba(85,85,85,.8)] pr-4'>Giới tính</Label>
-                <div className="w-full ">
-                  <RadioGroup defaultValue="option-one" className="w-full flex items-center gap-x-2">
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="option-one" id="option-one" />
-                      <Label htmlFor="option-one">Nam</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="option-two" id="option-two" />
-                      <Label htmlFor="option-two">Nữ</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="option-three" id="option-three" />
-                      <Label htmlFor="option-three">Khác</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-              </div>
-              <div className="flex items-center pb-8">
-                <Label className='w-[40%] text-right text-[rgba(85,85,85,.8)] pr-4'>Ngày sinh</Label>
-                <div className="w-full">
-                  {/* <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !date && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4 " />
-                        {date ? format(date, "PPP") : <span>Chọn ngày sinh</span>}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <Calendar
-                        mode="single"
-                        selected={date}
-                        onSelect={setDate}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover> */}
-                </div>
+
+              <div className="order-1 md:order-2 w-full md:w-[35%] flex flex-col justify-center items-center border-b mb-10 md:mb-0 md:border-l border-gray-200 ">
+                <FormField
+                  control={form.control}
+                  name="avatarUrl"
+                  render={({ field }) => (
+                    <FormItem className='flex items-center pb-8'>
+                      <FormControl>
+                        <div className='w-full flex flex-col justify-center items-center'>
+                          <div className="size-[100px]">
+                            <img src={previewUrl.url || ""} className="relative w-full h-full border border-gray-300 rounded-full bg-gray-300" alt="" />
+                            {previewUrl?.isLoading && (
+                              <div className="absolute bg-slate-50/50 w-full inset-0 flex items-center justify-center">
+                                <AiOutlineLoading3Quarters
+                                  size={20}
+                                  strokeWidth="4px"
+                                  className="animate-spin w-full "
+                                />
+                              </div>
+                            )}
+                          </div>
+                          <input type="file" className="hidden" id="avatarInput" onChange={(event) =>
+                            field.onChange(async () => {
+                              // console.log("url", URL.createObjectURL(
+                              //   (event?.target as HTMLInputElement)
+                              //     ?.files?.[0] as File,
+                              // ))
+                              setPreviewUrl({
+                                url: URL.createObjectURL(
+                                  (event?.target as HTMLInputElement)
+                                    ?.files?.[0] as File,
+                                ),
+                                isLoading: true,
+                              });
+                              form.clearErrors("avatarUrl");
+                              const url = await handleUploadFile(
+                                (event?.target as HTMLInputElement)
+                                  ?.files?.[0] as File,
+                              );
+                              field.onChange(url);
+                            })
+                          } />
+                          <label htmlFor="avatarInput" className='text-sm md:text-base border border-gray-300 rounded-sm px-4 py-2 mt-4 mb-3 cursor-pointer'>Chọn Ảnh</label>
+                          <div className="flex flex-col text-[#999] text-xs md:text-base">
+                            <span className="">Dụng lượng file tối đa 1 MB
+                            </span>
+                            <span className=""> Định dạng:.JPEG, .PNG
+                            </span>
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
-            <div className="w-[35%] flex flex-col justify-center items-center border-l border-gray-200 ">
-              <div className="size-[100px]">
-                <img src={authUser?.avatarUrl || ""} className="w-full h-full rounded-full bg-gray-300" alt="" />
-              </div>
-              <button className='border border-gray-300 rounded-sm px-4 py-2 mt-4 mb-3'>Chọn Ảnh</button>
-              <div className="flex flex-col text-[#999] text-sm md:text-base">
-                <span className="">Dụng lượng file tối đa 1 MB
-                </span>
-                <span className=""> Định dạng:.JPEG, .PNG
-                </span>
-              </div>
+            <div className="w-full md:w-[40%] flex justify-center my-5">
+              <button type='submit' className='text-white bg-blue-500 px-5 py-2 border rounded-sm'>Cập nhật</button>
             </div>
-          </div>
-          <div className="w-[40%] flex justify-center ">
-            <button type='submit' className='text-white bg-blue-500 px-5 py-2 border rounded-sm'>Lưu</button>
-          </div>
-        </form>
+          </form>
+        </Form>
       </div>
     </div>
   )
