@@ -27,18 +27,16 @@ interface RowISize {
   quantity: number;
 }
 
-function randomThreeConsecutiveNumbers(a:number) {
-  if(a < 4) {
-      return 0
+function randomThreeConsecutiveNumbers(a: number) {
+  if (a < 4) {
+    return 0;
   }
   const start = Math.floor(Math.random() * (a - 4));
-  
-  return start
+
+  return start;
 }
 
 class ProductController {
-  
-
   async addProduct(req: Request, res: Response) {
     try {
       const { error } = productValidations.validate(req.body);
@@ -66,10 +64,9 @@ class ProductController {
         attributes
       );
 
-
       const quantity = dataAttributes.reduce((acc, item) => {
-        return acc + item.quantity
-      }, 0)
+        return acc + item.quantity;
+      }, 0);
 
       const product = await ProductModel.create({
         name,
@@ -106,7 +103,7 @@ class ProductController {
         });
 
       const product = await ProductModel.findOne({
-        slug: slug
+        slug: slug,
       })
         .populate([
           {
@@ -163,9 +160,7 @@ class ProductController {
 
       const listSize = (product?.attributes as IAttribute[])?.reduce(
         (acc: RowISize[], item) => {
-          let group = acc.find(
-            (g) => g.sizeId === (item.size as ISize)?._id
-          );
+          let group = acc.find((g) => g.sizeId === (item.size as ISize)?._id);
           // Nếu nhóm không tồn tại, tạo nhóm mới
           if (!group) {
             group = {
@@ -189,19 +184,20 @@ class ProductController {
       const countProduct = await ProductModel.countDocuments({
         is_deleted: false,
         slug: {
-          $ne:slug,
+          $ne: slug,
         },
-      })
+      });
 
-      const random = randomThreeConsecutiveNumbers(countProduct)
-
+      const random = randomThreeConsecutiveNumbers(countProduct);
 
       const listProductOther = await ProductModel.find({
         is_deleted: false,
         slug: {
-          $ne:slug,
+          $ne: slug,
         },
-      }).skip(random).limit(4)
+      })
+        .skip(random)
+        .limit(4);
 
       return res.status(STATUS.OK).json({
         data: {
@@ -209,7 +205,7 @@ class ProductController {
           listColor,
           listSize,
         },
-        listProductOther
+        listProductOther,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
@@ -244,19 +240,19 @@ class ProductController {
         attributes = [],
       } = req.body;
 
-
       const existingProduct = await ProductModel.findById(id);
-
 
       if (!existingProduct)
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có sản phẩm thỏa mãn",
         });
 
-      let slugProduct = existingProduct.slug
+      let slugProduct = existingProduct.slug;
 
-      if (existingProduct.name.toLocaleLowerCase() !== name.toLocaleLowerCase()) {
-        slugProduct = generateSlugs(name)
+      if (
+        existingProduct.name.toLocaleLowerCase() !== name.toLocaleLowerCase()
+      ) {
+        slugProduct = generateSlugs(name);
       }
 
       const listNew = attributes.filter((item: IAttribute) => !item._id);
@@ -296,7 +292,7 @@ class ProductController {
         const listNewAttributes = await AttributeModel.create<IAttribute[]>(
           listNew.map((item: IAttribute) => {
             const { _id, ...value } = item;
-            return value
+            return value;
           })
         );
         dataAttributes = [
@@ -312,8 +308,8 @@ class ProductController {
       }
 
       const quantity = attributes.reduce((acc: number, item: IAttribute) => {
-        return acc + item.quantity
-      }, 0)
+        return acc + item.quantity;
+      }, 0);
 
       const newProduct = await ProductModel.findByIdAndUpdate(
         existingProduct?._id,
@@ -438,7 +434,7 @@ class ProductController {
 
       await CartItemModel.deleteOne({
         product: existingProduct._id,
-      })
+      });
 
       return res.status(STATUS.OK).json({
         message: "Ẩn sản phẩm thành công",
@@ -500,9 +496,9 @@ class ProductController {
 
       await CartItemModel.deleteMany({
         product: {
-          $in: listId
-        }
-      })
+          $in: listId,
+        },
+      });
 
       return res.status(STATUS.OK).json({
         message: "Xóa thành công",
@@ -562,18 +558,18 @@ class ProductController {
         min,
         max,
         tab,
-        rating
+        rating,
       } = req.body;
 
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
       let queryKeyword = keyword
         ? {
-          name: {
-            $regex: keyword,
-            $options: "i",
-          },
-        }
+            name: {
+              $regex: keyword,
+              $options: "i",
+            },
+          }
         : {};
       let queryAttribute = {};
       let querySort = {};
@@ -615,7 +611,7 @@ class ProductController {
           conditions = { color: color };
         } else if (size.length > 0) {
           conditions = { size: size };
-        }       
+        }
         const listAttributeColor = await AttributeModel.find(conditions);
         const colorAttributeIds = listAttributeColor?.map((attr) => attr._id);
         queryAttribute = {
@@ -623,7 +619,6 @@ class ProductController {
             $in: colorAttributeIds,
           },
         };
-        
       }
 
       // sắp xếp
@@ -675,7 +670,11 @@ class ProductController {
       }
 
       if (rating) {
-
+        queryRating = {
+          $lte: {
+            rating: rating,
+          },
+        };
       }
 
       const listProduct = await ProductModel.find({
@@ -684,6 +683,7 @@ class ProductController {
         ...queryCategory,
         ...queryPrice,
         ...queryTab,
+        ...queryRating,
       })
         .sort(querySort)
         .skip(skip)
@@ -712,6 +712,7 @@ class ProductController {
         ...queryCategory,
         ...queryPrice,
         ...queryTab,
+        ...queryRating,
       });
 
       const result = formatDataPaging({
