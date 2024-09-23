@@ -277,7 +277,7 @@ class VoucherController {
 
       const existingVoucher = await VoucherModel.findById(id);
 
-      if (existingVoucher) {
+      if (!existingVoucher) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có voucher nào",
         });
@@ -295,7 +295,7 @@ class VoucherController {
       });
 
       return res.status(STATUS.OK).json({
-        message: "Tạo thành công",
+        message: "Cập nhập thành công",
         data: newVoucher,
       });
     } catch (error: any) {
@@ -309,7 +309,7 @@ class VoucherController {
     try {
       const { id } = req.params;
 
-      if (id)
+      if (!id)
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn chưa nhập id",
         });
@@ -418,6 +418,7 @@ class VoucherController {
         ...queryDiscountType,
         ...queryUsageLimit,
         ...queryStartDate,
+        ...queryKeyword,
       })
         .sort(querySort)
         .skip(skip)
