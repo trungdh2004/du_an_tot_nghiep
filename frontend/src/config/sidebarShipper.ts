@@ -30,7 +30,7 @@ const sidebarShipper: any[] = [
 		label: "Thống kê",
 	},
 	{
-		path: "/shipper/user",
+		path: "/shipper/account",
 		icon: LuLayoutDashboard,
 		isVisible: true,
 		isAdmin: false,

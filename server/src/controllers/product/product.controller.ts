@@ -27,7 +27,18 @@ interface RowISize {
   quantity: number;
 }
 
+function randomThreeConsecutiveNumbers(a:number) {
+  if(a < 4) {
+      return 0
+  }
+  const start = Math.floor(Math.random() * (a - 4));
+  
+  return start
+}
+
 class ProductController {
+  
+
   async addProduct(req: Request, res: Response) {
     try {
       const { error } = productValidations.validate(req.body);
@@ -175,12 +186,30 @@ class ProductController {
         []
       );
 
+      const countProduct = await ProductModel.countDocuments({
+        is_deleted: false,
+        slug: {
+          $ne:slug,
+        },
+      })
+
+      const random = randomThreeConsecutiveNumbers(countProduct)
+
+
+      const listProductOther = await ProductModel.find({
+        is_deleted: false,
+        slug: {
+          $ne:slug,
+        },
+      }).skip(random).limit(4)
+
       return res.status(STATUS.OK).json({
         data: {
           ...product,
           listColor,
           listSize,
         },
+        listProductOther
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({

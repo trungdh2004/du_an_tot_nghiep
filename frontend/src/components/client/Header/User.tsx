@@ -68,7 +68,7 @@ const User = () => {
 				<DropdownMenuSeparator
 					className={cn(!authUser?.is_admin && "hidden")}
 				/>
-				<DropdownMenuItem className={cn(!authUser?.is_admin && "hidden")}>
+				<DropdownMenuItem className={cn("hidden" , authUser?.is_admin || authUser?.is_staff ? 'block' : 'hidden' )}>
 					<Link to={"/admin"}>Vào trang quản trị</Link>
 				</DropdownMenuItem>
 
