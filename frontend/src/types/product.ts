@@ -38,25 +38,22 @@ export interface IProductDetail {
 	createdAt?: string;
 	updatedAt?: string;
 	slug?: string;
-	listColor?: [
-		{
-			colorId: string;
-			colorName: string;
-			list: [IAttribute];
-			quantity: number;
-			colorCode: string;
-		},
-	];
-	listSize?: [
-		{
-			sizeId: string;
-			sizeName: string;
-			list: [IAttribute];
-			quantity: number;
-		},
-	];
+	listColor?: IListColorAttribute[];
+	listSize?: IListSizeAttribute[];
 }
-
+export interface IListSizeAttribute {
+	sizeId: string;
+	sizeName: string;
+	list: [IAttribute];
+	quantity: number;
+}
+export interface IListColorAttribute {
+	colorId: string;
+	colorName: string;
+	list: [IAttribute];
+	quantity: number;
+	colorCode: string;
+}
 export interface IProductSlider {
 	colorCode?: string;
 	createdAt?: string;

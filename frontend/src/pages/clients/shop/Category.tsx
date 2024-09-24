@@ -57,7 +57,7 @@ const Category = ({ setSearchParamsObject }: Props) => {
 					return (
 						<Label
 							className={cn(
-								`relative max-w-40 max-h-[50px] overflow-hidden flex items-center font-thin border-[#e9e9e9] cursor-pointer py-2 gap-2 rounded  bg-white hover:underline has-[:checked]:underline has-[:checked]:font-bold`,
+								`relative max-w-40 max-h-[50px] overflow-hidden flex items-center font-thin border-[#e9e9e9] cursor-pointer py-2 gap-2 rounded   hover:underline has-[:checked]:underline has-[:checked]:font-bold`,
 							)}
 						>
 							<input

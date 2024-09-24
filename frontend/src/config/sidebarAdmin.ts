@@ -18,6 +18,12 @@ const sidebarConfig: any[] = [
 		label: "Danh mục",
 	},
 	{
+		path: "/voucher",
+		isVisible: true,
+		isAdmin: false,
+		label: "Mã giảm giá",
+	},
+	{
 		path: "/users",
 		isVisible: true,
 		label: "Người dùng",

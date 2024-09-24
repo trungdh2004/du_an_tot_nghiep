@@ -1,5 +1,6 @@
 import { getIo, getSocket } from ".";
 import TYPENOTIFICATION from "../config/typeNotification";
+import { IOrder } from "../interface/order";
 import NotificationModel from "../models/Notification.schema";
 
 export const SocketEmit = (order: any, message: string, userId: string) => {
@@ -33,7 +34,7 @@ export const socketNotificationOrderClient = async (
     if (status === 4) {
       message = `Đơn hàng có mã :<strong>${code}</strong> đã giao thành công !!`;
     }
-
+    
     const newNotification = await NotificationModel.create({
       message: message,
       receiver: [userId],
@@ -42,6 +43,8 @@ export const socketNotificationOrderClient = async (
       directId: id,
       recipientType: "single",
     });
+
+    
 
     if (newNotification) {
       io.to(socket).emit("notification", newNotification);
@@ -81,3 +84,17 @@ export const socketNotificationAllClient = async (
     return
   }
 };
+
+export const socketNewOrderShipperClient = async (order:any,shipper:string) => {
+  if(!order || !shipper) {
+    return
+  }
+  const io = getIo()
+  const socket = getSocket(shipper);
+
+  console.log({socket,shipper,order});
+  
+
+  io.to(socket).emit("newOrderShipper", order)
+
+}

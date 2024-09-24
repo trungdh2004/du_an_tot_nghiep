@@ -4,10 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Outofstock from "@/assets/OutofStock.png";
 import { useForm } from "react-hook-form";
-import { checkVoucher } from "@/service/voucher";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { FaRegCircleXmark } from "react-icons/fa6";
+import { IVoucher } from "@/types/voucher";
+import { takeApplyDiscountCode } from "@/service/voucher";
 interface Props {
 	data: any;
 	setOrderCheckout: (order: any) => void;
@@ -22,12 +23,12 @@ const Vorcher = ({ data, setOrderCheckout, setMoneyVoucher }: Props) => {
 		(acc: number, value: number) => acc + value,
 		0,
 	);
-	const [voucher, setVoucher] = useState<VoucherCheck | null | undefined>(null);
+	const [voucher, setVoucher] = useState<IVoucher | null | undefined>(null);
 	const [show, setShow] = useState(false);
 	const { register, handleSubmit, reset } = useForm();
 	const onSubmit = async (data: any) => {
 		try {
-			const check = await checkVoucher({
+			const check = await takeApplyDiscountCode({
 				code: data.voucherCode,
 				totalMoney: totalCost,
 			});

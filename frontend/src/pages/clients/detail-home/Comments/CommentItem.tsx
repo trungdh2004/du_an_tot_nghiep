@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { AiFillLike } from "react-icons/ai";
 import DialogLoginComment from "./DialogLoginComment";
 import { useLocation, useNavigate } from "react-router-dom";
+import { calculateTimeDistance } from "@/common/func";
 type Props = {
 	comment: Comment;
 };
@@ -68,7 +69,7 @@ const CommentItem = ({ comment }: Props) => {
 	) => {
 		if (!isLoggedIn) {
 			const productUrl = location.pathname;
-			navigate(`/auth/login?product=${encodeURIComponent(productUrl)}`);
+			navigate(`/auth/login?url=${encodeURIComponent(productUrl)}`);
 			return;
 		}
 		setOpenFeedback(commentId);
@@ -83,7 +84,7 @@ const CommentItem = ({ comment }: Props) => {
 	const handleLike = async (commentId: string) => {
 		if (!isLoggedIn) {
 			const productUrl = location.pathname;
-			navigate(`/auth/login?product=${encodeURIComponent(productUrl)}`);
+			navigate(`/auth/login?url=${encodeURIComponent(productUrl)}`);
 			return;
 		}
 		try {
@@ -96,7 +97,7 @@ const CommentItem = ({ comment }: Props) => {
 	const handleDislike = async (commentId: string) => {
 		if (!isLoggedIn) {
 			const productUrl = location.pathname;
-			navigate(`/auth/login?product=${encodeURIComponent(productUrl)}`);
+			navigate(`/auth/login?url=${encodeURIComponent(productUrl)}`);
 			return;
 		}
 		try {
@@ -110,11 +111,13 @@ const CommentItem = ({ comment }: Props) => {
 	const onSubmitComment = async () => {
 		console.log("value:", content);
 		try {
-			const data = await createComment(
+			const { data } = await createComment(
 				content,
 				comment?._id as string,
 				TYPE_COMMENT.COMMENT,
 			);
+			console.log(data);
+			setCommentNotification((prevComments) => [data?.data, ...prevComments]);
 			setContent("");
 			return data;
 		} catch (error) {
@@ -143,12 +146,12 @@ const CommentItem = ({ comment }: Props) => {
 				</div>
 				<div className="flex-1">
 					<div className="flex flex-col gap-2">
-						<div className="flex items-center gap-1">
+						<div className="flex items-center gap-2">
 							<span className="font-semibold text-base">
 								{comment?.user?.full_name}
 							</span>
 							<span className="text-xs text-gray-400">
-								{format(new Date(comment?.createdAt), "dd/MM/yyyy HH:mm:ss")}
+								{calculateTimeDistance(new Date(comment?.createdAt))} trước
 							</span>
 						</div>
 						<span className="break-all text-sm">
@@ -218,10 +221,8 @@ const CommentItem = ({ comment }: Props) => {
 											{comment?.user?.full_name}
 										</span>
 										<span className="text-xs text-gray-400">
-											{format(
-												new Date(comment?.createdAt),
-												"dd/MM/yyyy HH:mm:ss",
-											)}
+											{calculateTimeDistance(new Date(comment?.createdAt))}{" "}
+											trước
 										</span>
 									</div>
 									<span className="break-all text-sm">
@@ -262,18 +263,19 @@ const CommentItem = ({ comment }: Props) => {
 						</div>
 					);
 				})}
-			{(check?.pageIndex as number) !== (check?.totalPage as number) && (
-				<div
-					className="cursor-pointer"
-					onClick={() => {
-						handleLoadMoreComments();
-					}}
-				>
-					<h3 className="font-bold text-sm text-slate-600 hover:underline pl-9">
-						Xem thêm bình luận
-					</h3>
-				</div>
-			)}
+			{(check?.totalPage as number) > 0 &&
+				(check?.pageIndex as number) !== (check?.totalPage as number) && (
+					<div
+						className="cursor-pointer"
+						onClick={() => {
+							handleLoadMoreComments();
+						}}
+					>
+						<h3 className="font-bold text-sm text-slate-600 hover:underline pl-9">
+							Xem thêm bình luận
+						</h3>
+					</div>
+				)}
 		</div>
 	);
 };

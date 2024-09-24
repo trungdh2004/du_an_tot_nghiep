@@ -21,6 +21,7 @@ import {
 import { TYPE_NOTIFICATION } from "@/config/configType";
 import { useNavigate } from "react-router-dom";
 import { watchedNotification } from "@/service/notification.service";
+import { calculateTimeDistance } from "@/common/func";
 
 interface IProps {
 	countNotRead: number;
@@ -28,7 +29,7 @@ interface IProps {
 	handleNextPage: () => void;
 	handleWatchedNotification: (id: string, isRead: boolean) => void;
 	handleDeleteNotification: (id: string, isRead: boolean) => void;
-	handleWatchedAllNotification: () => void;
+	isNotThumbnail?: boolean;
 }
 
 const Notification = ({
@@ -37,7 +38,7 @@ const Notification = ({
 	handleNextPage,
 	handleWatchedNotification,
 	handleDeleteNotification,
-	handleWatchedAllNotification,
+	isNotThumbnail,
 }: IProps) => {
 	const router = useNavigate();
 	const [open, setOpen] = useState(false);
@@ -59,7 +60,7 @@ const Notification = ({
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
 				style={{ boxShadow: "0 -4px 32px rgba(0, 0, 0, .2)" }}
-				className="max-sm:w-320px w-[400px] py-2 px-1 sm:px-2 *:cursor-pointer  text-[#1d2129] rounded-lg border-none"
+				className="w-[300px] sm:w-[400px] py-2 px-1 sm:px-2 *:cursor-pointer  text-[#1d2129] rounded-lg border-none"
 				side="bottom"
 				align="end"
 			>
@@ -79,12 +80,9 @@ const Notification = ({
 					id="scrollableDiv"
 				>
 					<InfiniteScroll
-						dataLength={dataNotification.totalAllOptions} //This is important field to render the next data
+						dataLength={dataNotification.content.length} //This is important field to render the next data
 						next={handleNextPage}
-						hasMore={
-							dataNotification.totalAllOptions !==
-							dataNotification.content.length
-						}
+						hasMore={dataNotification.pageIndex !== dataNotification.totalPage}
 						loader={
 							<p className="text-center text-sm text-gray-400">Loading...</p>
 						}
@@ -92,7 +90,7 @@ const Notification = ({
 						refreshFunction={() => {
 							console.log("refreshFunction");
 						}}
-						pullDownToRefresh
+						pullDownToRefresh={false}
 						pullDownToRefreshThreshold={dataNotification.totalAllOptions}
 						pullDownToRefreshContent={
 							<h3 style={{ textAlign: "center" }}>
@@ -106,80 +104,90 @@ const Notification = ({
 						}
 						scrollableTarget="scrollableDiv"
 					>
-						{dataNotification.content?.map((item) => (
-							<div className="relative " key={item._id}>
-								<DropdownMenuItem
-									className={cn(
-										" group mb-1 pr-5",
-										!item.isRead && "bg-blue-100/40",
-									)}
-									onClick={async() => {
-										if (item.directType === TYPE_NOTIFICATION.ORDER) {
-											if (item?.directId) {
-												router(`/account/purchase/order/${item?.directId}`);
-												if(!item.isRead) {
-													await watchedNotification(item._id,true)
+						{dataNotification.content?.length > 0 &&
+							dataNotification.content?.map((item) => (
+								<div className="relative " key={item._id}>
+									<DropdownMenuItem
+										className={cn(
+											" group mb-1 pr-5",
+											!item.isRead && "bg-blue-100/40",
+										)}
+										onClick={async () => {
+											if (item.directType === TYPE_NOTIFICATION.ORDER) {
+												if (item?.directId) {
+													router(`/account/purchase/order/${item?.directId}`);
+													if (!item.isRead) {
+														await watchedNotification(item._id, true);
+													}
 												}
 											}
-										}
-									}}
-								>
-									<div className="flex w-full items-center justify-start gap-x-2 cursor-pointer ">
-										<div className="size-10">
-											<img
-												src={item.thumbnail || "/avatar_25.jpg"}
-												alt=""
-												className="w-full h-full object-cover rounded-full"
-											/>
-										</div>
-										<div className="flex-1 space-y-1 leading-[18px]">
-											<div
-												className={cn("max-sm:text-sm w-full ")}
-												dangerouslySetInnerHTML={{ __html: item?.message }}
-											></div>
-											<span className="text-xs text-gray-500 max-sm:text-sm">
-												{item?.createdAt
-													? formatDistanceToNow(new Date(item?.createdAt), {
-															locale: vi,
-														})
-													: "Không xác định"}
-											</span>
-										</div>
-									</div>
-								</DropdownMenuItem>
+										}}
+									>
+										<div className="flex w-full items-center justify-start gap-x-2 cursor-pointer ">
+											{!isNotThumbnail && (
+												<div className="size-10">
+													<img
+														src={item.thumbnail || "/avatar_25.jpg"}
+														alt=""
+														className="w-full h-full object-cover rounded-full"
+													/>
+												</div>
+											)}
 
-								<div className="absolute right-1 top-1  z-[1px] group">
-									<button className="size-5 rounded-full hover:bg-gray-200 flex items-center justify-center ">
-										<HiMiniEllipsisHorizontal size={14} />
-									</button>
-									<div className="w-44 p-1 absolute right-0 top-0 hidden group-hover:block z-10 bg-white rounded-sm shadow">
-										<button
-											className="text-sm border-none rounded-sm hover:bg-gray-100 outline-none w-full py-1 pl-1 pr-2 flex gap-2 items-center"
-											onClick={() => {
-												handleWatchedNotification(item._id, !item.isRead);
-											}}
-										>
-											<IoCheckmark size={16} />
-											<span>
-												{item.isRead ? "Đánh dấu chưa xem" : "Đánh dấu đã xem"}
-											</span>
+											<div className="flex-1 space-y-1 leading-[18px]">
+												<div
+													className={cn("max-sm:text-sm w-full ")}
+													dangerouslySetInnerHTML={{ __html: item?.message }}
+												></div>
+												<span className="text-xs text-gray-500 max-sm:text-sm">
+													{item?.createdAt
+														? calculateTimeDistance(item?.createdAt)
+														: "Không xác định"}
+												</span>
+											</div>
+										</div>
+									</DropdownMenuItem>
+
+									<div className="absolute right-1 top-1  z-[1px] group">
+										<button className="size-5 rounded-full hover:bg-gray-200 flex items-center justify-center ">
+											<HiMiniEllipsisHorizontal size={14} />
 										</button>
-										<button
-											className="text-sm border-none rounded-sm hover:bg-gray-100 outline-none w-full py-1 pl-1 pr-4 flex gap-2 items-center"
-											onClick={() => {
-												handleDeleteNotification(
-													item._id.toString(),
-													item.isRead,
-												);
-											}}
-										>
-											<IoIosRemoveCircleOutline size={16} />
-											<span>Gỡ thông báo</span>
-										</button>
+										<div className="w-44 p-1 absolute right-0 top-0 hidden group-hover:block z-10 bg-white rounded-sm shadow">
+											<button
+												className="text-sm border-none rounded-sm hover:bg-gray-100 outline-none w-full py-1 pl-1 pr-2 flex gap-2 items-center"
+												onClick={() => {
+													handleWatchedNotification(item._id, !item.isRead);
+												}}
+											>
+												<IoCheckmark size={16} />
+												<span>
+													{item.isRead
+														? "Đánh dấu chưa xem"
+														: "Đánh dấu đã xem"}
+												</span>
+											</button>
+											<button
+												className="text-sm border-none rounded-sm hover:bg-gray-100 outline-none w-full py-1 pl-1 pr-4 flex gap-2 items-center"
+												onClick={() => {
+													handleDeleteNotification(
+														item._id.toString(),
+														item.isRead,
+													);
+												}}
+											>
+												<IoIosRemoveCircleOutline size={16} />
+												<span>Gỡ thông báo</span>
+											</button>
+										</div>
 									</div>
 								</div>
+							))}
+
+						{dataNotification.content.length === 0 && (
+							<div className="w-full h-full flex items-center justify-center">
+								<p>Không có thông báo</p>
 							</div>
-						))}
+						)}
 					</InfiniteScroll>
 				</div>
 			</DropdownMenuContent>

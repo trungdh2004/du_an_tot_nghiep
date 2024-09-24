@@ -25,6 +25,8 @@ import OrderReceived from "@/pages/admin/order/OrderReceived";
 import OrderCancel from "@/pages/admin/order/OrderCancel";
 import path from "path";
 import OrderConfirmShipper from "@/pages/admin/order/OrderConfirmShipper";
+import VoucherForm from "@/pages/admin/Vouchers/VoucherForm";
+import VoucherList from "@/pages/admin/Vouchers/VoucherList";
 
 const AdminRouter = [
 	{
@@ -54,6 +56,18 @@ const AdminRouter = [
 			{
 				path: "category",
 				element: <CategoryIndex />,
+			},
+			{
+				path: "voucher",
+				element: <VoucherList />,
+			},
+			{
+				path: "voucher/add",
+				element: <VoucherForm />,
+			},
+			{
+				path: "voucher/:id/edit",
+				element: <VoucherForm />,
 			},
 			{
 				path: "tags",

@@ -74,9 +74,6 @@ const Actions = () => {
 
 	const handleNextPage = async () => {
 		try {
-			console.log("dataNotification.pageIndex", dataNotification.pageIndex);
-			console.log("dataNotification.totalPage", dataNotification.totalPage);
-
 			// if (dataNotification.pageIndex < dataNotification.totalPage) {
 			const { data } = await getPagingNotification(
 				dataNotification.pageIndex + 1,

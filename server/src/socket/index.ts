@@ -14,15 +14,35 @@ export const initSocket = (server: any) => {
     const userId = socket.handshake.query.userId;
     const role = socket.handshake.query.role;
 
+
     if (role === "admin") {
-      listAdmin.set(userId, socket.id);
-      listUser.set(userId, socket.id);
+      if (listUser.has(userId)) {
+        listUser.get(userId).push(socket.id);
+      } else {
+        listUser.set(userId, [socket.id]);
+      }
+      if (listAdmin.has(userId)) {
+        listAdmin.get(userId).push(socket.id);
+      } else {
+        listAdmin.set(userId, [socket.id]);
+      }
     } else {
-      listUser.set(userId, socket.id);
+      if (listUser.has(userId)) {
+        listUser.get(userId).push(socket.id);
+      } else {
+        listUser.set(userId, [socket.id]);
+      }
     }
-    
+
     socket.emit("returnSocket", socket.id);
+
+    socket.on("disconnect",(dataUser) => {
+      removeSocketFromUser(userId as string,socket.id);
+      removeSocketFromAdmin(userId as string,socket.id);
+    })
   });
+
+
   return io;
 };
 
@@ -39,9 +59,36 @@ export const getSocket = (userId: string) => {
   return socket;
 };
 
-export const getFullSocket = () => {
-  const valuesIterator = listUser.values();
+export const getFullSocketAdmin = () => {
+  const valuesIterator = listAdmin.values();
   // Chuyển đổi từ Iterator sang mảng
   const valuesArray = Array.from(valuesIterator);
-  return [...valuesArray];
+  const listSocket = valuesArray?.flat().map(String)
+  return listSocket;
 };
+
+
+function removeSocketFromUser(userId:string, socketId:string) {
+  if (listUser.has(userId)) {
+    const sockets = listUser.get(userId);
+    const index = sockets.indexOf(socketId);
+    if (index !== -1) {
+      sockets.splice(index, 1);
+      if (sockets.length === 0) {
+        listUser.delete(userId);
+      }
+    }
+  }
+}
+function removeSocketFromAdmin(userId:string, socketId:string) {
+  if (listAdmin.has(userId)) {
+    const sockets = listAdmin.get(userId);
+    const index = sockets.indexOf(socketId);
+    if (index !== -1) {
+      sockets.splice(index, 1);
+      if (sockets.length === 0) {
+        listAdmin.delete(userId);
+      }
+    }
+  }
+}

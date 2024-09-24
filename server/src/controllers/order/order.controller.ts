@@ -27,7 +27,10 @@ import { checkVoucher } from "../voucher";
 import { IVoucher } from "../../interface/voucher";
 import AttributeModel from "../../models/products/Attribute.schema";
 import ProductModel from "../../models/products/Product.schema";
-import { socketNotificationOrderClient } from "../../socket/socketNotifycationClient.service";
+import { socketNewOrderShipperClient, socketNotificationOrderClient } from "../../socket/socketNotifycationClient.service";
+import { socketNotificationAdmin } from "../../socket/socketNotifycationServer.service";
+import { TYPE_NOTIFICATION_ADMIN } from "../../config/typeNotification";
+import { formatCurrency } from "../../config/func";
 
 const long = +process.env.LONGSHOP! || 105.62573250208116;
 const lat = +process.env.LATSHOP! || 21.045193948892585;
@@ -312,11 +315,16 @@ class OrderController {
           message: "Tạo đơn hàng thất bại",
         });
       }
-      // await CartItemModel.deleteMany({
-      //   _id: {
-      //     $in: listId,
-      //   },
-      // });
+      await CartItemModel.deleteMany({
+        _id: {
+          $in: listId,
+        },
+      });
+      socketNotificationAdmin(
+        `<p>Đơn hàng: <span style="color:blue;font-weight:500;">${newOrder.code}</span> vừa được đặt, vui lòng kiểm tra thông tin</p>`,
+        TYPE_NOTIFICATION_ADMIN.ORDER,
+        newOrder._id
+      );
 
       return res.status(STATUS.OK).json({
         message: "Tạo đơn hàng thành công",
@@ -582,19 +590,13 @@ class OrderController {
               voucherMain = data.voucher as IVoucher;
             }
             if (!data.check) {
-              return res.status(STATUS.BAD_REQUEST).json({
-                message: data.message,
-              });
+              voucherMain = null
             }
           } else {
-            return res.status(STATUS.BAD_REQUEST).json({
-              message: "Bạn đã sử dụng voucher",
-            });
+            voucherMain = null
           }
         } else {
-          return res.status(STATUS.BAD_REQUEST).json({
-            message: "Không có voucher",
-          });
+          voucherMain = null
         }
       }
 
@@ -649,9 +651,7 @@ class OrderController {
       }, 0);
       if (voucherMain) {
         if (voucherMain.minimumOrderValue > checkTotalMoney) {
-          return res.status(STATUS.BAD_REQUEST).json({
-            message: "Đơn hàng không đạt đủ điều kiện voucher",
-          });
+          voucherMain = null
         }
       }
 
@@ -880,9 +880,9 @@ class OrderController {
 
       const ipAddress = String(
         req.headers["x-forwarded-for"] ||
-          req.connection.remoteAddress ||
-          req.socket.remoteAddress ||
-          req.ip
+        req.connection.remoteAddress ||
+        req.socket.remoteAddress ||
+        req.ip
       );
 
       const paymentUrl = vnpay.buildPaymentUrl({
@@ -891,7 +891,7 @@ class OrderController {
         vnp_TxnRef: `${newOrder._id}`,
         vnp_OrderInfo: "Thanh toan cho ma GD:" + newOrder._id,
         vnp_OrderType: ProductCode.Other,
-        vnp_ReturnUrl: `${returnUrl}?status=${stateDeCodeUrl}`, // Đường dẫn nên là của frontend
+        vnp_ReturnUrl: `${returnUrl}?state=${stateDeCodeUrl}`, // Đường dẫn nên là của frontend
         vnp_Locale: VnpLocale.VN,
       });
 
@@ -1064,15 +1064,27 @@ class OrderController {
         bankCode: verify.vnp_BankCode,
       });
 
-      await OrderModel.findByIdAndUpdate(existingOrder._id, {
-        payment: payment._id,
-        status: 1,
-        $push: {
-          statusList: 1,
+      const updateOder = await OrderModel.findByIdAndUpdate(
+        existingOrder._id,
+        {
+          payment: payment._id,
+          status: 1,
+          $push: {
+            statusList: 1,
+          },
+          amountToPay: 0,
+          paymentStatus: true,
         },
-        amountToPay: 0,
-        paymentStatus: true,
-      });
+        { new: true }
+      );
+
+      if (!updateOder) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Xử lí đơn hàng lỗi chúng tôi sẽ hoàn trả tiền sau",
+          url: "/",
+          type: 1,
+        });
+      }
 
       await OrderItemsModel.updateMany(
         {
@@ -1081,6 +1093,19 @@ class OrderController {
         {
           status: 1,
         }
+      );
+
+      socketNotificationAdmin(
+        `<p>Đơn hàng <span style="color:blue;font-weight:500;">${updateOder?.code}</span> vừa được đặt, vui lòng kiểm tra thông tin</p>`,
+        TYPE_NOTIFICATION_ADMIN.ORDER,
+        updateOder?._id
+      );
+      socketNotificationAdmin(
+        `<p>Có giao dịch thanh toán online với số tiền : <span style="color:red;font-weight:500;">${formatCurrency(
+          payment?.amount
+        )}</span>, vui lòng kiểm tra thông tin</p>`,
+        TYPE_NOTIFICATION_ADMIN.PAYMENT,
+        `${payment?._id}`
       );
 
       if (state) {
@@ -1325,9 +1350,8 @@ class OrderController {
               status: 4,
               date: existingOrder?.shippedDate,
               message: "Đơn hàng giao thành công",
-              sub: `Người nhận: ${
-                (existingOrder?.address as IAddress).username
-              }`,
+              sub: `Người nhận: ${(existingOrder?.address as IAddress).username
+                }`,
             };
           } else if (item === 3) {
             return {
@@ -1407,11 +1431,9 @@ class OrderController {
 
       if (checkAttribute) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message: `Sản phẩm '${
-            ((checkAttribute as IOrderItem).product as IProduct)?.name
-          }' đã không còn loại hàng (${
-            (checkAttribute as IOrderItem).color.name
-          } - ${(checkAttribute as IOrderItem).size})`,
+          message: `Sản phẩm '${((checkAttribute as IOrderItem).product as IProduct)?.name
+            }' đã không còn loại hàng (${(checkAttribute as IOrderItem).color.name
+            } - ${(checkAttribute as IOrderItem).size})`,
         });
       }
 
@@ -1425,11 +1447,9 @@ class OrderController {
 
       if (checkQuantity) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message: `Sản phẩm '${
-            ((checkQuantity as IOrderItem).product as IProduct)?.name
-          }' đã hết hàng loại hàng (${
-            (checkQuantity as IOrderItem).color.name
-          } - ${(checkQuantity as IOrderItem).size})`,
+          message: `Sản phẩm '${((checkQuantity as IOrderItem).product as IProduct)?.name
+            }' đã hết hàng loại hàng (${(checkQuantity as IOrderItem).color.name
+            } - ${(checkQuantity as IOrderItem).size})`,
         });
       }
 
@@ -1481,10 +1501,10 @@ class OrderController {
       );
 
       socketNotificationOrderClient(
-        orderUpdate?.code as string,
+        existingOrder?.code as string,
         2,
-        `${user?.id}`,
-        orderUpdate?._id as string
+        `${existingOrder?.user}`,
+        existingOrder?._id as string
       );
 
       return res.status(STATUS.OK).json({
@@ -1540,7 +1560,9 @@ class OrderController {
 
       const updateOrder = await OrderModel.findByIdAndUpdate(id, {
         shipper: existingShipper._id,
-      });
+      },{new:true}).populate("address")
+
+      socketNewOrderShipperClient(updateOrder,`${existingShipper.user}`)
 
       return res.status(STATUS.OK).json({
         message: "Chọn shipper thành công",
@@ -1568,11 +1590,11 @@ class OrderController {
             $in: [1, 2, 3, 4, 5, 6],
           },
         };
-      }else if (status === 8) {
+      } else if (status === 8) {
         queryStatus = {
           status: {
-            $in: [4, 5],
-          },
+            $in: [4, 5]
+          }
         };
       } else {
         queryStatus = {
@@ -1608,46 +1630,46 @@ class OrderController {
       const convestOrder =
         listOrder.length > 0
           ? listOrder?.map((order: IOrder, index) => {
-              if (order.orderItems.length > 0) {
-                const mapItemOrder = order.orderItems.reduce(
-                  (acc: IAccOrderClient[], item) => {
-                    const accCheck = acc.find(
-                      (row) =>
-                        row.productId.toString() ===
-                        (
-                          (item as IOrderItem).product as IProductSelectOrder
-                        )._id.toString()
-                    );
-                    if (accCheck) {
-                      const totalMoney =
-                        accCheck.totalMoney + (item as IOrderItem).totalMoney;
-                      accCheck.items.push(item as IOrderItem);
-                      accCheck.totalMoney = totalMoney;
-                      return acc;
-                    }
-
-                    acc.push({
-                      productId: (
+            if (order.orderItems.length > 0) {
+              const mapItemOrder = order.orderItems.reduce(
+                (acc: IAccOrderClient[], item) => {
+                  const accCheck = acc.find(
+                    (row) =>
+                      row.productId.toString() ===
+                      (
                         (item as IOrderItem).product as IProductSelectOrder
-                      )._id,
-                      product: (item as IOrderItem)
-                        .product as IProductSelectOrder,
-                      totalMoney: (item as IOrderItem).totalMoney,
-                      items: [item as IOrderItem],
-                      is_evaluate: (item as IOrderItem).is_evaluate,
-                    });
+                      )._id.toString()
+                  );
+                  if (accCheck) {
+                    const totalMoney =
+                      accCheck.totalMoney + (item as IOrderItem).totalMoney;
+                    accCheck.items.push(item as IOrderItem);
+                    accCheck.totalMoney = totalMoney;
                     return acc;
-                  },
-                  []
-                );
-                return {
-                  ...order,
-                  itemList: mapItemOrder,
-                };
-              }
+                  }
 
-              return [];
-            })
+                  acc.push({
+                    productId: (
+                      (item as IOrderItem).product as IProductSelectOrder
+                    )._id,
+                    product: (item as IOrderItem)
+                      .product as IProductSelectOrder,
+                    totalMoney: (item as IOrderItem).totalMoney,
+                    items: [item as IOrderItem],
+                    is_evaluate: (item as IOrderItem).is_evaluate,
+                  });
+                  return acc;
+                },
+                []
+              );
+              return {
+                ...order,
+                itemList: mapItemOrder,
+              };
+            }
+
+            return [];
+          })
           : [];
 
       const countOrder = await OrderModel.countDocuments({
@@ -1708,6 +1730,7 @@ class OrderController {
           $push: {
             statusList: 5,
           },
+          deliveredDate: Date.now()
         },
         { new: true }
       );
@@ -1726,7 +1749,7 @@ class OrderController {
         }
       );
 
-      return res.status(STATUS.BAD_REQUEST).json({
+      return res.status(STATUS.OK).json({
         message: "Cập nhập thành công",
       });
     } catch (error: any) {
@@ -1880,9 +1903,8 @@ class OrderController {
               status: 4,
               date: existingOrder?.shippedDate,
               message: "Đơn hàng giao thành công",
-              sub: `Người nhận: ${
-                (existingOrder?.address as IAddress).username
-              }`,
+              sub: `Người nhận: ${(existingOrder?.address as IAddress).username
+                }`,
             };
           } else if (item === 3) {
             return {

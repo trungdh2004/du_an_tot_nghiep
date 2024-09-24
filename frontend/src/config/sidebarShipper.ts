@@ -23,14 +23,14 @@ const sidebarShipper: any[] = [
 		label: "Đơn hàng đã giao",
 	},
 	{
-		path: "/shipper/orderSuccess",
+		path: "/shipper/dashboard",
 		icon: LuLayoutDashboard,
 		isVisible: true,
 		isAdmin: false,
 		label: "Thống kê",
 	},
 	{
-		path: "/shipper/orderSuccess",
+		path: "/shipper/user",
 		icon: LuLayoutDashboard,
 		isVisible: true,
 		isAdmin: false,

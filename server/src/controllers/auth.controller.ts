@@ -708,6 +708,42 @@ class AuthController {
       });
     }
   }
+
+  async changeUser(req: RequestModel, res: Response) {
+    try {
+      const {birthDay,full_name,avatarUrl,phone} = req.body;
+      const user = req.user
+
+      if(!birthDay || !full_name || !avatarUrl || !phone) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Bạn chưa truyền gì"
+        })
+      }
+
+      if(!full_name) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Tên tài khoản không được để trống"
+        })
+      }
+
+      const updateUser = await UserModel.findByIdAndUpdate(user?.id,{
+        birthDay,
+        full_name,
+        avatarUrl,
+        phone
+      })
+
+
+      return res.status(STATUS.OK).json({
+        message:"Cập nhập thành công",
+        user:updateUser
+      })
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+        message:error.message,
+      })
+    }
+  }
 }
 
 export default new AuthController();

@@ -5,20 +5,26 @@ import { useEffect, useState } from "react";
 import { createComment, getListComments } from "@/service/comment";
 import { IProductDetail } from "@/types/product";
 import TYPE_COMMENT from "@/config/typeComment";
-import { Comment, IObjectComment, IPageComment } from "@/types/TypeObjectComment";
+import {
+	Comment,
+	IObjectComment,
+	IPageComment,
+} from "@/types/TypeObjectComment";
 import { useAuth } from "@/hooks/auth";
 type Props = {
 	product: IProductDetail | undefined;
 };
 
 const Comments = ({ product }: Props) => {
-  const { isLoggedIn } = useAuth();
-  console.log(isLoggedIn);
-  
+	const { isLoggedIn } = useAuth();
+	console.log(isLoggedIn);
+
 	const [content, setContent] = useState("");
 	const [open, setOpen] = useState(false);
 	const [pageIndex, setPageIndex] = useState(1);
 	const [comment, setComment] = useState<Comment[]>([]);
+	console.log(comment);
+
 	const [check, setCheck] = useState<IPageComment | null>(null);
 	const [objectComment, setObjectComment] = useState<IObjectComment>({
 		commentId: product?._id,
@@ -43,11 +49,14 @@ const Comments = ({ product }: Props) => {
 	const onSubmitComment = async () => {
 		console.log("value:", content);
 		try {
-			const data = await createComment(
+			const { data } = await createComment(
 				content,
 				product?._id as string,
 				TYPE_COMMENT.PRODUCT,
 			);
+			setComment((prevComments) => [data?.data, ...prevComments]);
+			console.log(data.data);
+
 			setContent("");
 			return data;
 		} catch (error) {
@@ -70,8 +79,8 @@ const Comments = ({ product }: Props) => {
 					{comment?.length} bình luận
 				</h3>
 				<FilterComment />
-      </div>
-      <CommentEditor
+			</div>
+			<CommentEditor
 				onSubmit={onSubmitComment}
 				avatar="/avatar_25.jpg"
 				handleChange={handleChange}
@@ -79,27 +88,28 @@ const Comments = ({ product }: Props) => {
 				content={content}
 				handleOpen={() => setOpen(true)}
 				openComment={open}
-      />
-			
+			/>
+
 			<div className="space-y-5 mt-10">
 				{comment?.map((comment: any) => {
 					return <CommentItem comment={comment} />;
 				})}
-				{(check?.pageIndex as number) !== (check?.totalPage as number) && (
-					<div
-						className="cursor-pointer"
-						onClick={() => {
-							setObjectComment((prev) => ({
-								...prev,
-								pageIndex: pageIndex + 1,
-							}));
-						}}
-					>
-						<h3 className="font-bold text-sm text-slate-600 hover:underline pl-9">
-							Xem thêm bình luận
-						</h3>
-					</div>
-				)}
+				{(check?.totalPage as number) > 0 &&
+					(check?.pageIndex as number) !== (check?.totalPage as number) && (
+						<div
+							className="cursor-pointer"
+							onClick={() => {
+								setObjectComment((prev) => ({
+									...prev,
+									pageIndex: pageIndex + 1,
+								}));
+							}}
+						>
+							<h3 className="font-bold text-sm text-slate-600 hover:underline pl-9">
+								Xem thêm bình luận
+							</h3>
+						</div>
+					)}
 			</div>
 		</div>
 	);

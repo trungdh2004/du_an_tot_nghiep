@@ -13,3 +13,12 @@ export const watchedAllNotification = () =>
 
 export const deleteNotification = (id: string) =>
 	instance.delete(`/notification/delete/${id}`);
+
+
+export const pagingNotificationAdmin =  (page: number) =>
+	instance.get(`/notification/pagingNotificationAdmin?page=${page}`);
+
+export const watchedNotificationAdmin = (id: string, isRead: boolean) =>
+	instance.put(`/notification/watchedNotificationAdmin/${id}`, {
+		isRead,
+	});
