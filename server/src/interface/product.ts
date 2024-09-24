@@ -33,6 +33,9 @@ export interface IProduct {
   category: string;
   quantitySold: number;
   quantity: number;
+  ratingCount:number;
+  rating: number;
+  ratingQuantity: number;
   attributes: IAttribute[] | string[];
 }
 

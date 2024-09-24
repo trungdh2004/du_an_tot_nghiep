@@ -449,49 +449,47 @@ class VoucherController {
 
   async deleteList(req: RequestModel, res: Response) {
     try {
-      const {listId} = req.body
+      const { listId } = req.body;
 
-      if(!listId || listId?.lenght === 0) { 
+      if (!listId || listId?.lenght === 0) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Bạn chưa chọn voucher"
-        })
+          message: "Bạn chưa chọn voucher",
+        });
       }
 
       const existingVoucher = await VoucherModel.find({
-        _id:{
-          $in: [listId]
-        }
-      })
+        _id: {
+          $in: [listId],
+        },
+      });
 
-      if(!existingVoucher) {
+      if (!existingVoucher) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Không có voucher nào"
-        })
+          message: "Không có voucher nào",
+        });
       }
 
-      if(existingVoucher?.length !== listId?.length) {
+      if (existingVoucher?.length !== listId?.length) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Không có voucher nào"
-        })
+          message: "Không có voucher nào",
+        });
       }
-
 
       await VoucherModel.deleteMany({
-        _id:{
-          $in:[listId]
-        }
-      })
+        _id: {
+          $in: [listId],
+        },
+      });
 
       return res.status(STATUS.OK).json({
-        message:"Xóa thành công"
-      })
-    } catch (error:any) {
+        message: "Xóa thành công",
+      });
+    } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
-        message:error.message,
-      })
+        message: error.message,
+      });
     }
   }
-
 }
 
 export default new VoucherController();
