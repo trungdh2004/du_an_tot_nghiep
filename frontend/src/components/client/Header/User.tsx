@@ -68,7 +68,7 @@ const User = () => {
 				<DropdownMenuSeparator
 					className={cn(!authUser?.is_admin && "hidden")}
 				/>
-				<DropdownMenuItem className={cn(!authUser?.is_admin && "hidden")}>
+				<DropdownMenuItem className={cn("hidden" , authUser?.is_admin || authUser?.is_staff ? 'block' : 'hidden' )}>
 					<Link to={"/admin"}>Vào trang quản trị</Link>
 				</DropdownMenuItem>
 
@@ -78,7 +78,7 @@ const User = () => {
 				<DropdownMenuSeparator />
 				<DropdownMenuItem>Yêu thích</DropdownMenuItem>
 				<DropdownMenuItem>
-					<Link to="/purchase">Đơn hàng</Link>
+					<Link to="/account/purchase">Đơn hàng</Link>
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem

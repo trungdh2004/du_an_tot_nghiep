@@ -1,7 +1,7 @@
 import { formatCurrency } from "@/common/func";
 import { Button } from "@/components/ui/button";
 import { confirmOrder } from "@/service/order";
-import { pagingShipperOrder } from "@/service/shipper";
+import { pagingShipper } from "@/service/shipper";
 import { SearchShipperOrder } from "@/types/shipper.interface";
 import { formatInTimeZone } from "date-fns-tz";
 import React, { useEffect, useState } from "react";
@@ -10,9 +10,6 @@ import { cn } from "@/lib/utils";
 import OrderCancelConfirm from "./OrderCancelConfirm";
 
 const OrderInforAddress = ({ data, getOrderById }: any) => {
-	console.log(data);
-	// const dateString = data.createdAt;
-	// const formattedDate = format(new Date(data.createdAt), "dd/MM/yyyy HH:mm:ss");
 	const [pageIndex, setPageIndex] = useState(1);
 	const handleChangeOrder = async (id: string) => {
 		try {
@@ -31,14 +28,12 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 		isBlock: null,
 	});
 	const [dataShipper, setDataShipper] = useState({});
-	console.log("data", dataShipper);
-
 	const [open, setOpen] = useState(false);
 	const [openCancel, setOpenCancel] = useState(false);
 	useEffect(() => {
 		(async () => {
 			try {
-				const { data } = await pagingShipperOrder(searchObjecOrder);
+				const { data } = await pagingShipper(searchObjecOrder);
 				setDataShipper(data);
 			} catch (error) {
 				console.log(error);

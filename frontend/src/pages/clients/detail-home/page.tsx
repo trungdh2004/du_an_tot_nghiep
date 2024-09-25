@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { IProductDetail } from "@/types/product";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { getProductBySlug } from "../../../service/product";
 import Ablum from "./Ablum";
 import InfoProduct from "./InfoProduct";
@@ -41,11 +41,9 @@ const DetailProduct = () => {
 							<>
 								<BreadcrumbSeparator />
 								<BreadcrumbItem>
-									<BreadcrumbLink
-										href={`/shop?category=${data?.category?._id}`}
-									>
-										{data?.category?.name}
-									</BreadcrumbLink>
+									<Link to={`/shop?category=${data?.category?._id}`}>
+									<BreadcrumbLink>{data?.category?.name}</BreadcrumbLink>
+									</Link>
 								</BreadcrumbItem>
 							</>
 						)}

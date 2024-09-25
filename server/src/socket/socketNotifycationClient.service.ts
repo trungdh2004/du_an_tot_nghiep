@@ -1,5 +1,6 @@
 import { getIo, getSocket } from ".";
 import TYPENOTIFICATION from "../config/typeNotification";
+import { IOrder } from "../interface/order";
 import NotificationModel from "../models/Notification.schema";
 
 export const SocketEmit = (order: any, message: string, userId: string) => {
@@ -46,8 +47,6 @@ export const socketNotificationOrderClient = async (
     
 
     if (newNotification) {
-      console.log({socket});
-      
       io.to(socket).emit("notification", newNotification);
     }
   } catch (error) {
@@ -85,3 +84,17 @@ export const socketNotificationAllClient = async (
     return
   }
 };
+
+export const socketNewOrderShipperClient = async (order:any,shipper:string) => {
+  if(!order || !shipper) {
+    return
+  }
+  const io = getIo()
+  const socket = getSocket(shipper);
+
+  console.log({socket,shipper,order});
+  
+
+  io.to(socket).emit("newOrderShipper", order)
+
+}

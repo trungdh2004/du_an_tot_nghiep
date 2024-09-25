@@ -5,6 +5,7 @@ export interface ServerToClientEvents {
 	returnSocket: (id: string) => void;
 	notification: (obj: any) => void;
 	notificationAdmin: (obj: any) => void;
+	newOrderShipper: (obj: any) => void;
 }
 
 export interface ClientToServerEvents {

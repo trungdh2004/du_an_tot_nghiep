@@ -19,6 +19,7 @@ import routerShipper from "./shipper.route";
 import routerDashboard from "./dashboard.route";
 import routerNotification from "./notification.route";
 import routerComment from "./comment.route";
+import routerEvaluate from "./evaluate.route";
 // import routerTest from "./test.route";
 
 const router = Router();
@@ -40,8 +41,9 @@ router.use("/order", routerOrder);
 router.use("/voucher", routerVoucher);
 router.use("/shipper", routerShipper);
 router.use("/dashboard", routerDashboard);
-// router.use("/notification", routerNotification);
+router.use("/notification", routerNotification);
 router.use("/comment", routerComment);
+router.use("/evaluate", routerEvaluate);
 
 // router.use("/test", routerTest);
 

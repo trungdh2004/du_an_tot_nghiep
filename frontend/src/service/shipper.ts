@@ -7,8 +7,8 @@ export const registerShipper = async (obj: IShipper) =>
 export const getCurrentShipper = async () =>
 	instance.get(`/shipper/getCurrentShipper`);
 
-export const getListOrderMap = async (status: string) =>
-	instance.get(`/shipper/getListOrderMap/${status}`);
+export const getListOrderMap = async () =>
+	instance.get(`/shipper/getListOrderMap`);
 
 export const getOrderMapByCode = async (code: string) =>
 	instance.get(`/shipper/getOrderByCode/${code}`);
@@ -19,5 +19,8 @@ export const updateStatusShippingOrder = async (id: string): Promise<any> =>
 export const updateStatusShippedOrder = async (id: string): Promise<any> =>
 	instance.put(`/shipper/updateStatusShippedOrder/` + id);
 
-export const pagingShipperOrder = async (ObjectSearchShipper: any) =>
+export const pagingShipper = async (ObjectSearchShipper: any) =>
 	instance.post(`/shipper/paging`, ObjectSearchShipper);
+
+export const pagingOrderShipper =  (pageIndex?:number,status?:number) =>
+	instance.post(`/shipper/pagingOrderShipper?page=${pageIndex}`, {status});

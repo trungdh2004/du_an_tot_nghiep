@@ -175,7 +175,6 @@ const Actions = () => {
 					handleNextPage={handleNextPage}
 					handleWatchedNotification={handleWatchedNotification}
 					handleDeleteNotification={handleDeleteNotification}
-					handleWatchedAllNotification={handleWatchedAllNotification}
 				/>
 			</div>
 			<Cart />
