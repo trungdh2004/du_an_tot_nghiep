@@ -20,8 +20,13 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
-import { addCategory, getCategory, updateCategory } from "@/service/category-admin";
+import {
+	addCategory,
+	getCategory,
+	updateCategory,
+} from "@/service/category-admin";
 import instance from "@/config/instance";
+import { useProcessBarLoadingEventNone } from "@/store/useSidebarAdmin";
 
 interface FormDialog {
 	open: boolean | string;
@@ -52,6 +57,8 @@ const CategoryAdd = ({
 	handleClose,
 	handlePaging,
 }: FormDialog) => {
+	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
+		useProcessBarLoadingEventNone();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -63,23 +70,29 @@ const CategoryAdd = ({
 
 	const onHandleUpdate = async (dataForm: any) => {
 		try {
-			const { data } = await updateCategory(open, dataForm)
+			setOpenProcessLoadingEventNone();
+			const { data } = await updateCategory(open, dataForm);
 			handleClose();
 			handlePaging();
 			toast.success("Bạn cập nhật danh mục thành công");
 		} catch (error) {
 			console.error("Error:", error);
+		} finally {
+			setCloseProcessLoadingEventNone();
 		}
 	};
 	const onHandleAdd = async (dataForm: any) => {
 		try {
-			const { data } = await addCategory(dataForm)
+			setOpenProcessLoadingEventNone();
+			const { data } = await addCategory(dataForm);
 			form.reset();
 			handleClose();
 			handlePaging();
 			toast.success("Bạn thêm danh mục thành công");
 		} catch (error) {
 			console.error("Error:", error);
+		} finally {
+			setCloseProcessLoadingEventNone();
 		}
 	};
 
@@ -87,7 +100,7 @@ const CategoryAdd = ({
 		if (typeof open === "string") {
 			(async () => {
 				try {
-					const { data } = await getCategory(open)
+					const { data } = await getCategory(open);
 					form.reset(data.data);
 				} catch (error) {
 					console.error("Error:", error);
