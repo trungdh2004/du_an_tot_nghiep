@@ -8,5 +8,6 @@ routerCart.put("/updateProductCart/:id", authentication, cartController.updateCa
 routerCart.post("/pagingCart", authentication, cartController.pagingCart);
 routerCart.post("/deleteProductCart", authentication, cartController.deleteCartItem);
 routerCart.get("/countCart", authentication, cartController.getCountProductCart);
+routerCart.post("/pagingNewCart", authentication, cartController.getPagingNewCartItem);
 
 export default routerCart;

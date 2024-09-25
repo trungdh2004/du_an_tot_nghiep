@@ -576,6 +576,45 @@ class CartController {
       });
     }
   }
+
+  async getPagingNewCartItem(req: RequestModel, res: Response) {
+    try {
+      const user = req.user
+      const {pageIndex,pageSize} = req.body;
+
+      let limit = pageSize || 10;
+      let skip = (pageIndex - 1) * limit || 0;
+
+      let existingCart = await CartModel.findOne({
+        user: user?.id,
+      });
+
+      if (!existingCart) {
+        existingCart = await CartModel.create({
+          user: user?.id,
+        });
+      }
+
+      const listCartItem = await CartItemModel.find({
+        cart:existingCart._id
+      }).sort({createdAt:-1}).skip(skip).limit(limit).populate({
+        path:"product",
+        select:{
+          _id:1,
+          price:1,
+          thumbnail:1,
+          name:1,
+        }
+      })
+
+      return res.status(STATUS.OK).json({
+        message:"Lấy giá trị nè",
+        content:listCartItem
+      })
+    } catch (error) {
+      
+    }
+  }
 }
 
 export default new CartController();
