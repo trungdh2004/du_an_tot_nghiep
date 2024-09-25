@@ -12,7 +12,7 @@ import { formatDataPaging } from "../../common/pagingData";
 class EvaluateController {
   async createEvaluate(req: RequestModel, res: Response) {
     try {
-        const user = req.user
+      const user = req.user
       const { listId, rating, content } = req.body;
 
       if (!listId || !rating || listId?.length === 0 || !content) {
@@ -49,48 +49,48 @@ class EvaluateController {
         product = orderItem.product
 
         return {
-            product:orderItem.product,
-            rating:+rating,
-            user:user?.id,
-            content:content,
-            attribute:`${orderItem.size} - ${orderItem.color.name}`
+          product: orderItem.product,
+          rating: +rating,
+          user: user?.id,
+          content: content,
+          attribute: `${orderItem.size} - ${orderItem.color.name}`
         }
       });
 
       const findProduct = await ProductModel.findById(product)
 
-      if(!findProduct) {
+      if (!findProduct) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Không có sản phẩm muốn đánh giá"
+          message: "Không có sản phẩm muốn đánh giá"
         })
       }
 
       const newEvaluate = await EvaluateModel.create(createEvaluate)
 
       const updateOrderItem = await OrderItemsModel.updateMany({
-        _id:{
-            $in:[listId]
+        _id: {
+          $in: [listId]
         }
-      },{
-        is_evaluate:true
-      },{new:true})
+      }, {
+        is_evaluate: true
+      }, { new: true })
 
-      const ratingCount = findProduct.ratingCount + rating 
+      const ratingCount = findProduct.ratingCount + rating
       const ratingQuantity = findProduct.ratingQuantity + 1
       const ratingPro = (ratingCount / ratingQuantity).toFixed(1)
 
-      await ProductModel.findByIdAndUpdate(product,{
+      await ProductModel.findByIdAndUpdate(product, {
         ratingCount,
         ratingQuantity,
-        rating:ratingPro
+        rating: ratingPro
       })
 
-      await UserModel.findByIdAndUpdate(user?.id,{
+      await UserModel.findByIdAndUpdate(user?.id, {
         $inc: { point: 200 }
       })
 
       return res.status(STATUS.OK).json({
-        message:"Tạo đánh giá thành công"
+        message: "Tạo đánh giá thành công"
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
@@ -105,42 +105,42 @@ class EvaluateController {
       const pageIndex = Number(req.query.page) || 1;
       let limit = 10;
       let skip = (pageIndex - 1) * limit || 0;
-      const {id} = req.params
-      const {rating} = req.body
+      const { id } = req.params
+      const { rating } = req.body
 
-      if(!id) return res.status(STATUS.BAD_REQUEST).json({
-        message:"Bạn chưa chọn sản phẩm"
+      if (!id) return res.status(STATUS.BAD_REQUEST).json({
+        message: "Bạn chưa chọn sản phẩm"
       })
       let queryRating = {}
 
-      if(rating && rating <=5 && rating > 0) {
+      if (rating && rating <= 5 && rating > 0) {
         queryRating = {
           rating: rating,
         }
       }
 
-      console.log({queryRating});
-      
+      console.log({ queryRating });
+
 
       const listEvaluate = await EvaluateModel.find({
         ...queryRating,
-        product:id,
-        isDelete:false
-      }).sort({createdAt:-1}).skip(skip).limit(limit).populate({
-        path:"user",
-        select:{
-          _id:1,
-          full_name:1,
-          email:1,
-          avatarUrl:1
+        product: id,
+        isDelete: false
+      }).sort({ createdAt: -1 }).skip(skip).limit(limit).populate({
+        path: "user",
+        select: {
+          _id: 1,
+          full_name: 1,
+          email: 1,
+          avatarUrl: 1
         }
       })
-      
+
 
       const countEvaluate = await EvaluateModel.countDocuments({
         ...queryRating,
-        product:id,
-        isDelete:false
+        product: id,
+        isDelete: false
       })
 
 
@@ -155,7 +155,7 @@ class EvaluateController {
         ...result,
       });
     } catch (error) {
-      
+
     }
   }
 }

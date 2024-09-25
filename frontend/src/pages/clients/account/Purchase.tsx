@@ -1,19 +1,19 @@
 import { formatQuantity } from "@/common/localFunction";
 import { cn } from "@/lib/utils";
-import { cancelOrder, fetchOrder, receivedClientOrder } from "@/service/order";
+import { fetchOrder, receivedClientOrder } from "@/service/order";
 import { IItemOrder, IItemOrderList, IOrderList } from "@/types/order";
-import { Item } from "@radix-ui/react-dropdown-menu";
 import {
-  keepPreviousData,
   useMutation,
   useQuery,
-  useQueryClient,
+  useQueryClient
 } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import LoadingTable from "./LoadingTable";
+import { FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import CancelConfirm from "./CancelConfirm";
-import { format } from "date-fns";
+import Evaluate from "./Evaluate";
+import LoadingTable from "./LoadingTable";
 
 const OrderManagements = () => {
   const queryClient = useQueryClient();
@@ -22,6 +22,7 @@ const OrderManagements = () => {
   const [showLoader, setShowLoader] = useState(true);
   const [statusLists, setStatusLists] = useState<number[]>([0]);
   const [openId, setOpenId] = useState<string | boolean>(false);
+  const [openEvalaute, setOpenEvalaute] = useState<string | boolean>(false);
   const menuList = [
     {
       index: 7,
@@ -108,7 +109,6 @@ const OrderManagements = () => {
       });
     },
   });
-
   return (
     <>
       <div className="w-full">
@@ -175,7 +175,7 @@ const OrderManagements = () => {
                         return (
                           <div
                             key={itemOrderList.productId}
-                            className="w-full bg-white box-shadow  border border-gray-200 rounded-sm px-2 lg:px-8 py-2 "
+                            className="w-full bg-white box-shadow  border border-gray-200 rounded-sm px-2 lg:px-8 py-1 "
                           >
                             <div className="py-4 space-y-4">
                               {itemOrderList?.items?.map(
@@ -235,21 +235,22 @@ const OrderManagements = () => {
                                 },
                               )}
 
-                              <div className="w-full flex justify-between items-center pt-2">
+                              <div className="w-full flex justify-between items-center pt-1">
                                 {/*  */}
                                 {item.status === 5 && (
                                   <div className="w-full">
-                                    <button className="px-5 py-2 md:px-8 lg:py-3 text-white bg-blue-500 border border-blue-500 rounded-sm text-sm lg:text-[18px]">
-                                      Đánh giá
+                                    <button onClick={() => setOpenEvalaute(itemOrderList.productId)}
+                                      className="flex items-center px-3 py-2 cursor-pointer text-blue-500  border border-blue-500 hover:bg-blue-100 rounded-sm text-sm ">
+                                      <FaStar className="text-orange-500 mr-1" /> <span className="">Đánh giá</span>
                                     </button>
                                   </div>
                                 )}
-                                <div className="flex  justify-end w-full">
-                                  <p className="text-right text-sm md:text-base lg:font-medium lg:flex gap-x-3">
-                                    Tổng số tiền (
-                                    {itemOrderList?.items.length as number} sản
-                                    phẩm):
-                                    <span className="text-red-500 font-medium lg:font-semibold text-sm lg:text-[18px] pl-2 lg:pl-0">
+                                <div className="flex item-center justify-end w-full">
+                                  <p className="text-right text-sm md:text-base lg:font-medium md:flex md:items-center ">
+                                    Tổng số tiền <span className="hidden md:block">(
+                                      {itemOrderList?.items.length as number} sản
+                                      phẩm):</span>
+                                    <span className="text-red-500 font-medium lg:font-semibold text-sm lg:text-[16px]">
                                       {formatQuantity(
                                         itemOrderList.totalMoney,
                                         "₫",
@@ -270,7 +271,7 @@ const OrderManagements = () => {
                       {[1].includes(item.status) && (
                         <button
                           onClick={() => setOpenId(item._id)}
-                          className="px-3 py-2 lg:px-8 lg:py-3 text-white bg-red-500 border border-orange-700 hover:bg-red-600 transition-all  duration-300    rounded-sm text-xs lg:text-[16px]"
+                          className="cursor-pointer px-3 py-2 lg:px-8 lg:py-3 text-white bg-red-500 border border-orange-700 hover:bg-red-600 transition-all  duration-300    rounded-sm text-xs lg:text-[16px]"
                         >
                           Hủy đơn hàng
                         </button>
@@ -307,7 +308,7 @@ const OrderManagements = () => {
                       )}
                       <div className="text-sm lg:text-base font-medium">
                         Thành tiền:{" "}
-                        <span className="text-xs lg:text-[18px] font-medium lg:font-semibold text-red-500">
+                        <span className="text-red-500 font-medium lg:font-semibold text-sm lg:text-[16px]">
                           {formatQuantity(item.totalMoney, "₫")}
                         </span>
                       </div>
@@ -334,6 +335,13 @@ const OrderManagements = () => {
         <CancelConfirm
           open={openId}
           handleClose={() => setOpenId(false)}
+          handleFetchOrder={handleFetchOrder}
+        />
+      )}
+      {openEvalaute && (
+        <Evaluate
+          open={openEvalaute}
+          handleClose={() => setOpenEvalaute(false)}
           handleFetchOrder={handleFetchOrder}
         />
       )}
