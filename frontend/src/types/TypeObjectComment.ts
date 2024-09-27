@@ -20,9 +20,9 @@ export interface Comment {
 	content: string;
 	createdAt: string;
 	is_removed: boolean;
-	reactions: any[]; // Nếu muốn chi tiết hơn, bạn có thể xác định kiểu cho các phần tử của mảng này
+	reactions: any[];
 	reactions_count: number;
-	replies: any[]; // Tương tự, bạn có thể chi tiết hoá kiểu của phần tử
+	replies: string[];
 	replies_count: number;
 	updatedAt: string;
 	user: User;

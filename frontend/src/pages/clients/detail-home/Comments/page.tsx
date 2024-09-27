@@ -17,14 +17,10 @@ type Props = {
 
 const Comments = ({ product }: Props) => {
 	const { isLoggedIn } = useAuth();
-	console.log(isLoggedIn);
-
 	const [content, setContent] = useState("");
 	const [open, setOpen] = useState(false);
 	const [pageIndex, setPageIndex] = useState(1);
 	const [comment, setComment] = useState<Comment[]>([]);
-	console.log(comment);
-
 	const [check, setCheck] = useState<IPageComment | null>(null);
 	const [objectComment, setObjectComment] = useState<IObjectComment>({
 		commentId: product?._id,
@@ -55,14 +51,14 @@ const Comments = ({ product }: Props) => {
 				TYPE_COMMENT.PRODUCT,
 			);
 			setComment((prevComments) => [data?.data, ...prevComments]);
-			console.log(data.data);
-
 			setContent("");
 			return data;
 		} catch (error) {
 			console.log(error);
 		}
-	};
+  };
+  
+  
 
 	const handleChange = (content: string) => {
 		setContent(content);
@@ -92,7 +88,7 @@ const Comments = ({ product }: Props) => {
 
 			<div className="space-y-5 mt-10">
 				{comment?.map((comment: any) => {
-					return <CommentItem comment={comment} />;
+          return <CommentItem comment={comment} setComment={setComment} />;
 				})}
 				{(check?.totalPage as number) > 0 &&
 					(check?.pageIndex as number) !== (check?.totalPage as number) && (

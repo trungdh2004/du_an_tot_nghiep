@@ -16,7 +16,7 @@ interface IProps {
 	handlOpenFeedback: () => void;
 	handleLike: () => void;
 	handleDislike: () => void;
-	comment: Comment;
+	comment: any;
 }
 
 const Reaction = ({
@@ -28,7 +28,9 @@ const Reaction = ({
   const { authUser } = useAuth();
   console.log(comment);
   
-	const checkLike = comment?.reactions.includes(authUser?._id);
+  const checkLike = comment?.reactions.includes(authUser?._id);
+  console.log(checkLike);
+  
 	return (
 		<div className="flex items-center justify-between pt-2">
 			<div className="flex items-center gap-2">

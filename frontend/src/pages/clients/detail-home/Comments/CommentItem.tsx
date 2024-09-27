@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Actions from "./Actions";
 import Reaction from "./Reaction";
 import SendComment from "./SendComment";
@@ -23,8 +23,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { calculateTimeDistance } from "@/common/func";
 type Props = {
 	comment: Comment;
+	setComment: Dispatch<SetStateAction<Comment[]>>;
 };
-const CommentItem = ({ comment }: Props) => {
+const CommentItem = ({ comment, setComment }: Props) => {
+	console.log(comment);
+
 	const { authUser, isLoggedIn } = useAuth();
 	const [content, setContent] = useState(``);
 	const [commentNotification, setCommentNotification] = useState<Comment[]>([]);
@@ -52,10 +55,11 @@ const CommentItem = ({ comment }: Props) => {
 				...objectComment,
 				pageIndex: newPageIndex,
 			});
-			setCommentNotification((prevComments) => [
-				...prevComments,
-				...data.content,
-			]);
+			// setCommentNotification((prevComments) => [
+			// 	...prevComments,
+			// 	...data.content,
+			// ]);
+			comment?.replies.push(...data.content);
 			setCheck(data);
 			return data;
 		} catch (error) {
@@ -89,6 +93,18 @@ const CommentItem = ({ comment }: Props) => {
 		}
 		try {
 			const data = await reactionsComment(commentId, true);
+			setComment((prev) => {
+				return prev?.map((comment) => {
+					if (comment._id === commentId) {
+						return {
+							...comment,
+							reactions: [...(comment.reactions || []), authUser?._id],
+							reactions_count: comment.reactions.length +1,
+						};
+					}
+					return comment;
+				});
+			});
 			return data;
 		} catch (error) {
 			console.log(error);
@@ -102,6 +118,20 @@ const CommentItem = ({ comment }: Props) => {
 		}
 		try {
 			const data = await reactionsComment(commentId, false);
+			setComment((prev) => {
+				return prev?.map((comment) => {
+					if (comment._id === commentId) {
+						return {
+							...comment,
+							reactions: comment?.reactions.filter(
+								(reaction) => reaction._id === authUser?._id,
+							),
+							reactions_count: comment.reactions.length - 1,
+						};
+					}
+					return comment;
+				});
+			});
 			return data;
 		} catch (error) {
 			console.log(error);
@@ -117,8 +147,20 @@ const CommentItem = ({ comment }: Props) => {
 				TYPE_COMMENT.COMMENT,
 			);
 			console.log(data);
-			setCommentNotification((prevComments) => [data?.data, ...prevComments]);
+			setComment((prev) => {
+				return prev?.map((comment) => {
+					if (comment._id === data.data.comment_id) {
+						return {
+							...comment,
+							replies: [...(comment.replies || []), data.data],
+						};
+					}
+					return comment;
+				});
+			});
 			setContent("");
+
+			handleClose();
 			return data;
 		} catch (error) {
 			console.log(error);
@@ -134,6 +176,8 @@ const CommentItem = ({ comment }: Props) => {
 		setOpenFeedback(null);
 	};
 	const isFeedbackOpen = openFeedback === comment?._id;
+	console.log(comment.replies);
+
 	return (
 		<div>
 			<div className="flex items-start gap-1 md:gap-3 w-full">
@@ -203,7 +247,9 @@ const CommentItem = ({ comment }: Props) => {
 				</div>
 			</div>
 			{openAnswer &&
-				commentNotification?.map((comment) => {
+				comment?.replies?.map((comment: any) => {
+					console.log(comment);
+
 					const isFeedbackOpen = openFeedback === comment?._id;
 					return (
 						<div className="flex items-start gap-1 md:gap-3 w-full pl-8">
