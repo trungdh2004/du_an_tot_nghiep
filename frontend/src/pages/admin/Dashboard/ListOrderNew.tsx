@@ -1,22 +1,20 @@
 import { formatCurrency } from "@/common/func";
+import { optimizeCloudinaryUrl } from "@/common/localFunction";
+import { TooltipComponent } from "@/components/common/TooltipComponent";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
 	Table,
 	TableBody,
 	TableCell,
-	TableFooter,
 	TableHead,
 	TableHeader,
-	TableRow,
+	TableRow
 } from "@/components/ui/table";
 import { getNewOrder } from "@/service/dashboard.service";
 import { useQuery } from "@tanstack/react-query";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tooltip } from "@/components/ui/tooltip";
-import { TooltipComponent } from "@/components/common/TooltipComponent";
 import { format } from "date-fns";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { Link } from "react-router-dom";
-import { optimizeCloudinaryUrl } from "@/common/localFunction";
 
 const statusOrder = [
 	{
@@ -73,7 +71,7 @@ const ListOrderNew = () => {
 	// });
 
 	return (
-		<div className="w-full flex flex-col p-2 h-auto overflow-visible">
+		<div className="flex flex-col w-full h-auto p-2 overflow-visible">
 			<div className="flex items-center justify-between py-2 border-b">
 				<p className="font-semibold">Thông tin đơn hàng gần đây</p>
 				<div className="flex items-center gap-2"></div>
@@ -117,10 +115,10 @@ const ListOrderNew = () => {
 											</Avatar>
 										</TooltipComponent>
 									</TableCell>
-									<TableCell className="text-rose-500 font-semibold">
+									<TableCell className="font-semibold text-rose-500">
 										{formatCurrency(row.totalMoney)}
 									</TableCell>
-									<TableCell className="text-rose-500 font-semibold">
+									<TableCell className="font-semibold text-rose-500">
 										{formatCurrency(row.amountToPay)}
 									</TableCell>
 									<TableCell className="font-semibold text-nowrap">
@@ -130,7 +128,7 @@ const ListOrderNew = () => {
 									<TableCell>{format(row.orderDate, "dd/MM/yyy")}</TableCell>
 									<TableHead>
 										<div
-											className="w-full h-5 rounded-full bg-red-500 text-center text-white leading-5 text-xs text-nowrap"
+											className="w-full h-5 text-xs leading-5 text-center text-white bg-red-500 rounded-full text-nowrap"
 											style={{
 												backgroundColor:
 													statusOrder?.find(
