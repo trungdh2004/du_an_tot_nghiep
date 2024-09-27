@@ -102,6 +102,8 @@ class AuthController {
         maxAge: 1000 * 60 * 24 * 60 * 60,
         httpOnly: true,
         path: "/",
+        secure: true,      // Chỉ hoạt động qua HTTPS
+        sameSite: 'none'
       });
 
       delete existingEmail._doc.password;

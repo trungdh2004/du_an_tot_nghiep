@@ -348,7 +348,7 @@ class CartController {
 
       const newCartItem = await CartItemModel.create({
         product: productId,
-        quantity:+quantity,
+        quantity: +quantity,
         attribute,
         cart: existingCart._id,
       });
@@ -579,8 +579,8 @@ class CartController {
 
   async getPagingNewCartItem(req: RequestModel, res: Response) {
     try {
-      const user = req.user
-      const {pageIndex,pageSize} = req.body;
+      const user = req.user;
+      const { pageIndex, pageSize } = req.body;
 
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
@@ -596,24 +596,33 @@ class CartController {
       }
 
       const listCartItem = await CartItemModel.find({
-        cart:existingCart._id
-      }).sort({createdAt:-1}).skip(skip).limit(limit).populate({
-        path:"product",
-        select:{
-          _id:1,
-          price:1,
-          thumbnail:1,
-          name:1,
-        }
+        cart: existingCart._id,
       })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate([
+          {
+            path: "product",
+            select: {
+              _id: 1,
+              price: 1,
+              thumbnail: 1,
+              name: 1,
+            },
+          },
+          {
+            path: "attribute",
+            match: { _id: { $ne: null } }, // Chỉ populate nếu attribute không bị xóa
+            populate: [{ path: "color" },{path:"size"}],
+          },
+        ]);
 
       return res.status(STATUS.OK).json({
-        message:"Lấy giá trị nè",
-        content:listCartItem
-      })
-    } catch (error) {
-      
-    }
+        message: "Lấy giá trị nè",
+        content: listCartItem,
+      });
+    } catch (error) {}
   }
 }
 
