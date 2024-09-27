@@ -28,9 +28,10 @@ import {
 	getVoucherById,
 	updateVoucherById,
 } from "@/service/voucher";
+import { useProcessBarLoadingEventNone } from "@/store/useSidebarAdmin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -89,6 +90,8 @@ const voucherSchema = z
 	);
 export type VoucherFormValues = z.infer<typeof voucherSchema>;
 const VoucherForm = () => {
+	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
+		useProcessBarLoadingEventNone();
 	const { id } = useParams();
 	useEffect(() => {
 		(async () => {
@@ -161,10 +164,19 @@ const VoucherForm = () => {
 		}
 	};
 	const onSubmit = async (payload: z.infer<typeof voucherSchema>) => {
-		if (id) {
-			await handleUpdateVoucher(payload);
-		} else {
-			await handleCreateVoucher(payload);
+		try {
+			setOpenProcessLoadingEventNone();
+			if (id) {
+				await handleUpdateVoucher(payload);
+			} else {
+				await handleCreateVoucher(payload);
+			}
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				toast.error(error?.response?.data?.message);
+			}
+		} finally {
+			setCloseProcessLoadingEventNone();
 		}
 	};
 	return (

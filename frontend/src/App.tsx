@@ -13,6 +13,7 @@ import LoadingProvider from "./components/common/LoadingProvider";
 import { useLoadingModal } from "./store/useLoadingModal";
 import ShipperRouter from "./routers/ShipperRouter";
 import OrderRouter from "./routers/OrderRouter";
+import ProgessBarLoadingEventNone from "./components/common/ProgessBarLoadingEventNone";
 const router = createBrowserRouter([
 	...MainRouter,
 	...AuthRouter,
@@ -25,10 +26,10 @@ const App = () => {
 
 	return (
 		<>
-			<RouterProvider router={router} />
+			<ProgessBarLoadingEventNone />
 			<ProgessBarLoading />
+			<RouterProvider router={router} />
 			{isOpen && <LoadingProvider />}
-			
 		</>
 	);
 };
