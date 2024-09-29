@@ -1,4 +1,8 @@
-import { getCountMyShoppingCart, updateCartItem } from "@/service/cart";
+import {
+	getCountMyShoppingCart,
+	pagingNewCart,
+	updateCartItem,
+} from "@/service/cart";
 import useCart from "@/store/cart.store";
 import { ICart, ICartItem } from "@/types/cart";
 import { IListColorAttribute, IListSizeAttribute } from "@/types/product";
@@ -122,5 +126,25 @@ const useUpdateAttributeItemCart = () => {
 	};
 	return { updateAttributeItemCart };
 };
+const useFetchNewProductsInTheCart = () => {
+	const { setCartsPreview } = useCart();
+	const fetchNewProductsInTheCart = async () => {
+		try {
+			const { data } = await pagingNewCart({ pageSize: 5 });
+			setCartsPreview(data?.content);
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				toast.error(error?.response?.data?.message);
+			}
+		}
+	};
+	return {
+		fetchNewProductsInTheCart,
+	};
+};
 
-export { useExitsColorSizeAttribute, useUpdateAttributeItemCart };
+export {
+	useExitsColorSizeAttribute,
+	useUpdateAttributeItemCart,
+	useFetchNewProductsInTheCart,
+};

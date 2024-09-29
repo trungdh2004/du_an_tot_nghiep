@@ -1,6 +1,6 @@
 import LoadingFixed from "@/components/LoadingFixed";
 import { currentAccount } from "@/service/account";
-import { getCountMyShoppingCart, pagingCart } from "@/service/cart";
+import { getCountMyShoppingCart, pagingNewCart } from "@/service/cart";
 import useCart from "@/store/cart.store";
 import {
 	ClientToServerEvents,
@@ -44,7 +44,7 @@ interface AuthProviderProps {
 }
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
-	const { setCarts, setTotalCart } = useCart();
+	const { setCarts, setCartsPreview, setTotalCart } = useCart();
 	const [authUser, setAuthUser] = useState<IUser | undefined>(undefined);
 	const [socket, setSocket] =
 		useState<Socket<ServerToClientEvents, ClientToServerEvents>>();
@@ -57,10 +57,10 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 			try {
 				const { data } = await currentAccount();
 				const [carts, totalCountCart] = await Promise.all([
-					pagingCart({ pageSize: 9999999999999 }),
+					pagingNewCart({ pageSize: 5 }),
 					getCountMyShoppingCart(),
 				]);
-				setCarts(carts?.data?.data?.content);
+				setCartsPreview(carts?.data?.content);
 				setTotalCart(totalCountCart?.data?.count);
 				setAuthUser(data?.data);
 				if (data.data._id) {

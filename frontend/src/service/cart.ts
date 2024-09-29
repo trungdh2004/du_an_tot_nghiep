@@ -32,3 +32,10 @@ export const updateCartItem = (
 	const uri = `${endpoint}/updateProductCart/${id}`;
 	return instance.put(uri, payload);
 };
+export const pagingNewCart = (payload: {
+	pageIndex?: number;
+	pageSize?: number;
+}) => {
+	const uri = `${endpoint}/pagingNewCart`;
+	return instance.post(uri, payload);
+};

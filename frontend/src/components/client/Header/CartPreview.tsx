@@ -1,10 +1,10 @@
 import { formatCurrency } from "@/common/func";
 import { optimizeCloudinaryUrl } from "@/common/localFunction";
-import { ICart } from "@/types/cart";
+import { ICartPreview } from "@/types/cart";
 import { Link } from "react-router-dom";
 type Props = {
 	totalCart?: number;
-	carts?: ICart[];
+	carts?: ICartPreview[];
 };
 const CartPreview = ({ totalCart, carts }: Props) => {
 	return (
@@ -12,32 +12,42 @@ const CartPreview = ({ totalCart, carts }: Props) => {
 			<div className="mb-5">
 				<p className="text-xs">Sản phẩm mới thêm</p>
 			</div>
-			<div className="space-y-3 h-auto  max-h-96 overflow-y-auto">
-				{carts?.map((cart) =>
-					cart?.items?.map((item) => {
-						return item?.attribute?._id && item?.attribute?.quantity ? (
-							<div className="flex items-start justify-between">
-								<div className="flex items-start gap-1">
-									<div className="min-w-10 min-h-10 max-w-10 max-h-10 w-10 h-10">
-										<img
-											src={optimizeCloudinaryUrl(item?.thumbnail, 40, 40)}
-											alt=""
-											className="w-full h-full object-cover"
-										/>
-									</div>
-									<p className="max-w-52 truncate text-sm">{item?.name}</p>
+			<div className="h-auto space-y-3 overflow-x-hidden overflow-y-auto max-h-96">
+				{carts?.map((cart) => {
+					return cart?.attribute?._id && cart?.attribute?.quantity ? (
+						<div key={cart?._id} className="flex items-start justify-between">
+							<div className="flex items-start gap-1">
+								<div className="w-10 h-10 min-w-10 min-h-10 max-w-10 max-h-10">
+									<img
+										src={optimizeCloudinaryUrl(
+											cart?.product?.thumbnail,
+											40,
+											40,
+										)}
+										alt=""
+										className="object-cover w-full h-full"
+									/>
 								</div>
-								<p className="text-red-500 text-sm">
-									{formatCurrency(item?.attribute?.discount || 0)}
-								</p>
+								<div>
+									<p className="text-sm truncate max-w-40">
+										{cart?.product?.name}
+									</p>
+									<span className="text-xs text-gray-400">
+										Màu {cart?.attribute?.color?.name}, kích thước{" "}
+										{cart?.attribute?.size?.name}.
+									</span>
+								</div>
 							</div>
-						) : (
-							<></>
-						);
-					}),
-				)}
+							<p className="text-sm text-red-500">
+								{formatCurrency(cart?.attribute?.discount || 0)}
+							</p>
+						</div>
+					) : (
+						<></>
+					);
+				})}
 			</div>
-			<div className="flex items-center justify-between  mt-3">
+			<div className="flex items-center justify-between mt-3">
 				<p className="text-xs capitalize">{totalCart} thêm vào giỏ hàng</p>
 				<Link
 					to={"/cart"}
