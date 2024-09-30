@@ -19,8 +19,6 @@ class CommentController {
         });
       }
 
-      console.log("commentType", commentType);
-
       const valuesType = Object.values(TYPE_COMMENT);
 
       if (!valuesType.includes(commentType.toString())) {
@@ -68,11 +66,22 @@ class CommentController {
         content,
         commentType,
         comment_id: commentId,
-      });
+      })
+
+      const commentRes = await CommentModel.findById(newComment?._id).populate({
+        path: "user",
+        select: {
+          _id: 1,
+          full_name: 1,
+          avatarUrl: 1,
+          is_admin: 1,
+          is_staff: 1,
+        },
+      })
 
       return res.status(STATUS.OK).json({
         message: "Tạo comment thành công",
-        data: newComment,
+        data: commentRes,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({

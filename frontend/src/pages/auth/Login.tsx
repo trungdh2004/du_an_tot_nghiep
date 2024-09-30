@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { IoIosArrowRoundBack } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "../../components/ui/button";
@@ -26,7 +26,8 @@ import SignInWithFacebookOrGoogle from "./SignInWithFacebookOrGoogle";
 import useCart from "@/store/cart.store";
 import { getCountMyShoppingCart, pagingCart } from "@/service/cart";
 const Login = () => {
-	const routerHistory = useRouterHistory();
+	const [searchParams,SetURLSearchParams] = useSearchParams();
+	const router = useNavigate()
 	const { setCarts, setTotalCart } = useCart();
 	const { setAuthUser, setIsLoggedIn } = useAuth();
 	const formSchema = z.object({
@@ -46,10 +47,11 @@ const Login = () => {
 			password: "",
 		},
 	});
+
+	
 	const onSubmit = async (payload: z.infer<typeof formSchema>) => {
 		try {
 			const { data } = await loginAccount(payload);
-			console.log(data);
 			setAuthUser?.(data?.user);
 			setIsLoggedIn?.(true);
 			instance.defaults.headers.common.Authorization = `Bearer ${data?.accessToken}`;
@@ -60,7 +62,14 @@ const Login = () => {
 			setCarts(carts?.data?.data?.content);
 			setTotalCart(totalCountCart?.data?.count);
 			toast.success(data?.message);
-			routerHistory();
+			const historyUrl = searchParams.get('url')
+
+			if(historyUrl) {
+				const url = decodeURIComponent(historyUrl);
+				window.location.href = url;
+			}else {
+				router("/")
+			}
 		} catch (error) {
 			setAuthUser?.(undefined);
 			setIsLoggedIn?.(false);

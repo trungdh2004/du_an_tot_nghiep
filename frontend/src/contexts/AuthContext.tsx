@@ -1,6 +1,6 @@
 import LoadingFixed from "@/components/LoadingFixed";
 import { currentAccount } from "@/service/account";
-import { getCountMyShoppingCart, pagingCart } from "@/service/cart";
+import { getCountMyShoppingCart, pagingNewCart } from "@/service/cart";
 import useCart from "@/store/cart.store";
 import {
   ClientToServerEvents,
@@ -44,49 +44,48 @@ interface AuthProviderProps {
 }
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
-  const { setCarts, setTotalCart } = useCart();
-  const [authUser, setAuthUser] = useState<IUser | undefined>(undefined);
-  const [socket, setSocket] =
-    useState<Socket<ServerToClientEvents, ClientToServerEvents>>();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const value = { authUser, setAuthUser, isLoggedIn, setIsLoggedIn, socket };
-  console.log("authcontext", authUser)
-  useEffect(() => {
-    setIsLoggedIn(true);
-    (async () => {
-      try {
-        const { data } = await currentAccount();
-        const [carts, totalCountCart] = await Promise.all([
-          pagingCart({ pageSize: 9999999999999 }),
-          getCountMyShoppingCart(),
-        ]);
-        setCarts(carts?.data?.data?.content);
-        setTotalCart(totalCountCart?.data?.count);
-        setAuthUser(data?.data);
-        if (data.data._id) {
-          const role = data.data.is_admin || data.data.is_staff;
-          const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
-            process.env.SERVER_SOCKET_URL!,
-            {
-              query: {
-                userId: data.data._id,
-                role: role ? "admin" : "user",
-              },
-            },
-          );
-          setSocket(socket);
-          console.log({ socket });
-        }
-      } catch (error) {
-        setTotalCart(0);
-        setCarts([]);
-        setAuthUser(undefined);
-        setIsLoggedIn(false);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
+	const { setCarts, setCartsPreview, setTotalCart } = useCart();
+	const [authUser, setAuthUser] = useState<IUser | undefined>(undefined);
+	const [socket, setSocket] =
+		useState<Socket<ServerToClientEvents, ClientToServerEvents>>();
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
+	const value = { authUser, setAuthUser, isLoggedIn, setIsLoggedIn, socket };
+	useEffect(() => {
+		setIsLoggedIn(true);
+		(async () => {
+			try {
+				const { data } = await currentAccount();
+				const [carts, totalCountCart] = await Promise.all([
+					pagingNewCart({ pageSize: 5 }),
+					getCountMyShoppingCart(),
+				]);
+				setCartsPreview(carts?.data?.content);
+				setTotalCart(totalCountCart?.data?.count);
+				setAuthUser(data?.data);
+				if (data.data._id) {
+					const role = data.data.is_admin || data.data.is_staff;
+					const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
+						process.env.SERVER_SOCKET_URL!,
+						{
+							query: {
+								userId: data.data._id,
+								role: role ? "admin" : "user",
+							},
+						},
+					);
+					setSocket(socket);
+					console.log({ socket });
+				}
+			} catch (error) {
+				setTotalCart(0);
+				setCarts([]);
+				setAuthUser(undefined);
+				setIsLoggedIn(false);
+			} finally {
+				setIsLoading(false);
+			}
+		})();
 
     return () => {
       if (socket) {

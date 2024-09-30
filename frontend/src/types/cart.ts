@@ -1,4 +1,5 @@
-import { IAttribute, IProduct } from "./typeProduct";
+import { IAttribute, IColor, IProduct } from "./typeProduct";
+import { ISize } from "./variants";
 
 export interface ICartItem {
 	_id?: string;
@@ -33,4 +34,24 @@ export interface ICart {
 			quantity: number;
 		},
 	];
+}
+export interface ICartPreview {
+	_id: string;
+	product: { _id: string; name: string; price: number; thumbnail: string };
+	quantity: number;
+	cart: string;
+	attribute: {
+		_id: string;
+		color: IColor;
+		size: ISize;
+		price: number;
+		quantity: number;
+		discount: number;
+		createdAt: Date;
+		updatedAt: Date;
+		__v: number;
+	};
+	createdAt: Date;
+	updatedAt: Date;
+	__v: number;
 }

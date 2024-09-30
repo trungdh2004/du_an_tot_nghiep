@@ -27,7 +27,10 @@ import { cn } from "@/lib/utils";
 import { publishBlogs, showBlogsEdit, updateBlogs } from "@/service/blog";
 import { getAllTags } from "@/service/tags-admin";
 import { uploadFileService } from "@/service/upload";
-import { useProcessBarLoading } from "@/store/useSidebarAdmin";
+import {
+	useProcessBarLoading,
+	useProcessBarLoadingEventNone,
+} from "@/store/useSidebarAdmin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { format } from "date-fns";
@@ -38,15 +41,16 @@ import {
 	AiOutlineCloudUpload,
 	AiOutlineLoading3Quarters,
 } from "react-icons/ai";
-import { IoMdArrowRoundBack } from "react-icons/io";
 import { MdOutlineCalendarMonth } from "react-icons/md";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
 import { toast } from "sonner";
 import { z } from "zod";
 
 const EditBlog = () => {
-	const navigate = useNavigate()
+	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
+		useProcessBarLoadingEventNone();
+	const navigate = useNavigate();
 	const [statusLoading, setStatusLoading] = useState({
 		isSubmitted: false,
 		isLoading: false,
@@ -141,6 +145,7 @@ const EditBlog = () => {
 			if (previewUrl.isLoading) {
 				toast.warning("Vui lòng chờ ảnh tải xong");
 			} else {
+				setOpenProcessLoadingEventNone();
 				const payload = {
 					...values,
 				};
@@ -148,7 +153,7 @@ const EditBlog = () => {
 				const reponse = await publishBlogs(id as string, payload);
 				if (reponse.status === 200) {
 					toast.success("Cập nhập bài viết thành công");
-					navigate("/admin/blogs")
+					navigate("/admin/blogs");
 				} else {
 					throw new Error("Cập nhập bài viết thất bại");
 				}
@@ -158,13 +163,12 @@ const EditBlog = () => {
 				toast.error(error?.response?.data.message);
 			}
 		} finally {
+			setCloseProcessLoadingEventNone();
 			setStatusLoading({ isSubmitted: true, isLoading: false });
 		}
 	}
 	return (
 		<div className="">
-
-
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
@@ -192,16 +196,16 @@ const EditBlog = () => {
 															document.title = title;
 															form.clearErrors("title"),
 																(title == "" || title == null) &&
-																form.setError("title", {
-																	type: "custom",
-																	message: "Tiêu đề nội dung là bắt buộc",
-																});
+																	form.setError("title", {
+																		type: "custom",
+																		message: "Tiêu đề nội dung là bắt buộc",
+																	});
 
 															form.setValue("title", title),
 																debouncedChangeHandler();
 														})
 													}
-													className="bg-transparent py-5 border-none outline-none focus-visible:ring-0 text-2xl font-semibold text-black"
+													className="py-5 text-2xl font-semibold text-black bg-transparent border-none outline-none focus-visible:ring-0"
 												/>
 											</div>
 										</FormControl>
@@ -234,8 +238,8 @@ const EditBlog = () => {
 						</div>
 					</div>
 
-					<div className="flex flex-col md:flex-row items-start gap-5 w-full">
-						<div className="w-full order-2 md:order-none">
+					<div className="flex flex-col items-start w-full gap-5 md:flex-row">
+						<div className="order-2 w-full md:order-none">
 							<FroalaEditor
 								content={content}
 								onChangeContext={(value) => {
@@ -273,12 +277,12 @@ const EditBlog = () => {
 							/>
 						</div>
 						<div className="flex flex-col space-y-5 order-1 md:order-none w-full min-w-72 md:max-w-72 *:rounded-xl">
-							<div className="w-full  order-1 md:order-none box-shadow">
-								<div className=" bg-white   rounded-lg ">
-									<h3 className="font-semibold text-base py-2 px-5 ">
+							<div className="order-1 w-full md:order-none box-shadow">
+								<div className="bg-white rounded-lg ">
+									<h3 className="px-5 py-2 text-base font-semibold ">
 										Phát hành
 									</h3>
-									<div className="px-5 py-3 border-y border-gray-200">
+									<div className="px-5 py-3 border-gray-200 border-y">
 										<FormField
 											control={form.control}
 											name="published_at"
@@ -342,7 +346,7 @@ const EditBlog = () => {
 									</div>
 								</div>
 							</div>
-							<div className="w-full order-3 md:order-none box-shadow">
+							<div className="order-3 w-full md:order-none box-shadow">
 								<div className={cn("bg-white   rounded-lg")}>
 									<FormField
 										control={form.control}
@@ -359,7 +363,7 @@ const EditBlog = () => {
 															value="item-1"
 															className="border-none"
 														>
-															<AccordionTrigger className="pt-0 px-5 py-3 border-none">
+															<AccordionTrigger className="px-5 py-3 pt-0 border-none">
 																<FormLabel className="cursor-pointer">
 																	Nhãn
 																</FormLabel>
@@ -389,13 +393,13 @@ const EditBlog = () => {
 									></FormField>
 								</div>
 							</div>
-							<div className="w-ful order-4 md:order-nonel box-shadow">
-								<div className=" bg-white  rounded-lg ">
+							<div className="order-4 w-ful md:order-nonel box-shadow">
+								<div className="bg-white rounded-lg ">
 									<FormField
 										control={form.control}
 										name="thumbnail_url"
 										render={({ field }) => (
-											<FormItem className="flex flex-wrap  items-center ">
+											<FormItem className="flex flex-wrap items-center ">
 												<FormControl>
 													<Accordion
 														type="single"
@@ -406,7 +410,7 @@ const EditBlog = () => {
 															value="item-1"
 															className="border-none"
 														>
-															<AccordionTrigger className="pt-0 px-5 py-3 border-none">
+															<AccordionTrigger className="px-5 py-3 pt-0 border-none">
 																<FormLabel className="cursor-pointer">
 																	Hình ảnh thu nhỏ
 																</FormLabel>
@@ -425,7 +429,7 @@ const EditBlog = () => {
 																				"flex flex-col justify-center items-center ",
 																				(previewUrl.url ||
 																					blogs?.thumbnail_url) &&
-																				"hidden",
+																					"hidden",
 																			)}
 																		>
 																			<AiOutlineCloudUpload
@@ -454,7 +458,7 @@ const EditBlog = () => {
 																				id="preview"
 																			/>
 																			{previewUrl.isLoading && (
-																				<div className="absolute bg-slate-50/50 inset-0 flex items-center justify-center">
+																				<div className="absolute inset-0 flex items-center justify-center bg-slate-50/50">
 																					<AiOutlineLoading3Quarters
 																						size={20}
 																						strokeWidth="4px"
