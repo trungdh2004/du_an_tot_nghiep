@@ -1,12 +1,12 @@
 import { optimizeCloudinaryUrl } from "@/common/localFunction";
 import { removeItemLocal } from "@/common/localStorage";
 import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import app from "@/config/initializeFirebase";
 import { useAuth } from "@/hooks/auth";
@@ -98,7 +98,7 @@ const User = () => {
 				<DropdownMenuItem
 					className={cn(regex.test(location.pathname) ? "hidden" : "block")}
 				>
-					<Link to={"/"} className="block w-full h-full">
+					<Link to={"/account/profile"} className="block w-full h-full">
 						Tài khoản của tôi
 					</Link>
 				</DropdownMenuItem>
