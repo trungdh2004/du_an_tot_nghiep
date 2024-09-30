@@ -23,7 +23,7 @@ class EvaluateController {
 
       const listOrderProduct = await OrderItemsModel.find({
         _id: {
-          $in: [listId],
+          $in: [...listId],
         },
       });
 
@@ -69,7 +69,7 @@ class EvaluateController {
 
       const updateOrderItem = await OrderItemsModel.updateMany({
         _id:{
-            $in:[listId]
+            $in:[...listId]
         }
       },{
         is_evaluate:true

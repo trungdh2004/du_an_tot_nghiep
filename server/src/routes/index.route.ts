@@ -20,6 +20,7 @@ import routerDashboard from "./dashboard.route";
 import routerNotification from "./notification.route";
 import routerComment from "./comment.route";
 import routerEvaluate from "./evaluate.route";
+import routerSystem from "./sysTem.router";
 // import routerTest from "./test.route";
 
 const router = Router();
@@ -44,6 +45,7 @@ router.use("/dashboard", routerDashboard);
 router.use("/notification", routerNotification);
 router.use("/comment", routerComment);
 router.use("/evaluate", routerEvaluate);
+router.use("/system", routerSystem);
 
 // router.use("/test", routerTest);
 
