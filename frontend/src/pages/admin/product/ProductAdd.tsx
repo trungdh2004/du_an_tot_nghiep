@@ -20,7 +20,10 @@ import {
 } from "react-icons/ai";
 import { cn } from "@/lib/utils";
 import { uploadFileService, uploadMultipleFileService } from "@/service/upload";
-import { useProcessBarLoading } from "@/store/useSidebarAdmin";
+import {
+	useProcessBarLoading,
+	useProcessBarLoadingEventNone,
+} from "@/store/useSidebarAdmin";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import { CiCirclePlus } from "react-icons/ci";
 import { getAllCategory } from "@/service/category-admin";
@@ -135,6 +138,8 @@ const formSchema = z.object({
 
 const ProductAddPage = () => {
 	const router = useNavigate();
+	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
+		useProcessBarLoadingEventNone();
 	const form = useForm({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -171,11 +176,13 @@ const ProductAddPage = () => {
 	const { mutate } = useMutation({
 		mutationFn: (value: IProduct) => addProduct(value),
 		onSuccess: () => {
+			setCloseProcessLoadingEventNone();
 			toast.success("Thêm sản phẩm thành công");
 			form.reset();
 			router("/admin/product");
 		},
 		onError: () => {
+			setCloseProcessLoadingEventNone();
 			toast.error("Thêm sản phẩm thất bại");
 		},
 	});
@@ -201,6 +208,7 @@ const ProductAddPage = () => {
 	});
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		try {
+			setOpenProcessLoadingEventNone();
 			const listImageNotFile = values.images?.filter((image) => !image?.file);
 			const listImageFile = values.images?.filter((image) => image?.file);
 			let listImage = [];
@@ -233,6 +241,7 @@ const ProductAddPage = () => {
 			};
 			mutate(data as IProduct);
 		} catch (error) {
+			setCloseProcessLoadingEventNone();
 			toast.error("Tạo sản phẩm xảy ra lỗi");
 		}
 	};
@@ -257,36 +266,36 @@ const ProductAddPage = () => {
 
 	const listColor = form.watch("attributes")
 		? form
-			.watch("attributes")
-			?.reduce((acc: IColor[], item: IItemListColor) => {
-				if (!item.color) return acc;
+				.watch("attributes")
+				?.reduce((acc: IColor[], item: IItemListColor) => {
+					if (!item.color) return acc;
 
-				let group = acc.find(
-					(g) => item.color && g._id === (item.color._id as string),
-				);
+					let group = acc.find(
+						(g) => item.color && g._id === (item.color._id as string),
+					);
 
-				if (!group) {
-					group = {
-						_id: item.color._id as string,
-						name: item.color.name as string,
-						code: item.color.code as string,
-					};
-					acc.push(group);
+					if (!group) {
+						group = {
+							_id: item.color._id as string,
+							name: item.color.name as string,
+							code: item.color.code as string,
+						};
+						acc.push(group);
+						return acc;
+					}
 					return acc;
-				}
-				return acc;
-			}, [])
+				}, [])
 		: [];
 
 	return (
 		<div>
-			<h4 className="font-medium text-xl">Thêm mới sản phẩm</h4>
+			<h4 className="text-xl font-medium">Thêm mới sản phẩm</h4>
 
-			<div className="w-full gap-5 grid lg:grid-cols-12 mt-4">
+			<div className="grid w-full gap-5 mt-4 lg:grid-cols-12">
 				<Form {...form}>
 					<form
 						onSubmit={form.handleSubmit(onSubmit)}
-						className="space-y-8 flex gap-5 w-full lg:col-span-9"
+						className="flex w-full gap-5 space-y-8 lg:col-span-9"
 					>
 						<div className="w-full">
 							<div className=" w-[full] grid grid-cols-2 gap-2">
@@ -302,7 +311,7 @@ const ProductAddPage = () => {
 													<Input
 														placeholder="Tên sản phẩm"
 														{...field}
-													// onChange={(e) => setName(e.target.value)}
+														// onChange={(e) => setName(e.target.value)}
 													/>
 												</FormControl>
 
@@ -407,7 +416,7 @@ const ProductAddPage = () => {
 															htmlFor="file-upload"
 															className={cn("w-full relative ")}
 														>
-															<div className="w-full border rounded-sm bg-white relative">
+															<div className="relative w-full bg-white border rounded-sm">
 																<div
 																	className={cn(
 																		"w-full h-[160px] flex justify-center items-center flex-col",
@@ -442,11 +451,11 @@ const ProductAddPage = () => {
 																</div>
 
 																{previewUrl?.isLoading && (
-																	<div className="absolute bg-slate-50/50 w-full inset-0 flex items-center justify-center">
+																	<div className="absolute inset-0 flex items-center justify-center w-full bg-slate-50/50">
 																		<AiOutlineLoading3Quarters
 																			size={20}
 																			strokeWidth="4px"
-																			className="animate-spin w-full "
+																			className="w-full animate-spin "
 																		/>
 																	</div>
 																)}
@@ -534,7 +543,7 @@ const ProductAddPage = () => {
 																					<div className="col-span-1 row-span-1">
 																						<div
 																							// key={index}
-																							className=" relative w-full h-full border rounded flex justify-center items-center"
+																							className="relative flex items-center justify-center w-full h-full border rounded "
 																						>
 																							<img
 																								src={image?.url}
@@ -545,7 +554,7 @@ const ProductAddPage = () => {
 																								className="cursor-pointer h-[90%] object-cover 	"
 																							/>
 																							<AiFillCloseCircle
-																								className="absolute top-2 right right-0 cursor-pointer"
+																								className="absolute right-0 cursor-pointer top-2 right"
 																								size={20}
 																								onClick={() =>
 																									onImageRemove(index)
@@ -597,18 +606,18 @@ const ProductAddPage = () => {
 											form.formState.errors.attributes && "border-red-500",
 										)}
 									>
-										<ul className="flex w-full flex-col justify-between gap-4">
+										<ul className="flex flex-col justify-between w-full gap-4">
 											{fields.map((item, index) => (
 												<li
 													key={item.id}
-													className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 w-full gap-4 border-b pb-2"
+													className="grid w-full grid-cols-2 gap-4 pb-2 border-b md:grid-cols-3 lg:grid-cols-6"
 												>
 													<FormField
 														disabled={isPending}
 														control={control}
 														name={`attributes.${index}.size`}
 														render={({ field }) => (
-															<FormItem className="flex w-full flex-col">
+															<FormItem className="flex flex-col w-full">
 																<FormLabel>Kích thước</FormLabel>
 																<SelectComponent<ISize>
 																	value={field.value}
@@ -635,7 +644,7 @@ const ProductAddPage = () => {
 															name={`attributes.${index}.color`}
 															control={control}
 															render={({ field }) => (
-																<FormItem className="flex w-full flex-col">
+																<FormItem className="flex flex-col w-full">
 																	<FormLabel>Màu</FormLabel>
 																	<SelectComponent<IColor>
 																		value={field.value}
@@ -649,10 +658,10 @@ const ProductAddPage = () => {
 																		options={color}
 																		getOptionLabel={(option) => {
 																			return (
-																				<div className="w-full flex items-center justify-between">
+																				<div className="flex items-center justify-between w-full">
 																					{option.name}{" "}
 																					<p
-																						className="w-2 h-2 rounded-full ml-1"
+																						className="w-2 h-2 ml-1 rounded-full"
 																						style={{
 																							backgroundColor: option.code,
 																						}}
@@ -674,7 +683,7 @@ const ProductAddPage = () => {
 														name={`attributes.${index}.price`}
 														control={control}
 														render={({ field }) => (
-															<FormItem className="flex w-full flex-col">
+															<FormItem className="flex flex-col w-full">
 																<FormLabel>Giá</FormLabel>
 																<FormControl>
 																	<Input
@@ -696,7 +705,7 @@ const ProductAddPage = () => {
 														name={`attributes.${index}.quantity`}
 														control={control}
 														render={({ field }) => (
-															<FormItem className="flex w-full flex-col">
+															<FormItem className="flex flex-col w-full">
 																<FormLabel>Số lượng</FormLabel>
 																<FormControl>
 																	<Input
@@ -718,7 +727,7 @@ const ProductAddPage = () => {
 														name={`attributes.${index}.discount`}
 														control={control}
 														render={({ field }) => (
-															<FormItem className="flex w-full flex-col">
+															<FormItem className="flex flex-col w-full">
 																<FormLabel>Giảm giá</FormLabel>
 																<FormControl>
 																	<Input
@@ -735,7 +744,7 @@ const ProductAddPage = () => {
 															</FormItem>
 														)}
 													/>
-													<div className="w-full flex justify-center items-center">
+													<div className="flex items-center justify-center w-full">
 														<button
 															type="button"
 															onClick={() => {
@@ -784,7 +793,7 @@ const ProductAddPage = () => {
 										name="description"
 										control={control}
 										render={({ field }) => (
-											<FormItem className="flex w-full flex-col">
+											<FormItem className="flex flex-col w-full">
 												<FormLabel>Mô tả</FormLabel>
 												<FormControl>
 													<FroalaEditor
@@ -809,7 +818,7 @@ const ProductAddPage = () => {
 						</div>
 					</form>
 				</Form>
-				<div className="hidden lg:block lg:col-span-3 p-4 ">
+				<div className="hidden p-4 lg:block lg:col-span-3 ">
 					<div className="w-full border rounded">
 						<img
 							src={
@@ -828,7 +837,7 @@ const ProductAddPage = () => {
 								{listColor?.map((item) => (
 									<span
 										style={{ background: item.code }}
-										className="box-shadow border border-black/40"
+										className="border box-shadow border-black/40"
 									></span>
 								))}
 							</div>

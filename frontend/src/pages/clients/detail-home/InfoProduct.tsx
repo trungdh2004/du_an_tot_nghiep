@@ -16,6 +16,7 @@ import useCartAnimation from "@/hooks/useCartAnimation";
 import useCart from "@/store/cart.store";
 import { useCurrentRouteAndNavigation } from "@/hooks/router";
 import { useAuth } from "@/hooks/auth";
+import { useFetchNewProductsInTheCart } from "@/hooks/cart";
 
 type Props = {
 	product?: IProductDetail;
@@ -57,6 +58,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 		isLoadingBynow: false,
 	});
 	const [isErrorAttribute, setIsErrorAttribute] = useState<boolean>(false);
+	const { fetchNewProductsInTheCart } = useFetchNewProductsInTheCart();
 	useMemo(() => {
 		const updateQuantityAndAttribute = () => {
 			if (chooseColorId && chooseSizeId) {
@@ -149,6 +151,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 					) as HTMLDivElement;
 					startAnimation(itemElement, product?.thumbnail as string);
 					updateTotalCart(purchaseQuantity);
+					fetchNewProductsInTheCart();
 				} catch (error) {
 					if (error instanceof AxiosError) {
 						toast.error(error?.response?.data?.message);

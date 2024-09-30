@@ -7,6 +7,7 @@ import PrivateRouterShipper from "./PrivateRouterShipper";
 import OrderNewIndex from "@/pages/shipper/OrderNew/OrderNewIndex";
 import OrderSusccesIndex from "@/pages/shipper/OrderSuscces/OrderSusccesIndex";
 import OrderDashboardIndex from "@/pages/shipper/OrderDashboard/OrderDashboardIndex";
+import AccountShipperIndex from "@/pages/shipper/AccountShipper/AccountShipperIndex";
 
 const ShipperRouter = [
 	{
@@ -28,6 +29,10 @@ const ShipperRouter = [
 			{
 				path:"dashboard",
 				element:<OrderDashboardIndex />
+			},
+			{
+				path:"account",
+				element:<AccountShipperIndex />
 			},
 		],
 	},

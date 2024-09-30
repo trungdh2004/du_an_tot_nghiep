@@ -348,7 +348,7 @@ class CartController {
 
       const newCartItem = await CartItemModel.create({
         product: productId,
-        quantity:+quantity,
+        quantity: +quantity,
         attribute,
         cart: existingCart._id,
       });
@@ -569,6 +569,130 @@ class CartController {
       return res.status(STATUS.OK).json({
         message: "Lấy thành công",
         count: count || 0,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async getPagingNewCartItem(req: RequestModel, res: Response) {
+    try {
+      const user = req.user;
+      const { pageIndex, pageSize } = req.body;
+
+      let limit = pageSize || 10;
+      let skip = (pageIndex - 1) * limit || 0;
+
+      let existingCart = await CartModel.findOne({
+        user: user?.id,
+      });
+
+      if (!existingCart) {
+        existingCart = await CartModel.create({
+          user: user?.id,
+        });
+      }
+
+      const listCartItem = await CartItemModel.find({
+        cart: existingCart._id,
+      })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate([
+          {
+            path: "product",
+            select: {
+              _id: 1,
+              price: 1,
+              thumbnail: 1,
+              name: 1,
+            },
+          },
+          {
+            path: "attribute",
+            match: { _id: { $ne: null } }, // Chỉ populate nếu attribute không bị xóa
+            populate: [{ path: "color" }, { path: "size" }],
+          },
+        ]);
+
+      return res.status(STATUS.OK).json({
+        message: "Lấy giá trị nè",
+        content: listCartItem,
+      });
+    } catch (error) {}
+  }
+
+  async productToOrder(req: RequestModel, res: Response) {
+    try {
+      const user = req.user;
+
+      const { error } = cartItemValidation.validate(req.body);
+
+      if (error) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: error.details[0].message,
+        });
+      }
+
+      const { productId, quantity, attribute } = req.body;
+
+      if (!user)
+        return res.status(STATUS.AUTHORIZED).json({
+          message: "Bạn chưa đăng nhập",
+        });
+
+      let existingCart = await CartModel.findOne({
+        user: user?.id,
+      });
+
+      if (!existingCart) {
+        existingCart = await CartModel.create({
+          user: user.id,
+        });
+      }
+
+      const existingProduct = await ProductModel.findById(productId);
+
+      if (!existingProduct) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có sản phẩm thỏa mãn",
+          toast: true,
+        });
+      }
+      if (existingProduct.is_deleted) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Sản phẩm đã bị xóa",
+          toast: true,
+        });
+      }
+
+      const existingProductCart = await CartItemModel.deleteMany({
+        product: productId,
+        attribute: attribute,
+        cart: existingCart._id,
+      });
+
+      const newCartItem = await CartItemModel.create({
+        product: productId,
+        quantity: +quantity,
+        attribute,
+        cart: existingCart._id,
+      });
+
+      const stateValue = {
+        listId:[newCartItem?._id],
+        voucher: null,
+      };
+
+      const stateJson = JSON.stringify(stateValue);
+
+      const stateDeCodeUrl = encodeURIComponent(stateJson);
+
+      return res.status(STATUS.OK).json({
+        url: stateDeCodeUrl,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({

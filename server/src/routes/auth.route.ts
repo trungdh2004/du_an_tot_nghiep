@@ -19,6 +19,6 @@ routerAuth.put("/blockedMany", authController.blockedMany);
 routerAuth.put("/unBlockedMany", authController.unBlockedMany);
 // current
 routerAuth.get("/current-user", authorization, authController.currentUser);
-routerAuth.put("/changeUser", authorization, authController.changeUser);
+routerAuth.put("/changeUser/:id", authorization, authController.changeUser);
 
 export default routerAuth;
