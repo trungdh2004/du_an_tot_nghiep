@@ -20,9 +20,10 @@ const OrderManagements = () => {
   const [active, setActive] = useState(7);
   const [status, setStatus] = useState(null);
   const [showLoader, setShowLoader] = useState(true);
-  const [statusLists, setStatusLists] = useState<number[]>([0]);
   const [openId, setOpenId] = useState<string | boolean>(false);
-  const [openEvalaute, setOpenEvalaute] = useState<string | boolean>(false);
+  const [openEvaluate, setOpenEvaluate] = useState<string[] | null>(null);
+  // console.log("openEvaluate", openEvaluate)
+  // console.log("openId", openId)
   const menuList = [
     {
       index: 7,
@@ -169,24 +170,25 @@ const OrderManagements = () => {
                     {/* end head */}
 
                     {/*  order item*/}
-                    <Link to={`/account/purchase/order/${item?._id}`}>
-                      {item?.itemList?.map((itemOrderList: IItemOrderList) => {
-                        // console.log("itemOrderList: ", itemOrderList)
-                        return (
-                          <div
-                            key={itemOrderList.productId}
-                            className="w-full bg-white box-shadow  border border-gray-200 rounded-sm px-2 lg:px-8 py-1 "
-                          >
-                            <div className="py-4 space-y-4">
-                              {itemOrderList?.items?.map(
-                                (itemOrder: IItemOrder) => {
-                                  // console.log("itemOrderList: ", itemOrder)
-                                  return (
+
+                    {item?.itemList?.map((itemOrderList: IItemOrderList) => {
+                      // console.log("itemOrderList: ", itemOrderList)
+                      return (
+                        <div
+                          key={itemOrderList.productId}
+                          className="w-full bg-white box-shadow  border border-gray-200 rounded-sm px-2 lg:px-8 "
+                        >
+                          <div className="">
+                            {itemOrderList?.items?.map(
+                              (itemOrder: IItemOrder) => {
+                                // console.log("itemOrderList: ", itemOrder)
+                                return (
+                                  <Link to={`/account/purchase/order/${item?._id}`}>
                                     <div
                                       key={itemOrder._id}
-                                      className="w-full flex justify-between gap-3 md:gap-5 pb-4 border-b border-gray-300 "
+                                      className="w-full flex justify-between gap-3 md:gap-5 py-3  border-b border-gray-300 "
                                     >
-                                      <div className="size-[80px] md:size-[100px] bg-gray-100 p-2">
+                                      <div className="size-[80px] md:size-[100px] bg-gray-100 border ">
                                         <img
                                           src={itemOrder?.product.thumbnail}
                                           className="w-full h-full"
@@ -231,39 +233,52 @@ const OrderManagements = () => {
                                         </div>
                                       </div>
                                     </div>
-                                  );
-                                },
-                              )}
+                                  </Link>
+                                );
+                              },
+                            )}
 
-                              <div className="w-full flex justify-between items-center pt-1">
-                                {/*  */}
-                                {item.status === 5 && (
-                                  <div className="w-full">
-                                    <button onClick={() => setOpenEvalaute(itemOrderList.productId)}
+                            <div className="w-full flex justify-between items-center py-3">
+                              {/*  */}
+                              {item.status === 5 && (
+                                <div className="w-full">
+                                  {itemOrderList?.is_evaluate === true ? (
+                                    <div className="">
+                                      {/* <button className="flex items-center px-3 py-2 cursor-pointer text-blue-500 
+                                       border border-blue-500 hover:bg-blue-100 rounded-sm text-sm ">Xem đánh giá</button> */}
+                                      <span className="text-blue-500 text-sm">Đã đánh giá</span>
+                                    </div>
+                                  ) : (
+                                    <button onClick={() => {
+                                      console.log("itemOrderList.productId", itemOrderList.items.map((itemOrder: IItemOrder) => itemOrder._id)),
+                                        setOpenEvaluate(itemOrderList.items.map((itemOrder: IItemOrder) => itemOrder._id))
+                                    }}
                                       className="flex items-center px-3 py-2 cursor-pointer text-blue-500  border border-blue-500 hover:bg-blue-100 rounded-sm text-sm ">
                                       <FaStar className="text-orange-500 mr-1" /> <span className="">Đánh giá</span>
                                     </button>
-                                  </div>
-                                )}
-                                <div className="flex item-center justify-end w-full">
-                                  <p className="text-right text-sm md:text-base lg:font-medium md:flex md:items-center ">
-                                    Tổng số tiền <span className="hidden md:block">(
-                                      {itemOrderList?.items.length as number} sản
-                                      phẩm):</span>
-                                    <span className="text-red-500 font-medium lg:font-semibold text-sm lg:text-[16px]">
-                                      {formatQuantity(
-                                        itemOrderList.totalMoney,
-                                        "₫",
-                                      )}
-                                    </span>
-                                  </p>
+                                  )}
+
                                 </div>
+                              )}
+                              <div className="flex item-center justify-end w-full">
+                                <p className="text-right text-sm md:text-base lg:font-medium md:flex md:items-center ">
+                                  Tổng số tiền <span className="hidden md:block">(
+                                    {itemOrderList?.items.length as number} sản
+                                    phẩm):</span>
+                                  <span className="text-red-500 font-medium lg:font-semibold text-sm lg:text-[16px]">
+                                    {formatQuantity(
+                                      itemOrderList.totalMoney,
+                                      "₫",
+                                    )}
+                                  </span>
+                                </p>
                               </div>
                             </div>
                           </div>
-                        );
-                      })}
-                    </Link>
+                        </div>
+                      );
+                    })}
+
                   </div>
                   <div className="bg-[#FFFCF5] box-shadow border border-gray-200 px-2 md:px-4 lg:px-8 py-3 md:py-6">
                     <div className="flex flex-col items-end md:flex-row gap-y-2 md:justify-between md:items-center">
@@ -271,7 +286,8 @@ const OrderManagements = () => {
                       {[1].includes(item.status) && (
                         <button
                           onClick={() => setOpenId(item._id)}
-                          className="cursor-pointer px-3 py-2 lg:px-8 lg:py-3 text-white bg-red-500 border border-orange-700 hover:bg-red-600 transition-all  duration-300    rounded-sm text-xs lg:text-[16px]"
+                          className="px-3 py-2 cursor-pointer  border
+                           border-red-600 text-red-600 hover:bg-red-100 transition-all  duration-300    rounded-sm text-xs lg:text-[16px]"
                         >
                           Hủy đơn hàng
                         </button>
@@ -338,11 +354,10 @@ const OrderManagements = () => {
           handleFetchOrder={handleFetchOrder}
         />
       )}
-      {openEvalaute && (
+      {openEvaluate && (
         <Evaluate
-          open={openEvalaute}
-          handleClose={() => setOpenEvalaute(false)}
-          handleFetchOrder={handleFetchOrder}
+          open={openEvaluate}
+          handleClose={() => setOpenEvaluate(null)}
         />
       )}
     </>

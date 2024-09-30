@@ -14,29 +14,30 @@ class EvaluateController {
     try {
       const user = req.user
       const { listId, rating, content } = req.body;
+      console.log("req.body", req.body)
 
       if (!listId || !rating || listId?.length === 0 || !content) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn truyền thiếu dữ liệu",
         });
       }
-
+      console.log("1")
       const listOrderProduct = await OrderItemsModel.find({
         _id: {
-          $in: [listId],
+          $in: [...listId],
         },
       });
-
+      console.log("2")
       if (listOrderProduct?.length !== listId?.length) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Danh sách sản phẩm có lỗi",
         });
       }
-
+      console.log("3")
       const check = listOrderProduct?.some((orderItem: IOrderItem) => {
         return orderItem.status !== 5 || orderItem?.is_evaluate;
       });
-
+      console.log("4")
       if (check) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Đã đánh giá",
@@ -56,7 +57,7 @@ class EvaluateController {
           attribute: `${orderItem.size} - ${orderItem.color.name}`
         }
       });
-
+      console.log("5")
       const findProduct = await ProductModel.findById(product)
 
       if (!findProduct) {
@@ -64,21 +65,21 @@ class EvaluateController {
           message: "Không có sản phẩm muốn đánh giá"
         })
       }
-
+      console.log("6")
       const newEvaluate = await EvaluateModel.create(createEvaluate)
-
+      console.log("ada")
       const updateOrderItem = await OrderItemsModel.updateMany({
         _id: {
-          $in: [listId]
+          $in: [...listId]
         }
       }, {
         is_evaluate: true
       }, { new: true })
-
+      console.log("7")
       const ratingCount = findProduct.ratingCount + rating
       const ratingQuantity = findProduct.ratingQuantity + 1
       const ratingPro = (ratingCount / ratingQuantity).toFixed(1)
-
+      console.log("8")
       await ProductModel.findByIdAndUpdate(product, {
         ratingCount,
         ratingQuantity,

@@ -1,20 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { Textarea } from '@/components/ui/textarea'
 import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-
 import {
   Form,
   FormControl,
@@ -23,91 +19,114 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { AiFillExclamationCircle } from 'react-icons/ai'
-import { cancelOrder } from '@/service/order'
 import { toast } from 'sonner'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Textarea } from '@/components/ui/textarea'
+import StarRatings from 'react-star-ratings' // Thư viện react-star-ratings
+import { evaluate } from '@/service/evaluate'
+import { IEvaluate } from '@/types/evaluate'
 
+
+
+// Schema validation
 const FormSchema = z.object({
-  rating: z.number().min(1),
-  content: z.string().min(3).max(200),
+  rating: z.number().min(1, 'Vui lòng đánh giá chất lượng!'),
+  content: z.string().min(3, 'Nội dung quá ngắn'),
 });
 
 type Props = {
-  open: string | boolean,
+  open: string[] | null,
   handleClose: () => void,
-  handleFetchOrder: () => void,
+  handleFetchOrder?: () => void,
 }
-interface IRes {
-  note: string,
-  cancelBy: number,
-  open: string,
-}
+
 const Evaluate = ({ open, handleClose }: Props) => {
   const queryClient = useQueryClient();
+  const [rating, setRating] = useState(0); // State để lưu số sao đã chọn
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      content: '',
+    }
   })
-
-
-  const { mutate } = useMutation({
-    mutationFn: async ({ open, note, cancelBy = 1 }: IRes) => {
-      const data = await cancelOrder(open, note, cancelBy);
+  // const form = useForm()
+  const mutation = useMutation({
+    mutationFn: async (data: IEvaluate) => {
+      return await evaluate(data)
     },
     onSuccess: () => {
-      handleClose();
       queryClient.invalidateQueries({
         queryKey: ['purchase']
       })
-      toast.success("Đánh giá sản phẩm thành công!");
+      toast.success('Cảm ơn bạn đã đánh giá!');
+      handleClose();
     },
     onError: () => {
-      toast.error("Đánh giá sản phẩm thất bại!");
+      toast.error('Đã xảy ra lỗi!');
     },
-  })
-  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-
+  });
+  // const { isSubmitted } = form.formState; // Kiểm tra form đã được submit hay chưa
+  const onSubmit = (data: any) => {
+    console.log("dât", open);
+    mutation.mutate({ ...data, listId: open });
   }
   return (
     <>
       <Dialog open={!!open} onOpenChange={handleClose}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Đánh giá sản phẩm</DialogTitle>
-            {/* <div className="my-2">
-              <DialogDescription className='text-[#FFB22C] my-3'>
-                <p className="flex "><AiFillExclamationCircle className='mr-2' size={24} /> Vui lòng chọn lý do hủy đơn hàng. Lưu ý: Thao tác này sẽ hủy tất cả sản phẩm có trong đơn hàng và không thể hoàn tác.</p>
-              </DialogDescription>
-            </div> */}
+            <DialogTitle className='text-center'>Đánh giá sản phẩm</DialogTitle>
           </DialogHeader>
-          <div className="">
+          <div>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+
                 <FormField
                   control={form.control}
-                  name="content"
+                  name="rating"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel></FormLabel>
+                    <FormItem className=''>
+                      <FormLabel className='pr-3'>Chất lượng sản phẩm:</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Nội dung:" />
+                        <StarRatings
+                          rating={field.value}
+                          starRatedColor="#f97316 "
+                          starHoverColor="#f97316 "
+                          changeRating={(newRating) => field.onChange(+newRating)}
+                          numberOfStars={5}
+                          starDimension="20px"
+                          starSpacing="5px"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <button className='w-full bg-red-500 py-3 text-sm md:text-base uppercase text-white rounded-sm' type="submit">Đồng ý</button>
+                <FormField
+                  control={form.control}
+                  name="content"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nội dung:</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Hãy chia sẻ nhận cho sản phẩm này bạn nhé!" {...field} className='h-[200px] after:outline-none' />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button
+                  type="submit"
+                  className='w-full bg-red-500 py-3 text-sm md:text-base uppercase text-white rounded-sm' >
+                  Đánh giá
+                </Button>
               </form>
             </Form>
           </div>
-          <DialogFooter>
-          </DialogFooter>
+          <DialogFooter></DialogFooter>
         </DialogContent>
       </Dialog>
     </>
   )
 }
 
-export default Evaluate
+export default Evaluate;
