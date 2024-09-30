@@ -133,7 +133,7 @@ const OrderDashboardIndex = () => {
 					<div className="px-2 flex-1 space-y-1">
 						<div className="w-full px-2 py-2 rounded-r-md bg-yellow-100 text-sm">
 							Nhận 50k ship đơn hàng có mã:{" "}
-							<span className="font-medium">MDHFJSHEGFE</span>
+							<span className="font-medium text-sm">MDHFJSHEGFE</span>
 						</div>
 					</div>
 				</div>
