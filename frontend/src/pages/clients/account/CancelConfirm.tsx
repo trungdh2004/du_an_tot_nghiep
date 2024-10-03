@@ -88,7 +88,7 @@ const CancelConfirm = ({ open, handleClose, handleFetchOrder }: Props) => {
   return (
     <>
       <Dialog open={!!open} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className=" sm:w-[500px] ">
           <DialogHeader>
             <DialogTitle>Chọn Lý Do Hủy</DialogTitle>
             <div className="my-2">
