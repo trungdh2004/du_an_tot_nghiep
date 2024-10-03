@@ -120,7 +120,8 @@ const OrderManagements = () => {
                 key={item.index}
                 onClick={() => handleMenuClick(item)}
                 className={cn(
-                  `flex-1 text-nowrap text-sm md:text-base px-5 cursor-pointer font-medium flex justify-center py-3 md:py-5 border-b-2 border-gray-200 hover:border-b-2
+                  `flex-1 text-nowrap text-sm md:text-base px-5 cursor-pointer 
+                  font-medium flex justify-center py-3 md:py-5 border-b-2 border-gray-200 hover:border-b-2
                                  hover:border-blue-500 hover:text-blue-500 transition-all duration-300 `,
                   active === item.index && `border-blue-500 text-blue-500`,
                 )}
@@ -363,5 +364,4 @@ const OrderManagements = () => {
     </>
   );
 };
-
 export default OrderManagements;

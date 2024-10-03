@@ -15,6 +15,7 @@ import AccountIndex from "@/pages/clients/account/AccountIndex";
 import { Navigate } from "react-router-dom";
 import OrderManagements from "@/pages/clients/account/Purchase";
 import PurchaseOrder from "@/pages/clients/account/PurchaseOrder";
+import PaymentIndex from "@/pages/clients/account/PaymentIndex";
 const MainRouter = [
   {
     path: "/",
@@ -47,6 +48,10 @@ const MainRouter = [
           {
             path: 'purchase/order/:id',
             element: <PurchaseOrder />
+          },
+          {
+            path: 'payments',
+            element: <PaymentIndex />
           },
         ],
       },
