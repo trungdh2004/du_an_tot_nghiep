@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -6,22 +5,25 @@ import { array, z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
-	AiOutlineCloudUpload,
-	AiOutlineLoading3Quarters,
-	AiFillCloseCircle,
+  AiOutlineCloudUpload,
+  AiOutlineLoading3Quarters,
+  AiFillCloseCircle,
 } from "react-icons/ai";
 import { cn } from "@/lib/utils";
 import { uploadFileService, uploadMultipleFileService } from "@/service/upload";
-import { useProcessBarLoading } from "@/store/useSidebarAdmin";
+import {
+	useProcessBarLoading,
+	useProcessBarLoadingEventNone,
+} from "@/store/useSidebarAdmin";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import { CiCirclePlus } from "react-icons/ci";
 import { getAllCategory } from "@/service/category-admin";
@@ -83,7 +85,8 @@ const formSchema = z.object({
 					.object({
 						_id: z.string().nonempty("Bạn chưa nhập loại sản phẩm"),
 						name: z.string(),
-					}).nullable()
+					})
+					.nullable()
 					.refine(
 						(data) => {
 							if (!data) return false;
@@ -97,7 +100,7 @@ const formSchema = z.object({
 				price: z.number().min(1, "Phải lớn hơn 0"),
 				quantity: z.number().min(1, "Phải lớn hơn 0"),
 				discount: z.number().min(1, "Phải lớn hơn 0"),
-				_id: z.string().nullable()
+				_id: z.string().nullable(),
 			}),
 		)
 		.refine(
@@ -135,6 +138,8 @@ const formSchema = z.object({
 });
 
 const ProductUpdate = () => {
+	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
+		useProcessBarLoadingEventNone();
 	const { id } = useParams();
 	const router = useNavigate();
 	const form = useForm({
@@ -157,7 +162,7 @@ const ProductUpdate = () => {
 					price: 0,
 					quantity: 0,
 					discount: 0,
-					_id: null
+					_id: null,
 				},
 			],
 			images: [],
@@ -177,58 +182,59 @@ const ProductUpdate = () => {
 	const { mutate } = useMutation({
 		mutationFn: (value: IProduct) => updateProductById(id as string, value),
 		onSuccess: () => {
+			setCloseProcessLoadingEventNone();
 			toast.success("Chỉnh sửa sản phẩm thành công");
 			form.reset();
 			router("/admin/product");
 		},
 		onError: () => {
+			setCloseProcessLoadingEventNone();
 			toast.error("Chỉnh sửa sản phẩm thất bại");
 		},
 	});
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data: dataCate } = await getAllCategory();
+        const { data: dataSize } = await getAllSize();
+        const { data } = await getAllColor();
+        setCategorys(dataCate.data);
+        setSize(dataSize.data);
+        setColor(data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
 
-	useEffect(() => {
-		(async () => {
-			try {
-				const { data: dataCate } = await getAllCategory();
-				const { data: dataSize } = await getAllSize();
-				const { data } = await getAllColor();
-				setCategorys(dataCate.data);
-				setSize(dataSize.data);
-				setColor(data.data);
-			} catch (error) {
-				console.log(error);
-			}
-		})();
-	}, []);
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await getProductById(id as string);
 
-	useEffect(() => {
-		(async () => {
-			try {
-				const { data } = await getProductById(id as string);
+        form.reset({
+          category: data.data.category,
+          name: data.data.name,
+          price: data.data.price.toString(),
+          discount: data.data.discount.toString(),
+          thumbnail: data.data.thumbnail,
+          images: data.data.images,
+          attributes: data.data.attributes,
+          description: data.data.description,
+          featured: false,
+        });
 
-				form.reset({
-					category: data.data.category,
-					name: data.data.name,
-					price: data.data.price.toString(),
-					discount: data.data.discount.toString(),
-					thumbnail: data.data.thumbnail,
-					images: data.data.images,
-					attributes: data.data.attributes,
-					description: data.data.description,
-					featured: false,
-				});
-
-				setPreviewUrl({
-					isLoading: false,
-					url: data.data.thumbnail,
-				});
-				setImages(data.data.images);
-			} catch (error) {
-				router("/admin/product");
-				toast.error("Lấy thông tin sản phẩm lỗi");
-			}
-		})();
-	}, []);
+        setPreviewUrl({
+          isLoading: false,
+          url: data.data.thumbnail,
+        });
+        setImages(data.data.images);
+      } catch (error) {
+        router("/admin/product");
+        toast.error("Lấy thông tin sản phẩm lỗi");
+      }
+    })();
+  }, []);
 
 	const control = form.control;
 	const { fields, append, remove } = useFieldArray({
@@ -237,90 +243,96 @@ const ProductUpdate = () => {
 	});
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		try {
+			setOpenProcessLoadingEventNone();
 			const listImageNotFile = values.images?.filter((image) => !image?.file);
 			const listImageFile = values.images?.filter((image) => image?.file);
 			let listImage = [];
 
-			if (listImageFile?.length > 0) {
-				const formData = new FormData();
-				for (let i = 0; i < listImageFile?.length; i++) {
-					formData.append("images", listImageFile[i]?.file as any);
-				}
+      if (listImageFile?.length > 0) {
+        const formData = new FormData();
+        for (let i = 0; i < listImageFile?.length; i++) {
+          formData.append("images", listImageFile[i]?.file as any);
+        }
 
-				const { data } = await uploadMultipleFileService(formData);
+        const { data } = await uploadMultipleFileService(formData);
 
-				listImage = data?.map((item: any) => ({
-					url: item.path,
-				}));
-			}
-			const images = [...listImageNotFile, ...listImage];
-			const attribute = values.attributes?.map((attribute) => ({
-				...attribute,
-				color: attribute.color?._id as string,
-				size: attribute.size?._id as string,
-			}));
-			const data = {
-				...values,
-				images,
-				category: values.category?._id,
-				attributes: attribute,
-				price: +values.price,
-				discount: +values.discount,
-			};
-			mutate(data as IProduct);
-		} catch (error) {
-			console.log("error", error);
+        listImage = data?.map((item: any) => ({
+          url: item.path,
+        }));
+      }
+      const images = [...listImageNotFile, ...listImage];
+      const attribute = values.attributes?.map((attribute) => ({
+        ...attribute,
+        color: attribute.color?._id as string,
+        size: attribute.size?._id as string,
+      }));
+      const data = {
+        ...values,
+        images,
+        category: values.category?._id,
+        attributes: attribute,
+        price: +values.price,
+        discount: +values.discount,
+      };
+      mutate(data as IProduct);
+    } catch (error) {
+      console.log("error", error);
 
-			toast.error("Chỉnh sửa sản phẩm xảy ra lỗi");
-		}
-	};
-	const handleUploadFile = async (file: File) => {
-		try {
-			setOpen();
-			const formdata = new FormData();
-			formdata.append("image", file);
-			const { data } = await uploadFileService(formdata);
-			URL.revokeObjectURL(previewUrl.url);
-			setPreviewUrl({
-				url: data.path,
-				isLoading: false,
-			});
-			return data.path;
-		} catch (error) {
-			console.error(error);
-		} finally {
-			setClose();
-		}
-	};
+      toast.error("Chỉnh sửa sản phẩm xảy ra lỗi");
+    }
+  };
+  const handleUploadFile = async (file: File) => {
+    try {
+      setOpen();
+      const formdata = new FormData();
+      formdata.append("image", file);
+      const { data } = await uploadFileService(formdata);
+      URL.revokeObjectURL(previewUrl.url);
+      setPreviewUrl({
+        url: data.path,
+        isLoading: false,
+      });
+      return data.path;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setClose();
+    }
+  };
+
 
 	const listColor = form.watch("attributes")
-		? form.watch("attributes")?.reduce((acc: IColor[], item: IItemListColor) => {
-			if (!item.color) return acc;
+		? form
+				.watch("attributes")
+				?.reduce((acc: IColor[], item: IItemListColor) => {
+					if (!item.color) return acc;
 
-			let group = acc.find((g) => item.color && g._id === item.color._id as string);
+					let group = acc.find(
+						(g) => item.color && g._id === (item.color._id as string),
+					);
 
-			if (!group) {
-				group = {
-					_id: item.color._id as string,
-					name: item.color.name as string,
-					code: item.color.code as string,
-				};
-				acc.push(group);
-				return acc;
-			}
-			return acc;
-		}, [])
+					if (!group) {
+						group = {
+							_id: item.color._id as string,
+							name: item.color.name as string,
+							code: item.color.code as string,
+						};
+						acc.push(group);
+						return acc;
+					}
+					return acc;
+				}, [])
 		: [];
 
 	return (
 		<div>
-			<h4 className="font-medium text-xl">Thêm mới sản phẩm</h4>
+			<h4 className="text-xl font-medium">Thêm mới sản phẩm</h4>
 
-			<div className="w-full gap-5 grid lg:grid-cols-12 mt-4">
+			<div className="grid w-full gap-5 mt-4 lg:grid-cols-12">
 				<Form {...form}>
 					<form
 						onSubmit={form.handleSubmit(onSubmit)}
-						className="space-y-8 flex gap-5 w-full lg:col-span-9"
+						className="flex w-full gap-5 space-y-8 lg:col-span-9"
 					>
 						<div className="w-full">
 							<div className=" w-[full] grid grid-cols-2 gap-2">
@@ -336,7 +348,7 @@ const ProductUpdate = () => {
 													<Input
 														placeholder="Tên sản phẩm"
 														{...field}
-													// onChange={(e) => setName(e.target.value)}
+														// onChange={(e) => setName(e.target.value)}
 													/>
 												</FormControl>
 
@@ -358,7 +370,10 @@ const ProductUpdate = () => {
 														placeholder="Giá sản phẩm"
 														{...field}
 														onChange={(event) => {
-															const numericValue = event.target.value.replace(/[^0-9]/g, '');
+															const numericValue = event.target.value.replace(
+																/[^0-9]/g,
+																"",
+															);
 															return field.onChange(numericValue);
 														}}
 													/>
@@ -409,7 +424,10 @@ const ProductUpdate = () => {
 														placeholder="Giá sản phẩm"
 														{...field}
 														onChange={(event) => {
-															const numericValue = event.target.value.replace(/[^0-9]/g, '');
+															const numericValue = event.target.value.replace(
+																/[^0-9]/g,
+																"",
+															);
 															return field.onChange(numericValue);
 														}}
 													/>
@@ -435,7 +453,7 @@ const ProductUpdate = () => {
 															htmlFor="file-upload"
 															className={cn("w-full relative ")}
 														>
-															<div className="w-full border rounded-sm bg-white relative">
+															<div className="relative w-full bg-white border rounded-sm">
 																<div
 																	className={cn(
 																		"w-full h-[160px] flex justify-center items-center flex-col",
@@ -453,28 +471,28 @@ const ProductUpdate = () => {
 																		PNG, JPG, GIF.
 																	</p>
 																</div>
+                                <div
+                                  className={cn(
+                                    " relative flex justify-center items-center h-[160px]",
+                                    previewUrl?.url ? "" : "hidden",
+                                  )}
+                                >
+                                  <img
+                                    src={previewUrl?.url}
+                                    className={cn(
+                                      "size-[140px] object-cover border border-slate-100",
+                                    )}
+                                    id="preview"
+                                  />
+                                </div>
 
-																<div
-																	className={cn(
-																		" relative flex justify-center items-center h-[160px]",
-																		previewUrl?.url ? "" : "hidden",
-																	)}
-																>
-																	<img
-																		src={previewUrl?.url}
-																		className={cn(
-																			"size-[140px] object-cover border border-slate-100",
-																		)}
-																		id="preview"
-																	/>
-																</div>
 
 																{previewUrl?.isLoading && (
-																	<div className="absolute bg-slate-50/50 w-full inset-0 flex items-center justify-center">
+																	<div className="absolute inset-0 flex items-center justify-center w-full bg-slate-50/50">
 																		<AiOutlineLoading3Quarters
 																			size={20}
 																			strokeWidth="4px"
-																			className="animate-spin w-full "
+																			className="w-full animate-spin "
 																		/>
 																	</div>
 																)}
@@ -562,7 +580,7 @@ const ProductUpdate = () => {
 																					<div className="col-span-1 row-span-1">
 																						<div
 																							// key={index}
-																							className=" relative w-full h-full border rounded flex justify-center items-center"
+																							className="relative flex items-center justify-center w-full h-full border rounded "
 																						>
 																							<img
 																								src={image?.url}
@@ -573,7 +591,7 @@ const ProductUpdate = () => {
 																								className="cursor-pointer h-[90%] object-cover aspect-square"
 																							/>
 																							<AiFillCloseCircle
-																								className="absolute top-2 right right-0 cursor-pointer"
+																								className="absolute right-0 cursor-pointer top-2 right"
 																								size={20}
 																								onClick={() =>
 																									onImageRemove(index)
@@ -625,18 +643,18 @@ const ProductUpdate = () => {
 											form.formState.errors.attributes && "border-red-500",
 										)}
 									>
-										<ul className="flex w-full flex-col justify-between gap-4">
+										<ul className="flex flex-col justify-between w-full gap-4">
 											{fields.map((item, index) => (
 												<li
 													key={item.id}
-													className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 w-full gap-4 border-b pb-2"
+													className="grid w-full grid-cols-2 gap-4 pb-2 border-b md:grid-cols-3 lg:grid-cols-6"
 												>
 													<FormField
 														disabled={isPending}
 														control={control}
 														name={`attributes.${index}.size`}
 														render={({ field }) => (
-															<FormItem className="flex w-full flex-col">
+															<FormItem className="flex flex-col w-full">
 																<FormLabel>Kích thước</FormLabel>
 																<SelectComponent<ISize>
 																	value={field.value}
@@ -649,7 +667,9 @@ const ProductUpdate = () => {
 																	placeholder="Kích thước"
 																	options={size}
 																	getOptionLabel={(option) => option.name}
-																	getOptionValue={(option) => option?._id as string}
+																	getOptionValue={(option) =>
+																		option?._id as string
+																	}
 																/>
 																<FormMessage className="text-xs" />
 															</FormItem>
@@ -661,7 +681,7 @@ const ProductUpdate = () => {
 															name={`attributes.${index}.color`}
 															control={control}
 															render={({ field }) => (
-																<FormItem className="flex w-full flex-col">
+																<FormItem className="flex flex-col w-full">
 																	<FormLabel>Màu</FormLabel>
 																	<SelectComponent<IColor>
 																		value={field.value}
@@ -675,10 +695,10 @@ const ProductUpdate = () => {
 																		options={color}
 																		getOptionLabel={(option) => {
 																			return (
-																				<div className="w-full flex items-center justify-between">
+																				<div className="flex items-center justify-between w-full">
 																					{option.name}{" "}
 																					<p
-																						className="w-2 h-2 rounded-full ml-1"
+																						className="w-2 h-2 ml-1 rounded-full"
 																						style={{
 																							backgroundColor: option.code,
 																						}}
@@ -700,7 +720,7 @@ const ProductUpdate = () => {
 														name={`attributes.${index}.price`}
 														control={control}
 														render={({ field }) => (
-															<FormItem className="flex w-full flex-col">
+															<FormItem className="flex flex-col w-full">
 																<FormLabel>Giá</FormLabel>
 																<FormControl>
 																	<Input
@@ -722,7 +742,7 @@ const ProductUpdate = () => {
 														name={`attributes.${index}.quantity`}
 														control={control}
 														render={({ field }) => (
-															<FormItem className="flex w-full flex-col">
+															<FormItem className="flex flex-col w-full">
 																<FormLabel>Số lượng</FormLabel>
 																<FormControl>
 																	<Input
@@ -744,7 +764,7 @@ const ProductUpdate = () => {
 														name={`attributes.${index}.discount`}
 														control={control}
 														render={({ field }) => (
-															<FormItem className="flex w-full flex-col">
+															<FormItem className="flex flex-col w-full">
 																<FormLabel>Giảm giá</FormLabel>
 																<FormControl>
 																	<Input
@@ -761,7 +781,7 @@ const ProductUpdate = () => {
 															</FormItem>
 														)}
 													/>
-													<div className="w-full flex justify-center items-center">
+													<div className="flex items-center justify-center w-full">
 														<button
 															type="button"
 															onClick={() => {
@@ -791,7 +811,7 @@ const ProductUpdate = () => {
 													price: 0,
 													quantity: 0,
 													discount: 0,
-													_id: null
+													_id: null,
 												})
 											}
 										>
@@ -811,7 +831,7 @@ const ProductUpdate = () => {
 										name="description"
 										control={control}
 										render={({ field }) => (
-											<FormItem className="flex w-full flex-col">
+											<FormItem className="flex flex-col w-full">
 												<FormLabel>Mô tả</FormLabel>
 												<FormControl>
 													<FroalaEditor
@@ -836,7 +856,7 @@ const ProductUpdate = () => {
 						</div>
 					</form>
 				</Form>
-				<div className="hidden lg:block lg:col-span-3 p-4 ">
+				<div className="hidden p-4 lg:block lg:col-span-3 ">
 					<div className="w-full border rounded">
 						<img
 							src={
@@ -855,7 +875,7 @@ const ProductUpdate = () => {
 								{listColor?.map((item) => (
 									<span
 										style={{ background: item.code }}
-										className="box-shadow border border-black/40"
+										className="border box-shadow border-black/40"
 									></span>
 								))}
 							</div>

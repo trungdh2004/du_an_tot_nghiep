@@ -25,6 +25,7 @@ import {
 
 import { toast } from "sonner";
 import { addTag, getTag, updateTag } from "@/service/tags-admin";
+import { useProcessBarLoadingEventNone } from "@/store/useSidebarAdmin";
 
 interface FormDialog {
 	open: boolean | string;
@@ -52,12 +53,9 @@ const formSchema = z.object({
 			message: "Mô tả bắt buộc phải nhập",
 		}),
 });
-const TagAdd = ({
-	title,
-	open,
-	handleClose,
-	handlePaging,
-}: FormDialog) => {
+const TagAdd = ({ title, open, handleClose, handlePaging }: FormDialog) => {
+	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
+		useProcessBarLoadingEventNone();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -67,26 +65,30 @@ const TagAdd = ({
 	});
 	const onHandleUpdate = async (dataForm: any) => {
 		try {
-			const { data } = await updateTag(open,dataForm)
+			setOpenProcessLoadingEventNone();
+			const { data } = await updateTag(open, dataForm);
 			console.log("Update tag success");
 			handleClose();
 			handlePaging();
 			toast.success("Bạn cập nhật tags thành công");
 		} catch (error) {
 			console.error("Error:", error);
+		} finally {
+			setCloseProcessLoadingEventNone();
 		}
 	};
 	const onHandleAdd = async (dataForm: any) => {
 		try {
-			const { data } = await addTag(dataForm)
-			console.log(data);
-			console.log("Add tag success");
+			setOpenProcessLoadingEventNone();
+			const { data } = await addTag(dataForm);
 			form.reset();
 			handleClose();
 			handlePaging();
 			toast.success("Bạn thêm tag thành công");
 		} catch (error) {
 			console.error("Error:", error);
+		} finally {
+			setCloseProcessLoadingEventNone();
 		}
 	};
 
@@ -94,7 +96,7 @@ const TagAdd = ({
 		if (typeof open === "string") {
 			(async () => {
 				try {
-					const { data } = await getTag(open)
+					const { data } = await getTag(open);
 					form.reset(data.data);
 				} catch (error) {
 					console.error("Error:", error);

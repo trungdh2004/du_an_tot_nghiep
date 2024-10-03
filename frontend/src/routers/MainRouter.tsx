@@ -1,20 +1,19 @@
+import AccountLayout from "@/layout/AcountLayout";
 import MainLayout from "@/layout/MainLayout";
 import UserIndex from "@/pages/admin/users/UserIndex";
-import Address from "@/pages/clients/address/Address";
-import NotFound from "@/pages/NotFound";
-import BlogDetail from "@/pages/clients/blogs/BlogDetail";
-import BlogPage from "@/pages/clients/blogs/BLogPage";
-import DetailProduct from "@/pages/clients/detail-home/page";
-import HomePage from "@/pages/clients/home/page";
-import ShopProduct from "@/pages/clients/shop/ShopProduct";
-import CartPage from "@/pages/clients/cart/CartPage";
-import OrderProcessing from "@/pages/clients/order/OrderProcessing";
-import TestComponent from "@/pages/clients/Test";
-import AccountLayout from "@/layout/AcountLayout";
 import AccountIndex from "@/pages/clients/account/AccountIndex";
-import { Navigate } from "react-router-dom";
 import OrderManagements from "@/pages/clients/account/Purchase";
 import PurchaseOrder from "@/pages/clients/account/PurchaseOrder";
+import Address from "@/pages/clients/address/Address";
+import BlogDetail from "@/pages/clients/blogs/BlogDetail";
+import BlogPage from "@/pages/clients/blogs/BLogPage";
+import CartPage from "@/pages/clients/cart/CartPage";
+import DetailProduct from "@/pages/clients/detail-home/page";
+import HomePage from "@/pages/clients/home/page";
+import OrderProcessing from "@/pages/clients/order/OrderProcessing";
+import ShopProduct from "@/pages/clients/shop/ShopProduct";
+import NotFound from "@/pages/NotFound";
+import { Navigate } from "react-router-dom";
 import PaymentIndex from "@/pages/clients/account/PaymentIndex";
 const MainRouter = [
   {
@@ -53,6 +52,7 @@ const MainRouter = [
             path: 'payments',
             element: <PaymentIndex />
           },
+
         ],
       },
     ],

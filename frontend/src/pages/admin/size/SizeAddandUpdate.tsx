@@ -1,19 +1,11 @@
-import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
-	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import {
 	Form,
 	FormControl,
@@ -22,11 +14,15 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import instance from "@/config/instance";
-import { toast } from "sonner";
-import { SearchObjectType } from "@/types/searchObjecTypes";
+import { Input } from "@/components/ui/input";
 import { addSize, getSizeId, updateSize } from "@/service/size-admin";
+import { useProcessBarLoadingEventNone } from "@/store/useSidebarAdmin";
 import { SizeTypes } from "@/types/typeSize";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
 interface FormDialog {
 	open: boolean | string;
@@ -39,14 +35,14 @@ const formSchema = z.object({
 	name: z
 		.string({
 			message: "Tên kích thước không được để trống",
-    }).nonempty({
-      message: "Tên kích thước không được để trống"
-    }),
+		})
+		.nonempty({
+			message: "Tên kích thước không được để trống",
+		}),
 	toWeight: z.number().min(1, "Phải lớn hơn 0"),
 	fromWeight: z.number().min(1, "Phải lớn hơn 0"),
-  toHeight:z.number().min(1, "Phải lớn hơn 0"),
-  fromHeight: z.number().min(1, "Phải lớn hơn 0"),
-
+	toHeight: z.number().min(1, "Phải lớn hơn 0"),
+	fromHeight: z.number().min(1, "Phải lớn hơn 0"),
 });
 const SizeAddandUpdate = ({
 	title,
@@ -54,6 +50,8 @@ const SizeAddandUpdate = ({
 	handleClose,
 	handlePaging,
 }: FormDialog) => {
+	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
+		useProcessBarLoadingEventNone();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -66,23 +64,29 @@ const SizeAddandUpdate = ({
 	});
 	const onHandleUpdate = async (dataForm: SizeTypes) => {
 		try {
-			const { data } = await updateSize(open,dataForm)
+			setOpenProcessLoadingEventNone();
+			const { data } = await updateSize(open, dataForm);
 			handleClose();
 			handlePaging();
 			toast.success("Bạn cập nhật size thành công");
 		} catch (error) {
 			console.error("Error:", error);
+		} finally {
+			setCloseProcessLoadingEventNone();
 		}
 	};
 	const onHandleAdd = async (dataForm: SizeTypes) => {
 		try {
-			const { data } = await addSize(dataForm)
+			setOpenProcessLoadingEventNone();
+			const { data } = await addSize(dataForm);
 			form.reset();
 			handleClose();
 			handlePaging();
 			toast.success("Bạn thêm size thành công");
 		} catch (error) {
 			console.error("Error:", error);
+		} finally {
+			setCloseProcessLoadingEventNone();
 		}
 	};
 
@@ -90,7 +94,7 @@ const SizeAddandUpdate = ({
 		if (typeof open === "string") {
 			(async () => {
 				try {
-					const { data } = await getSizeId(open)
+					const { data } = await getSizeId(open);
 					console.log(data);
 					form.reset(data.data);
 				} catch (error) {
@@ -100,7 +104,13 @@ const SizeAddandUpdate = ({
 		}
 	}, [open]);
 
-	const onSubmit = (data: { name: string; toWeight: number,fromHeight:number,toHeight:number,fromWeight:number }) => {
+	const onSubmit = (data: {
+		name: string;
+		toWeight: number;
+		fromHeight: number;
+		toHeight: number;
+		fromWeight: number;
+	}) => {
 		if (typeof open === "string") {
 			onHandleUpdate(data);
 		} else {

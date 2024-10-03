@@ -3,7 +3,7 @@ import DialogConfirm from "@/components/common/DialogConfirm";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import { deleteCartItem } from "@/service/cart";
+import { deleteCartItem, pagingCart } from "@/service/cart";
 import useCart from "@/store/cart.store";
 import { AxiosError } from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -16,6 +16,7 @@ import { takeApplyDiscountCode } from "@/service/voucher";
 import { IVoucher } from "@/types/voucher";
 import { VoucherIcon } from "@/assets/svg";
 import { createStateUrlCart } from "@/service/order";
+import { useFetchNewProductsInTheCart } from "@/hooks/cart";
 
 type CheckedState = Record<string, boolean>;
 
@@ -27,6 +28,7 @@ const CartPage = () => {
 	const [checkedState, setCheckedState] = useState<CheckedState>({});
 	const [allChecked, setAllChecked] = useState<boolean>(false);
 	const [groupCheckedState, setGroupCheckedState] = useState<CheckedState>({});
+	const { fetchNewProductsInTheCart } = useFetchNewProductsInTheCart();
 	const [totalSelectedAmount, setTotalSelectedAmount] = useState<{
 		totalQuantity: number;
 		totalAmount: number;
@@ -45,6 +47,12 @@ const CartPage = () => {
 	});
 	const isItemValid = useCallback((item: any) => {
 		return item?.attribute?._id && item?.attribute?.quantity > 0;
+	}, []);
+	useEffect(() => {
+		(async () => {
+			const { data } = await pagingCart({ pageSize: 999999 });
+			setCarts(data?.data?.content);
+		})();
 	}, []);
 	useEffect(() => {
 		if (itemCart) {
@@ -104,6 +112,7 @@ const CartPage = () => {
 		}
 		setTotalSelectedAmount(totals || { totalQuantity: 0, totalAmount: 0 });
 		setAllChecked(isAllChecked || false);
+		fetchNewProductsInTheCart();
 	}, [checkedState, carts, isItemValid]);
 
 	const totalAttribute = useMemo(() => {
