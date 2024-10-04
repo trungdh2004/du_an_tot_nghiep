@@ -57,9 +57,7 @@ const Comments = ({ product }: Props) => {
 		} catch (error) {
 			console.log(error);
 		}
-  };
-  
-  
+	};
 
 	const handleChange = (content: string) => {
 		setContent(content);
@@ -70,6 +68,13 @@ const Comments = ({ product }: Props) => {
 	};
 	return (
 		<div>
+			<Button
+				onClick={() => {
+					console.log("comment tổng ", comment);
+				}}
+			>
+				Click
+			</Button>
 			<div className="mb-3 flex items-center gap-2">
 				<h3 className="font-bold text-xl text-slate-600">
 					{" "}

@@ -31,42 +31,48 @@ const CommentItem = ({ comment, setComment }: Props) => {
 	const [content, setContent] = useState(``);
 	const [pageIndex, setPageIndex] = useState(1);
 	const [check, setCheck] = useState<IPageComment | null>(null);
-	const [objectComment, setObjectComment] = useState<IObjectComment>({
-		pageIndex: pageIndex,
-		pageSize: 5,
-		commentId: comment?._id,
-		commentType: TYPE_COMMENT.COMMENT,
-	});
+	// const [objectComment, setObjectComment] = useState<IObjectComment>({
+	// 	pageIndex: pageIndex,
+	// 	pageSize: 5,
+	// 	commentId: comment?._id,
+	// 	commentType: TYPE_COMMENT.COMMENT,
+	// });
 	const [open, setOpen] = useState(false);
 	const [openFeedback, setOpenFeedback] = useState<string | null>(null);
 	const [openAnswer, setOpenAnswer] = useState(false);
 	const navigate = useNavigate();
 	const location = useLocation();
-	const handleLoadMoreComments = async () => {
-		const newPageIndex = pageIndex + 1;
-		setPageIndex(newPageIndex);
-		await handleListcommentItems(newPageIndex);
-	};
-	const handleListcommentItems = async (newPageIndex: number) => {
+	// const handleLoadMoreComments = async () => {
+	// 	const newPageIndex = pageIndex + 1;
+	// 	setPageIndex(newPageIndex);
+	// 	await handleListcommentItems(newPageIndex);
+	// };
+	const handleListcommentItems = async (cmtParent: any) => {
 		try {
+			console.log("cmtpr", cmtParent);
+
 			const { data } = await getListComments({
-				...objectComment,
-				pageIndex: newPageIndex,
+				pageSize: 5,
+				commentId: comment?._id,
+				commentType: TYPE_COMMENT.COMMENT,
+				pageIndex: cmtParent?.pageIndexReplies || 1,
 			});
+			console.log(data);
 
 			setComment((prev) => {
 				return prev?.map((comment) => {
-					if (comment._id === objectComment.commentId) {
+					if (comment._id === cmtParent._id) {
 						return {
 							...comment,
 							replies: [...comment.replies, ...data.content],
+							pageIndexReplies: data.pageIndex,
 						};
 					}
 					return comment;
 				});
 			});
-			setCheck(data);
-			return data;
+			// setCheck(data);
+			// return data;
 		} catch (error) {
 			console.log(error);
 		}
@@ -192,9 +198,17 @@ const CommentItem = ({ comment, setComment }: Props) => {
 			setComment((prev) => {
 				return prev?.map((comment) => {
 					if (comment._id === data.data.comment_id) {
+						if (comment.replies.length > 0) {
+							console.log("abc");
+							return {
+								...comment,
+								replies: [data.data, ...(comment.replies || [])],
+								replies_count: comment.replies_count + 1,
+							};
+						}
 						return {
 							...comment,
-							replies: [data.data, ...(comment.replies || [])],
+							replies: [],
 							replies_count: comment.replies_count + 1,
 						};
 					}
@@ -281,7 +295,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 							)}
 							onClick={() => {
 								setOpenAnswer(true);
-								handleListcommentItems(1);
+								handleListcommentItems(comment);
 							}}
 						>
 							{comment?.replies_count} câu trả lời
@@ -351,7 +365,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 						</div>
 					);
 				})}
-			{(check?.totalPage as number) > 0 &&
+			{/* {(check?.totalPage as number) > 0 &&
 				(check?.pageIndex as number) !== (check?.totalPage as number) && (
 					<div
 						className="cursor-pointer"
@@ -363,7 +377,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 							Xem thêm bình luận
 						</h3>
 					</div>
-				)}
+				)} */}
 		</div>
 	);
 };
