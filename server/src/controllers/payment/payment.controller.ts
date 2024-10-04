@@ -7,8 +7,8 @@ import STATUS from "../../utils/status";
 class PaymentController {
   async pagingClient(req: RequestModel, res: Response) {
     try {
-      const { pageIndex = 1 } = req.body;
-      const limit = 20;
+      const { pageIndex = 1, pageSize } = req.body;
+      const limit = pageSize || 20;
       const skip = (pageIndex - 1) * limit;
       const user = req.user;
 

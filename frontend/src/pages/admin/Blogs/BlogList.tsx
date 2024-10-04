@@ -164,14 +164,12 @@ const BlogList = () => {
           <TabsTrigger
             value="1"
             onClick={() => setSearchObject((prev) => ({ ...prev, tab: 1, pageIndex: 1 }))}
-
           >
             Bài viết đã đăng tải
           </TabsTrigger>
           <TabsTrigger
             value="2"
             onClick={() => { setSearchObject((prev) => ({ ...prev, tab: 2, pageIndex: 1 })) }}
-
           >
             Bài viết chưa đăng tải
           </TabsTrigger>
