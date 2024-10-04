@@ -27,6 +27,7 @@ import path from "path";
 import OrderConfirmShipper from "@/pages/admin/order/OrderConfirmShipper";
 import VoucherForm from "@/pages/admin/Vouchers/VoucherForm";
 import VoucherList from "@/pages/admin/Vouchers/VoucherList";
+import LocationIndex from "@/pages/admin/Location/LocationIndex";
 
 const AdminRouter = [
 	{
@@ -155,6 +156,12 @@ const AdminRouter = [
 			{
 				path: "order/orderconfirmShipper",
 				element: <OrderConfirmShipper />,
+			},
+
+			// location
+			{
+				path: "location",
+				element: <LocationIndex />,
 			},
 		],
 	},

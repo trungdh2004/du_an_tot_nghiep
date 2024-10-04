@@ -167,6 +167,12 @@ const sidebarConfig: any[] = [
 			},
 		],
 	},
+	{
+		path: "/location",
+		isVisible: true,
+		label: "Vị trí cửa hàng",
+		isAdmin: false,
+	},
 ];
 
 export default sidebarConfig;

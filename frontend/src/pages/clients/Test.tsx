@@ -13,7 +13,7 @@ import {
 
 const TestComponent = () => {
 	return (
-		<div className="min-h-screen w-full flex items-center justify-center">
+		<div className="flex items-center justify-center w-full min-h-screen">
 			<Select>
 				<SelectTrigger className="w-[280px]">
 					<SelectValue placeholder="Select a timezone" />
@@ -29,6 +29,10 @@ const TestComponent = () => {
 
 							return;
 						}
+						// console.log("scrollHeight:",e.target.scrollHeight - e.target.scrollTop);
+						// console.log("scroll:",e.target.clientHeight - 50);
+						// console.log("scrollHeight:",e.target.scrollHeight - e.target.scrollTop);
+						// console.log("scroll:",e.target.clientHeight - 50);
 						// console.log("scrollHeight:",e.target.scrollHeight - e.target.scrollTop);
 						// console.log("scroll:",e.target.clientHeight - 50);
 					}}

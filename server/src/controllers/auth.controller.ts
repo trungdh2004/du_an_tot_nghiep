@@ -97,7 +97,7 @@ class AuthController {
         is_admin: existingEmail.is_admin,
         is_staff: existingEmail.is_staff
       });
-     
+
       res.cookie("token", refreshToken, {
         maxAge: 1000 * 60 * 24 * 60 * 60,
         httpOnly: true,
@@ -278,7 +278,7 @@ class AuthController {
             if (err.message === "jwt expired") {
               message = "Token đã hết hạn";
             }
-  
+
             return res.status(STATUS.AUTHORIZED).json({
               message: message,
             });
@@ -296,7 +296,7 @@ class AuthController {
 
           const newAccessToken = await this.generateAccessToken(payload);
           const newRefreshToken = await this.generateRefreshToken(payload);
-  
+
           res.cookie("token", newRefreshToken, {
             maxAge: 24 * 60 * 60 * 1000 * 60,
             httpOnly: true,
@@ -713,22 +713,22 @@ class AuthController {
 
   async changeUser(req: RequestModel, res: Response) {
     try {
-      const {birthDay,full_name,avatarUrl,phone} = req.body;
+      const { birthDay, full_name, avatarUrl, phone } = req.body;
       const user = req.user
 
-      if(!birthDay || !full_name || !avatarUrl || !phone) {
+      if (!full_name || !avatarUrl || !phone) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Bạn chưa truyền gì"
+          message: "Bạn chưa truyền gì"
         })
       }
 
-      if(!full_name) {
+      if (!full_name) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Tên tài khoản không được để trống"
+          message: "Tên tài khoản không được để trống"
         })
       }
 
-      const updateUser = await UserModel.findByIdAndUpdate(user?.id,{
+      const updateUser = await UserModel.findByIdAndUpdate(user?.id, {
         birthDay,
         full_name,
         avatarUrl,
@@ -737,12 +737,12 @@ class AuthController {
 
 
       return res.status(STATUS.OK).json({
-        message:"Cập nhập thành công",
-        user:updateUser
+        message: "Cập nhập thành công",
+        user: updateUser
       })
-    } catch (error:any) {
+    } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
-        message:error.message,
+        message: error.message,
       })
     }
   }

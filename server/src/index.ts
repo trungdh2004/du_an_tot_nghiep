@@ -6,12 +6,19 @@ import cookieParser from "cookie-parser";
 import router from "./routes/index.route";
 import STATUS from "./utils/status";
 import dbConnect from "./config/db";
-import * as cron from 'cron';
-import rootCron from "./cron/index"
+import * as cron from "cron";
+import rootCron from "./cron/index";
 import updateStatusShippedToSuccess from "./cron/job1";
 import { createServer } from "http";
 import { initSocket } from "./socket";
-const job = new cron.CronJob(rootCron.jobSchedules.job1, updateStatusShippedToSuccess, null, true, rootCron.timezone);
+import LocationModel from "./models/Location.schema";
+const job = new cron.CronJob(
+  rootCron.jobSchedules.job1,
+  updateStatusShippedToSuccess,
+  null,
+  true,
+  rootCron.timezone
+);
 
 // Bắt đầu công việc cron
 job.start();
@@ -32,6 +39,7 @@ app.use(
     origin: [
       process.env.CLIENT_URL!,
       "http://localhost:4000",
+      "http://localhost:8080",
     ],
     credentials: true,
   })
@@ -40,9 +48,22 @@ app.use(cookieParser());
 // connect db
 dbConnect();
 
-initSocket(server)
+initSocket(server);
 
 app.use("/api/v1", router);
+
+(async () => {
+  try {
+    const location = await LocationModel.findOne();
+
+    if (!location) {
+      await LocationModel.create({
+        long: +process.env.LONGSHOP! || 105.62573250208116,
+        lat: +process.env.LATSHOP! || 21.045193948892585,
+      });
+    }
+  } catch (error) {}
+})();
 
 app.use("*", (req, res) => {
   res.status(STATUS.BAD_REQUEST).json({

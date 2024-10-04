@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 import CartPreview from "./CartPreview";
 
 const Cart = () => {
-	const { totalCart, carts } = useCart();
+	const { totalCart, cartsPreviews } = useCart();
 	const { isLoggedIn } = useAuth();
 	const navigateIsLogin = useCurrentRouteAndNavigation();
 	return (
@@ -46,20 +46,20 @@ const Cart = () => {
 				<HoverCardContent align="end" className="w-80">
 					<div className={cn("")}>
 						{!totalCart ? (
-							<div className="py-14 flex items-center justify-center">
+							<div className="flex items-center justify-center py-14">
 								<div className="flex flex-col items-center justify-center">
 									<div className="w-24 h-24 mx-auto">
 										<img
 											src="/cart-is-empty.png"
 											alt=""
-											className="w-full h-full object-cover"
+											className="object-cover w-full h-full"
 										/>
 									</div>
 									<p>Chưa có sản phẩm</p>
 								</div>
 							</div>
 						) : (
-							<CartPreview carts={carts} totalCart={totalCart} />
+							<CartPreview carts={cartsPreviews} totalCart={totalCart} />
 						)}
 					</div>
 				</HoverCardContent>

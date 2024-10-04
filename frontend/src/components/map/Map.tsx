@@ -11,6 +11,7 @@ interface IProps {
 	height?: string;
 	latitude?: number;
 	longitude?: number;
+	zoom?: number;
 }
 
 const MapComponent = ({
@@ -19,22 +20,24 @@ const MapComponent = ({
 	height,
 	longitude,
 	latitude,
+	zoom
 }: IProps) => {
 	const [viewState, setViewState] = useState({
 		longitude: longitude || 105.62583879555804,
 		latitude: latitude || 21.046006645820455,
-		zoom: 15.5,
+		zoom: zoom || 15.5,
 	});
 
 	useEffect(() => {
-		if (longitude && latitude) {
+		if (longitude && latitude && zoom) {
 			setViewState((prev) => ({
 				...prev,
 				longitude,
 				latitude,
+				zoom
 			}));
 		}
-	}, [longitude, latitude]);
+	}, [longitude, latitude,zoom]);
 	return (
 		<Map
 			// mapLib={import("mapbox-gl")}

@@ -9,5 +9,6 @@ routerCart.post("/pagingCart", authentication, cartController.pagingCart);
 routerCart.post("/deleteProductCart", authentication, cartController.deleteCartItem);
 routerCart.get("/countCart", authentication, cartController.getCountProductCart);
 routerCart.post("/pagingNewCart", authentication, cartController.getPagingNewCartItem);
+routerCart.post("/productToOrder", authentication, cartController.productToOrder);
 
 export default routerCart;
