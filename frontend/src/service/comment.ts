@@ -25,3 +25,8 @@ export const reactionsComment = (id: string, is_reacted: boolean) => {
 	});
 	return data;
 };
+
+export const deleteComment = (id: string) => {
+  const data = instance.delete(`/comment/deleteComment/${id}`);
+  return data;
+};

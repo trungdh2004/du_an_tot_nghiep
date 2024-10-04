@@ -21,16 +21,14 @@ import { AiFillLike } from "react-icons/ai";
 import DialogLoginComment from "./DialogLoginComment";
 import { useLocation, useNavigate } from "react-router-dom";
 import { calculateTimeDistance } from "@/common/func";
+import { Button } from "@/components/ui/button";
 type Props = {
 	comment: Comment;
 	setComment: Dispatch<SetStateAction<Comment[]>>;
 };
 const CommentItem = ({ comment, setComment }: Props) => {
-	console.log(comment);
-
 	const { authUser, isLoggedIn } = useAuth();
 	const [content, setContent] = useState(``);
-	const [commentNotification, setCommentNotification] = useState<Comment[]>([]);
 	const [pageIndex, setPageIndex] = useState(1);
 	const [check, setCheck] = useState<IPageComment | null>(null);
 	const [objectComment, setObjectComment] = useState<IObjectComment>({
@@ -55,11 +53,18 @@ const CommentItem = ({ comment, setComment }: Props) => {
 				...objectComment,
 				pageIndex: newPageIndex,
 			});
-			// setCommentNotification((prevComments) => [
-			// 	...prevComments,
-			// 	...data.content,
-			// ]);
-			comment?.replies.push(...data.content);
+
+			setComment((prev) => {
+				return prev?.map((comment) => {
+					if (comment._id === objectComment.commentId) {
+						return {
+							...comment,
+							replies: [...comment.replies, ...data.content],
+						};
+					}
+					return comment;
+				});
+			});
 			setCheck(data);
 			return data;
 		} catch (error) {
@@ -92,15 +97,37 @@ const CommentItem = ({ comment, setComment }: Props) => {
 			return;
 		}
 		try {
-			const data = await reactionsComment(commentId, true);
+			const { data } = await reactionsComment(commentId, true);
+			console.log(data);
+			console.log(commentId);
+
 			setComment((prev) => {
 				return prev?.map((comment) => {
-					if (comment._id === commentId) {
-						return {
-							...comment,
-							reactions: [...(comment.reactions || []), authUser?._id],
-							reactions_count: comment.reactions.length +1,
-						};
+					if (data.commentType === TYPE_COMMENT.PRODUCT) {
+						if (comment._id === commentId) {
+							return {
+								...comment,
+								reactions: [...(comment.reactions || []), authUser?._id],
+								reactions_count: comment.reactions.length + 1,
+							};
+						}
+					} else {
+						if (comment._id === data?.comment_id) {
+							const newComment = { ...comment };
+							const newReplies = newComment.replies.map((reply: any) => {
+								if (reply._id === data._id) {
+									console.log("reply_data", { reply, data });
+									return data;
+								}
+								return reply;
+							});
+							newComment.replies = newReplies;
+							console.log({ newComment, comment, newReplies });
+
+							return newComment;
+						} else {
+							return comment;
+						}
 					}
 					return comment;
 				});
@@ -117,17 +144,33 @@ const CommentItem = ({ comment, setComment }: Props) => {
 			return;
 		}
 		try {
-			const data = await reactionsComment(commentId, false);
+			const { data } = await reactionsComment(commentId, false);
 			setComment((prev) => {
 				return prev?.map((comment) => {
-					if (comment._id === commentId) {
-						return {
-							...comment,
-							reactions: comment?.reactions.filter(
-								(reaction) => reaction._id === authUser?._id,
-							),
-							reactions_count: comment.reactions.length - 1,
-						};
+					if (data.commentType === TYPE_COMMENT.PRODUCT) {
+						if (comment._id === commentId) {
+							return {
+								...comment,
+								reactions: [...(comment.reactions || []), authUser?._id],
+								reactions_count: comment.reactions.length + 1,
+							};
+						}
+					} else {
+						if (comment._id === data?.comment_id) {
+							const newComment = { ...comment };
+							const newReplies = newComment.replies.map((reply: any) => {
+								if (reply._id === data._id) {
+									return data;
+								}
+								return reply;
+							});
+							newComment.replies = newReplies;
+							console.log({ newComment, comment, newReplies });
+
+							return newComment;
+						} else {
+							return comment;
+						}
 					}
 					return comment;
 				});
@@ -139,25 +182,27 @@ const CommentItem = ({ comment, setComment }: Props) => {
 	};
 
 	const onSubmitComment = async () => {
-		console.log("value:", content);
+		// console.log("value:", content);
 		try {
 			const { data } = await createComment(
 				content,
 				comment?._id as string,
 				TYPE_COMMENT.COMMENT,
 			);
-			console.log(data);
 			setComment((prev) => {
 				return prev?.map((comment) => {
 					if (comment._id === data.data.comment_id) {
 						return {
 							...comment,
-							replies: [...(comment.replies || []), data.data],
+							replies: [data.data, ...(comment.replies || [])],
+							replies_count: comment.replies_count + 1,
 						};
 					}
 					return comment;
 				});
 			});
+			console.log("cmt sub", comment);
+
 			setContent("");
 
 			handleClose();
@@ -166,7 +211,6 @@ const CommentItem = ({ comment, setComment }: Props) => {
 			console.log(error);
 		}
 	};
-
 	const handleChange = (content: string) => {
 		setContent(content);
 	};
@@ -176,8 +220,6 @@ const CommentItem = ({ comment, setComment }: Props) => {
 		setOpenFeedback(null);
 	};
 	const isFeedbackOpen = openFeedback === comment?._id;
-	console.log(comment.replies);
-
 	return (
 		<div>
 			<div className="flex items-start gap-1 md:gap-3 w-full">
@@ -213,6 +255,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 						handleLike={() => handleLike(comment?._id)}
 						handleDislike={() => handleDislike(comment?._id)}
 						comment={comment}
+						setComment={setComment}
 					/>
 
 					{isFeedbackOpen &&
@@ -248,8 +291,6 @@ const CommentItem = ({ comment, setComment }: Props) => {
 			</div>
 			{openAnswer &&
 				comment?.replies?.map((comment: any) => {
-					console.log(comment);
-
 					const isFeedbackOpen = openFeedback === comment?._id;
 					return (
 						<div className="flex items-start gap-1 md:gap-3 w-full pl-8">
@@ -288,6 +329,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 									handleLike={() => handleLike(comment?._id)}
 									handleDislike={() => handleDislike(comment?._id)}
 									comment={comment}
+									setComment={setComment}
 								/>
 
 								{isFeedbackOpen &&

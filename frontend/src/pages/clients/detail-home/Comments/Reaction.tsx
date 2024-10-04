@@ -8,15 +8,18 @@ import {
 import { BiLike } from "react-icons/bi";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import Actions from "./Actions";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Comment } from "@/types/TypeObjectComment";
 import { useAuth } from "@/hooks/auth";
+import { deleteComment } from "@/service/comment";
+import TYPE_COMMENT from "@/config/typeComment";
 
 interface IProps {
 	handlOpenFeedback: () => void;
 	handleLike: () => void;
 	handleDislike: () => void;
 	comment: any;
+	setComment: Dispatch<SetStateAction<Comment[]>>;
 }
 
 const Reaction = ({
@@ -24,13 +27,44 @@ const Reaction = ({
 	handleLike,
 	handleDislike,
 	comment,
+	setComment,
 }: IProps) => {
-  const { authUser } = useAuth();
-  console.log(comment);
-  
-  const checkLike = comment?.reactions.includes(authUser?._id);
-  console.log(checkLike);
-  
+	const { authUser } = useAuth();
+	// console.log(comment);
+	// console.log(Props);
+
+	const checkLike = comment?.reactions.includes(authUser?._id);
+	// console.log(checkLike);
+	// interface Props {
+	// 	comment: Comment;
+	// }
+	const handleDeleteComment = async (props: Comment) => {
+		console.log(props);
+
+		try {
+			const { data } = await deleteComment(props?._id);
+			console.log(data);
+			setComment((prev) => {
+				if (props.commentType === TYPE_COMMENT.PRODUCT) {
+					return prev?.filter((comment) => comment._id !== props._id);
+				}
+				return prev?.map((comment) =>
+					comment._id === props?.comment_id
+						? {
+								...comment,
+								replies: comment.replies.filter(
+									(reply: any) => reply._id !== props._id,
+								),
+							}
+						: comment,
+				);
+			});
+			return data;
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
 	return (
 		<div className="flex items-center justify-between pt-2">
 			<div className="flex items-center gap-2">
@@ -77,7 +111,7 @@ const Reaction = ({
 				)}
 			</div>
 
-			<Actions />
+			<Actions handleDelete={() => handleDeleteComment(comment)} />
 		</div>
 	);
 };

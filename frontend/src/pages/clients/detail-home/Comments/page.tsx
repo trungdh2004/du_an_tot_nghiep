@@ -11,6 +11,7 @@ import {
 	IPageComment,
 } from "@/types/TypeObjectComment";
 import { useAuth } from "@/hooks/auth";
+import { Button } from "@/components/ui/button";
 type Props = {
 	product: IProductDetail | undefined;
 };
@@ -88,7 +89,7 @@ const Comments = ({ product }: Props) => {
 
 			<div className="space-y-5 mt-10">
 				{comment?.map((comment: any) => {
-          return <CommentItem comment={comment} setComment={setComment} />;
+					return <CommentItem comment={comment} setComment={setComment} />;
 				})}
 				{(check?.totalPage as number) > 0 &&
 					(check?.pageIndex as number) !== (check?.totalPage as number) && (
