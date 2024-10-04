@@ -1,30 +1,36 @@
-import React, {  useRef } from "react";
+import React, { useRef } from "react";
 import FroalaEditor from "react-froala-wysiwyg";
 import "froala-editor/css/froala_style.min.css";
 import "froala-editor/css/froala_editor.pkgd.min.css";
 import FroalaEditorComponent from "react-froala-wysiwyg";
 import Froalaeditor from "froala-editor";
+import { useAuth } from "@/hooks/auth";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface CommentEditorProps {
 	onSubmit: () => void;
 	openComment?: boolean;
 	avatar: string;
-    handleClose?:() => void;
-    content: string;
-    handleChange: (content: string) => void;
-    handleOpen?:() => void;
+	handleClose?: () => void;
+	content: string;
+	handleChange: (content: string) => void;
+	handleOpen?: () => void;
 }
 
 const CommentEditor: React.FC<CommentEditorProps> = ({
 	onSubmit,
 	openComment = false,
 	avatar,
-    handleClose,
-    content,
-    handleChange,
-    handleOpen
+	handleClose,
+	content,
+	handleChange,
+	handleOpen,
 }) => {
 	const editorRef = useRef<FroalaEditorComponent | null>(null);
+	const { isLoggedIn } = useAuth();
+	const navigate = useNavigate();
+	const location = useLocation();
+
 	Froalaeditor.DefineIcon("insertLink", {
 		NAME: "link",
 		SVG_KEY: "insertLink",
@@ -93,9 +99,16 @@ const CommentEditor: React.FC<CommentEditorProps> = ({
 					<div
 						className="h-7 md:h-8 flex-1 rounded-sm flex items-center border-b cursor-pointer text-gray-300 px-2"
 						onClick={() => {
-                            if(handleOpen) {
-                                handleOpen();
-                            }
+							if (!isLoggedIn) {
+								const productUrl = location.pathname;
+								navigate(
+									`/auth/login?product=${encodeURIComponent(productUrl)}`,
+								);
+								return;
+							}
+							if (handleOpen) {
+								handleOpen();
+							}
 						}}
 					>
 						Mời bạn nhập bình luận

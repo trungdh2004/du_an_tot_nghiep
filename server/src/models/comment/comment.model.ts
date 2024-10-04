@@ -6,10 +6,10 @@ export interface IComment {
   user: Types.ObjectId;
   commentType: string;
   comment_id: Types.ObjectId;
-  replies: [];
-  replies_count: number;
-  reactions:string[],
-  reactions_count:number;
+  replies: [];//câu trả lời
+  replies_count: number;//số lượt rep
+  reactions:string[],// những người like
+  reactions_count:number;// số người like
   createdAt:Date,
   updatedAt:Date
 }
