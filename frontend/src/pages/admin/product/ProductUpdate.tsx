@@ -5,18 +5,18 @@ import { array, z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
-	AiOutlineCloudUpload,
-	AiOutlineLoading3Quarters,
-	AiFillCloseCircle,
+  AiOutlineCloudUpload,
+  AiOutlineLoading3Quarters,
+  AiFillCloseCircle,
 } from "react-icons/ai";
 import { cn } from "@/lib/utils";
 import { uploadFileService, uploadMultipleFileService } from "@/service/upload";
@@ -192,50 +192,49 @@ const ProductUpdate = () => {
 			toast.error("Chỉnh sửa sản phẩm thất bại");
 		},
 	});
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data: dataCate } = await getAllCategory();
+        const { data: dataSize } = await getAllSize();
+        const { data } = await getAllColor();
+        setCategorys(dataCate.data);
+        setSize(dataSize.data);
+        setColor(data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
 
-	useEffect(() => {
-		(async () => {
-			try {
-				const { data: dataCate } = await getAllCategory();
-				const { data: dataSize } = await getAllSize();
-				const { data } = await getAllColor();
-				setCategorys(dataCate.data);
-				setSize(dataSize.data);
-				setColor(data.data);
-			} catch (error) {
-				console.log(error);
-			}
-		})();
-	}, []);
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await getProductById(id as string);
 
-	useEffect(() => {
-		(async () => {
-			try {
-				const { data } = await getProductById(id as string);
+        form.reset({
+          category: data.data.category,
+          name: data.data.name,
+          price: data.data.price.toString(),
+          discount: data.data.discount.toString(),
+          thumbnail: data.data.thumbnail,
+          images: data.data.images,
+          attributes: data.data.attributes,
+          description: data.data.description,
+          featured: false,
+        });
 
-				form.reset({
-					category: data.data.category,
-					name: data.data.name,
-					price: data.data.price.toString(),
-					discount: data.data.discount.toString(),
-					thumbnail: data.data.thumbnail,
-					images: data.data.images,
-					attributes: data.data.attributes,
-					description: data.data.description,
-					featured: false,
-				});
-
-				setPreviewUrl({
-					isLoading: false,
-					url: data.data.thumbnail,
-				});
-				setImages(data.data.images);
-			} catch (error) {
-				router("/admin/product");
-				toast.error("Lấy thông tin sản phẩm lỗi");
-			}
-		})();
-	}, []);
+        setPreviewUrl({
+          isLoading: false,
+          url: data.data.thumbnail,
+        });
+        setImages(data.data.images);
+      } catch (error) {
+        router("/admin/product");
+        toast.error("Lấy thông tin sản phẩm lỗi");
+      }
+    })();
+  }, []);
 
 	const control = form.control;
 	const { fields, append, remove } = useFieldArray({
@@ -249,57 +248,58 @@ const ProductUpdate = () => {
 			const listImageFile = values.images?.filter((image) => image?.file);
 			let listImage = [];
 
-			if (listImageFile?.length > 0) {
-				const formData = new FormData();
-				for (let i = 0; i < listImageFile?.length; i++) {
-					formData.append("images", listImageFile[i]?.file as any);
-				}
+      if (listImageFile?.length > 0) {
+        const formData = new FormData();
+        for (let i = 0; i < listImageFile?.length; i++) {
+          formData.append("images", listImageFile[i]?.file as any);
+        }
 
-				const { data } = await uploadMultipleFileService(formData);
+        const { data } = await uploadMultipleFileService(formData);
 
-				listImage = data?.map((item: any) => ({
-					url: item.path,
-				}));
-			}
-			const images = [...listImageNotFile, ...listImage];
-			const attribute = values.attributes?.map((attribute) => ({
-				...attribute,
-				color: attribute.color?._id as string,
-				size: attribute.size?._id as string,
-			}));
-			const data = {
-				...values,
-				images,
-				category: values.category?._id,
-				attributes: attribute,
-				price: +values.price,
-				discount: +values.discount,
-			};
-			mutate(data as IProduct);
-		} catch (error) {
-			console.log("error", error);
+        listImage = data?.map((item: any) => ({
+          url: item.path,
+        }));
+      }
+      const images = [...listImageNotFile, ...listImage];
+      const attribute = values.attributes?.map((attribute) => ({
+        ...attribute,
+        color: attribute.color?._id as string,
+        size: attribute.size?._id as string,
+      }));
+      const data = {
+        ...values,
+        images,
+        category: values.category?._id,
+        attributes: attribute,
+        price: +values.price,
+        discount: +values.discount,
+      };
+      mutate(data as IProduct);
+    } catch (error) {
+      console.log("error", error);
 
-			toast.error("Chỉnh sửa sản phẩm xảy ra lỗi");
-		}
-	};
-	const handleUploadFile = async (file: File) => {
-		try {
-			setOpen();
-			const formdata = new FormData();
-			formdata.append("image", file);
-			const { data } = await uploadFileService(formdata);
-			URL.revokeObjectURL(previewUrl.url);
-			setPreviewUrl({
-				url: data.path,
-				isLoading: false,
-			});
-			return data.path;
-		} catch (error) {
-			console.error(error);
-		} finally {
-			setClose();
-		}
-	};
+      toast.error("Chỉnh sửa sản phẩm xảy ra lỗi");
+    }
+  };
+  const handleUploadFile = async (file: File) => {
+    try {
+      setOpen();
+      const formdata = new FormData();
+      formdata.append("image", file);
+      const { data } = await uploadFileService(formdata);
+      URL.revokeObjectURL(previewUrl.url);
+      setPreviewUrl({
+        url: data.path,
+        isLoading: false,
+      });
+      return data.path;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setClose();
+    }
+  };
+
 
 	const listColor = form.watch("attributes")
 		? form
@@ -471,21 +471,21 @@ const ProductUpdate = () => {
 																		PNG, JPG, GIF.
 																	</p>
 																</div>
+                                <div
+                                  className={cn(
+                                    " relative flex justify-center items-center h-[160px]",
+                                    previewUrl?.url ? "" : "hidden",
+                                  )}
+                                >
+                                  <img
+                                    src={previewUrl?.url}
+                                    className={cn(
+                                      "size-[140px] object-cover border border-slate-100",
+                                    )}
+                                    id="preview"
+                                  />
+                                </div>
 
-																<div
-																	className={cn(
-																		" relative flex justify-center items-center h-[160px]",
-																		previewUrl?.url ? "" : "hidden",
-																	)}
-																>
-																	<img
-																		src={previewUrl?.url}
-																		className={cn(
-																			"size-[140px] object-cover border border-slate-100",
-																		)}
-																		id="preview"
-																	/>
-																</div>
 
 																{previewUrl?.isLoading && (
 																	<div className="absolute inset-0 flex items-center justify-center w-full bg-slate-50/50">

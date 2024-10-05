@@ -24,7 +24,6 @@ const CartItemSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "Attribute",
       required: true,
-      unique: true,
     },
   },
   {

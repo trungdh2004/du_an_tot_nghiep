@@ -1,32 +1,20 @@
-"use client";
-
-import { TrendingUp } from "lucide-react";
 import {
 	Bar,
 	BarChart,
-	CartesianGrid,
 	LabelList,
+	ResponsiveContainer,
+	Tooltip,
+	TooltipProps,
 	XAxis,
-	YAxis,
+	YAxis
 } from "recharts";
 
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
-import {
-	ChartConfig,
-	ChartContainer,
-	ChartTooltip,
-	ChartTooltipContent,
-} from "@/components/ui/chart";
-import { useQuery } from "@tanstack/react-query";
-import { getCountCategory } from "@/service/dashboard.service";
 import { formatQuantity } from "@/common/localFunction";
+import {
+	ChartConfig
+} from "@/components/ui/chart";
+import { getCountCategory } from "@/service/dashboard.service";
+import { useQuery } from "@tanstack/react-query";
 
 export const description = "A bar chart with a custom label";
 
@@ -51,6 +39,38 @@ const chartConfig = {
 		color: "hsl(var(--background))",
 	},
 } satisfies ChartConfig;
+interface CustomTooltipProps extends TooltipProps<number, string> {}
+
+const CustomTooltip: React.FC<CustomTooltipProps> = ({
+	active,
+	payload,
+	label,
+}) => {
+	console.log({ active, payload, label });
+
+	if (active && payload && payload.length) {
+		return (
+			<div className="p-2 rounded-sm bg-white box-shadow min-w-[120px]">
+				<p className="font-medium mb-1 text-sm ">{`${label}`}</p>
+				<table className="w-full text-xs">
+					<tr>
+						<td colSpan={1}>
+							<div className="size-3 bg-blue-500 rounded-sm "></div>
+						</td>
+						<td className=" text-left" colSpan={2}>
+							<div className="">Doanh thu</div>
+						</td>
+						<td className="text-end" colSpan={2}>
+							<div className="">{payload[0].value}</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+		);
+	}
+
+	return null;
+};
 
 export default function CategoryDashboard() {
 	const { data, isLoading } = useQuery({
@@ -64,13 +84,13 @@ export default function CategoryDashboard() {
 	});
 
 	return (
-		<div className="h-[240px] md:h-[300px] lg:h-[400px] flex flex-col p-2">
+		<div className="h-[300px] lg:h-[400px] flex flex-col p-2">
 			<div className="flex items-center justify-between py-2 border-b">
-				<p className="font-semibold">Biểu đồ đơn hàng 123</p>
+				<p className="font-semibold">Biểu đồ đơn hàng </p>
 			</div>
 
-			{!isLoading && (
-				<ChartContainer config={chartConfig} className="flex-1 w-full py-1">
+			<div className="flex-1 w-full">
+				<ResponsiveContainer width="100%" height="100%">
 					<BarChart
 						accessibilityLayer
 						data={data}
@@ -79,7 +99,6 @@ export default function CategoryDashboard() {
 							right: 16,
 						}}
 					>
-						<CartesianGrid horizontal={false} />
 						<YAxis
 							dataKey="categoryName"
 							type="category"
@@ -89,14 +108,11 @@ export default function CategoryDashboard() {
 							hide
 						/>
 						<XAxis dataKey="totalMoney" type="number" hide />
-						<ChartTooltip
-							cursor={false}
-							content={<ChartTooltipContent indicator="line" />}
-						/>
+						<Tooltip content={<CustomTooltip />} />
 						<Bar
 							dataKey="totalMoney"
 							layout="horizontal"
-							fill="var(--color-desktop)"
+							fill="#008cff"
 							radius={4}
 						>
 							<LabelList
@@ -108,16 +124,16 @@ export default function CategoryDashboard() {
 							/>
 							<LabelList
 								dataKey="totalMoney"
-								position="right"
+								position="insideRight"
 								offset={8}
 								className="fill-foreground"
-								fontSize={12}
-								formatter={(value:any) => formatQuantity(value,"đ")}
+								fontSize={14}
+								formatter={(value: any) => formatQuantity(value, "đ")}
 							/>
 						</Bar>
 					</BarChart>
-				</ChartContainer>
-			)}
+				</ResponsiveContainer>
+			</div>
 		</div>
 	);
 }

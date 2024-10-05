@@ -21,8 +21,8 @@ type StatusHistoryObject = {
 const PurchaseOrder = () => {
   const queryClient = useQueryClient();
   const [status, setStatus] = useState(null);
-  const [statusLists, setStatusLists] = useState<number[]>([0]);
-  const [paymentMethod, setPaymentMethod] = useState<number>(1)
+  // const [statusLists, setStatusLists] = useState<number[]>([0]);
+  // const [paymentMethod, setPaymentMethod] = useState<number>(1)
   const statusIndex = [
     {
       "index": 1,
@@ -57,8 +57,8 @@ const PurchaseOrder = () => {
     queryFn: async () => {
       const { data } = await fetchOrderDetail(id as string);
       setStatus(data?.data.status);
-      setStatusLists(data?.data?.statusList);
-      setPaymentMethod(data?.data?.paymentMethod);
+      // setStatusLists(data?.data?.statusList);
+      // setPaymentMethod(data?.data?.paymentMethod);
       // handleStatus(data?.data.status)
       return data;
     }, staleTime: 5 * 60 * 60,
@@ -79,9 +79,10 @@ const PurchaseOrder = () => {
     { status: 4, label: "Đã giao hàng", icon: Inbox },
     { status: 5, label: "Đã nhận", icon: Star },
   ];
-  // console.log("statusLists", statusLists);
+  const statusList = data?.data?.statusList
+  console.log("statusLists", data?.data?.statusList);
   const isStatusList = (stepStatus: number) => {
-    return statusLists.some((status: number) => status === stepStatus)
+    return data?.data?.statusList.some((status: number) => status === stepStatus)
   }
   const { mutate } = useMutation({
     mutationFn: async (id: string) => {
@@ -98,7 +99,6 @@ const PurchaseOrder = () => {
       })
     }
   })
-  console.log("adadadadadasdasd",)
   return (
     <>
       <div className="w-full px-0 lg:px-20">
@@ -115,12 +115,14 @@ const PurchaseOrder = () => {
             <div className="flex md:gap-x-3 md:justify-center md:items-center xl:gap-x-5 uppercase ">
               <p className="hidden md:flex justify-center items-center gap-1 font-medium text-xs md:text-base text-gray-900 ">Mã đơn hàng:  <span className="text-gray-600">{data?.data.code} </span></p>
               <span className="hidden md:block pb-1">|</span>
-              <span className={cn(statusLists.find(item => item === 6) ? "text-red-500 text-xs md:text-base font-medium" : "text-xs md:text-base font-medium text-blue-500")}>{statusIndex.find((item) => item.index === status)?.name}</span>
+              <span className={cn(data?.data?.statusList.find((item: any) => item === 6) ? "text-red-500 text-xs md:text-base font-medium" :
+                "text-xs md:text-base font-medium text-blue-500")}>
+                {statusIndex.find((item) => item.index === data?.data.status)?.name}</span>
             </div>
           </div>
           {/* status */}
           { }
-          <div className={cn(statusLists.find((item) => item === 6) ? "hidden" : "hidden md:block")}>
+          <div className={cn(data?.data?.statusList.find((item: any) => item === 6) ? "hidden" : "hidden md:block")}>
             <div
               className={cn(
                 "w-full overflow-x-auto scrollbar-hide border-b-2 box-shadow border-dotted border-gray-300 rounded",
@@ -174,7 +176,7 @@ const PurchaseOrder = () => {
           </div>
 
           {/*  */}
-          <div className={cn(statusLists.find(item => item === 6) ? "block" : "hidden")}>
+          <div className={cn(data?.data?.statusList.find((item: any) => item === 6) ? "block" : "hidden")}>
             <div className="bg-[#FFFCF5] px-5 py-6 mt-1 mb-4">
               <h3 className="text-sm md:text-[18px] text-red-500 font-medium pb-2 uppercase">Đơn hàng đã hủy</h3>
               <span className="text-[#000000]">{data?.data?.cancelOrderDate && format(data?.data?.cancelOrderDate || "", "hh:mm dd/MM/yyyy")}</span>
@@ -183,7 +185,7 @@ const PurchaseOrder = () => {
           {/* information */}
           <div className="">
             {/* customer */}
-            <div className={cn(statusLists.find((item) => item === 6) ? "hidden" : "block")}>
+            <div className={cn(data?.data?.statusList.find((item: any) => item === 6) ? "hidden" : "block")}>
               <div className="p-5 border-b-2 border-dotted border-gray-300 bg-white rounded">
                 <h3 className="text-sm md:text-base font-medium md:pb-2 ">Địa Chỉ Nhận Hàng</h3>
                 <div className="flex flex-col md:flex-row">
@@ -226,11 +228,11 @@ const PurchaseOrder = () => {
                   return (
                     <>
                       <div key={itemOrder._id} className="w-full flex justify-between gap-3 md:gap-5 px-5 py-4 border-b border-dotted border-gray-300 ">
-                        <div className="size-[80px] md:size-[100px] bg-gray-100 p-2">
+                        <div className="size-[80px] md:size-[100px] bg-gray-100 ">
                           <img src={itemOrder?.product.thumbnail} className='w-full h-full' alt="" />
                         </div>
                         <div className="flex flex-1 flex-col md:flex-row md:justify-between gap-2">
-                          <div className="">
+                          <div className="flex-1">
                             <h3 className="text-base md:text-[18px] font-medium line-clamp-1 ">{itemOrder?.product.name}</h3>
                             <div className="flex flex-row md:flex-col gap-x-3">
                               <p className="text-base text-[#0000008A] flex gap-x-1"><span className="hidden md:block">Phân loại đơn hàng:</span>
@@ -240,8 +242,8 @@ const PurchaseOrder = () => {
                               <span className='text-sm text-gray-900 md:text-base'>x{itemOrder?.quantity}</span>
                             </div>
                           </div>
-                          <div className="text-red-500 text-sm md:text-base flex items-end md:items-center font-medium ">
-                            <span className="text-gray-500 line-through pr-3">{formatQuantity(itemOrder?.product.price, "₫")}</span>
+                          <div className="lg:w-[200px] text-red-500 text-sm md:text-base flex items-end md:items-center font-medium ">
+                            {/* <span className="text-gray-500 line-through pr-3">{formatQuantity(itemOrder?.product.price, "₫")}</span> */}
                             <span className="">{formatQuantity(itemOrder?.price, "₫")}</span>
                           </div>
                         </div>
@@ -265,18 +267,18 @@ const PurchaseOrder = () => {
                 </div>
               </div>
               <div className="py-5">
-                <div className={cn((paymentMethod === 1 ? "block" : "hidden"))}>
+                <div className={cn((data?.data?.paymentMethod === 1 ? "block" : "hidden"))}>
                   <div className="text-xs md:text-base border border-[rgba(224,168,0,.4)] rounded w-full px-5 py-2 text-[rgba(0,0,0,.68)] leading-[160%]">
                     Vui lòng thanh toán <span className="text-red-500">{formatQuantity(data?.data?.amountToPay, "₫")}</span> khi nhận hàng.
                   </div>
                 </div>
-                <div className={cn((paymentMethod === 2 ? "block" : "hidden"))}>
+                <div className={cn((data?.data?.paymentMethod === 2 ? "block" : "hidden"))}>
                   <div className="border border-[rgba(224,168,0,.4)] rounded w-full px-5 py-2 text-[rgba(0,0,0,.68)] leading-[160%]">
                     <span className="">Đơn hàng của bạn đã được thanh toán!</span>
                   </div>
                 </div>
               </div>
-              {statusLists.includes(4) && !statusLists.includes(5) && (
+              {data?.data?.statusList.includes(4) && !data?.data?.statusList.includes(5) && (
                 <div className="border-t-2 border-dotted border-gray-200 flex flex-col gap-y-3 md:flex-row md:justify-between md:items-center px-5 py-4">
                   <div className="text-sm md:text-base font-normal md:font-medium">
                     Đã giao hàng: {data?.data?.shippedDate && format(data?.data?.shippedDate || "", "hh:mm dd/MM/yyyy")}

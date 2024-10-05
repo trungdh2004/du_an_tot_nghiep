@@ -6,22 +6,22 @@ dotenv.config();
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	plugins: [react()],
-	server: {
-		port: 4000,
-	},
-	css: {
-		devSourcemap: true,
-	},
-	resolve: {
-		alias: {
-			"@": path.resolve(__dirname, "./src"),
-		},
-	},
-	define: {
-		"process.env": process.env, // wrapping in "" since it's a string
-	},
-	optimizeDeps: {
-		include: ["quill-image-resize-module-react"],
-	},
+  plugins: [react()],
+  server: {
+    port: 4000,
+  },
+  css: {
+    devSourcemap: true,
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  define: {
+    "process.env": process.env, // wrapping in "" since it's a string
+  },
+  optimizeDeps: {
+    include: ["quill-image-resize-module-react"],
+  },
 });
