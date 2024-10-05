@@ -15,7 +15,9 @@ import AccountIndex from "@/pages/clients/account/AccountIndex";
 import { Navigate } from "react-router-dom";
 import OrderManagements from "@/pages/clients/account/Purchase";
 import PurchaseOrder from "@/pages/clients/account/PurchaseOrder";
-import SearchPage from "@/pages/clients/search";
+import WrapperSearch from "@/pages/clients/search/WrapperSearch";
+import SearchProductPage from "@/pages/clients/search/SearchProductPage";
+import SearchPostsPage from "@/pages/clients/search/SearchPostsPage";
 const MainRouter = [
 	{
 		path: "/",
@@ -29,7 +31,20 @@ const MainRouter = [
 			{ path: "table", element: <UserIndex /> },
 			{ path: "cart", element: <CartPage /> },
 			{ path: "shop", element: <ShopProduct /> },
-			{ path: "search", element: <SearchPage /> },
+			{
+				path: "search",
+				element: <WrapperSearch />,
+				children: [
+					{
+						path: "",
+						element: <SearchProductPage />,
+					},
+					{
+						path: "posts",
+						element: <SearchPostsPage />,
+					},
+				],
+			},
 			{
 				path: "/account",
 				element: <AccountLayout />,

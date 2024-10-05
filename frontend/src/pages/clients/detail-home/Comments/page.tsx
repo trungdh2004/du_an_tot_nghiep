@@ -45,6 +45,11 @@ const Comments = ({ product }: Props) => {
 
 	const onSubmitComment = async () => {
 		console.log("value:", content);
+		// if (!isLoggedIn) {
+		// 	console.log("Bạn chưa đăng nhập");
+
+		// 	return;
+		// }
 		try {
 			const { data } = await createComment(
 				content,
@@ -57,9 +62,7 @@ const Comments = ({ product }: Props) => {
 		} catch (error) {
 			console.log(error);
 		}
-  };
-  
-  
+	};
 
 	const handleChange = (content: string) => {
 		setContent(content);
@@ -70,8 +73,8 @@ const Comments = ({ product }: Props) => {
 	};
 	return (
 		<div>
-			<div className="mb-3 flex items-center gap-2">
-				<h3 className="font-bold text-xl text-slate-600">
+			<div className="flex items-center gap-2 mb-3">
+				<h3 className="text-xl font-bold text-slate-600">
 					{" "}
 					{comment?.length} bình luận
 				</h3>
@@ -87,7 +90,7 @@ const Comments = ({ product }: Props) => {
 				openComment={open}
 			/>
 
-			<div className="space-y-5 mt-10">
+			<div className="mt-10 space-y-5">
 				{comment?.map((comment: any) => {
 					return <CommentItem comment={comment} setComment={setComment} />;
 				})}
@@ -102,7 +105,7 @@ const Comments = ({ product }: Props) => {
 								}));
 							}}
 						>
-							<h3 className="font-bold text-sm text-slate-600 hover:underline pl-9">
+							<h3 className="text-sm font-bold text-slate-600 hover:underline pl-9">
 								Xem thêm bình luận
 							</h3>
 						</div>

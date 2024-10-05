@@ -1,12 +1,14 @@
 import Footer from "@/components/client/Footer";
 import Header from "@/components/client/Header";
-import { Outlet, ScrollRestoration } from "react-router-dom";
+import HeaderAndSlider from "@/pages/clients/home/HeaderAndSlider";
+import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 
 const MainLayout = () => {
+	const location = useLocation();
 	return (
 		<div>
 			<div className="bg-magic"></div>
-			<Header />
+			{location.pathname == "/" ? <HeaderAndSlider /> : <Header />}
 			<main className="mt-[64px]">
 				<Outlet />
 			</main>

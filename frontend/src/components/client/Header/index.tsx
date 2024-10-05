@@ -9,7 +9,7 @@ const Header = () => {
 					<div className="block md:hidden">
 						<MenuMobile />
 					</div>
-					<div className="absolute top-1/2 max-sm:-translate-x-1/2 left-1/2 max-sm:-translate-y-1/2 sm:static sm:flex sm:items-center ">
+					<div className="absolute max-sm:-translate-x-1/2 left-1/2 max-sm:-translate-y-1/2 sm:static sm:flex sm:items-center ">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width={150}

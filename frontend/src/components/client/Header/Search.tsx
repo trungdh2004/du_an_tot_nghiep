@@ -41,7 +41,13 @@ const Search = () => {
 	}, 700);
 	const handleSearch = (keyword: string) => {
 		setTextKeyWord(keyword);
-		findSearch(keyword);
+
+		keyword?.length > 0
+			? findSearch(keyword)
+			: setAutocomplete({
+					listBlog: [],
+					listProduct: [],
+				});
 	};
 	const handleChangePath = () => {
 		setIsOpen(false);
