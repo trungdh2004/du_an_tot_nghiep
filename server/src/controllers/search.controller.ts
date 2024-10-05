@@ -35,6 +35,7 @@ class SearchController {
         .limit(5)
         .select({
           _id: 1,
+          slug: 1,
           name: 1,
           price: 1,
           discount: 1,
@@ -53,12 +54,14 @@ class SearchController {
         .limit(5)
         .select({
           title: 1,
+          slug: 1,
           meta_title: 1,
           meta_description: 1,
           thumbnail_url: 1,
           _id: 1,
           views_count: 1,
           countLike: 1,
+          published_at: 1,
         });
       return res.status(STATUS.OK).json({
         listProduct: listProduct,
@@ -98,12 +101,14 @@ class SearchController {
           .limit(limit)
           .select({
             title: 1,
+            slug: 1,
             meta_title: 1,
             meta_description: 1,
             thumbnail_url: 1,
             _id: 1,
             views_count: 1,
             countLike: 1,
+            published_at: 1,
           });
 
         const countProduct = await BlogsModel.countDocuments({
@@ -139,6 +144,7 @@ class SearchController {
         .limit(limit)
         .select({
           _id: 1,
+          slug: 1,
           name: 1,
           price: 1,
           discount: 1,

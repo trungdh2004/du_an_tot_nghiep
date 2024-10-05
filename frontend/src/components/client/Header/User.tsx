@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import app from "@/config/initializeFirebase";
+import instance from "@/config/instance";
 import { useAuth } from "@/hooks/auth";
 import { cn } from "@/lib/utils";
 import { logOut } from "@/service/account";
@@ -27,6 +28,7 @@ const User = () => {
 	const handleLogout = async () => {
 		try {
 			const data = await logOut();
+			delete instance.defaults.headers.common.Authorization;
 			setAuthUser?.(undefined);
 			setIsLoggedIn?.(false);
 			removeItemLocal("token");

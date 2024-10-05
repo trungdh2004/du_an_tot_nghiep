@@ -33,7 +33,9 @@ const SendComment = ({ sizeAvatar = 40 }: Props) => {
 	};
 
 	const handleFocusOrChange = () => {
-		const content = elements.current.content;
+    const content = elements.current.content;
+    console.log('n' ,content);
+    
 
 		console.log("content",content?.textContent);
 		console.log("content inner",content?.innerHTML);
@@ -61,7 +63,7 @@ const SendComment = ({ sizeAvatar = 40 }: Props) => {
 	const sendComment = () => {
 		const content = elements.current.content;
 		if (content) {
-			content.innerHTML = `${content.innerHTML}&nbsp;&nbsp;`;
+      content.innerHTML = `${content.innerHTML}&nbsp;&nbsp;`;
 			handleFocusOrChange();
 		}
 	};

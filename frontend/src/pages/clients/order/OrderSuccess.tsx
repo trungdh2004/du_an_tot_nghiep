@@ -1,10 +1,21 @@
+import { getCountMyShoppingCart, pagingNewCart } from "@/service/cart";
+import useCart from "@/store/cart.store";
 import { useEffect } from "react";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
 
 const OrderSuccess = () => {
 	const navigate = useNavigate();
+	const { setCartsPreview, setTotalCart } = useCart();
 	useEffect(() => {
+		(async () => {
+			const [carts, totalCountCart] = await Promise.all([
+				pagingNewCart({ pageSize: 5 }),
+				getCountMyShoppingCart(),
+			]);
+			setCartsPreview(carts?.data?.content);
+			setTotalCart(totalCountCart?.data?.count);
+		})();
 		const timeout = setTimeout(() => {
 			navigate("/");
 		}, 5000);
@@ -12,7 +23,7 @@ const OrderSuccess = () => {
 	}, [navigate]);
 	return (
 		<div className="container">
-			<div className="flex flex-col justify-center items-center gap-5 py-11">
+			<div className="flex flex-col items-center justify-center gap-5 py-11">
 				<IoIosCheckmarkCircleOutline size={80} className="text-green-500" />
 				<h3 className="text-lg">Đặt hàng thành công </h3>
 				<p>
@@ -21,10 +32,10 @@ const OrderSuccess = () => {
 				</p>
 				<div className="flex gap-3 ">
 					<Link
-						to="/myinfor/myorder"
-						className="border border-gray-200 font-light p-2 rounded-lg hover:bg-slate-100"
+						to="/account/purchase"
+						className="p-2 font-light border border-gray-200 rounded-lg hover:bg-slate-100"
 					>
-						Xem lại đơn hàng
+						Quản lý đơn hàng
 					</Link>
 					<Link
 						to="/shop"
