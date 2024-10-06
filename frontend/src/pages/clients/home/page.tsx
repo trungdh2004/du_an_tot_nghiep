@@ -2,12 +2,10 @@ import Carousel from "./Carousel";
 import DealOfTheDays from "./DealOfTheDays";
 import LatestNewsBlog from "./LatestNewsBlog";
 import ProductByCategory from "./ProductByCategory";
-import Slider from "./Slider";
 
 const HomePage = () => {
 	return (
 		<div className="">
-			<Slider />
 			<Carousel />
 			<ProductByCategory />
 			<DealOfTheDays />

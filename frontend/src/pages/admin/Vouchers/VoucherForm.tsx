@@ -35,19 +35,17 @@ import { format, set } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams, Navigate } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 const voucherSchema = z
 	.object({
 		name: z.string().min(1, "Tên voucher là bắt buộc"),
 		description: z.string().min(1, "Mô tả voucher là bắt buộc"),
-		startDate: z.date({
-			required_error: "Vui lòng chọn ngày bắt đầu",
-		}),
-		endDate: z.date({
-			required_error: "Vui lòng chọn ngày kết thúc",
-		}),
+		startDate: z
+			.union([z.string(), z.date()])
+			.transform((val) => new Date(val)),
+		endDate: z.union([z.string(), z.date()]).transform((val) => new Date(val)),
 		discountType: z.enum(["fixed", "percentage"], {
 			required_error: "Vui lòng chọn loại giảm giá",
 		}),
@@ -90,6 +88,7 @@ const voucherSchema = z
 	);
 export type VoucherFormValues = z.infer<typeof voucherSchema>;
 const VoucherForm = () => {
+	const navigate = useNavigate();
 	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
 		useProcessBarLoadingEventNone();
 	const { id } = useParams();
@@ -102,8 +101,8 @@ const VoucherForm = () => {
 						...data.data,
 						discountType: data.data.discountType == 1 ? "fixed" : "percentage",
 						status: data.data.status == 1 ? "active" : "inactive",
-						startDate: new Date(data.data.startDate),
-						endDate: new Date(data.data.endDate),
+						startDate: new Date(data.data.startDate).toISOString(),
+						endDate: new Date(data.data.endDate).toISOString(),
 					};
 					form.reset(deafaultForm);
 				} catch (error) {
@@ -143,6 +142,8 @@ const VoucherForm = () => {
 			if (error instanceof AxiosError) {
 				toast.error(error?.response?.data?.message);
 			}
+		} finally {
+			navigate("/admin/voucher");
 		}
 	};
 	const handleUpdateVoucher = async (
@@ -161,6 +162,8 @@ const VoucherForm = () => {
 			if (error instanceof AxiosError) {
 				toast.error(error?.response?.data?.message);
 			}
+		} finally {
+			navigate("/admin/voucher");
 		}
 	};
 	const onSubmit = async (payload: z.infer<typeof voucherSchema>) => {

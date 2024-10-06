@@ -376,7 +376,7 @@ const CartPage = () => {
 												<div
 													className={cn(
 														"hidden  justify-between text-nowrap bg-red-500 text-xs md:text-sm text-white px-2.5 py-1 rounded-xl items-center gap-2",
-														discountCode?.currentVoucherCode && "flex",
+														discountCode?.currentVoucherCode && "max-md:flex",
 													)}
 												>
 													Giảm{" "}
