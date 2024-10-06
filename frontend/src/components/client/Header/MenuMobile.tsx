@@ -1,15 +1,4 @@
-import {
-	Accordion,
-	AccordionContent,
-	AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
-	Sheet,
-	SheetContent,
-	SheetHeader,
-	SheetTrigger,
-} from "@/components/ui/sheet";
-import { AccordionItem } from "@radix-ui/react-accordion";
+import { Sheet, SheetContent, SheetHeader } from "@/components/ui/sheet";
 import { useEffect, useState } from "react";
 import { IoMenu } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
@@ -35,7 +24,7 @@ const MenuMobile = () => {
 					<div className="flex items-center gap-3">
 						<div className="size-14 ">
 							<img
-								className="w-full h-full object-cover rounded-full"
+								className="object-cover w-full h-full rounded-full"
 								src="https://i.pinimg.com/564x/06/25/9f/06259fed99c906d43f691b1d1d4956cc.jpg"
 								alt=""
 							/>
@@ -48,7 +37,7 @@ const MenuMobile = () => {
 						</div>
 					</div>
 				</SheetHeader>
-				<div className=" ">
+				<div className="">
 					<ul className="text-black font-medium flex flex-col items-start justify-center  *:py-4 *:px-1 *:rounded *:cursor-pointer  transition-all *:w-full ">
 						<li className=" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14]">
 							<NavLink to={"/"} className="block">
@@ -56,7 +45,7 @@ const MenuMobile = () => {
 							</NavLink>
 						</li>
 						<li className=" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14]">
-						<NavLink to={"/shop"} className="block">
+							<NavLink to={"/shop"} className="block">
 								Sản phẩm
 							</NavLink>
 						</li>

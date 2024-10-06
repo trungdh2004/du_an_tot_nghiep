@@ -15,8 +15,10 @@ import {
 	watchedNotification,
 } from "@/service/notification.service";
 import { toast } from "sonner";
-import { INotification, ISearchObjectNotifications } from "@/types/notification.interface";
-
+import {
+	INotification,
+	ISearchObjectNotifications,
+} from "@/types/notification.interface";
 
 const Actions = () => {
 	const { isLoggedIn, authUser, socket } = useAuth();
@@ -157,15 +159,15 @@ const Actions = () => {
 					content: newContent,
 				};
 			});
-			setCountNotRead(0)
+			setCountNotRead(0);
 		} catch (error) {
-			toast.error("Đã xem tất cả bị lỗi")
+			toast.error("Đã xem tất cả bị lỗi");
 		}
 	};
 
 	return (
 		<div className="flex items-center justify-center max-h-8 gap-1 md:gap-4  *:rounded-full  *:cursor-pointer">
-			<div className="">
+			<div className="hidden md:block">
 				<Search />
 			</div>
 			<div className="">
@@ -185,7 +187,7 @@ const Actions = () => {
 				</div>
 			) : (
 				<Link to={"/auth/login"} className="hidden md:block">
-					<Button className=" rounded h-8 text-xs px-3" size={"sm"}>
+					<Button className="h-8 px-3 text-xs rounded " size={"sm"}>
 						Đăng nhập
 					</Button>
 				</Link>
