@@ -117,10 +117,11 @@ const Notification = ({
 												if (item?.directId) {
 													router(`/account/purchase/order/${item?.directId}`);
 													if (!item.isRead) {
-														await watchedNotification(item._id, true);
+														handleWatchedNotification(item._id, true);
 													}
 												}
 											}
+											setOpen(false)
 										}}
 									>
 										<div className="flex w-full items-center justify-start gap-x-2 cursor-pointer ">

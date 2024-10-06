@@ -1,4 +1,4 @@
-type IBlog = {
+export type IBlogs = {
 	_id?: string,
 	title: string,
 	content: string,

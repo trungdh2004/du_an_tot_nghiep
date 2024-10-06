@@ -184,7 +184,7 @@ const VoucherList = () => {
 				const parsedDate = parseISO(row.original.startDate);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
 				return (
-					<div className="text-xs font-medium md:text-base">
+					<div className="text-xs md:text-base">
 						{formattedDate}
 					</div>
 				);
@@ -197,7 +197,7 @@ const VoucherList = () => {
 				const parsedDate = parseISO(row.original.endDate);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
 				return (
-					<div className="text-xs font-medium md:text-base">
+					<div className="text-xs md:text-base">
 						{formattedDate}
 					</div>
 				);
