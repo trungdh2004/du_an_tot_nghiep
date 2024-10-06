@@ -234,7 +234,7 @@ const ColorList = () => {
                 const parsedDate = parseISO(row.original.createdAt);
                 const formattedDate = format(parsedDate, "dd/MM/yyyy");
                 return (
-                    <div className="font-medium md:text-base text-xs">
+                    <div className=" md:text-base text-xs">
                         {formattedDate}
                     </div>
                 );

@@ -47,9 +47,9 @@ const Header = () => {
 const Logo = () => (
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
-		width={150}
+		width={100}
 		height={50}
-		viewBox="0 0 300 100"
+		viewBox="0 0 200 100"
 		preserveAspectRatio="xMaxYMax meet"
 	>
 		<defs>
@@ -77,13 +77,6 @@ const Logo = () => (
 		>
 			ucshop
 		</text>
-		<path
-			d="M10,70 Q90,90 200,70"
-			fill="none"
-			stroke="red"
-			strokeWidth="6"
-			strokeLinecap="round"
-		/>
 	</svg>
 );
 
