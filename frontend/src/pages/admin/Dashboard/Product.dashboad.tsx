@@ -119,14 +119,14 @@ export default function ProductDashboard() {
 						/>
 						<Bar
 							dataKey="totalQuantity"
-							fill="orange"
+							fill="#f97316"
 							radius={4}
-							opacity={0.4}
+							opacity={1}
 							yAxisId={0}
 						/>
 						<Bar
 							dataKey="totalMoney"
-							fill="blue"
+							fill="#3b82f6"
 							radius={4}
 							yAxisId={1}
 							opacity={1}
