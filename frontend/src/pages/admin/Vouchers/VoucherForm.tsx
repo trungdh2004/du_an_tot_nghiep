@@ -35,7 +35,7 @@ import { format, set } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams, Navigate } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 const voucherSchema = z
@@ -88,6 +88,7 @@ const voucherSchema = z
 	);
 export type VoucherFormValues = z.infer<typeof voucherSchema>;
 const VoucherForm = () => {
+	const navigate = useNavigate();
 	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
 		useProcessBarLoadingEventNone();
 	const { id } = useParams();
@@ -141,6 +142,8 @@ const VoucherForm = () => {
 			if (error instanceof AxiosError) {
 				toast.error(error?.response?.data?.message);
 			}
+		} finally {
+			navigate("/admin/voucher");
 		}
 	};
 	const handleUpdateVoucher = async (
@@ -159,6 +162,8 @@ const VoucherForm = () => {
 			if (error instanceof AxiosError) {
 				toast.error(error?.response?.data?.message);
 			}
+		} finally {
+			navigate("/admin/voucher");
 		}
 	};
 	const onSubmit = async (payload: z.infer<typeof voucherSchema>) => {
