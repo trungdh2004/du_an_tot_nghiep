@@ -24,8 +24,6 @@ const User = () => {
 	const regex = /\b\/?admin\b/;
 
 	const { authUser, setAuthUser, setIsLoggedIn } = useAuth();
-	console.log(">>>>>>>>", authUser);
-
 	const { setCarts, updateTotalCart } = useCart();
 	const handleLogout = async () => {
 		try {
