@@ -1,12 +1,12 @@
 import { optimizeCloudinaryUrl } from "@/common/localFunction";
 import { removeItemLocal } from "@/common/localStorage";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import app from "@/config/initializeFirebase";
 import instance from "@/config/instance";
@@ -66,10 +66,10 @@ const User = () => {
 							/>
 						</div>
 						<div className="">
-							<p className="text-sm truncate max-w-20 ">
+							<p className="text-sm truncate max-w-36 ">
 								{authUser?.full_name}
 							</p>
-							<span className="max-w-20  truncate text-xs font-normal text-[#757575] ">
+							<span className="max-w-36 inline-block truncate text-xs font-normal text-[#757575] ">
 								{authUser?.email}
 							</span>
 						</div>
@@ -115,10 +115,29 @@ const User = () => {
 					className={cn(regex.test(location.pathname) ? "hidden" : "block")}
 				/>
 				<DropdownMenuItem
-					className={cn(regex.test(location.pathname) ? "hidden" : "block")}
+					className={cn(
+						!regex.test(location.pathname) &&
+							!authUser?.is_shipper &&
+							!authUser?.is_admin
+							? "block"
+							: "hidden",
+					)}
+				>
+					<Link to={"/shipper/auth"} className="block w-full h-full">
+						Đăng ký vận chuyển
+					</Link>
+				</DropdownMenuItem>
+				<DropdownMenuItem
+					className={cn(
+						!regex.test(location.pathname) &&
+							authUser?.is_shipper &&
+							!authUser?.is_admin
+							? "block"
+							: "hidden",
+					)}
 				>
 					<Link to={"/"} className="block w-full h-full">
-						Yêu thích
+						Vận chuyển
 					</Link>
 				</DropdownMenuItem>
 				<DropdownMenuItem

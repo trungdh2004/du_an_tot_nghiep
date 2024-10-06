@@ -4,7 +4,6 @@ import "froala-editor/js/languages/es";
 import "froala-editor/js/plugins.pkgd.min.js";
 import Froala from "react-froala-wysiwyg";
 
-
 const froalaEditorConfig = {
 	attribution: false,
 	quickInsertEnabled: false,
@@ -42,7 +41,7 @@ const froalaEditorConfig = {
 		"#640487",
 		"REMOVE",
 	],
-	
+
 	colorsBackground: [
 		"#000000",
 		"#2C2E2F",
@@ -98,7 +97,6 @@ const froalaEditorConfig = {
 			align: "right",
 			buttonsVisible: 2,
 		},
-		
 	},
 	tableEditButtons: [
 		"tableHeader",
@@ -146,7 +144,6 @@ const froalaEditorConfig = {
 	},
 };
 
-
 type FroalaEditorType = {
 	content: string;
 	onChangeContext: (value: string) => void;
@@ -155,9 +152,8 @@ type FroalaEditorType = {
 const FroalaEditor = ({
 	content,
 	onChangeContext,
-	props
+	props,
 }: FroalaEditorType) => {
-	
 	return (
 		<div className="z-0">
 			<Froala
