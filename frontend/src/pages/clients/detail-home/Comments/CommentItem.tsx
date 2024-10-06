@@ -31,23 +31,20 @@ const CommentItem = ({ comment, setComment }: Props) => {
 	const [content, setContent] = useState(``);
 	const [pageIndex, setPageIndex] = useState(1);
 	const [check, setCheck] = useState<IPageComment | null>(null);
-	// const [objectComment, setObjectComment] = useState<IObjectComment>({
-	// 	pageIndex: pageIndex,
-	// 	pageSize: 5,
-	// 	commentId: comment?._id,
-	// 	commentType: TYPE_COMMENT.COMMENT,
-	// });
 	const [open, setOpen] = useState(false);
 	const [openFeedback, setOpenFeedback] = useState<string | null>(null);
 	const [openAnswer, setOpenAnswer] = useState(false);
 	const navigate = useNavigate();
 	const location = useLocation();
-	// const handleLoadMoreComments = async () => {
-	// 	const newPageIndex = pageIndex + 1;
-	// 	setPageIndex(newPageIndex);
-	// 	await handleListcommentItems(newPageIndex);
-	// };
-	const handleListcommentItems = async (cmtParent: any) => {
+	const handleLoadMoreComments = async (cmtParent: any) => {
+		const newPageIndex = pageIndex + 1;
+		setPageIndex(newPageIndex);
+		await handleListcommentItems(newPageIndex, cmtParent);
+	};
+	const handleListcommentItems = async (
+		newPageIndex: number,
+		cmtParent: any,
+	) => {
 		try {
 			console.log("cmtpr", cmtParent);
 
@@ -55,7 +52,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 				pageSize: 5,
 				commentId: comment?._id,
 				commentType: TYPE_COMMENT.COMMENT,
-				pageIndex: cmtParent?.pageIndexReplies || 1,
+				pageIndex: newPageIndex || 1,
 			});
 			console.log(data);
 
@@ -71,8 +68,8 @@ const CommentItem = ({ comment, setComment }: Props) => {
 					return comment;
 				});
 			});
-			// setCheck(data);
-			// return data;
+			setCheck(data);
+			return data;
 		} catch (error) {
 			console.log(error);
 		}
@@ -295,7 +292,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 							)}
 							onClick={() => {
 								setOpenAnswer(true);
-								handleListcommentItems(comment);
+								handleListcommentItems(1, comment);
 							}}
 						>
 							{comment?.replies_count} câu trả lời
@@ -365,19 +362,19 @@ const CommentItem = ({ comment, setComment }: Props) => {
 						</div>
 					);
 				})}
-			{/* {(check?.totalPage as number) > 0 &&
+			{(check?.totalPage as number) > 0 &&
 				(check?.pageIndex as number) !== (check?.totalPage as number) && (
 					<div
 						className="cursor-pointer"
 						onClick={() => {
-							handleLoadMoreComments();
+							handleLoadMoreComments(comment);
 						}}
 					>
 						<h3 className="font-bold text-sm text-slate-600 hover:underline pl-9">
 							Xem thêm bình luận
 						</h3>
 					</div>
-				)} */}
+				)}
 		</div>
 	);
 };
