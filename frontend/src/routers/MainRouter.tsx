@@ -64,6 +64,10 @@ const MainRouter = [
 						path: "purchase/order/:id",
 						element: <PurchaseOrder />,
 					},
+          {
+            path: 'payments',
+            element: <PaymentIndex />
+          },
 				],
 			},
 		],

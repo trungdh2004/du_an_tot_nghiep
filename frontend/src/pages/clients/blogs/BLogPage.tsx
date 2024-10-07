@@ -38,7 +38,7 @@ const BlogPage = () => {
   // const paramsObject = Object.fromEntries(searchParams.entries())
   const [searchObject, setSearchObject] = useState<SearchObjectBlog>({
     pageIndex: 1,
-    pageSize: 12,
+    pageSize: 6,
     keyword: "",
     fieldSort: "",
     sort: 1,
