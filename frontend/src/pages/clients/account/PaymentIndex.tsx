@@ -18,11 +18,7 @@ type IPayment = {
 }
 
 const PaymentIndex = () => {
-  // const [response, setResponse] = useState<typeResponse>({
-  //   pageCount: 0,
-  //   totalElement: 0,
-  //   totalOptionPage: 0,
-  // });
+  
   const [searchObject, setSearchObject] = useState<ISearchObjectPayment>({
     pageIndex: 1,
     pageSize: 1,
@@ -40,10 +36,7 @@ const PaymentIndex = () => {
     placeholderData: keepPreviousData,
     staleTime: 5 * 60 * 60,
   })
-  console.log("data", data);
-  // useEffect(() => {
-  //   setSearchObject((prev))
-  // })
+  
   const handleChangePag = (value: any) => {
     console.log("value", value)
     try {
@@ -68,7 +61,7 @@ const PaymentIndex = () => {
                 <p className="">Có giao dịch thanh toán online với số tiên
                   <span className="text-red-500 font-semibold pl-1">{formatQuantity(
                     item?.amount, "₫",)}</span>
-                  , vui long kiểm tra thông tin.</p>
+                  , vui lòng kiểm tra thông tin.</p>
                 <p className="text-gray-500 text-sm text-right">{format(item?.createdAt || "", "hh:mm dd/MM/yyyy")}</p>
               </div>
             )
