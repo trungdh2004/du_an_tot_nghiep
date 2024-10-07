@@ -17,7 +17,7 @@ import ProductDetailsAndReviews from "./ProductDetailsAndReviews";
 const DetailProduct = () => {
 	const { slug } = useParams();
 	const { data, isLoading } = useQuery<IProductDetail>({
-		queryKey: ["GET_PRODUCT_BY_SLUG"],
+		queryKey: ["GET_PRODUCT_BY_SLUG", slug],
 		queryFn: async () => {
 			const { data } = await getProductBySlug(
 				encodeURIComponent(slug as string),
@@ -42,7 +42,7 @@ const DetailProduct = () => {
 								<BreadcrumbSeparator />
 								<BreadcrumbItem>
 									<Link to={`/shop?category=${data?.category?._id}`}>
-									<BreadcrumbLink>{data?.category?.name}</BreadcrumbLink>
+										<BreadcrumbLink>{data?.category?.name}</BreadcrumbLink>
 									</Link>
 								</BreadcrumbItem>
 							</>
@@ -57,8 +57,8 @@ const DetailProduct = () => {
 						)}
 					</BreadcrumbList>
 				</Breadcrumb>
-				<div className="flex max-md:flex-col items-start bg-white">
-					<div className="max-md:w-full w-2/5">
+				<div className="flex items-start bg-white max-md:flex-col">
+					<div className="w-2/5 max-md:w-full">
 						<Ablum images={data?.images} isLoading={isLoading} />
 					</div>
 					<div className="w-full md:flex-1">

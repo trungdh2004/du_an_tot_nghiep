@@ -63,6 +63,7 @@ const authorization = async (
           id: existingUser._id,
           email: existingUser.email,
           is_admin: existingUser.is_admin,
+          is_staff:existingUser.is_staff
         };
 
         next();

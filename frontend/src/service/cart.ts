@@ -39,3 +39,12 @@ export const pagingNewCart = (payload: {
 	const uri = `${endpoint}/pagingNewCart`;
 	return instance.post(uri, payload);
 };
+type buyNowServicesType = {
+	productId: string;
+	quantity: number;
+	attribute: string;
+};
+export const buyNowSevices = (payload: buyNowServicesType) => {
+	const uri = `${endpoint}/productToOrder`;
+	return instance.post(uri, payload);
+};
