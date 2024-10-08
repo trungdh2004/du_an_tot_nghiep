@@ -73,7 +73,8 @@ const CommentItem = ({ comment, setComment }: Props) => {
 		} catch (error) {
 			console.log(error);
 		}
-	};
+  };
+  
 	const handlOpenFeedback = (
 		commentId: string,
 		userRep?: string,
