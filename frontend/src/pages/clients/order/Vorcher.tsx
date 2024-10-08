@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import voucher1 from "@/assets/voucher.png";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,9 @@ const Vorcher = ({ data, setOrderCheckout, setMoneyVoucher }: Props) => {
 		(acc: number, value: number) => acc + value,
 		0,
 	);
-	const [voucher, setVoucher] = useState<IVoucher | null | undefined>(null);
+	const [voucher, setVoucher] = useState<IVoucher | null | undefined>(
+		data?.voucher,
+	);
 	const [show, setShow] = useState(false);
 	const { register, handleSubmit, reset } = useForm();
 	const onSubmit = async (data: any) => {
@@ -48,8 +50,28 @@ const Vorcher = ({ data, setOrderCheckout, setMoneyVoucher }: Props) => {
 			toast.error("Không có voucher nào ");
 		}
 	};
+
+	useEffect(() => {
+		if (data?.voucherMain) {
+			console.log("data:", data);
+			setOrderCheckout((prev: any) => {
+				return { ...prev, voucher: data?.voucherMain?._id };
+			});
+			setVoucher(data?.voucherMain);
+			setMoneyVoucher(data?.voucherMain.discountValue);
+			setShow(true)
+		}
+	}, [data]);
+
 	return (
 		<div className="py-2">
+			<button
+				onClick={() => {
+					console.log({ voucher });
+				}}
+			>
+				click
+			</button>
 			<div className="flex flex-col bg-white lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow">
 				<div className="flex lg:flex-row gap-3  items-center  justify-between py-2">
 					<div className="col-span-3">
@@ -107,7 +129,6 @@ const Vorcher = ({ data, setOrderCheckout, setMoneyVoucher }: Props) => {
 											: "Sai time"}
 									</p>
 								</div>
-								
 							</div>
 							<div
 								onClick={() => {

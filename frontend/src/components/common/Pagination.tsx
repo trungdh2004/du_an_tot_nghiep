@@ -7,6 +7,7 @@ interface Props {
 	handlePageClick: ({ selected }: { selected: number }) => void;
 	size?: "sm" | "md";
 	forcePage: number;
+	marginPagesDisplayed?:number
 }
 
 function Paginations({
@@ -14,6 +15,7 @@ function Paginations({
 	handlePageClick,
 	size = "md",
 	forcePage = 0,
+	marginPagesDisplayed = 2
 }: Props) {
 	return (
 		<>
@@ -25,7 +27,7 @@ function Paginations({
 					nextLabel={<FaAngleRight />}
 					onPageChange={handlePageClick}
 					pageRangeDisplayed={1}
-					marginPagesDisplayed={2}
+					marginPagesDisplayed={marginPagesDisplayed}
 					pageCount={pageCount}
 					previousLabel={<FaAngleLeft />}
 					renderOnZeroPageCount={null}

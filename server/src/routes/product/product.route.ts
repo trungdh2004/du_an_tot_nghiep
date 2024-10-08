@@ -12,6 +12,7 @@ routerProduct.put("/deletedMany", productController.deleteMany);
 routerProduct.put("/unDeletedMany", productController.unDeleteMany);
 routerProduct.post("/paging", productController.pagingProduct);
 routerProduct.get("/findBySlug/:slug", productController.showProductById);
+routerProduct.post("/pagingProductOfVoucher", productController.pagingProductOfVoucher);
 
 
 
