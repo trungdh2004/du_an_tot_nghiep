@@ -69,7 +69,7 @@ const PaymentIndex = () => {
                   <span className="text-red-500 font-semibold pl-1">{formatQuantity(
                     item?.amount, "₫",)}</span>
                   , vui long kiểm tra thông tin.</p>
-                <p className="text-gray-500 text-sm text-right">{format(item?.createdAt || "", "hh:mm dd/MM/yyyy")}</p>
+                <p className="text-gray-500 text-sm text-right pt-2">{format(item?.createdAt || "", "hh:mm dd/MM/yyyy")}</p>
               </div>
             )
           })}
