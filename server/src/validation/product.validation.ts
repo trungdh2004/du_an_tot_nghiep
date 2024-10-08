@@ -31,6 +31,8 @@ export const productValidations = Joi.object({
       _id: Joi.string().optional(),
     })
   ),
+  is_hot:Joi.boolean().optional(),
+  is_simple:Joi.boolean().optional(),
   attributes: Joi.array().items(
     Joi.object({
       color: Joi.string().required().messages({}),

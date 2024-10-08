@@ -17,6 +17,7 @@ import { Navigate } from "react-router-dom";
 import SearchPostsPage from "@/pages/clients/search/SearchPostsPage";
 import SearchProductPage from "@/pages/clients/search/SearchProductPage";
 import WrapperSearch from "@/pages/clients/search/WrapperSearch";
+import PaymentIndex from "@/pages/clients/account/PaymentIndex";
 const MainRouter = [
 	{
 		path: "/",
@@ -63,6 +64,10 @@ const MainRouter = [
 					{
 						path: "purchase/order/:id",
 						element: <PurchaseOrder />,
+					},
+					{
+						path: "payment",
+						element: <PaymentIndex />,
 					},
 				],
 			},

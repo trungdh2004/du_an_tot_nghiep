@@ -42,4 +42,6 @@ export interface IProduct {
 	rating: number;
 	quantitySold?: number;
 	slug?: string;
+	is_hot?: boolean;
+	is_simple?: boolean;
 }

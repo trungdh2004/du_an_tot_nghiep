@@ -30,3 +30,7 @@ export const activeVoucherById = async (id: string) => {
 export const deActiveVoucherById = async (id: string) => {
 	return instance.put(`${url}/stopAction/${id}`);
 };
+
+export const generateCodeAuto = async () => {
+	return instance.get(`${url}/generateCodeAuto`);
+};

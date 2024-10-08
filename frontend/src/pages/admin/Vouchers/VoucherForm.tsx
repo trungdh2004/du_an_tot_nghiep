@@ -1,4 +1,5 @@
 import InputNumber from "@/components/common/InputNumber";
+import { TooltipComponent } from "@/components/common/TooltipComponent";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -25,21 +26,27 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import {
 	createVoucher,
+	generateCodeAuto,
 	getVoucherById,
 	updateVoucherById,
 } from "@/service/voucher";
 import { useProcessBarLoadingEventNone } from "@/store/useSidebarAdmin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
-import { format, set } from "date-fns";
+import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams, Navigate } from "react-router-dom";
+import { BsStars } from "react-icons/bs";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
+import InputNumberFormat from "@/components/common/InputNumberFormat";
+import PopupTableService from "@/components/common/PopupTableService";
+
 const voucherSchema = z
 	.object({
+		code: z.string().length(7, "Voucher có 7 kí tự"),
 		name: z.string().min(1, "Tên voucher là bắt buộc"),
 		description: z.string().min(1, "Mô tả voucher là bắt buộc"),
 		startDate: z
@@ -54,10 +61,8 @@ const voucherSchema = z
 				required_error: "Giá trị giảm là bắt buộc",
 				invalid_type_error: "Giá trị giảm phải là số",
 			})
-			.min(0, "Giá trị giảm không được âm"),
-		// .refine((val) => val <= 100, {
-		// 	message: "Giá trị giảm tối đa là 100%",
-		// }),
+			.min(1, "Phải lớn hơn 0"),
+
 		usageLimit: z
 			.number({
 				required_error: "Giới hạn sử dụng là bắt buộc",
@@ -69,10 +74,20 @@ const voucherSchema = z
 				required_error: "Giá trị đơn hàng tối thiểu là bắt buộc",
 				invalid_type_error: "Giá trị đơn hàng tối thiểu phải là số",
 			})
-			.min(0, "Giá trị đơn hàng tối thiểu không được âm"),
+			.min(1, "Giá trị đơn hàng tối thiểu phải lớn hơn 0"),
+		maxAmount: z
+			.number({
+				required_error: "Giá trị đơn hàng tối thiểu là bắt buộc",
+				invalid_type_error: "Giá trị đơn hàng tối thiểu phải là số",
+			})
+			.min(1, "Số tiền giảm tối đa lớn hơn 0"),
 		status: z.enum(["active", "inactive"], {
 			required_error: "Vui lòng chọn trạng thái",
 		}),
+		type: z.enum(["1", "2"], {
+			required_error: "Vui lòng phạm vi",
+		}),
+		listUseProduct: z.array(z.string()),
 	})
 	.refine(
 		(data) => {
@@ -87,11 +102,30 @@ const voucherSchema = z
 		},
 	);
 export type VoucherFormValues = z.infer<typeof voucherSchema>;
+
 const VoucherForm = () => {
 	const navigate = useNavigate();
+	const [openProduct, setOpenProduct] = useState(false);
 	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
 		useProcessBarLoadingEventNone();
 	const { id } = useParams();
+	const form = useForm<z.infer<typeof voucherSchema>>({
+		resolver: zodResolver(voucherSchema),
+		defaultValues: {
+			name: "",
+			code: "",
+			description: "",
+			startDate: new Date(),
+			endDate: new Date(),
+			discountType: "fixed",
+			discountValue: 0,
+			usageLimit: 0,
+			minimumOrderValue: 0,
+			status: "active",
+			type: "1",
+			listUseProduct: [],
+		},
+	});
 	useEffect(() => {
 		(async () => {
 			if (id) {
@@ -103,7 +137,10 @@ const VoucherForm = () => {
 						status: data.data.status == 1 ? "active" : "inactive",
 						startDate: new Date(data.data.startDate).toISOString(),
 						endDate: new Date(data.data.endDate).toISOString(),
+						type: data.data?.type.toString(),
 					};
+					console.log({deafaultForm});
+					
 					form.reset(deafaultForm);
 				} catch (error) {
 					if (error instanceof AxiosError) {
@@ -113,57 +150,47 @@ const VoucherForm = () => {
 			}
 		})();
 	}, []);
-	const form = useForm<z.infer<typeof voucherSchema>>({
-		resolver: zodResolver(voucherSchema),
-		defaultValues: {
-			name: "",
-			description: "",
-			startDate: new Date(),
-			endDate: new Date(),
-			discountType: "fixed",
-			discountValue: 0,
-			usageLimit: 0,
-			minimumOrderValue: 0,
-			status: "active",
-		},
-	});
+
 	const handleCreateVoucher = async (
 		payload: z.infer<typeof voucherSchema>,
 	) => {
 		try {
-			const { status, ...voucherData } = payload;
+			const { status,type,listUseProduct, ...voucherData } = payload;
 			const formattedData = {
 				...voucherData,
 				discountType: voucherData.discountType === "fixed" ? 1 : 2,
+				type,
+				listUseProduct:type === "1" ? [] : listUseProduct
 			};
 			const { data } = await createVoucher(formattedData as any);
 			toast.success(data?.message);
+			navigate("/admin/voucher");
+
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				toast.error(error?.response?.data?.message);
 			}
-		} finally {
-			navigate("/admin/voucher");
 		}
 	};
 	const handleUpdateVoucher = async (
 		payload: z.infer<typeof voucherSchema>,
 	) => {
 		try {
-			const { status, ...voucherData } = payload;
+			const { status,type,listUseProduct, ...voucherData } = payload;
 			const formattedData = {
 				...voucherData,
 				_id: id,
 				discountType: voucherData.discountType === "fixed" ? 1 : 2,
+				type,
+				listUseProduct:type === "1" ? [] : listUseProduct
 			};
 			const { data } = await updateVoucherById(formattedData as any);
 			toast.success(data?.message);
+			navigate("/admin/voucher");
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				toast.error(error?.response?.data?.message);
 			}
-		} finally {
-			navigate("/admin/voucher");
 		}
 	};
 	const onSubmit = async (payload: z.infer<typeof voucherSchema>) => {
@@ -182,12 +209,76 @@ const VoucherForm = () => {
 			setCloseProcessLoadingEventNone();
 		}
 	};
+	const handleGenerateCodeAuto = async () => {
+		try {
+			const { data } = await generateCodeAuto();
+			form.setValue("code", data?.code);
+		} catch (error) {
+			toast.error("Tạo mã code xảy ra lỗi");
+		}
+	};
+
+	const handleSelected = (arr: string[]) => {
+		form.setValue("listUseProduct", arr);
+		setOpenProduct(false);
+	};
+
 	return (
-		<div className="p-6 mx-auto ">
-			<h2 className="mb-6 text-2xl font-bold">{`${id ? "Cập nhập mã giảm giá" : "Thêm mới mã giảm giá"}`}</h2>
+		<div className="">
+			<h4 className="text-base font-medium md:text-xl">{`${id ? "Cập nhập mã giảm giá" : "Thêm mới mã giảm giá"}`}</h4>
+			{openProduct && (
+				<PopupTableService
+					open={openProduct}
+					handleClose={() => {
+						setOpenProduct(false);
+					}}
+					initialSelected={form.watch("listUseProduct")}
+					handleSubmit={handleSelected}
+				/>
+			)}
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+						<FormField
+							control={form.control}
+							name="code"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Mã voucher</FormLabel>
+									<FormControl>
+										<div className="relative">
+											<Input
+												placeholder="Nhập mã voucher"
+												{...field}
+												maxLength={7}
+												onChange={(e) => {
+													const target = e.target.value;
+													const value = target.replace(/[^a-zA-Z0-9]/g, "");
+													console.log({ value });
+
+													const valueUpperCase =
+														target !== "" ? target.toLocaleUpperCase() : "";
+													field.onChange(valueUpperCase);
+												}}
+											/>
+
+											<TooltipComponent label="Tự tạo mã voucher không bị trùng lặp">
+												<div
+													className="absolute size-7  right-1 top-1/2 -translate-y-1/2 flex items-center justify-center rounded-full group hover:bg-gray-50 cursor-pointer"
+													onClick={handleGenerateCodeAuto}
+												>
+													<BsStars
+														size={20}
+														className="text-blue-500 group-hover:text-blue-700"
+													/>
+												</div>
+											</TooltipComponent>
+										</div>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 						<FormField
 							control={form.control}
 							name="name"
@@ -201,6 +292,8 @@ const VoucherForm = () => {
 								</FormItem>
 							)}
 						/>
+					</div>
+					<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 						<FormField
 							control={form.control}
 							name="status"
@@ -225,8 +318,133 @@ const VoucherForm = () => {
 								</FormItem>
 							)}
 						/>
+						<FormField
+							control={form.control}
+							name="usageLimit"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Số lượng sử dụng</FormLabel>
+									<FormControl>
+										<InputNumberFormat
+											value={field.value}
+											onChange={(value) => {
+												field.onChange(value.floatValue);
+											}}
+											suffix=""
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 					</div>
 
+					<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+						<FormField
+							control={form.control}
+							name="discountType"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Loại giảm giá</FormLabel>
+									<Select
+										onValueChange={(value) => {
+											field.onChange(value);
+											form.setValue("discountValue", 0);
+										}}
+										defaultValue={field.value}
+									>
+										<FormControl>
+											<SelectTrigger>
+												<SelectValue placeholder="Chọn loại giảm giá" />
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											<SelectItem value="fixed">Số tiền</SelectItem>
+											<SelectItem value="percentage">Số phần trăm</SelectItem>
+										</SelectContent>
+									</Select>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="discountValue"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Giá trị giảm</FormLabel>
+									<FormControl>
+										<InputNumberFormat
+											value={field.value}
+											isAllowed={(value) => {
+												const valueCheck = value.floatValue || 0;
+												if (form.watch("discountType") === "percentage") {
+													const check = valueCheck > 100;
+													if (check) return false;
+												}
+												return true;
+											}}
+											onChange={(value) => {
+												const valueCheck = value.floatValue || 0;
+												if (form.watch("discountType") === "fixed") {
+													form.setValue("maxAmount", valueCheck);
+												}
+												field.onChange(valueCheck);
+											}}
+											suffix={
+												form.watch("discountType") === "fixed" ? "đ" : "%"
+											}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</div>
+
+					<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+						<FormField
+							control={form.control}
+							name="minimumOrderValue"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Giá trị đơn hàng tối thiểu</FormLabel>
+									<FormControl>
+										<InputNumberFormat
+											value={field.value}
+											onChange={(value) => {
+												field.onChange(value.floatValue);
+											}}
+											suffix="đ"
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="maxAmount"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Số tiền giảm tối đa</FormLabel>
+									<FormControl>
+										<InputNumberFormat
+											value={field.value}
+											onChange={(value) => {
+												field.onChange(value.floatValue);
+											}}
+											suffix="đ"
+											disabled={form.watch("discountType") === "fixed"}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</div>
+
+					{/* ngày */}
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 						<FormField
 							control={form.control}
@@ -317,13 +535,15 @@ const VoucherForm = () => {
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 						<FormField
 							control={form.control}
-							name="discountType"
+							name="type"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Loại giảm giá</FormLabel>
+									<FormLabel>Phạm vi voucher</FormLabel>
 									<Select
-										onValueChange={field.onChange}
-										defaultValue={field.value}
+										onValueChange={(value) => {
+											field.onChange(value);
+										}}
+										value={field.value}
 									>
 										<FormControl>
 											<SelectTrigger>
@@ -331,87 +551,30 @@ const VoucherForm = () => {
 											</SelectTrigger>
 										</FormControl>
 										<SelectContent>
-											<SelectItem value="fixed">Số tiền</SelectItem>
-											<SelectItem value="percentage">Số phần trăm</SelectItem>
+											<SelectItem value="1">Tất cả</SelectItem>
+											<SelectItem value="2">Một số sản phẩm</SelectItem>
 										</SelectContent>
 									</Select>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
-						<FormField
-							control={form.control}
-							name="discountValue"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Giá trị giảm</FormLabel>
-									<FormControl>
-										<InputNumber
-											isNumeric
-											value={String(field.value)}
-											name={field.name}
-											placeholder="Nhập giá trị giảm"
-											onChange={(value) => field.onChange(+value)}
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+						<div>
+							<FormLabel>Chọn sản phẩm </FormLabel>
+							<Button
+								type="button"
+								variant={"default"}
+								className="mt-2 w-full bg-white border text-black text-left hover:bg-gray-50 justify-start font-normal"
+								onClick={() => {
+									setOpenProduct(true);
+								}}
+								disabled={form.watch("type") === "1"}
+							>
+								{form.getValues("listUseProduct")?.length} sản phẩm đã chọn
+							</Button>
+						</div>
 					</div>
 
-					<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-						<FormField
-							control={form.control}
-							name="usageLimit"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Giới hạn sử dụng</FormLabel>
-									<FormControl>
-										{/* <Input
-											type="number"
-											placeholder="Nhập giới hạn sử dụng"
-											{...field}
-											onChange={(event) => field.onChange(+event.target.value)}
-										/> */}
-										<InputNumber
-											isNumeric
-											value={String(field.value)}
-											name={field.name}
-											placeholder="Nhập giới hạn sử dụng"
-											onChange={(value) => field.onChange(+value)}
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="minimumOrderValue"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Giá trị đơn hàng tối thiểu</FormLabel>
-									<FormControl>
-										<InputNumber
-											isNumeric
-											value={String(field.value)}
-											name={field.name}
-											placeholder="Nhập giá trị tối thiểu"
-											onChange={(value) => field.onChange(+value)}
-										/>
-										{/* <Input
-											type="number"
-											placeholder="Nhập giá trị tối thiểu"
-											{...field}
-											onChange={(event) => field.onChange(+event.target.value)}
-										/> */}
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</div>
 					<FormField
 						control={form.control}
 						name="description"

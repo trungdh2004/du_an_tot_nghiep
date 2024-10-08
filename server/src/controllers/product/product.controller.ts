@@ -58,13 +58,38 @@ class ProductController {
         images,
         featured,
         attributes = [],
+        is_hot,
+        is_simple,
+        quantity,
       } = req.body;
+
+      if (is_simple) {
+        const product = await ProductModel.create({
+          name,
+          price,
+          discount,
+          description,
+          thumbnail,
+          category,
+          quantitySold,
+          images,
+          featured,
+          quantity,
+          is_hot,
+          is_simple,
+        });
+
+        return res.status(STATUS.OK).json({
+          message: "Tạo thành công",
+          data: product,
+        });
+      }
 
       const dataAttributes = await AttributeModel.create<IAttribute[]>(
         attributes
       );
 
-      const quantity = dataAttributes.reduce((acc, item) => {
+      const quantityAttribute = dataAttributes.reduce((acc, item) => {
         return acc + item.quantity;
       }, 0);
 
@@ -78,8 +103,9 @@ class ProductController {
         quantitySold,
         images,
         featured,
-        quantity,
+        quantity: quantityAttribute,
         attributes: dataAttributes?.map((item) => item._id),
+        is_hot,
       });
 
       return res.status(STATUS.OK).json({
@@ -238,6 +264,9 @@ class ProductController {
         quantitySold,
         images,
         attributes = [],
+        is_simple,
+        is_hot,
+        quantity,
       } = req.body;
 
       const existingProduct = await ProductModel.findById(id);
@@ -253,6 +282,39 @@ class ProductController {
         existingProduct.name.toLocaleLowerCase() !== name.toLocaleLowerCase()
       ) {
         slugProduct = generateSlugs(name);
+      }
+
+      if (is_simple) {
+        const listAttributeId = existingProduct?.attributes;
+
+        await AttributeModel.deleteMany({
+          _id: {
+            $in: listAttributeId,
+          },
+        });
+
+        const product = await ProductModel.findByIdAndUpdate(
+          existingProduct._id,
+          {
+            name,
+            price,
+            discount,
+            description,
+            thumbnail,
+            category,
+            quantitySold,
+            images,
+            quantity,
+            is_hot,
+            is_simple,
+            attributes,
+          }
+        );
+
+        return res.status(STATUS.OK).json({
+          message: "Tạo thành công",
+          data: product,
+        });
       }
 
       const listNew = attributes.filter((item: IAttribute) => !item._id);
@@ -307,9 +369,12 @@ class ProductController {
         });
       }
 
-      const quantity = attributes.reduce((acc: number, item: IAttribute) => {
-        return acc + item.quantity;
-      }, 0);
+      const quantityAttribute = attributes.reduce(
+        (acc: number, item: IAttribute) => {
+          return acc + item.quantity;
+        },
+        0
+      );
 
       const newProduct = await ProductModel.findByIdAndUpdate(
         existingProduct?._id,
@@ -321,10 +386,12 @@ class ProductController {
           thumbnail,
           category,
           quantitySold,
-          quantity,
+          quantity: quantityAttribute,
           images,
           attributes: dataAttributes,
           slug: slugProduct,
+          is_hot,
+          is_simple,
         },
         { new: true }
       ).populate([
@@ -552,7 +619,7 @@ class ProductController {
         keyword,
         color = [],
         size = [],
-        sort = 1,
+        sort = -1,
         fieldSort,
         category,
         min,
@@ -560,6 +627,8 @@ class ProductController {
         tab,
         rating,
       } = req.body;
+
+      console.log({ sort });
 
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
@@ -676,6 +745,7 @@ class ProductController {
           },
         };
       }
+      console.log({ querySort });
 
       const listProduct = await ProductModel.find({
         ...queryKeyword,
@@ -715,6 +785,52 @@ class ProductController {
         ...queryRating,
       });
 
+      const result = formatDataPaging({
+        limit,
+        pageIndex,
+        data: listProduct,
+        count: countProduct,
+      });
+      return res.status(STATUS.OK).json(result);
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async pagingProductOfVoucher(req: RequestModel, res: Response) {
+    try {
+      const { pageIndex, keyword } = req.body;
+      let limit = 5;
+      let skip = (pageIndex - 1) * limit || 0;
+      let queryKeyword = keyword
+        ? {
+            name: {
+              $regex: keyword,
+              $options: "i",
+            },
+          }
+        : {};
+
+      const listProduct = await ProductModel.find({
+        ...queryKeyword,
+        is_deleted: false,
+      })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .select({
+          _id: 1,
+          name: 1,
+          thumbnail: 1,
+        })
+        .exec();
+
+      const countProduct = await ProductModel.countDocuments({
+        ...queryKeyword,
+        is_deleted: false,
+      });
       const result = formatDataPaging({
         limit,
         pageIndex,
