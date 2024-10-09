@@ -73,8 +73,8 @@ const CommentItem = ({ comment, setComment }: Props) => {
 		} catch (error) {
 			console.log(error);
 		}
-  };
-  
+	};
+
 	const handlOpenFeedback = (
 		commentId: string,
 		userRep?: string,
@@ -141,6 +141,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 			console.log(error);
 		}
 	};
+	// [...(comment.reactions || []), authUser?._id]
 	const handleDislike = async (commentId: string) => {
 		if (!isLoggedIn) {
 			const productUrl = location.pathname;
@@ -149,14 +150,18 @@ const CommentItem = ({ comment, setComment }: Props) => {
 		}
 		try {
 			const { data } = await reactionsComment(commentId, false);
+			console.log(data);
+			
 			setComment((prev) => {
 				return prev?.map((comment) => {
 					if (data.commentType === TYPE_COMMENT.PRODUCT) {
 						if (comment._id === commentId) {
 							return {
 								...comment,
-								reactions: [...(comment.reactions || []), authUser?._id],
-								reactions_count: comment.reactions.length + 1,
+								reactions: comment.reactions.filter(
+									(reaction) => reaction !== authUser?._id,
+								),
+								reactions_count: comment.reactions.length - 1,
 							};
 						}
 					} else {
