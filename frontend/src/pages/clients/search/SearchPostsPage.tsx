@@ -10,7 +10,7 @@ type Props = {
 const SearchPostsPage = ({ blog }: Props) => {
 	return (
 		<>
-			<div className="flex flex-col overflow-hidden rounded-lg shadow-lg">
+			<Link to={`/blogDetail/${blog._id}`} className="flex flex-col overflow-hidden rounded-lg shadow-lg">
 				<div className="flex-shrink-0">
 					<img
 						className="object-cover w-full h-48"
@@ -23,7 +23,7 @@ const SearchPostsPage = ({ blog }: Props) => {
 				</div>
 				<div className="flex flex-col justify-between flex-1 p-3 bg-white">
 					<div className="flex-1">
-						<Link to="#" className="block mt-2">
+						<Link to={`/blogDetail/${blog._id}`} className="block mt-2">
 							<p className="text-xl font-semibold text-gray-900">
 								{blog?.meta_title}
 							</p>
@@ -68,7 +68,7 @@ const SearchPostsPage = ({ blog }: Props) => {
                         </div>
 					</div>
 				</div>
-			</div>
+			</Link>
 		</>
 	);
 };
