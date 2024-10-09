@@ -58,6 +58,7 @@ const Comments = ({ product }: Props) => {
 			);
 			setComment((prevComments) => [data?.data, ...prevComments]);
 			setContent("");
+			setOpen(false);
 			return data;
 		} catch (error) {
 			console.log(error);
@@ -78,6 +79,7 @@ const Comments = ({ product }: Props) => {
 					{" "}
 					{comment?.length} bình luận
 				</h3>
+				c
 				<FilterComment />
 			</div>
 			<CommentEditor
@@ -99,10 +101,12 @@ const Comments = ({ product }: Props) => {
 						<div
 							className="cursor-pointer"
 							onClick={() => {
-								setObjectComment((prev) => ({
-									...prev,
-									pageIndex: pageIndex + 1,
-								}));
+								setObjectComment((prev) => {
+									return {
+										...prev,
+										pageIndex: (prev?.pageIndex as number) + 1,
+									};
+								});
 							}}
 						>
 							<h3 className="text-sm font-bold text-slate-600 hover:underline pl-9">
