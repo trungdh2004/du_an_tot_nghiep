@@ -121,7 +121,7 @@ const ProductFilter = ({ onSubmit }: IProps) => {
 					<IoFilter size={20} className="cursor-pointer" />
 				</div>
 			</PopoverTrigger>
-			<PopoverContent align="end" side="bottom" className="md:min-w-[400px] max-w-[80wh] p-2 overflow-y-auto">
+			<PopoverContent align="end" side="bottom" className="md:min-w-[400px] max-w-[80wh] p-2 ">
 				<div className="grid grid-cols-2 gap-2">
 					<SelectComponent<ICategory>
 						value={data.category}

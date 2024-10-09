@@ -2,6 +2,7 @@ import AccountLayout from "@/layout/AcountLayout";
 import MainLayout from "@/layout/MainLayout";
 import UserIndex from "@/pages/admin/users/UserIndex";
 import AccountIndex from "@/pages/clients/account/AccountIndex";
+import PaymentIndex from "@/pages/clients/account/PaymentIndex";
 import OrderManagements from "@/pages/clients/account/Purchase";
 import PurchaseOrder from "@/pages/clients/account/PurchaseOrder";
 import Address from "@/pages/clients/address/Address";
@@ -51,6 +52,10 @@ const MainRouter = [
 					{
 						path: "purchase/order/:id",
 						element: <PurchaseOrder />,
+					},
+					{
+						path: "payment",
+						element: <PaymentIndex />,
 					},
 				],
 			},

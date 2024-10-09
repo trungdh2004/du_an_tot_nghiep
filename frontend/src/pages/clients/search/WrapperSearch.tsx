@@ -66,7 +66,6 @@ const WrapperSearch = () => {
 
   const handleSearch = useDebounce((keyword: string) => {
     setSearchParams({ topic, q: keyword });
-    setQuery(keyword);
     fetchSearchResults(keyword, topic);
   }, 700);
 
@@ -80,14 +79,14 @@ const WrapperSearch = () => {
   };
 
   return (
-    <div className="padding">
+    <div className="mb-10 padding">
       <h1 className="mb-4 text-xl font-bold">Tìm kiếm</h1>
 
       <div className="mb-8">Tìm kiếm khóa học, bài viết và các video...</div>
 
       <div className="w-full border-b border-gray-300">
         <input
-          onChange={(e) => handleSearch(e.target.value)}
+          onChange={(e) => {handleSearch(e.target.value);setQuery(e.target.value);}}
           type="text"
           value={query}
           placeholder=""
@@ -118,7 +117,7 @@ const WrapperSearch = () => {
           next={handleNextPage}
           hasMore={dataSearch.pageIndex < dataSearch.totalPage}
           loader={<p className="text-sm text-center text-gray-400">Loading...</p>}
-          endMessage={<p style={{ textAlign: "center" }}>Đã tải hết dữ liệu</p>}
+          endMessage={<p style={{ textAlign: "center" }}></p>}
         >
           <div className={cn("grid gap-5",topic === "product" ? "grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5" : "grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4")}>
             {dataSearch.content.map((item) =>

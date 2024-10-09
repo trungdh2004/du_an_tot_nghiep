@@ -86,7 +86,7 @@ export default function CategoryDashboard() {
 	return (
 		<div className="h-[300px] lg:h-[400px] flex flex-col p-2">
 			<div className="flex items-center justify-between py-2 border-b">
-				<p className="font-semibold">Biểu đồ đơn hàng </p>
+				<p className="font-semibold">Biểu đồ loại hàng mua nhiều nhất </p>
 			</div>
 
 			<div className="flex-1 w-full">

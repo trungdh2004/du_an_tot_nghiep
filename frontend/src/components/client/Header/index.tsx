@@ -35,7 +35,7 @@ const Header = () => {
 					<MenuMobile />
 				</div>
 				<div className="absolute max-sm:-translate-x-1/2 top-1/2 left-1/2 max-sm:-translate-y-1/2 sm:static sm:flex sm:items-center">
-					<Logo />
+					<img src="/NUC.svg" alt="" className="size-[50px]"/>
 				</div>
 				<Menu />
 				<Actions />
@@ -44,47 +44,6 @@ const Header = () => {
 	);
 };
 
-const Logo = () => (
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		width={150}
-		height={50}
-		viewBox="0 0 300 100"
-		preserveAspectRatio="xMaxYMax meet"
-	>
-		<defs>
-			<linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-				<stop offset="0%" style={{ stopColor: "#4ecdc4", stopOpacity: 1 }} />
-				<stop offset="100%" style={{ stopColor: "#ff6b6b", stopOpacity: 1 }} />
-			</linearGradient>
-		</defs>
-		<rect width="300" height="100" fill="none" />
-		<text
-			x="15"
-			y="65"
-			fontFamily="Brush Script MT, cursive"
-			fontSize="70"
-			fill="#00e0d0"
-		>
-			N
-		</text>
-		<text
-			x="55"
-			y="65"
-			fontFamily="Brush Script MT, cursive"
-			fontSize="70"
-			fill="url(#grad)"
-		>
-			ucshop
-		</text>
-		<path
-			d="M10,70 Q90,90 200,70"
-			fill="none"
-			stroke="red"
-			strokeWidth="6"
-			strokeLinecap="round"
-		/>
-	</svg>
-);
+
 
 export default Header;
