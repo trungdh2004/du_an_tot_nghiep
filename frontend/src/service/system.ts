@@ -8,10 +8,12 @@ export const searchPopupService = ({ keyword }: { keyword: string }) => {
 export const searchDetailPageService = ({
 	keyword,
 	type,
+	pageIndex = 1,
 }: {
 	keyword: string;
 	type: string;
+	pageIndex?: number;
 }) => {
-	const uri = `${url}/searchClient?keyword=${keyword}&type=${type}`;
+	const uri = `${url}/searchClientDetail?keyword=${keyword}&type=${type}&pageIndex=${pageIndex}`;
 	return instance.get(uri);
 };

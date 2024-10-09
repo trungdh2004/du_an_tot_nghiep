@@ -11,12 +11,10 @@ import CartPage from "@/pages/clients/cart/CartPage";
 import DetailProduct from "@/pages/clients/detail-home/page";
 import HomePage from "@/pages/clients/home/page";
 import OrderProcessing from "@/pages/clients/order/OrderProcessing";
+import WrapperSearch from "@/pages/clients/search/WrapperSearch";
 import ShopProduct from "@/pages/clients/shop/ShopProduct";
 import NotFound from "@/pages/NotFound";
 import { Navigate } from "react-router-dom";
-import SearchPostsPage from "@/pages/clients/search/SearchPostsPage";
-import SearchProductPage from "@/pages/clients/search/SearchProductPage";
-import WrapperSearch from "@/pages/clients/search/WrapperSearch";
 const MainRouter = [
 	{
 		path: "/",
@@ -33,16 +31,6 @@ const MainRouter = [
 			{
 				path: "search",
 				element: <WrapperSearch />,
-				children: [
-					{
-						path: "",
-						element: <SearchProductPage />,
-					},
-					{
-						path: "posts",
-						element: <SearchPostsPage />,
-					},
-				],
 			},
 			{
 				path: "/account",

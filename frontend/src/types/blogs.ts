@@ -20,3 +20,14 @@ type IBlog = {
 	meta_title?:string,
 	tags: string,
 }
+export interface IBlogSearch {
+	_id: string
+  title: string
+  thumbnail_url: string
+  meta_title: string
+  meta_description: string
+  views_count: number
+  published_at: string
+  countLike: number
+  slug: string
+}
