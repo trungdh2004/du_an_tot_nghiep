@@ -14,51 +14,69 @@ import OrderProcessing from "@/pages/clients/order/OrderProcessing";
 import ShopProduct from "@/pages/clients/shop/ShopProduct";
 import NotFound from "@/pages/NotFound";
 import { Navigate } from "react-router-dom";
+import SearchPostsPage from "@/pages/clients/search/SearchPostsPage";
+import SearchProductPage from "@/pages/clients/search/SearchProductPage";
+import WrapperSearch from "@/pages/clients/search/WrapperSearch";
 import PaymentIndex from "@/pages/clients/account/PaymentIndex";
+import AddressIndex from "@/pages/clients/address/AddressIndex";
 const MainRouter = [
-  {
-    path: "/",
-    element: <MainLayout />,
-    children: [
-      { path: "", element: <HomePage /> },
-      { path: "/shop/detail/:slug", element: <DetailProduct /> },
-      { path: "address", element: <Address /> },
-      { path: "blogs", element: <BlogPage /> },
-      { path: "blogDetail/:id", element: <BlogDetail /> },
-      { path: "table", element: <UserIndex /> },
-      { path: "cart", element: <CartPage /> },
-      { path: "shop", element: <ShopProduct /> },
-      {
-        path: "/account",
-        element: <AccountLayout />,
-        children: [
-          {
-            path: "",
-            element: <Navigate to={"/account/profile"} />,
-          },
-          {
-            path: "profile",
-            element: <AccountIndex />,
-          },
-          {
-            path: 'purchase',
-            element: <OrderManagements />
-          },
-          {
-            path: 'purchase/order/:id',
-            element: <PurchaseOrder />
-          },
-          {
-            path: 'payments',
-            element: <PaymentIndex />
-          },
-
-        ],
-      },
-    ],
-  },
-  // { path: "orderProcessing", element: <OrderProcessing /> },
-  { path: "*", element: <NotFound /> },
-  { path: "/orderprocessing", element: <OrderProcessing /> },
+	{
+		path: "/",
+		element: <MainLayout />,
+		children: [
+			{ path: "", element: <HomePage /> },
+			{ path: "/shop/detail/:slug", element: <DetailProduct /> },
+			{ path: "address", element: <Address /> },
+			{ path: "addressNew", element: <AddressIndex /> },
+			{ path: "blogs", element: <BlogPage /> },
+			{ path: "blogDetail/:id", element: <BlogDetail /> },
+			{ path: "table", element: <UserIndex /> },
+			{ path: "cart", element: <CartPage /> },
+			{ path: "shop", element: <ShopProduct /> },
+			{
+				path: "search",
+				element: <WrapperSearch />,
+				children: [
+					{
+						path: "",
+						element: <SearchProductPage />,
+					},
+					{
+						path: "posts",
+						element: <SearchPostsPage />,
+					},
+				],
+			},
+			{
+				path: "/account",
+				element: <AccountLayout />,
+				children: [
+					{
+						path: "",
+						element: <Navigate to={"/account/profile"} />,
+					},
+					{
+						path: "profile",
+						element: <AccountIndex />,
+					},
+					{
+						path: "purchase",
+						element: <OrderManagements />,
+					},
+					{
+						path: "purchase/order/:id",
+						element: <PurchaseOrder />,
+					},
+					{
+						path: "payment",
+						element: <PaymentIndex />,
+					},
+				],
+			},
+		],
+	},
+	// { path: "orderProcessing", element: <OrderProcessing /> },
+	{ path: "*", element: <NotFound /> },
+	{ path: "/orderprocessing", element: <OrderProcessing /> },
 ];
 export default MainRouter;

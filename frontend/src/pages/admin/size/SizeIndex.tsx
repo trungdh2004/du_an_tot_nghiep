@@ -226,7 +226,7 @@ const SizeIndex = () => {
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.createdAt);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
-				return <div className="font-medium">{formattedDate}</div>;
+				return <div className="">{formattedDate}</div>;
 			},
 		},
 		{

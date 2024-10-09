@@ -18,7 +18,7 @@ export const generateOrderCode = () => {
 };
 
 export const generateVoucherCode = () => {
-  return `KM${Math.random().toString(36).substr(2, 7).toUpperCase()}`;
+  return `KM${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
 };
 
 // const slug = `${slugify(value, {

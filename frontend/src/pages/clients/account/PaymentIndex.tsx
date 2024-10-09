@@ -18,11 +18,7 @@ type IPayment = {
 }
 
 const PaymentIndex = () => {
-  // const [response, setResponse] = useState<typeResponse>({
-  //   pageCount: 0,
-  //   totalElement: 0,
-  //   totalOptionPage: 0,
-  // });
+  
   const [searchObject, setSearchObject] = useState<ISearchObjectPayment>({
     pageIndex: 1,
     pageSize: 3,
@@ -40,10 +36,7 @@ const PaymentIndex = () => {
     placeholderData: keepPreviousData,
     staleTime: 5 * 60 * 60,
   })
-  console.log("data", data);
-  // useEffect(() => {
-  //   setSearchObject((prev))
-  // })
+  
   const handleChangePag = (value: any) => {
     console.log("value", value)
     try {
@@ -64,7 +57,7 @@ const PaymentIndex = () => {
           {data?.content?.map((item: IPayment, index: number) => {
             return (
               <div key={index} className="border border-blue-200 bg-gray-100 rounded-[8px] px-4 py-2 col-span-12  min-[900px]:col-span-6 ">
-                <p className="text-sm font-semibold pb-2 ">Mã đơn hàng: <span className="">{item?.codeOrder}</span></p>
+                <p className="text-sm font-semibold pb-2">Mã đơn hàng: <span className="">{item?.codeOrder}</span></p>
                 <p className="">Có giao dịch thanh toán online với số tiên
                   <span className="text-red-500 font-semibold pl-1">{formatQuantity(
                     item?.amount, "₫",)}</span>

@@ -52,7 +52,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 	const [isLoading, setIsLoading] = useState(true);
 	const value = { authUser, setAuthUser, isLoggedIn, setIsLoggedIn, socket };
 	useEffect(() => {
-		setIsLoggedIn(true);
 		(async () => {
 			try {
 				const { data } = await currentAccount();
@@ -63,6 +62,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 				setCartsPreview(carts?.data?.content);
 				setTotalCart(totalCountCart?.data?.count);
 				setAuthUser(data?.data);
+				setIsLoggedIn(true);
 				if (data.data._id) {
 					const role = data.data.is_admin || data.data.is_staff;
 					const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(

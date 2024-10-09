@@ -36,6 +36,8 @@ import { IFilterProduct } from "@/types/product";
 import DialogConfirm from "@/components/common/DialogConfirm";
 import { toast } from "sonner";
 import { ICategory } from "@/types/category";
+import { IoIosRemoveCircle, IoIosCheckmarkCircle } from "react-icons/io";
+import { Badge } from "@/components/ui/badge";
 
 const ProductIndex = () => {
 	const queryClient = useQueryClient();
@@ -44,7 +46,7 @@ const ProductIndex = () => {
 		pageSize: 5,
 		keyword: "",
 		fieldSort: "",
-		sort: 1,
+		sort: -1,
 		tab: 1,
 		category: "",
 		min: null,
@@ -135,7 +137,7 @@ const ProductIndex = () => {
 			queryClient.invalidateQueries({
 				queryKey: ["paging", searchObject],
 			});
-			setRowSelection([])
+			setRowSelection([]);
 			toast.success("Bỏ ẩn thành công");
 		} catch (error) {
 			toast.error("Bỏ ẩn thất bại");
@@ -172,7 +174,7 @@ const ProductIndex = () => {
 			size: 100,
 		},
 		{
-			accessorKey: "name",
+			accessorKey: "thumbnail",
 			header: () => {
 				return <div className="md:text-base text-xs">Ảnh</div>;
 			},
@@ -192,14 +194,14 @@ const ProductIndex = () => {
 			accessorKey: "name",
 			header: () => {
 				return (
-					<div className="md:text-base text-xs min-w-[140px] md:min-w-[200px]">
+					<div className="md:text-base text-xs min-w-[140px] md:min-w-[200px] max-w-[240px] line-clamp-2">
 						Tên
 					</div>
 				);
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs font-medium">
+					<div className="md:text-base text-xs font-medium line-clamp-2  max-w-[240px]">
 						{row?.original?.name}
 					</div>
 				);
@@ -276,77 +278,32 @@ const ProductIndex = () => {
 		},
 		// mầu
 		{
-			accessorKey: "color",
+			accessorKey: "is_simple",
 			header: () => {
-				return <div className="md:text-base text-xs">Màu</div>;
+				return <div className="md:text-base text-xs">Đơn giản</div>;
 			},
 			cell: ({ row }) => {
-				const listColor = row.original.attributes.reduce(
-					(acc: IColor[], item) => {
-						if (!(item.color as IColor)._id) return acc;
-						let group = acc.find((g) => g._id === (item.color as IColor)?._id);
-
-						// Nếu nhóm không tồn tại, tạo nhóm mới
-						if (!group) {
-							group = {
-								_id: (item.color as IColor)._id as string,
-								name: (item.color as IColor).name as string,
-								code: (item.color as IColor).code as string,
-							};
-							acc.push(group);
-							return acc;
-						}
-						return acc;
-					},
-					[],
-				);
-
-				
 				return (
-					<div className="flex flex-wrap md:gap-1">
-						{listColor?.map((item) => (
-							<div
-								className="w-2 h-2 md:w-4 md:h-4 rounded-full border"
-								key={item?._id}
-								style={{
-									backgroundColor: item?.code,
-								}}
-							></div>
-						))}
+					<div className="flex justify-center text-center">
+						{row?.original?.is_simple ? (
+							<IoIosCheckmarkCircle className="text-green-500" size={20} />
+						) : (
+							<IoIosRemoveCircle className="text-rose-500" size={20} />
+						)}
 					</div>
 				);
 			},
 		},
 		//size
 		{
-			accessorKey: "quantitySold",
+			accessorKey: "is_hot",
 			header: () => {
-				return <div className="md:text-base text-xs">Kích thước</div>;
+				return <div className="md:text-base text-xs">Nổi bật</div>;
 			},
 			cell: ({ row }) => {
-				const listSize = row.original.attributes.reduce(
-					(acc: { _id: string; name: string }[], item) => {
-						if (!(item.color as IColor)._id) return acc;
-						let group = acc.find(
-							(g) => g._id === (item.size as SizeTypes)?._id,
-						);
-
-						// Nếu nhóm không tồn tại, tạo nhóm mới
-						if (!group) {
-							group = {
-								_id: (item.size as SizeTypes)._id as string,
-								name: (item.size as SizeTypes).name as string,
-							};
-							acc.push(group);
-							return acc;
-						}
-						return acc;
-					},
-					[],
-				);
 				return (
-					<div className="flex flex-wrap gap-1">
-						{listSize?.map((item) => item.name).join(", ")}
+					<div className=" text-center">
+						{row?.original?.is_hot && <Badge className="bg-rose-500">HOT</Badge>}
 					</div>
 				);
 			},

@@ -10,13 +10,14 @@ import { IProductDetail } from "@/types/product";
 import ButtonLoading from "@/components/common/ButtonLoading";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { addProductToCart, pagingCart } from "@/service/cart";
+import { addProductToCart, buyNowSevices, pagingCart } from "@/service/cart";
 import { AxiosError } from "axios";
 import useCartAnimation from "@/hooks/useCartAnimation";
 import useCart from "@/store/cart.store";
 import { useCurrentRouteAndNavigation } from "@/hooks/router";
 import { useAuth } from "@/hooks/auth";
 import { useFetchNewProductsInTheCart } from "@/hooks/cart";
+import { useNavigate, Navigate } from "react-router-dom";
 
 type Props = {
 	product?: IProductDetail;
@@ -39,6 +40,7 @@ interface IStateInfoProduct {
 
 const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 	const { isLoggedIn } = useAuth();
+	const navigate = useNavigate();
 	const { startAnimation, RenderAnimation } = useCartAnimation();
 	const navigateIsLogin = useCurrentRouteAndNavigation();
 	const { updateTotalCart, setCarts } = useCart();
@@ -160,7 +162,18 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 
 				break;
 			case "buy-now":
-				console.log("Buy now");
+				try {
+					const { data } = await buyNowSevices({
+						attribute: attributeId,
+						productId: product?._id as string,
+						quantity: Number(purchaseQuantity),
+					});
+					navigate(`/order?state=${data?.url}`);
+				} catch (error) {
+					if (error instanceof AxiosError) {
+						toast.error(error?.response?.data?.message);
+					}
+				}
 				break;
 			default:
 				toast.error("Hành động không hợp lệ vui lòng thử lại!");

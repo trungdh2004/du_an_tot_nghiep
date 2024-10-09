@@ -28,7 +28,7 @@ const ProductDetailsAndReviews = ({ product, isLoading }: Props) => {
 					isLoading={isLoading}
 				/>
 			)}
-			{step == 2 && <Comments />}
+			{step == 2 && <Comments product={product} />}
 		</div>
 	);
 };

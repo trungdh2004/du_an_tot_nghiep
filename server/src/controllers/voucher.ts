@@ -1,8 +1,5 @@
 import { Request, Response } from "express";
-import {
-  generateOrderCode,
-  generateVoucherCode,
-} from "../middlewares/generateSlug";
+import { generateVoucherCode } from "../middlewares/generateSlug";
 import VoucherModel from "../models/order/Voucher.schema";
 import STATUS from "../utils/status";
 import { RequestModel } from "../interface/models";
@@ -11,13 +8,14 @@ import { voucherValidation } from "../validation/voucher.validation";
 import { formatDataPaging } from "../common/pagingData";
 import { IVoucher } from "../interface/voucher";
 
-const generateCode = async (code: string): Promise<string> => {
+const generateCode = async (): Promise<string> => {
+  let code = generateVoucherCode();
+
   const existingCode = await VoucherModel.findOne({
     code: code,
   });
   if (existingCode) {
-    let codeNew = generateOrderCode();
-    return generateCode(codeNew as string);
+    return generateCode();
   }
   return code;
 };
@@ -64,6 +62,7 @@ class VoucherController {
   async addVoucher(req: RequestModel, res: Response) {
     try {
       const user = req.user;
+
       const { error } = voucherValidation.validate(req.body);
 
       if (error) {
@@ -71,6 +70,7 @@ class VoucherController {
           message: error.details[0].message,
         });
       }
+
       const {
         name,
         description,
@@ -80,10 +80,21 @@ class VoucherController {
         discountValue,
         usageLimit,
         minimumOrderValue,
+        code,
+        type,
+        listUseProduct,
+        maxAmount,
       } = req.body;
 
-      let code = generateVoucherCode();
-      code = await generateCode(code);
+      const existingCode = await VoucherModel.findOne({
+        code,
+      });
+
+      if (existingCode) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Mã Voucher đã có",
+        });
+      }
 
       const newVoucher = await VoucherModel.create({
         name,
@@ -96,6 +107,9 @@ class VoucherController {
         code,
         user: user?.id,
         minimumOrderValue,
+        listUseProduct,
+        maxAmount,
+        type,
       });
 
       return res.status(STATUS.OK).json({
@@ -107,6 +121,17 @@ class VoucherController {
         message: error.message,
       });
     }
+  }
+
+  async generateCodeAuto(req: RequestModel, res: Response) {
+    try {
+      const code = await generateCode();
+
+      return res.status(STATUS.OK).json({
+        message: "Đã tạo mã code mới",
+        code,
+      });
+    } catch (error) {}
   }
 
   async getVoucherCode(req: RequestModel, res: Response) {
@@ -260,7 +285,12 @@ class VoucherController {
         discountValue,
         usageLimit,
         minimumOrderValue,
+        code,
+        type,
+        listUseProduct,
+        maxAmount,
       } = req.body;
+
       const { id } = req.params;
       const { error } = voucherValidation.validate(req.body);
 
@@ -283,6 +313,19 @@ class VoucherController {
         });
       }
 
+      const existingCheckCode = await VoucherModel.findOne({
+        code,
+        _id: {
+          $ne: existingVoucher._id,
+        },
+      });
+
+      if (existingCheckCode) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Mã Voucher đã có",
+        });
+      }
+
       const newVoucher = await VoucherModel.findByIdAndUpdate(id, {
         name,
         description,
@@ -292,6 +335,10 @@ class VoucherController {
         discountValue,
         usageLimit,
         minimumOrderValue,
+        code,
+        maxAmount,
+        type,
+        listUseProduct,
       });
 
       return res.status(STATUS.OK).json({
@@ -299,6 +346,8 @@ class VoucherController {
         data: newVoucher,
       });
     } catch (error: any) {
+      console.log("error", error);
+
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
       });

@@ -25,6 +25,7 @@ const Cart = () => {
 					navigateIsLogin();
 				}
 			}}
+			className="hidden md:block"
 		>
 			<HoverCard>
 				<HoverCardTrigger asChild>
@@ -32,14 +33,14 @@ const Cart = () => {
 						className="relative hover:bg-[#919eab27] rounded-full p-1"
 						id="cartHeader"
 					>
-						<div
+						<span
 							className={cn(
-								" rounded-full bg-red-500 text-white absolute  p-0.5 px-1 text-xs hidden items-center justify-center -top-1 -right-1 ",
+								" rounded-full bg-red-500 text-center text-white absolute w-4 h-4 text-xs flex items-center justify-center top-0 -right-1 ",
 								isLoggedIn && "inline-block",
 							)}
 						>
 							{totalCart}
-						</div>
+						</span>
 						<LucideShoppingCart strokeWidth={1.5} size={20} />
 					</div>
 				</HoverCardTrigger>

@@ -31,5 +31,6 @@ routerVoucher.put(
   VoucherController.startAction
 );
 routerVoucher.post("/deleteList", authentication, VoucherController.deleteList);
+routerVoucher.get("/generateCodeAuto", VoucherController.generateCodeAuto);
 
 export default routerVoucher;
