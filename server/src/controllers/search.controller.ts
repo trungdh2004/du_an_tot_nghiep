@@ -52,6 +52,14 @@ class SearchController {
       })
         .skip(0)
         .limit(5)
+        .populate({
+          path: "user_id",
+          select: {
+            _id: 1,
+            full_name: 1,
+            avatarUrl: 1,
+          },
+        })
         .select({
           title: 1,
           slug: 1,
@@ -99,6 +107,14 @@ class SearchController {
         })
           .skip(skip)
           .limit(limit)
+          .populate({
+            path: "user_id",
+            select: {
+              _id: 1,
+              full_name: 1,
+              avatarUrl: 1,
+            },
+          })
           .select({
             title: 1,
             slug: 1,

@@ -307,7 +307,7 @@ class ProductController {
             quantity,
             is_hot,
             is_simple,
-            attributes
+            attributes,
           }
         );
 
@@ -391,7 +391,7 @@ class ProductController {
           attributes: dataAttributes,
           slug: slugProduct,
           is_hot,
-          is_simple
+          is_simple,
         },
         { new: true }
       ).populate([
@@ -628,8 +628,7 @@ class ProductController {
         rating,
       } = req.body;
 
-      console.log({sort});
-      
+      console.log({ sort });
 
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
@@ -746,8 +745,7 @@ class ProductController {
           },
         };
       }
-      console.log({querySort});
-      
+      console.log({ querySort });
 
       const listProduct = await ProductModel.find({
         ...queryKeyword,
@@ -787,6 +785,52 @@ class ProductController {
         ...queryRating,
       });
 
+      const result = formatDataPaging({
+        limit,
+        pageIndex,
+        data: listProduct,
+        count: countProduct,
+      });
+      return res.status(STATUS.OK).json(result);
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async pagingProductOfVoucher(req: RequestModel, res: Response) {
+    try {
+      const { pageIndex, keyword } = req.body;
+      let limit = 5;
+      let skip = (pageIndex - 1) * limit || 0;
+      let queryKeyword = keyword
+        ? {
+            name: {
+              $regex: keyword,
+              $options: "i",
+            },
+          }
+        : {};
+
+      const listProduct = await ProductModel.find({
+        ...queryKeyword,
+        is_deleted: false,
+      })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .select({
+          _id: 1,
+          name: 1,
+          thumbnail: 1,
+        })
+        .exec();
+
+      const countProduct = await ProductModel.countDocuments({
+        ...queryKeyword,
+        is_deleted: false,
+      });
       const result = formatDataPaging({
         limit,
         pageIndex,
