@@ -54,10 +54,7 @@ const AdminRouter = [
 				path: "users/detail",
 				element: <UserDetail />,
 			},
-			{
-				path: "category",
-				element: <CategoryIndex />,
-			},
+			
 			{
 				path: "voucher",
 				element: <VoucherList />,
@@ -69,10 +66,6 @@ const AdminRouter = [
 			{
 				path: "voucher/:id/edit",
 				element: <VoucherForm />,
-			},
-			{
-				path: "tags",
-				element: <TagIndex />,
 			},
 			{
 				path: "blogs",
@@ -87,15 +80,31 @@ const AdminRouter = [
 				element: <ProductIndex />,
 			},
 			{
+				path: "product/category",
+				element: <CategoryIndex />,
+			},
+			{
+				path: "product/voucher",
+				element: <VoucherList />,
+			},
+			{
+				path: "product/voucher/add",
+				element: <VoucherForm />,
+			},
+			{
+				path: "product/voucher/:id/edit",
+				element: <VoucherForm />,
+			},
+			{
 				path: "product/add",
 				element: <ProductAddPage />,
 			},
 			{
-				path: "tags",
+				path: "blogs/tags",
 				element: <TagIndex />,
 			},
 			{
-				path: "size",
+				path: "variant/size",
 				element: <SizeIndex />,
 			},
 			// Blogs
@@ -112,7 +121,7 @@ const AdminRouter = [
 				element: <MyBlogs />,
 			},
 			{
-				path: "color",
+				path: "variant/color",
 				element: <ColorList />,
 			},
 			{
