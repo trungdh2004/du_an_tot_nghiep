@@ -1,31 +1,26 @@
-import { LuLayoutDashboard } from "react-icons/lu";
+import { CiShoppingTag } from "react-icons/ci";
 import { FaBox, FaUsers } from "react-icons/fa";
-import { FaUsersCog } from "react-icons/fa";
+import { GrAnalytics } from "react-icons/gr";
+import { HiOutlineInboxArrowDown, HiOutlineInboxStack, HiOutlineNewspaper, HiOutlineSquaresPlus, HiOutlineTicket } from "react-icons/hi2";
+import { IoColorPaletteOutline } from "react-icons/io5";
+import { LuLayoutDashboard, LuUserCircle } from "react-icons/lu";
 import { MdOutlinePostAdd } from "react-icons/md";
+import { PiResizeLight } from "react-icons/pi";
 
 const sidebarConfig: any[] = [
 	{
 		path: "",
-		icon: LuLayoutDashboard,
+		icon: GrAnalytics ,
 		isVisible: true,
 		isAdmin: false,
 		label: "Thống kê",
 	},
-	{
-		path: "/category",
-		isVisible: true,
-		isAdmin: false,
-		label: "Danh mục",
-	},
-	{
-		path: "/voucher",
-		isVisible: true,
-		isAdmin: false,
-		label: "Mã giảm giá",
-	},
+	
+	
 	{
 		path: "/users",
 		isVisible: true,
+		icon:LuUserCircle, 
 		label: "Người dùng",
 		isAdmin: false,
 		children: [
@@ -43,13 +38,6 @@ const sidebarConfig: any[] = [
 			// },
 		],
 	},
-	,
-	{
-		path: "/tags",
-		isVisible: true,
-		label: "Nhãn",
-		isAdmin: false,
-	},
 	{
 		path: "/product",
 		isVisible: true,
@@ -57,26 +45,56 @@ const sidebarConfig: any[] = [
 		isAdmin: false,
 		children: [
 			{
+				path: "/category",
+				icon: HiOutlineSquaresPlus ,
+				isVisible: true,
+				isAdmin: false,
+				label: "Danh mục",
+			},
+			{
+				path: "/voucher",
+				icon:HiOutlineTicket, 
+				isVisible: true,
+				isAdmin: false,
+				label: "Mã giảm giá",
+			},
+			{
 				path: "/",
-				icon: LuLayoutDashboard,
+				icon: HiOutlineInboxStack,
 				isVisible: true,
 				label: "Danh sách sản phẩm",
 			},
 			{
 				path: "/add",
-				icon: LuLayoutDashboard,
+				icon: HiOutlineInboxArrowDown,
 				isVisible: true,
 				label: "Thêm sản phẩm",
 			},
 		],
 	},
-
 	{
-		path: "/color",
+		path: "/variant",
 		isVisible: true,
-		label: "Màu sắc",
+		label: "Biến thể",
 		isAdmin: false,
+		children: [
+			{
+				path: "/color",
+				icon:IoColorPaletteOutline ,
+				isVisible: true,
+				label: "Màu sắc",
+				isAdmin: false,
+			},
+			{
+				path: "/size",
+				icon:PiResizeLight ,
+				isVisible: true,
+				label: "Kích thước",
+				isAdmin: false,
+			},
+		],
 	},
+	
 	{
 		path: "/blogs",
 		isVisible: true,
@@ -84,8 +102,15 @@ const sidebarConfig: any[] = [
 		isAdmin: false,
 		children: [
 			{
+				icon:CiShoppingTag ,
+				path: "/tags",
+				isVisible: true,
+				label: "Nhãn",
+				isAdmin: false,
+			},
+			{
 				path: "/",
-				icon: LuLayoutDashboard,
+				icon: HiOutlineNewspaper ,
 				isVisible: true,
 				label: "Danh sách bài viết",
 			},
@@ -103,12 +128,7 @@ const sidebarConfig: any[] = [
 			},
 		],
 	},
-	{
-		path: "/size",
-		isVisible: true,
-		label: "Kích thước",
-		isAdmin: false,
-	},
+	
 	{
 		path: "/revenue",
 		icon: LuLayoutDashboard,

@@ -104,7 +104,10 @@ const Search = () => {
 						)}
 					>
 						<p className="text-lg font-medium text-black/85">Sản phẩm</p>
-						<Link to={""} className="hover:text-red-500">
+						<Link
+							to={`/search?topic=product&q=${encodeURIComponent(textKeyWord)}`}
+							className="hover:text-red-500"
+						>
 							Xem thêm
 						</Link>
 					</li>
@@ -141,7 +144,10 @@ const Search = () => {
 						)}
 					>
 						<p className="text-lg font-medium text-black/85">Bài viết</p>
-						<Link to={""} className="hover:text-red-500">
+						<Link
+							to={`/search?topic=posts&q=${encodeURIComponent(textKeyWord)}`}
+							className="hover:text-red-500"
+						>
 							Xem thêm
 						</Link>
 					</li>
