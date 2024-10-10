@@ -164,7 +164,7 @@ const VoucherForm = () => {
 			};
 			const { data } = await createVoucher(formattedData as any);
 			toast.success(data?.message);
-			navigate("/admin/voucher");
+			navigate("/admin/product/voucher");
 
 		} catch (error) {
 			if (error instanceof AxiosError) {
@@ -186,7 +186,7 @@ const VoucherForm = () => {
 			};
 			const { data } = await updateVoucherById(formattedData as any);
 			toast.success(data?.message);
-			navigate("/admin/voucher");
+			navigate("/admin/product/voucher");
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				toast.error(error?.response?.data?.message);
@@ -264,7 +264,7 @@ const VoucherForm = () => {
 
 											<TooltipComponent label="Tự tạo mã voucher không bị trùng lặp">
 												<div
-													className="absolute size-7  right-1 top-1/2 -translate-y-1/2 flex items-center justify-center rounded-full group hover:bg-gray-50 cursor-pointer"
+													className="absolute flex items-center justify-center -translate-y-1/2 rounded-full cursor-pointer size-7 right-1 top-1/2 group hover:bg-gray-50"
 													onClick={handleGenerateCodeAuto}
 												>
 													<BsStars
@@ -564,7 +564,7 @@ const VoucherForm = () => {
 							<Button
 								type="button"
 								variant={"default"}
-								className="mt-2 w-full bg-white border text-black text-left hover:bg-gray-50 justify-start font-normal"
+								className="justify-start w-full mt-2 font-normal text-left text-black bg-white border hover:bg-gray-50"
 								onClick={() => {
 									setOpenProduct(true);
 								}}
