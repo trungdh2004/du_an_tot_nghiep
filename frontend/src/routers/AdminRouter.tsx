@@ -28,6 +28,8 @@ import OrderConfirmShipper from "@/pages/admin/order/OrderConfirmShipper";
 import VoucherForm from "@/pages/admin/Vouchers/VoucherForm";
 import VoucherList from "@/pages/admin/Vouchers/VoucherList";
 import LocationIndex from "@/pages/admin/Location/LocationIndex";
+import ShipperIndex from "@/pages/shipper/ShipperIndex";
+import ShipperDetail from "@/pages/admin/Shipper/ShipperDetail";
 
 const AdminRouter = [
 	{
@@ -46,6 +48,7 @@ const AdminRouter = [
 				path: "add",
 				element: <Dashboard />,
 			},
+			//Quản lý người dùng
 			{
 				path: "users",
 				element: <UserIndex />,
@@ -54,23 +57,15 @@ const AdminRouter = [
 				path: "users/detail",
 				element: <UserDetail />,
 			},
-			
 			{
-				path: "voucher",
-				element: <VoucherList />,
+				path: "shipper",
+				element: <ShipperIndex />,
 			},
 			{
-				path: "voucher/add",
-				element: <VoucherForm />,
+				path: "shipper/detail",
+				element: <ShipperDetail />,
 			},
-			{
-				path: "voucher/:id/edit",
-				element: <VoucherForm />,
-			},
-			{
-				path: "blogs",
-				element: <BlogList />,
-			},
+			// Quản lý sản phẩm
 			{
 				path: "product/update/:id",
 				element: <ProductUpdate />,
@@ -92,6 +87,18 @@ const AdminRouter = [
 				element: <VoucherForm />,
 			},
 			{
+				path: "product/voucher",
+				element: <VoucherList />,
+			},
+			{
+				path: "product/voucher/add",
+				element: <VoucherForm />,
+			},
+			{
+				path: "product/voucher/:id/edit",
+				element: <VoucherForm />,
+			},
+			{
 				path: "product/voucher/:id/edit",
 				element: <VoucherForm />,
 			},
@@ -99,15 +106,25 @@ const AdminRouter = [
 				path: "product/add",
 				element: <ProductAddPage />,
 			},
-			{
-				path: "blogs/tags",
-				element: <TagIndex />,
-			},
+			// Quản lý biến thể
 			{
 				path: "variant/size",
 				element: <SizeIndex />,
 			},
-			// Blogs
+			
+			{
+				path: "variant/color",
+				element: <ColorList />,
+			},
+			// Quản lý blogs
+			{
+				path: "blogs",
+				element: <BlogList />,
+			},
+			{
+				path: "blogs/tags",
+				element: <TagIndex />,
+			},
 			{
 				path: "blogs/new-blog",
 				element: <NewBlog />,
@@ -121,10 +138,6 @@ const AdminRouter = [
 				element: <MyBlogs />,
 			},
 			{
-				path: "variant/color",
-				element: <ColorList />,
-			},
-			{
 				path: "blogs",
 				element: <BlogList />,
 			},
@@ -132,7 +145,6 @@ const AdminRouter = [
 				path: "blogs/:id/",
 				element: <BlogDetail />,
 			},
-
 			//order
 			{
 				path: "order",

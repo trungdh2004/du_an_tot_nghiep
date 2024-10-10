@@ -29,7 +29,11 @@ const Search = () => {
 			try {
 				setLoading(true);
 				const { data } = await searchPopupService({ keyword });
-				setAutocomplete(data);
+				const fakeData = {
+					listBlog: [...data?.listBlog,...data?.listBlog,...data?.listBlog,...data?.listBlog,...data?.listBlog,...data?.listBlog,...data?.listBlog],
+					listProduct:[...data?.listProduct,...data?.listProduct,...data?.listProduct,...data?.listProduct,...data?.listProduct,...data?.listProduct,...data?.listProduct],
+				}
+				setAutocomplete(fakeData);
 			} catch (error) {
 				if (error instanceof AxiosError) {
 					toast.error(error.response?.data.message);
@@ -53,6 +57,7 @@ const Search = () => {
 		setIsOpen(false);
 		setAutocomplete([]);
 	};
+	
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger asChild>
@@ -60,7 +65,7 @@ const Search = () => {
 					<IoIosSearch strokeWidth={0.5} size={20} />
 				</div>
 			</DialogTrigger>
-			<DialogContent className="max-sm:max-w-[92%] rounded-md">
+			<DialogContent className="max-sm:max-w-[92%] rounded-md max-w-lg">
 				<DialogHeader className="pb-3 border-b border-gray-300">
 					<div className="flex items-center">
 						<label className="" htmlFor="search-header">
@@ -78,7 +83,7 @@ const Search = () => {
 				<div
 					className={cn(
 						"flex items-center gap-1",
-						textKeyWord.length <= 0 && "hidden",
+						textKeyWord?.length <= 0 && "hidden",
 					)}
 				>
 					{isLoading ? (
@@ -89,14 +94,14 @@ const Search = () => {
 
 					<p className={cn("text-sm text-gray-400")}>
 						{autocomplete &&
-						((autocomplete as ISearchPopup).listBlog.length > 0 ||
-							(autocomplete as ISearchPopup).listProduct.length > 0)
+						((autocomplete as ISearchPopup)?.listBlog?.length > 0 ||
+							(autocomplete as ISearchPopup)?.listProduct?.length > 0)
 							? "Kết quả cho"
 							: "Không có kết quả cho"}{" "}
 						'{textKeyWord}'
 					</p>
 				</div>
-				<ul className=" *:py-3 *:px-1 *:rounded *:relative">
+				<ul className=" *:py-1.5 *:px-1 *:rounded *:relative w-full max-h-80 overflow-y-auto scroll-custom">
 					<li
 						className={cn(
 							"hidden items-center justify-between border-b border-gray-200",
@@ -105,6 +110,7 @@ const Search = () => {
 					>
 						<p className="text-lg font-medium text-black/85">Sản phẩm</p>
 						<Link
+						onClick={handleChangePath}
 							to={`/search?topic=product&q=${encodeURIComponent(textKeyWord)}`}
 							className="hover:text-red-500"
 						>
@@ -120,15 +126,15 @@ const Search = () => {
 									className="block"
 								>
 									<div className="flex items-start gap-3">
-										<div className="overflow-hidden rounded-full size-11">
+										<div className="overflow-hidden rounded-full size-8 min-w-8 min-h-8">
 											<img
 												src={optimizeCloudinaryUrl(product?.thumbnail, 44, 44)}
 												alt=""
 												className="object-cover w-full h-full"
 											/>
 										</div>
-										<div className="">
-											<p className="text-sm ">{product?.name}</p>
+										<div className="flex-grow">
+											<p className="flex-grow text-sm truncate max-w-36 md:max-w-sm">{product?.name}</p>
 											<p className="text-xs text-red-500">
 												{formatCurrency(product?.price)}
 											</p>
@@ -145,7 +151,8 @@ const Search = () => {
 					>
 						<p className="text-lg font-medium text-black/85">Bài viết</p>
 						<Link
-							to={`/search?topic=posts&q=${encodeURIComponent(textKeyWord)}`}
+						onClick={handleChangePath}
+							to={`/search?topic=blog&q=${encodeURIComponent(textKeyWord)}`}
 							className="hover:text-red-500"
 						>
 							Xem thêm
@@ -160,7 +167,7 @@ const Search = () => {
 									className="block"
 								>
 									<div className="flex items-start gap-3">
-										<div className="overflow-hidden rounded-full size-11">
+										<div className="overflow-hidden rounded-full size-8 min-w-8 min-h-8">
 											<img
 												src={optimizeCloudinaryUrl(blog?.thumbnail_url, 44, 44)}
 												alt=""
@@ -168,7 +175,7 @@ const Search = () => {
 											/>
 										</div>
 										<div className="">
-											<p className="text-sm ">{blog?.meta_title}</p>
+											<p className="flex-grow text-sm truncate max-w-36 md:max-w-sm">{blog?.meta_title}</p>
 											<p className="text-xs text-gray-400">
 												{calculateTimeDistance(blog?.published_at)}
 											</p>
