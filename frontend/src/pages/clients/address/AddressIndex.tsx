@@ -23,14 +23,19 @@ import { TooltipComponent } from "@/components/common/TooltipComponent";
 import DialogConfirm from "@/components/common/DialogConfirm";
 import { FaLocationDot } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
+import NewAddress from "./NewAddress";
 const AddressIndex = () => {
+	const [open, setOpen] = useState<string | boolean>(false);
 	const [openEditById, setOpenEditById] = useState<string | null>(null);
 	const [openDeleteById, setopenDeleteById] = useState<string | null>(null);
 	const [pageIndex, setPageIndex] = useState(1);
 	const queryClient = useQueryClient();
 
 	const handleClose = () => {
-		setOpenEditById(null);
+		setOpen(false);
+	};
+	const handleCreate = () => {
+		setOpen(true);
 	};
 	const handleEdit = (id: string) => {
 		setOpenEditById(id);
@@ -87,6 +92,7 @@ const AddressIndex = () => {
 				<Skeleton className="h-[125px] w-full rounded-xl" />
 			</div>
 		);
+
 	return (
 		<>
 			<div className="padding">
@@ -94,7 +100,9 @@ const AddressIndex = () => {
 					<div className="flex justify-between items-center pb-4">
 						<h2 className="text-black font-semibold">Địa chỉ của bạn</h2>
 						<div className="">
-							<Button className="">Thêm địa chỉ</Button>
+							<Button onClick={() => handleCreate()} className="">
+								Thêm địa chỉ
+							</Button>
 						</div>
 					</div>
 					<div className="w-full grid grid-cols-12 gap-8">
@@ -106,10 +114,7 @@ const AddressIndex = () => {
 						) : (
 							data.content?.map((address: any, index: number) => {
 								return (
-									<div
-										className="w-full col-span-12 md:col-span-6 "
-										key={index}
-									>
+									<div className="w-full col-span-12  " key={index}>
 										<div
 											className={`w-full p-2 sm:p-5 lg:px-8 bg-slate-100 rounded-xl flex justify-between ${address.is_main === true ? `border-2 border-green-500` : ` `}`}
 										>
@@ -159,13 +164,8 @@ const AddressIndex = () => {
 							}}
 						/>
 					</div>
-					{!!openEditById && (
-						<EditAddress
-							open={!!openEditById}
-							handleClose={handleClose}
-							id={openEditById}
-						/>
-					)}
+
+					{!!open && <NewAddress open={!!open} handleClose={handleClose} />}
 					{!!openDeleteById && (
 						<DialogConfirm
 							open={!!openDeleteById}

@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import {
 	Form,
 	FormControl,
@@ -26,10 +26,10 @@ import AddressLocation from "./AddressLocation";
 import MapComponent from "@/components/map/Map";
 import MapSearchLocation from "@/components/map/MapSearchLocation";
 import { ICity, ICommune, IDistrict } from "@/types/address";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 interface IProps {
 	open: boolean;
-	id: string;
 	handleClose: () => void;
 }
 const formSchema = z.object({
@@ -75,11 +75,14 @@ const formSchema = z.object({
 	location: z.array(z.number()),
 });
 
-const NewAddress = ({ open, handleClose, id }: IProps) => {
+const NewAddress = ({ open, handleClose }: IProps) => {
 	const queryClient = useQueryClient();
 	const [districts, setDistricts] = useState<IDistrict[]>([]);
 	const [commune, setCommune] = useState<ICommune[]>([]);
 	const [query, setQuery] = useState("");
+	const [citys, setCitys] = useState<ICity[]>(
+		queryClient.getQueryData<ICity[]>(["city"]) || [],
+	);
 	const form = useForm({
 		resolver: zodResolver(formSchema),
 	});
@@ -134,6 +137,11 @@ const NewAddress = ({ open, handleClose, id }: IProps) => {
 		<>
 			<Dialog open={open} onOpenChange={handleClose}>
 				<DialogContent className="w-[90%] sm:max-w-[660px] rounded-md max-h-[90vh] p-2 sm:p-4 overflow-y-auto">
+					<DialogHeader>
+						<DialogTitle className="font-medium">
+							Tạo địa chỉ mới của bạn
+						</DialogTitle>
+					</DialogHeader>{" "}
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 							<div className="flex flex-row gap-3 w-full">
