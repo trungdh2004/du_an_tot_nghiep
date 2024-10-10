@@ -30,6 +30,8 @@ export interface IProduct {
   images: { url: string }[];
   slug: string;
   is_deleted: boolean;
+  is_simple: boolean;
+  is_hot: boolean;
   category: string;
   quantitySold: number;
   quantity: number;
