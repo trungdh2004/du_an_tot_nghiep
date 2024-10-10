@@ -54,7 +54,11 @@ class AuthController {
 
       const existingEmail = await UserModel.findOne({
         email: email,
+        provider:"credential"
       });
+
+      console.log({existingEmail});
+      
 
       if (!existingEmail) {
         return res.status(STATUS.BAD_REQUEST).json({

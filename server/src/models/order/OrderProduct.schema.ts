@@ -15,14 +15,6 @@ const OrderItemsSchema = new mongoose.Schema(
       enum: [0, 1, 2, 3, 4, 5, 6],
       default: 1,
     },
-    color:{
-      name:String,
-      code:String,
-    },
-    size:{
-      type:String,
-      required:true,
-    },
     price:{
       type:Number,
       required:true,
@@ -38,6 +30,14 @@ const OrderItemsSchema = new mongoose.Schema(
     attribute:{
       type:mongoose.Types.ObjectId,
       ref:"Attribute",
+    },
+    variant:{
+      type:String,
+      required:true,
+    },
+    is_simple:{
+      type:Boolean,
+      default:false
     },
     is_evaluate:{
       type:Boolean,
