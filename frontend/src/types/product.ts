@@ -76,3 +76,14 @@ export interface IFilterProduct {
 	fieldSort: string;
 	sort: 1 | -1;
 }
+export interface IProductSearch {
+	discount: number;
+	name: string;
+	price: number;
+	quantity: number;
+	quantitySold: number;
+	rating: number;
+	slug: string;
+	thumbnail: string;
+	_id: string;
+}

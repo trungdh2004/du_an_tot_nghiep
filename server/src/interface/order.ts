@@ -2,6 +2,7 @@ import mongoose, { Document } from "mongoose";
 import { IAddress } from "./address";
 import { IUser } from "./models";
 import { IAttribute, IProduct } from "./product";
+import { AttributeElement, ProductFindCart } from "./cart";
 
 export interface IOrder extends Document {
     _id:string;
@@ -35,18 +36,34 @@ export interface IOrder extends Document {
 
 export interface IOrderItem extends Document {
     _id:string;
-    product:string | IProduct;
+    product:IProduct;
     status:number;
     quantity:number;
     createdAt:string;
     updatedAt:string;
-    color:{
-        name:string,
-        code:string
-    },
-    size:string,
+    variant:string;
     price:number
-    attribute:string | IAttribute,
+    attribute:IAttribute,
     totalMoney:number
     is_evaluate:boolean
+    is_simple:boolean
 }
+
+
+export interface IListCart {
+    productId:string;
+    totalAmount:number;
+    items:IListCartItem[]
+}
+
+export interface IListCartItem {
+    attribute:AttributeElement,
+    discount:number;
+    name:string;
+    price:number;
+    productId:string;
+    quantity:number;
+    thumbnail:string;
+    _id:string;
+    is_simple:boolean
+} 

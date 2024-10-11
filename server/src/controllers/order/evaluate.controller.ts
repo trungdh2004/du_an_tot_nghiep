@@ -54,7 +54,7 @@ class EvaluateController {
           rating: +rating,
           user: user?.id,
           content: content,
-          attribute: `${orderItem.size} - ${orderItem.color.name}`
+          // attribute: `${orderItem.size} - ${orderItem.color.name}`
         }
       });
       console.log("5")

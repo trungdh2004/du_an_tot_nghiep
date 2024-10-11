@@ -8,5 +8,5 @@ export const cartItemValidation = Joi.object({
   quantity: Joi.number().required().messages({
     "any.required": "Bạn chưa chọn ảnh bài viết",
   }),
-  attribute:Joi.string().required().messages({})
+  attribute:Joi.string().allow(null).messages({})
 });

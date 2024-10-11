@@ -31,35 +31,38 @@ const CommentItem = ({ comment, setComment }: Props) => {
 	const [content, setContent] = useState(``);
 	const [pageIndex, setPageIndex] = useState(1);
 	const [check, setCheck] = useState<IPageComment | null>(null);
-	const [objectComment, setObjectComment] = useState<IObjectComment>({
-		pageIndex: pageIndex,
-		pageSize: 5,
-		commentId: comment?._id,
-		commentType: TYPE_COMMENT.COMMENT,
-	});
 	const [open, setOpen] = useState(false);
 	const [openFeedback, setOpenFeedback] = useState<string | null>(null);
 	const [openAnswer, setOpenAnswer] = useState(false);
 	const navigate = useNavigate();
 	const location = useLocation();
-	const handleLoadMoreComments = async () => {
+	const handleLoadMoreComments = async (cmtParent: any) => {
 		const newPageIndex = pageIndex + 1;
 		setPageIndex(newPageIndex);
-		await handleListcommentItems(newPageIndex);
+		await handleListcommentItems(newPageIndex, cmtParent);
 	};
-	const handleListcommentItems = async (newPageIndex: number) => {
+	const handleListcommentItems = async (
+		newPageIndex: number,
+		cmtParent: any,
+	) => {
 		try {
+			console.log("cmtpr", cmtParent);
+
 			const { data } = await getListComments({
-				...objectComment,
-				pageIndex: newPageIndex,
+				pageSize: 5,
+				commentId: comment?._id,
+				commentType: TYPE_COMMENT.COMMENT,
+				pageIndex: newPageIndex || 1,
 			});
+			console.log(data);
 
 			setComment((prev) => {
 				return prev?.map((comment) => {
-					if (comment._id === objectComment.commentId) {
+					if (comment._id === cmtParent._id) {
 						return {
 							...comment,
 							replies: [...comment.replies, ...data.content],
+							pageIndexReplies: data.pageIndex,
 						};
 					}
 					return comment;
@@ -71,6 +74,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 			console.log(error);
 		}
 	};
+
 	const handlOpenFeedback = (
 		commentId: string,
 		userRep?: string,
@@ -137,6 +141,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 			console.log(error);
 		}
 	};
+	// [...(comment.reactions || []), authUser?._id]
 	const handleDislike = async (commentId: string) => {
 		if (!isLoggedIn) {
 			const productUrl = location.pathname;
@@ -145,14 +150,18 @@ const CommentItem = ({ comment, setComment }: Props) => {
 		}
 		try {
 			const { data } = await reactionsComment(commentId, false);
+			console.log(data);
+			
 			setComment((prev) => {
 				return prev?.map((comment) => {
 					if (data.commentType === TYPE_COMMENT.PRODUCT) {
 						if (comment._id === commentId) {
 							return {
 								...comment,
-								reactions: [...(comment.reactions || []), authUser?._id],
-								reactions_count: comment.reactions.length + 1,
+								reactions: comment.reactions.filter(
+									(reaction) => reaction !== authUser?._id,
+								),
+								reactions_count: comment.reactions.length - 1,
 							};
 						}
 					} else {
@@ -192,9 +201,17 @@ const CommentItem = ({ comment, setComment }: Props) => {
 			setComment((prev) => {
 				return prev?.map((comment) => {
 					if (comment._id === data.data.comment_id) {
+						if (comment.replies.length > 0) {
+							console.log("abc");
+							return {
+								...comment,
+								replies: [data.data, ...(comment.replies || [])],
+								replies_count: comment.replies_count + 1,
+							};
+						}
 						return {
 							...comment,
-							replies: [data.data, ...(comment.replies || [])],
+							replies: [],
 							replies_count: comment.replies_count + 1,
 						};
 					}
@@ -281,7 +298,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 							)}
 							onClick={() => {
 								setOpenAnswer(true);
-								handleListcommentItems(1);
+								handleListcommentItems(1, comment);
 							}}
 						>
 							{comment?.replies_count} câu trả lời
@@ -356,7 +373,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 					<div
 						className="cursor-pointer"
 						onClick={() => {
-							handleLoadMoreComments();
+							handleLoadMoreComments(comment);
 						}}
 					>
 						<h3 className="font-bold text-sm text-slate-600 hover:underline pl-9">

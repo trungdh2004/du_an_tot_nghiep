@@ -7,6 +7,8 @@ import OrderModel from "../models/order/Order.schema";
 import { voucherValidation } from "../validation/voucher.validation";
 import { formatDataPaging } from "../common/pagingData";
 import { IVoucher } from "../interface/voucher";
+import CartItemModel from "../models/cart/CartItem.schema";
+import { IndexCartItem } from "../interface/cart";
 
 const generateCode = async (): Promise<string> => {
   let code = generateVoucherCode();
@@ -56,6 +58,117 @@ export const checkVoucher = (voucher: IVoucher) => {
     check: true,
     voucher,
   };
+};
+
+export const handleAmountVoucher = (
+  voucher: IVoucher,
+  totalMoney: number,
+  listProduct: {
+    productId: string;
+    totalMoney: number;
+  }[]
+) => {
+  if (voucher.type === "1") {
+    if (voucher.minimumOrderValue > totalMoney) {
+      return {
+        status: false,
+        amount: 0,
+        valueAmount: totalMoney,
+        message: "Tổng số tiền không thỏa mãn",
+      };
+    }
+
+    if (voucher.discountType === 1) {
+      const downAmount = voucher.discountValue;
+      const amount = totalMoney - downAmount;
+      if (amount < 0) {
+        return {
+          status: true,
+          amount: totalMoney,
+          valueAmount: 0,
+          message: "Tổng số tiền không thỏa mãn",
+        };
+      } else {
+        return {
+          status: true,
+          amount: downAmount,
+          valueAmount: amount,
+          message: "Tổng số tiền không thỏa mãn",
+        };
+      }
+    } else {
+      const downAmount = voucher.discountValue;
+      const percentAmount = (totalMoney * downAmount) / 100;
+      const checkDownVoucher =
+        percentAmount > voucher.maxAmount ? voucher.maxAmount : percentAmount;
+
+      return {
+        status: false,
+        amount: checkDownVoucher,
+        valueAmount: totalMoney - checkDownVoucher,
+        message: "",
+      };
+    }
+  } else {
+    const getCheckProduct = listProduct?.filter((item) =>
+      voucher.listUseProduct.includes(item.productId)
+    );
+
+    if (getCheckProduct.length === 0) {
+      return {
+        status: false,
+        amount: 0,
+        valueAmount: totalMoney,
+        message: "Voucher không thể áp dụng được",
+      };
+    }
+
+    const totalListPro = getCheckProduct.reduce((acc: number, item) => {
+      return acc + item.totalMoney;
+    }, 0);
+
+    if (voucher.minimumOrderValue > totalListPro) {
+      return {
+        status: false,
+        amount: 0,
+        valueAmount: totalMoney,
+        message: "Tổng số tiền không thỏa mãn",
+      };
+    }
+
+    if (voucher.discountType === 1) {
+      const downAmount = voucher.discountValue;
+      const amount = totalListPro - downAmount;
+      if (amount < 0) {
+        return {
+          status: true,
+          amount: totalListPro,
+          valueAmount: totalMoney - totalListPro,
+          message: "",
+        };
+      } else {
+        return {
+          status: true,
+          amount: downAmount,
+          valueAmount: totalMoney - downAmount,
+          message: "",
+        };
+      }
+    } else {
+      const downAmount = voucher.discountValue;
+      const percentAmount = (totalListPro * downAmount) / 100;
+
+      const checkDownVoucher =
+        percentAmount > voucher.maxAmount ? voucher.maxAmount : percentAmount;
+
+      return {
+        status: true,
+        amount: checkDownVoucher,
+        valueAmount: totalMoney - checkDownVoucher,
+        message: "",
+      };
+    }
+  }
 };
 
 class VoucherController {
@@ -136,8 +249,13 @@ class VoucherController {
 
   async getVoucherCode(req: RequestModel, res: Response) {
     try {
-      const { code, totalMoney = 0 } = req.body;
+      const { code, listId } = req.body;
       const user = req.user;
+      if (listId?.length === 0) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn sản phẩm",
+        });
+      }
 
       if (!code)
         return res.status(STATUS.BAD_REQUEST).json({
@@ -152,6 +270,21 @@ class VoucherController {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có voucher nào !!",
         });
+
+      const existingOrderVoucher = await OrderModel.findOne({
+        user: user?.id,
+        voucher: existingVoucher?.id,
+        voucherVersion: existingVoucher.version,
+        status: {
+          $ne: 0,
+        },
+      });
+
+      if (existingOrderVoucher) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Voucher này bạn đã sử dụng",
+        });
+      }
 
       if (existingVoucher.status === 0) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -181,30 +314,72 @@ class VoucherController {
         });
       }
 
-      if (existingVoucher.minimumOrderValue > totalMoney) {
+      const listCartItem = await CartItemModel.find<IndexCartItem>({
+        _id: {
+          $in: listId,
+        },
+      }).populate([
+        {
+          path: "product",
+          select: {
+            _id: 1,
+            discount: 1,
+            price: 1,
+            quantity: 1,
+          },
+        },
+        {
+          path: "attribute",
+        },
+      ]);
+
+      if (listCartItem?.length === 0) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message: "Sản phẩm chọn không đạt đủ điều kiện đơn hàng",
+          message: "Không có sản phẩm nào",
         });
       }
 
-      const existingOrderVoucher = await OrderModel.findOne({
-        user: user?.id,
-        voucher: existingVoucher?.id,
-        voucherVersion: existingVoucher.version,
-        status: {
-          $ne: 0,
-        },
+      const listProduct = listCartItem.map((item) => {
+        const productId = item.product._id;
+        let totalMoney = 0;
+
+        if (item.is_simple) {
+          totalMoney = item.product.discount * item.quantity;
+        } else {
+          totalMoney = item.attribute.discount * item.quantity;
+        }
+
+        return {
+          productId,
+          totalMoney,
+        };
       });
 
-      if (existingOrderVoucher) {
+      const totalMoney = listCartItem.reduce((sum, item) => {
+        let total = 0;
+        if (item.is_simple) {
+          total = item.product.discount * item.quantity;
+        } else {
+          total = item.attribute.discount * item.quantity;
+        }
+        return sum + total;
+      }, 0);
+
+      const valueCheck = handleAmountVoucher(
+        existingVoucher,
+        totalMoney,
+        listProduct
+      );
+
+      if (!valueCheck.status) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message: "Voucher này bạn đã sử dụng",
+          message: valueCheck.message,
         });
       }
 
       return res.status(STATUS.OK).json({
         message: "Lấy voucher thành công",
-        data: existingVoucher,
+        valueCheck,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
