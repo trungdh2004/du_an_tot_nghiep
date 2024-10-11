@@ -380,6 +380,7 @@ class VoucherController {
       return res.status(STATUS.OK).json({
         message: "Lấy voucher thành công",
         valueCheck,
+        voucher:existingVoucher
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
