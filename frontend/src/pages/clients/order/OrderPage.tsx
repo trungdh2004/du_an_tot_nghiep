@@ -18,11 +18,11 @@ import { toast } from "sonner";
 const OrderPage = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const paramsObject = Object.fromEntries(searchParams.entries());
-	const stateOrder = JSON.parse(paramsObject.state);
+  const stateOrder = JSON.parse(paramsObject.state);
+  console.log(stateOrder);
+  
 	const [orderParams, setOrderParams] = useState<any | {}>(stateOrder || {});
-	const [order, setOrder] = useState<any>({});
-	console.log(order);
-
+  const [order, setOrder] = useState<any>({});
 	const { mutate } = useMutation({
 		mutationKey: ["orderPagingCart"],
 		mutationFn: async (valueOrder) => {

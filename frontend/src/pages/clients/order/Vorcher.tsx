@@ -65,13 +65,6 @@ const Vorcher = ({ data, setOrderCheckout, setMoneyVoucher }: Props) => {
 
 	return (
 		<div className="py-2">
-			<button
-				onClick={() => {
-					console.log({ voucher });
-				}}
-			>
-				click
-			</button>
 			<div className="flex flex-col bg-white lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow">
 				<div className="flex lg:flex-row gap-3  items-center  justify-between py-2">
 					<div className="col-span-3">
@@ -124,7 +117,7 @@ const Vorcher = ({ data, setOrderCheckout, setMoneyVoucher }: Props) => {
 										{voucher?.endDate
 											? format(
 													new Date(voucher?.endDate),
-													"yyyy-MM-dd HH:mm:ss",
+													"yyyy-MM-dd",
 												)
 											: "Sai time"}
 									</p>
