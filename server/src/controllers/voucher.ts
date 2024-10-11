@@ -60,7 +60,7 @@ export const checkVoucher = (voucher: IVoucher) => {
   };
 };
 
-const handleAmountVoucher = (
+export const handleAmountVoucher = (
   voucher: IVoucher,
   totalMoney: number,
   listProduct: {
