@@ -113,7 +113,7 @@ const WrapperSearch = () => {
 
       <div>
         <InfiniteScroll
-          dataLength={dataSearch.content.length}
+          dataLength={dataSearch?.content?.length}
           next={handleNextPage}
           hasMore={dataSearch.pageIndex < dataSearch.totalPage}
           loader={<p className="text-sm text-center text-gray-400">Loading...</p>}
