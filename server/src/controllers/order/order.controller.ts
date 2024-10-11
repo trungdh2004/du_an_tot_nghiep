@@ -324,11 +324,11 @@ class OrderController {
           message: "Tạo đơn hàng thất bại",
         });
       }
-      await CartItemModel.deleteMany({
-        _id: {
-          $in: listId,
-        },
-      });
+      // await CartItemModel.deleteMany({
+      //   _id: {
+      //     $in: listId,
+      //   },
+      // });
       socketNotificationAdmin(
         `<p>Đơn hàng: <span style="color:blue;font-weight:500;">${newOrder.code}</span> vừa được đặt, vui lòng kiểm tra thông tin</p>`,
         TYPE_NOTIFICATION_ADMIN.ORDER,
