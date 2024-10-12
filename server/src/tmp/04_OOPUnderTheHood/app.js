@@ -1,7 +1,10 @@
 function Dog(name, breed) {
   this.name = name;
   this.breed = breed;
+
+
 }
+console.log("Dog: " + name);
 
 Dog.prototype.bark = function () {
   return `${this.name} says woof!`;
