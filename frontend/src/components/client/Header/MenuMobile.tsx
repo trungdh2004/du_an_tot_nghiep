@@ -51,7 +51,7 @@ const MenuMobile = () => {
 			<SheetContent side={"left"} className="flex flex-col gap-y-5">
 				<SheetHeader className={cn("hidden", isLoggedIn && "block")}>
 					<div className="flex items-center gap-3">
-						<div className="size-14 ">
+						<div className="size-10 min-w-10 min-h-10 max-w-10 max-h-10">
 							<img
 								className="object-cover w-full h-full rounded-full"
 								src={
