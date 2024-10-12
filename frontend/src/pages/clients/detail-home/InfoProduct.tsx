@@ -1,23 +1,23 @@
 import { formatCurrency } from "@/common/func";
-import StarRatings from "react-star-ratings";
-import ListColor from "./ListColor";
-import ListSize from "./ListSize";
+import ButtonLoading from "@/components/common/ButtonLoading";
 import InputQuantity from "@/components/common/InputQuantity";
 import { Button } from "@/components/ui/button";
-import { MdOutlineAddShoppingCart } from "react-icons/md";
-import { useEffect, useState, useCallback, useMemo } from "react";
-import { IProductDetail } from "@/types/product";
-import ButtonLoading from "@/components/common/ButtonLoading";
-import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-import { addProductToCart, buyNowSevices, pagingCart } from "@/service/cart";
-import { AxiosError } from "axios";
-import useCartAnimation from "@/hooks/useCartAnimation";
-import useCart from "@/store/cart.store";
-import { useCurrentRouteAndNavigation } from "@/hooks/router";
 import { useAuth } from "@/hooks/auth";
 import { useFetchNewProductsInTheCart } from "@/hooks/cart";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useCurrentRouteAndNavigation } from "@/hooks/router";
+import useCartAnimation from "@/hooks/useCartAnimation";
+import { cn } from "@/lib/utils";
+import { addProductToCart, buyNowSevices, pagingCartV2 } from "@/service/cart";
+import useCart from "@/store/cart.store";
+import { IProductDetail } from "@/types/product";
+import { AxiosError } from "axios";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { MdOutlineAddShoppingCart } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import StarRatings from "react-star-ratings";
+import { toast } from "sonner";
+import ListColor from "./ListColor";
+import ListSize from "./ListSize";
 
 type Props = {
 	product?: IProductDetail;
@@ -125,7 +125,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 		if (!isLoggedIn) {
 			return navigateIsLogin();
 		}
-		if (!attributeId) {
+		if (!attributeId && !product?.is_simple) {
 			setIsErrorAttribute(true);
 			return;
 		}
@@ -137,16 +137,16 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						isLoadingShopping: true,
 					});
 					await addProductToCart({
-						attribute: attributeId,
+						attribute: attributeId || null,
 						productId: product?._id as string,
 						quantity: purchaseQuantity,
 					});
-					const { data: dataCarts } = await pagingCart({ pageSize: 9999999 });
+					const { data: dataCarts } = await pagingCartV2();
 					setIsLoadingButton({
 						isLoadingBynow: false,
 						isLoadingShopping: false,
 					});
-					setCarts(dataCarts?.data?.content);
+					setCarts(dataCarts?.listData);
 					document.querySelector(".ablum-detail-product");
 					const itemElement = document.querySelector(
 						".ablum-detail-product",
@@ -164,7 +164,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 			case "buy-now":
 				try {
 					const { data } = await buyNowSevices({
-						attribute: attributeId,
+						attribute: attributeId || null,
 						productId: product?._id as string,
 						quantity: Number(purchaseQuantity),
 					});
@@ -235,26 +235,34 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						</span>
 					</div>
 					<div className="w-full space-y-3 md:space-y-5">
+						<p className={cn(" p-1.5 text-red-500 hidden text-xs",product?.is_simple && 'block')}>*Lưu ý: Đây là Sản phẩm tiêu chuẩn, không có tùy chọn màu và kích thước sản phẩm</p>
 						<div
 							className={cn(
 								"space-y-5 p-1.5 w-full",
 								isErrorAttribute && "bg-red-50",
 							)}
 						>
-							<ListColor
-								listColorExist={stateInfoProduct?.listColorExist}
-								onChoose={setChooseColorId}
-								setExitsListSize={setExitsListSize}
-								exitsListColor={exitsListColor}
-								setTotalQuantity={setTotalQuantity}
-							/>
-							<ListSize
-								listSizeExist={stateInfoProduct?.listSizeExist}
-								onChoose={setChooseSizeId}
-								exitsListSize={exitsListSize}
-								setExitsListColor={setExitsListColor}
-								setTotalQuantity={setTotalQuantity}
-							/>
+							<div
+								className={cn(
+									"w-full block space-y-3 md:space-y-5",
+									product?.is_simple && "hidden",
+								)}
+							>
+								<ListColor
+									listColorExist={stateInfoProduct?.listColorExist}
+									onChoose={setChooseColorId}
+									setExitsListSize={setExitsListSize}
+									exitsListColor={exitsListColor}
+									setTotalQuantity={setTotalQuantity}
+								/>
+								<ListSize
+									listSizeExist={stateInfoProduct?.listSizeExist}
+									onChoose={setChooseSizeId}
+									exitsListSize={exitsListSize}
+									setExitsListColor={setExitsListColor}
+									setTotalQuantity={setTotalQuantity}
+								/>
+							</div>
 							<div className="flex items-start max-md:flex-col max-md:gap-3 md:items-center">
 								<h3 className="text-base font-normal text-gray-500 min-w-28 max-w-28">
 									Số lượng

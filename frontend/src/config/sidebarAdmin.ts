@@ -1,5 +1,7 @@
+import { AiOutlineUsergroupAdd } from "react-icons/ai";
+import { BsTruckFront } from "react-icons/bs";
 import { CiDeliveryTruck, CiShoppingTag, CiStopwatch } from "react-icons/ci";
-import { FaBox, FaUsers, FaUsersCog } from "react-icons/fa";
+import { FaBox } from "react-icons/fa";
 import { GrAnalytics, GrBlog } from "react-icons/gr";
 import {
 	HiOutlineCheckCircle,
@@ -11,18 +13,16 @@ import {
 	HiOutlineTicket,
 } from "react-icons/hi2";
 import { IoColorPaletteOutline } from "react-icons/io5";
-import { LuLayoutDashboard, LuUserCircle } from "react-icons/lu";
-import { MdOutlinePostAdd } from "react-icons/md";
-import { PiResizeLight } from "react-icons/pi";
 import {
 	LiaShippingFastSolid,
 	LiaTruckLoadingSolid,
 	LiaUserAstronautSolid,
 } from "react-icons/lia";
+import { LuLayoutDashboard, LuUserCircle } from "react-icons/lu";
+import { MdOutlinePostAdd } from "react-icons/md";
+import { PiResizeLight } from "react-icons/pi";
+import { TbBasketCancel } from "react-icons/tb";
 import { VscAccount } from "react-icons/vsc";
-import { AiOutlineUsergroupAdd } from "react-icons/ai";
-import { FaBeer } from "react-icons/fa";
-import { BsClipboard2Check, BsClipboard2X, BsTruckFront } from "react-icons/bs";
 const sidebarConfig: any[] = [
 	{
 		path: "",
@@ -200,7 +200,7 @@ const sidebarConfig: any[] = [
 			},
 			{
 				path: "/ordercancel",
-				icon: BsClipboard2X,
+				icon: TbBasketCancel ,
 				isVisible: true,
 				label: "Đơn đã hủy",
 			},

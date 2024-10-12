@@ -33,6 +33,7 @@ export interface IProductDetail {
 	};
 	quantitySold: number;
 	quantity: number;
+	is_simple:boolean;
 	isSpecial: boolean;
 	attributes?: [IAttribute];
 	createdAt?: string;

@@ -47,15 +47,16 @@ const Category = ({ setSearchParamsObject }: Props) => {
 		query.invalidateQueries({ queryKey: ["productShop"] });
 	};
 	return (
-		<div className="w-full rounded-lg flex flex-col gap-3">
-			<h3 className="text-uppercase  font-semibold leading-7 tracking-wide lg:text-base md:text-sm sm:text-xs">
+		<div className="flex flex-col w-full gap-3 rounded-lg">
+			<h3 className="font-semibold leading-7 tracking-wide text-uppercase lg:text-base md:text-sm sm:text-xs">
 				Danh mục sản phẩm
 			</h3>
 
 			<div className="flex flex-col">
 				{category?.map((cate: any) => {
 					return (
-						<Label
+						<Label 
+							key={cate?._id}
 							className={cn(
 								`relative max-w-40 max-h-[50px] overflow-hidden flex items-center font-thin border-[#e9e9e9] cursor-pointer py-2 gap-2 rounded   hover:underline has-[:checked]:underline has-[:checked]:font-bold`,
 							)}
@@ -69,7 +70,7 @@ const Category = ({ setSearchParamsObject }: Props) => {
 								checked={
 									searchParams.get("category") === cate._id ? true : false
 								}
-								onClick={() => handleSearchCategory(cate._id)}
+								onChange={() => handleSearchCategory(cate._id)}
 							/>
 							<span
 								className={cn(
