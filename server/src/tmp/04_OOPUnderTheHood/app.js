@@ -14,13 +14,13 @@ Dog.prototype.sleep = function () {
   return `${this.name} is sleeping!`;
 };
 
-const myObj = {
-  color: "purple",
-  score: 99,
-  greet() {
-    console.log("HIII!");
-  },
-};
+// const myObj = {
+//   color: "purple",
+//   score: 99,
+//   greet() {
+//     console.log("HIII!");
+//   },
+// };
 
 class Dog {
   constructor(name, breed) {
