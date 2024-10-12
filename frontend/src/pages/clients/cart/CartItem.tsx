@@ -84,7 +84,7 @@ const CartItem = ({
 			setIsOpen,
 			setErrors,
 		});
-	};
+	};	
 	return (
 		<div key={item._id} className="flex items-center item-group">
 			<div
@@ -92,7 +92,8 @@ const CartItem = ({
 					"flex md:flex-row-reverse  min-w-[36px] md:min-w-[58px] md:pl-5 md:pr-3",
 				)}
 			>
-				{item?.attribute?._id && item?.attribute?.quantity ? (
+				{(item?.attribute?._id && item?.attribute?.quantity) ||
+				item?.is_simple ? (
 					<Checkbox
 						checked={checked}
 						onCheckedChange={() =>
@@ -115,11 +116,8 @@ const CartItem = ({
 					/>
 					<div className="absolute inset-x-0 bottom-0 bg-black/45">
 						<p className="text-xs text-center text-white">
-							{!item?.attribute?._id
-								? "Không khả dụng"
-								: !item?.attribute?.quantity
-									? "Hết hàng"
-									: ""}
+							{!item?.attribute?._id && !item?.is_simple && "Không khả dụng"}
+							{!item?.attribute?.quantity && !item?.is_simple ? "Hết hàng" : ""}
 						</p>
 					</div>
 				</div>
@@ -137,7 +135,7 @@ const CartItem = ({
 					>
 						{item.name}
 					</Link>
-					<div className="inline-block">
+					<div className={cn(item?.is_simple ? "hidden" : "inline-block")}>
 						<Attribute
 							isOpen={isOpen}
 							setIsOpen={setIsOpen}
@@ -170,23 +168,28 @@ const CartItem = ({
 								className={cn(
 									"line-through text-black/50 text-[8px]",
 									!item?.attribute?._id ||
-										(!item?.attribute?.quantity && "hidden"),
+										(!item?.is_simple &&
+											!item?.attribute?.quantity &&
+											"hidden"),
 								)}
 							>
-								{formatCurrency(item?.attribute?.price || 0)}
+								{formatCurrency(item?.attribute?.price || item?.price || 0)}
 							</span>
 							<span
 								className={cn(
-									!item?.attribute?._id || !item?.attribute?.quantity
+									!item?.is_simple &&
+										(!item?.attribute?._id || !item?.attribute?.quantity)
 										? "text-gray-700"
 										: "text-red-500 font-bold",
 								)}
 							>
-								{formatCurrency(item?.attribute?.discount || 0)}
+								{formatCurrency(
+									item?.attribute?.discount || item?.discount || 0,
+								)}
 							</span>
 						</div>
 						<div className="ml-auto">
-							{item?.attribute?._id && item?.attribute?.quantity ? (
+							{(item?.attribute?._id && item?.attribute?.quantity) || item?.is_simple ? (
 								<InputQuantity
 									size="mobile"
 									className="w-20"
@@ -205,25 +208,27 @@ const CartItem = ({
 				<span
 					className={cn(
 						"line-through text-black/50",
-						!item?.attribute?.discount && "hidden",
+						!item?.is_simple && !item?.attribute?.discount && "hidden",
 					)}
 				>
-					{formatCurrency(item?.attribute?.price || 0)}
+					{formatCurrency(item?.attribute?.price || item?.price || 0)}
 				</span>
 				<span
 					className={cn(
-						item?.attribute?.discount ? "text-red-500" : "text-gray-700",
+						item?.attribute?.discount || item?.is_simple
+							? "text-red-500"
+							: "text-gray-700",
 					)}
 				>
-					{formatCurrency(item?.attribute?.discount || 0)}
+					{formatCurrency(item?.attribute?.discount || item?.discount || 0)}
 				</span>
 			</div>
 			<div className="hidden lg:flex w-[15.4265%] text-center items-center justify-center">
-				{item?.attribute?._id && item?.attribute?.quantity ? (
+				{item?.attribute?._id && item?.attribute?.quantity || item?.is_simple ? (
 					<InputQuantity
 						size="small"
 						defaultValue={item?.quantity}
-						maxTotal={item?.attribute?.quantity}
+						maxTotal={item?.quantity || item?.attribute?.quantity }
 						getValue={handleChangeQuantity}
 					/>
 				) : (
@@ -233,9 +238,9 @@ const CartItem = ({
 			<div className="hidden lg:block w-[10.43557%] text-center">
 				<span className="text-red-500">
 					{formatCurrency(
-						item?.attribute?.discount
-							? item?.attribute?.discount * Number(item?.quantity)
-							: 0,
+						item?.is_simple
+							? item?.discount * Number(item?.quantity)
+							: item?.attribute?.discount * Number(item?.quantity) || 0,
 					)}
 				</span>
 			</div>

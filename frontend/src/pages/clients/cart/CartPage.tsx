@@ -1,10 +1,15 @@
+import { VoucherIcon } from "@/assets/svg";
 import { formatCurrency } from "@/common/func";
 import DialogConfirm from "@/components/common/DialogConfirm";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useFetchNewProductsInTheCart } from "@/hooks/cart";
 import { cn } from "@/lib/utils";
-import { deleteCartItem, pagingCart } from "@/service/cart";
+import { deleteCartItem, pagingCartV2 } from "@/service/cart";
+import { createStateUrlCart } from "@/service/order";
+import { takeApplyDiscountCode } from "@/service/voucher";
 import useCart from "@/store/cart.store";
+import { IVoucher } from "@/types/voucher";
 import { AxiosError } from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { HiOutlineTrash } from "react-icons/hi";
@@ -12,11 +17,6 @@ import { IoClose } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import CartGroup from "./CartGroup";
-import { takeApplyDiscountCode } from "@/service/voucher";
-import { IVoucher } from "@/types/voucher";
-import { VoucherIcon } from "@/assets/svg";
-import { createStateUrlCart } from "@/service/order";
-import { useFetchNewProductsInTheCart } from "@/hooks/cart";
 
 type CheckedState = Record<string, boolean>;
 
@@ -46,12 +46,15 @@ const CartPage = () => {
 		error: "",
 	});
 	const isItemValid = useCallback((item: any) => {
+		if(item?.is_simple){
+			return true;
+		}
 		return item?.attribute?._id && item?.attribute?.quantity > 0;
 	}, []);
 	useEffect(() => {
 		(async () => {
-			const { data } = await pagingCart({ pageSize: 999999 });
-			setCarts(data?.data?.content);
+			const { data } = await pagingCartV2();
+			setCarts(data?.listData);
 		})();
 	}, []);
 	useEffect(() => {
@@ -70,9 +73,11 @@ const CartPage = () => {
 				const groupTotals = cart?.items?.reduce(
 					(groupAcc, item) => {
 						if (isItemValid(item) && checkedState[item?._id as string]) {
+							console.log("Checking",item);
+							
 							groupAcc.totalQuantity += 1;
 							groupAcc.totalAmount +=
-								(item?.attribute?.discount || 0) * (item?.quantity || 0);
+								(item?.attribute?.discount || item?.discount || 0) * (item?.quantity || 0);
 						}
 						return groupAcc;
 					},

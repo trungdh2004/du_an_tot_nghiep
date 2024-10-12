@@ -41,9 +41,11 @@ const DetailProduct = () => {
 							<>
 								<BreadcrumbSeparator />
 								<BreadcrumbItem>
-									<Link to={`/shop?category=${data?.category?._id}`}>
-										<BreadcrumbLink>{data?.category?.name}</BreadcrumbLink>
-									</Link>
+									<div>
+										<Link to={`/shop?category=${data?.category?._id}`}>
+											<BreadcrumbLink>{data?.category?.name}</BreadcrumbLink>
+										</Link>
+									</div>
 								</BreadcrumbItem>
 							</>
 						)}
