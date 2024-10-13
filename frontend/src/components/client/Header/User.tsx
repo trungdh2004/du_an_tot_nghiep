@@ -124,7 +124,7 @@ const User = () => {
 					)}
 				>
 					<Link to={"/shipper/auth"} className="block w-full h-full">
-						Đăng ký vận chuyển
+						Đăng ký giao hàng
 					</Link>
 				</DropdownMenuItem>
 				<DropdownMenuItem
@@ -136,8 +136,8 @@ const User = () => {
 							: "hidden",
 					)}
 				>
-					<Link to={"/"} className="block w-full h-full">
-						Vận chuyển
+					<Link to={"/shipper"} className="block w-full h-full">
+						Giao hàng
 					</Link>
 				</DropdownMenuItem>
 				<DropdownMenuItem

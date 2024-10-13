@@ -46,9 +46,9 @@ const InputQuantity: React.FC<InputQuantityProps> = ({
 		[value, updateValue],
 	);
 
-	useEffect(() => {
-		updateValue(defaultValue);
-	}, [defaultValue, updateValue]);
+	// useEffect(() => {
+	// 	updateValue(defaultValue);
+	// }, [defaultValue, updateValue]);
 
 	const sizeClasses = {
 		small: "h-8 text-sm",

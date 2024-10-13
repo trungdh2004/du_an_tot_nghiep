@@ -28,7 +28,10 @@ export function optimizeCloudinaryUrl(
 		"e_vibrance:50", // Tăng sự sống động của màu sắc
 		// "e_hdr:100", // Áp dụng hiệu ứng HDR
 	];
-
+	
+	if(!/cloudinary/.test(url)){
+		return url
+	}
 	if (width) transformations.push(`w_${width}`);
 	if (height) transformations.push(`h_${height}`);
 

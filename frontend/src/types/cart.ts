@@ -11,10 +11,12 @@ export interface ICartItem {
 	quantity?: number;
 	quantitySold?: number;
 	attributeProduct: IAttribute[];
+	is_simple:boolean;
 }
 export interface ICart {
 	attributes: IAttribute[];
 	items: ICartItem[];
+	is_simple:boolean;
 	product: IProduct;
 	createdAt: string;
 	listColor: [

@@ -22,5 +22,14 @@ export const updateStatusShippedOrder = async (id: string): Promise<any> =>
 export const pagingShipper = async (ObjectSearchShipper: any) =>
 	instance.post(`/shipper/paging`, ObjectSearchShipper);
 
-export const pagingOrderShipper =  (pageIndex?:number,status?:number) =>
-	instance.post(`/shipper/pagingOrderShipper?page=${pageIndex}`, {status});
+export const pagingOrderShipper = (pageIndex?: number, status?: number) =>
+	instance.post(`/shipper/pagingOrderShipper?page=${pageIndex}`, { status });
+export const updateActionShippers = ({
+	listId,
+	type = 1,
+	isBlock = false,
+}: {
+	listId: string[];
+	type?: number;
+	isBlock?:boolean
+}) => instance.put(`/shipper/actionListShipper`, { listId, type,isBlock });

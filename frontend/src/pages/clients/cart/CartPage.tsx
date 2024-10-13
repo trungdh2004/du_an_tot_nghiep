@@ -1,10 +1,15 @@
+import { VoucherIcon } from "@/assets/svg";
 import { formatCurrency } from "@/common/func";
 import DialogConfirm from "@/components/common/DialogConfirm";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useFetchNewProductsInTheCart } from "@/hooks/cart";
 import { cn } from "@/lib/utils";
-import { deleteCartItem, pagingCart } from "@/service/cart";
+import { deleteCartItem, pagingCartV2 } from "@/service/cart";
+import { createStateUrlCart } from "@/service/order";
+import { takeApplyDiscountCode } from "@/service/voucher";
 import useCart from "@/store/cart.store";
+import { IVoucher } from "@/types/voucher";
 import { AxiosError } from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { HiOutlineTrash } from "react-icons/hi";
@@ -12,16 +17,13 @@ import { IoClose } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import CartGroup from "./CartGroup";
-import { takeApplyDiscountCode } from "@/service/voucher";
-import { IVoucher } from "@/types/voucher";
-import { VoucherIcon } from "@/assets/svg";
-import { createStateUrlCart } from "@/service/order";
-import { useFetchNewProductsInTheCart } from "@/hooks/cart";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type CheckedState = Record<string, boolean>;
 
 const CartPage = () => {
 	const navigate = useNavigate();
+	const [isLoading, setIsLoading] = useState(false);
 	const [isModalConfirm, setIsModalConfirm] = useState(false);
 	const { carts, totalCart, itemCart, setItemCart, setTotalCart, setCarts } =
 		useCart();
@@ -46,12 +48,24 @@ const CartPage = () => {
 		error: "",
 	});
 	const isItemValid = useCallback((item: any) => {
+		if (item?.is_simple) {
+			return true;
+		}
 		return item?.attribute?._id && item?.attribute?.quantity > 0;
 	}, []);
 	useEffect(() => {
 		(async () => {
-			const { data } = await pagingCart({ pageSize: 999999 });
-			setCarts(data?.data?.content);
+			try {
+				setIsLoading(true);
+				const { data } = await pagingCartV2();
+				setCarts(data?.listData);
+			} catch (error) {
+				if (error instanceof AxiosError) {
+					toast.error(error?.response?.data?.message);
+				}
+			} finally {
+				setIsLoading(false);
+			}
 		})();
 	}, []);
 	useEffect(() => {
@@ -72,7 +86,8 @@ const CartPage = () => {
 						if (isItemValid(item) && checkedState[item?._id as string]) {
 							groupAcc.totalQuantity += 1;
 							groupAcc.totalAmount +=
-								(item?.attribute?.discount || 0) * (item?.quantity || 0);
+								(item?.attribute?.discount || item?.discount || 0) *
+								(item?.quantity || 0);
 						}
 						return groupAcc;
 					},
@@ -276,6 +291,20 @@ const CartPage = () => {
 			}
 		}
 	};
+	if (isLoading) {
+		return (
+			<div className="px-0 sm:px-[30px] md:px-[40px] xl:px-[50px] 2xl:px-[60px] w-full  py-5 space-y-2">
+				<Skeleton className="w-full h-10 " />
+				<Skeleton className="w-full h-20 " />
+				<Skeleton className="w-full h-20 " />
+				<Skeleton className="w-full h-20 " />
+				<Skeleton className="w-full h-20 " />
+				<Skeleton className="w-full h-20 " />
+				<Skeleton className="w-full h-20 " />
+				<Skeleton className="w-full h-20 " />
+			</div>
+		);
+	}
 	return (
 		<>
 			<DialogConfirm
@@ -296,7 +325,7 @@ const CartPage = () => {
 				}}
 			/>
 			<section className="px-0 sm:px-[30px] md:px-[40px] xl:px-[50px] 2xl:px-[60px] w-full  py-5">
-				{carts?.length <= 0 ? (
+				{carts?.length <= 0 && !isLoading ? (
 					<div className="flex flex-col items-center justify-center gap-3 h-[21rem]">
 						<div className="w-28">
 							<img src="/cart-is-empty.png" alt="" className="w-full h-auto" />

@@ -6,10 +6,10 @@ import type { ProductOrderItem, ProductOrder } from "@/types/order";
 const ProductOrder = ({ data }: any) => {
 	return (
 		<div className="grid grid-cols-1">
-			<div className="lg:flex md:flex flex-col gap-3 bg-white my-2 py-2 hidden lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow">
-				<div className="lg:grid lg:grid-cols-6 md:grid md:grid-cols-6 lg:px-4 md:px-3 hidden">
+			<div className="flex-col hidden gap-3 py-2 my-2 bg-white border border-gray-200 rounded-none lg:flex md:flex lg:rounded-md md:rounded-md box-shadow">
+				<div className="hidden lg:grid lg:grid-cols-6 md:grid md:grid-cols-6 lg:px-4 md:px-3">
 					<div className="col-span-3">
-						<h3 className="lg:text-lg text-base font-medium">Sản phẩm</h3>
+						<h3 className="text-base font-medium lg:text-lg">Sản phẩm</h3>
 					</div>
 					<div className="col-span-1 text-right">
 						<h3 className="text-sm">Đơn giá </h3>
@@ -92,8 +92,8 @@ const ProductOrder = ({ data }: any) => {
 									},
 								)}
 								<hr />
-								<div className="px-4 lg:self-end md:self-end justify-between pt-3 flex gap-4 items-center">
-									<p className="lg:text-sm md:text-sm text-xs ">
+								<div className="flex items-center justify-between gap-4 px-4 pt-3 lg:self-end md:self-end">
+									<p className="text-xs lg:text-sm md:text-sm ">
 										Tổng số tiền ({product.items.length} sản phẩm) :
 									</p>
 									<span className="lg:text-lg md:text-lg text-base font-normal text-[#f78138]">
@@ -105,7 +105,7 @@ const ProductOrder = ({ data }: any) => {
 					);
 				})
 			) : (
-				<div className="flex flex-col gap-3 items-center justify-center bg-white my-2 py-2 lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow">
+				<div className="flex flex-col items-center justify-center gap-3 py-2 my-2 bg-white border border-gray-200 rounded-none lg:rounded-md md:rounded-md box-shadow">
 					<img
 						src={productNotFound}
 						alt=""

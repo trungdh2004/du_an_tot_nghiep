@@ -6,6 +6,8 @@ import { motion, Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "usehooks-ts";
 import sidebarAccount from "@/config/sidebarAccount";
+import { useAuth } from "@/hooks/auth";
+import { optimizeCloudinaryUrl } from "@/common/localFunction";
 
 const itemVariants: Variants = {
 	open: {
@@ -18,6 +20,7 @@ const itemVariants: Variants = {
 
 const AccountLayout = () => {
 	const [isOpen, setIsOpen] = useState(true);
+	const {authUser} = useAuth();
 	const isMobile = useMediaQuery("(max-width: 1024px)");
 	const router = useNavigate()
 
@@ -33,7 +36,7 @@ const AccountLayout = () => {
 	return (
 		<>
 			<div className="padding max-md:px-0 min-h-[calc(100vh-60px)] ">
-				<div className="flex flex-col  lg:flex-row w-full gap-2 lg:gap-8 py-2 lg:py-12 px-0 relative">
+				<div className="relative flex flex-col w-full gap-2 px-0 py-2 lg:flex-row lg:gap-8 lg:py-12">
 					<div className="block w-full lg:w-[250px]">
 						<div>
 							<motion.nav
@@ -41,15 +44,15 @@ const AccountLayout = () => {
 								animate={isOpen ? "open" : "closed"}
 								className="relative"
 							>
-								<motion.button className="w-full border-b flex items-center border-blue-400 px-2 ">
-									<div className="p-2 sm:pb-4 w-full flex gap-2 items-center flex-1">
-										<div className="size-8 sm:size-12 rounded-full border overflow-hidden">
-											<img src="/avatar_25.jpg" className="w-full h-full " />
+								<motion.button className="flex items-center w-full px-2 border-b border-blue-400 ">
+									<div className="flex items-center flex-1 w-full gap-2 p-2 sm:pb-4">
+										<div className="overflow-hidden border rounded-full size-8 sm:size-12">
+											<img src={optimizeCloudinaryUrl(authUser?.avatarUrl as string,50,50)} className="w-full h-full " />
 										</div>
 										<div className="">
-											<p className="font-semibold">Đỗ Hữu Trung</p>
-											<p className="md:flex items-center text-sm text-gray-400 cursor-pointer font-medium hidden">
-												<MdEdit className=" mr-1" size={16} /> Sửa hồ sơ
+											<p className="font-semibold">{authUser?.full_name}</p>
+											<p className="items-center hidden text-sm font-medium text-gray-400 cursor-pointer md:flex">
+												<MdEdit className="mr-1 " size={16} /> Sửa hồ sơ
 											</p>
 										</div>
 									</div>
@@ -61,7 +64,7 @@ const AccountLayout = () => {
 										onClick={() => setIsOpen(!isOpen)}
 										transition={{ duration: 0.2 }}
 										style={{ originY: 0.55 }}
-										className="p-2 rounded-full hover:bg-gray-50/50 text-blue-500 lg:hidden "
+										className="p-2 text-blue-500 rounded-full hover:bg-gray-50/50 lg:hidden "
 									>
 										<svg
 											width="15"
