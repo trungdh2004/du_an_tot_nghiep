@@ -7,29 +7,28 @@ import CategoryIndex from "@/pages/admin/category/CategoryIndex";
 import ColorList from "@/pages/admin/color/ColorList";
 import Dashboard from "@/pages/admin/Dashboard/Dashboard";
 
-import UserDetail from "@/pages/admin/users/UserDetail";
-import UserIndex from "@/pages/admin/users/UserIndex";
-import SizeIndex from "@/pages/admin/size/SizeIndex";
-import ProductIndex from "@/pages/admin/product/ProductIndex";
-import ProductUpdate from "@/pages/admin/product/ProductUpdate";
 import MyBlogs from "@/pages/admin/Blogs/MyBlog";
-import TagIndex from "@/pages/admin/tags/TagIndex";
-import PrivateRouter from "./PrivateRouter";
-import ProductAddPage from "@/pages/admin/product/ProductAdd";
-import OrderNeedConfirm from "@/pages/admin/order/OrderNeedConfirm";
+import LocationIndex from "@/pages/admin/Location/LocationIndex";
 import OrderById from "@/pages/admin/order/OrderById";
+import OrderCancel from "@/pages/admin/order/OrderCancel";
 import OrderConfirm from "@/pages/admin/order/OrderConfirm";
+import OrderConfirmShipper from "@/pages/admin/order/OrderConfirmShipper";
+import OrderNeedConfirm from "@/pages/admin/order/OrderNeedConfirm";
+import OrderReceived from "@/pages/admin/order/OrderReceived";
 import OrderShip from "@/pages/admin/order/OrderShip";
 import OrderShipSuccess from "@/pages/admin/order/OrderShipSuccess";
-import OrderReceived from "@/pages/admin/order/OrderReceived";
-import OrderCancel from "@/pages/admin/order/OrderCancel";
-import path from "path";
-import OrderConfirmShipper from "@/pages/admin/order/OrderConfirmShipper";
+import ProductAddPage from "@/pages/admin/product/ProductAdd";
+import ProductIndex from "@/pages/admin/product/ProductIndex";
+import ProductUpdate from "@/pages/admin/product/ProductUpdate";
+import SizeIndex from "@/pages/admin/size/SizeIndex";
+import TagIndex from "@/pages/admin/tags/TagIndex";
+import UserDetail from "@/pages/admin/users/UserDetail";
+import UserIndex from "@/pages/admin/users/UserIndex";
 import VoucherForm from "@/pages/admin/Vouchers/VoucherForm";
 import VoucherList from "@/pages/admin/Vouchers/VoucherList";
-import LocationIndex from "@/pages/admin/Location/LocationIndex";
-import ShipperIndex from "@/pages/shipper/ShipperIndex";
-import ShipperDetail from "@/pages/admin/Shipper/ShipperDetail";
+import PrivateRouter from "./PrivateRouter";
+import UserShipper from "@/pages/admin/users/shipper/UserShipper";
+import UserShipperDetail from "@/pages/admin/users/shipper/ShipperDetail";
 
 const AdminRouter = [
 	{
@@ -48,7 +47,7 @@ const AdminRouter = [
 				path: "add",
 				element: <Dashboard />,
 			},
-			//Quản lý người dùng
+			//Quản lý người dùng, vận chuyển, khách hàng, nhân viên
 			{
 				path: "users",
 				element: <UserIndex />,
@@ -58,12 +57,12 @@ const AdminRouter = [
 				element: <UserDetail />,
 			},
 			{
-				path: "shipper",
-				element: <ShipperIndex />,
+				path: "users/shipper",
+				element: <UserShipper />,
 			},
 			{
-				path: "shipper/detail",
-				element: <ShipperDetail />,
+				path: "users/shipper/detail",
+				element: <UserShipperDetail />,
 			},
 			// Quản lý sản phẩm
 			{
@@ -111,7 +110,7 @@ const AdminRouter = [
 				path: "variant/size",
 				element: <SizeIndex />,
 			},
-			
+
 			{
 				path: "variant/color",
 				element: <ColorList />,

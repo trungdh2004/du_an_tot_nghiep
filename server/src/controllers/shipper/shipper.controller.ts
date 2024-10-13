@@ -69,7 +69,7 @@ class ShipperController {
 
   async pagingShipper(req: RequestModel, res: Response) {
     try {
-      const { pageSize, pageIndex, active, isBlock, keyword } = req.body;
+      const { pageSize, pageIndex, active, isBlock, keyword,tab } = req.body;
 
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
@@ -95,7 +95,11 @@ class ShipperController {
           is_block: isBlock,
         };
       }
-
+      if(tab){
+        queryActive = {
+          active: tab === 1,
+        };
+      }
       const listData = await ShipperModel.find({
         ...queryKeyword,
         ...queryActive,

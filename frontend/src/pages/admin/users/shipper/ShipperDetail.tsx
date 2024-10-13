@@ -3,7 +3,7 @@ import React from 'react'
 import SimpleBarChart from '@/components/common/Chart';
 import { Button } from '@/components/ui/button';
 
-const ShipperDetail = () => {
+const UserShipperDetail = () => {
   return (
 		<div className="grid w-full grid-cols-1 gap-8 lg:grid-cols-8">
 			<div className="grid order-2 col-span-1 lg:col-span-6 lg:order-1">
@@ -46,4 +46,4 @@ const ShipperDetail = () => {
 	);
 }
 
-export default ShipperDetail
+export default UserShipperDetail

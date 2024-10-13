@@ -49,7 +49,7 @@ const sidebarConfig: any[] = [
 				path: "/shipper",
 				icon: LiaShippingFastSolid,
 				isVisible: true,
-				label: "Vận chuyển",
+				label: "Giao hàng",
 			},
 			{
 				path: "/client",
