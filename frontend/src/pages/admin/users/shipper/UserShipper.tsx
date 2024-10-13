@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { IUser } from "@/contexts/AuthContext";
-import { pagingShipper } from "@/service/shipper";
+import { pagingShipper, updateActionShippers } from "@/service/shipper";
 import {
 	BanManyUser,
 	banUser,
@@ -35,6 +35,7 @@ import { toast } from "sonner";
 import { useDebounceCallback } from "usehooks-ts";
 import { BsPersonFillCheck } from "react-icons/bs";
 import { cn } from "@/lib/utils";
+import { AxiosError } from "axios";
 interface IData {
 	_id: string;
 	user: IUser;
@@ -83,7 +84,7 @@ const UserShipper = () => {
 	const [openUnbanManyId, setopenUnbanManyId] = useState<
 		string | boolean | null
 	>(null);
-
+	const [isOpenUpdateActive,setIsOpenUpdateActive] = useState(false);
 	const debounced = useDebounceCallback((inputValue: string) => {
 		setSearchObject((prev) => ({
 			...prev,
@@ -132,7 +133,7 @@ const UserShipper = () => {
 
 	const handleBlock = async (id: string) => {
 		try {
-			const { data } = await banUser(id);
+			const { data } = await updateActionShippers({listId:[id],type:1,isBlock:true});
 			setopenBanId(null);
 			handlePagingUser();
 			toast.success("Đã cấm người dùng thành công");
@@ -143,7 +144,7 @@ const UserShipper = () => {
 
 	const handleUnBlock = async (id: string) => {
 		try {
-			const { data } = await unBanUser(id);
+			const { data } =  await updateActionShippers({listId:[id],type:2,isBlock:true});;
 			setopenUnbanId(null);
 			handlePagingUser();
 			toast.success("Bỏ cấm người dùng thành công");
@@ -152,9 +153,9 @@ const UserShipper = () => {
 		}
 	};
 
-	const handleBanMany = async (id: string) => {
+	const handleBanMany = async (listId: string[]) => {
 		try {
-			const { data } = await BanManyUser(id);
+			const { data } = await updateActionShippers({listId,type:1,isBlock:true});
 			setopenBanManyId(null);
 			handlePagingUser();
 			setListRowSelected([]);
@@ -165,9 +166,9 @@ const UserShipper = () => {
 		}
 	};
 
-	const handleUnBanMany = async (id: string) => {
+	const handleUnBanMany = async (listId: string[]) => {
 		try {
-			const { data } = await unBanManyUser(id);
+			const { data } = await updateActionShippers({listId,type:2,isBlock:true});
 			setopenUnbanManyId(null);
 			setListRowSelected([]);
 			setRowSelection({});
@@ -184,7 +185,18 @@ const UserShipper = () => {
 			pageIndex: 1,
 		}));
 	};
-
+	const handleUpdateActive =async (ids: string[],type:number=1) => { 
+		try {
+			 const {data} = await updateActionShippers({listId:ids,type})
+			 handlePagingUser();
+			 toast.success(data?.message);
+		} catch (error) {
+			if(error instanceof AxiosError){
+				toast.error(error?.response?.data?.message);
+			}
+		}
+	}
+	;
 	const columns: ColumnDef<IData>[] = [
 		{
 			id: "select",
@@ -308,7 +320,7 @@ const UserShipper = () => {
 								</DropdownMenuItem>
 							) : (
 								<DropdownMenuItem
-									className="text-red-400"
+									className={cn("text-red-400 hidden",row?.original?.active && 'block')}
 									onClick={() => setopenBanId(row?.original?._id)}
 								>
 									Cấm
@@ -368,7 +380,7 @@ const UserShipper = () => {
 							<>
 								<Button
 									onClick={() => {
-										setopenBanManyId(true);
+										setIsOpenUpdateActive(true);
 									}}
 									className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
 								> 
@@ -563,6 +575,15 @@ const UserShipper = () => {
 					content="Bỏ cấm mục người dùng"
 					handleSubmit={() => handleUnBanMany(listIdUser)}
 					labelConfirm="Bỏ cấm"
+				/>
+			)}
+			{isOpenUpdateActive && (
+				<DialogConfirm
+					open={isOpenUpdateActive}
+					handleClose={() => setIsOpenUpdateActive(false)}
+					content="Xác nhận người giao hàng"
+					handleSubmit={() => {handleUpdateActive(listIdUser);setIsOpenUpdateActive(false)}}
+					labelConfirm="Xác nhận"
 				/>
 			)}
 		</div>
