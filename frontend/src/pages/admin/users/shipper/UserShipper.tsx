@@ -233,13 +233,14 @@ const UserShipper = () => {
 		{
 			accessorKey: "full_name",
 			header: () => {
-				return <div className="text-xs md:text-base">Họ tên</div>;
+				return <div className="text-xs md:text-base">Thông tin</div>;
 			},
 			cell: ({ row }) => {
 				return (
 					<div className="flex items-center gap-1 text-xs md:text-base">
-						<div className="text-xs">
-							<p> {row?.original?.fullName}</p>
+						<div className="">
+							<p><span className="font-semibold">Họ tên: </span> {row?.original?.fullName}</p>
+							<p><span className="font-semibold">Điện thoại: </span> {row?.original?.phone}</p>
 						</div>
 					</div>
 				);
@@ -273,7 +274,7 @@ const UserShipper = () => {
 		{
 			accessorKey: "createdAt",
 			header: () => {
-				return <div className="text-xs md:text-base">Ngày tạo</div>;
+				return <div className="text-xs md:text-base">Ngày đăng ký</div>;
 			},
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.createdAt as string);
@@ -390,7 +391,7 @@ const UserShipper = () => {
 							</>
 						)}
 
-						<div className="pr-5">
+						<div className="hidden pr-5">
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
 									<div className="cursor-pointer">
@@ -427,7 +428,7 @@ const UserShipper = () => {
 											value="createdAt"
 											className="cursor-pointer"
 										>
-											Ngày tạo
+											Ngày đăng ký
 										</DropdownMenuRadioItem>
 									</DropdownMenuRadioGroup>
 									<DropdownMenuSeparator />
