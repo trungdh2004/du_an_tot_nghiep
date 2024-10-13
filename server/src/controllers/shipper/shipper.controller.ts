@@ -258,7 +258,7 @@ class ShipperController {
 
   async actionListShipper(req: RequestModel, res: Response) {
     try {
-      const { listId = [], type = 1 } = req.body;
+      const { listId = [], type = 1,isBlock } = req.body;
 
       if (listId.length === 0) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -279,29 +279,36 @@ class ShipperController {
       }
 
       const listUser = findListShipper.map((shipper) => shipper.user);
-
+      const payloadUpdate:{
+        [key:string]:any
+      } ={
+      };
+      if(isBlock){
+        payloadUpdate.is_block =  type === 1 ? true : false;
+        payloadUpdate.block_at =  type === 1 ? new Date().toISOString() : null
+      }else {
+        payloadUpdate.active =  type === 1 ? true : false;
+      }
       const updateListShipper = await ShipperModel.updateMany(
         {
           _id: {
             $in: listId,
           },
         },
-        {
-          active: type === 1 ? true : false,
-        }
+        payloadUpdate
       );
-
-      const updateUser = await UserModel.updateMany(
-        {
-          _id: {
-            $in: [...listUser],
+      if(!isBlock){
+        const updateUser = await UserModel.updateMany(
+          {
+            _id: {
+              $in: [...listUser],
+            },
           },
-        },
-        {
-          is_shipper: type === 1 ? true : false,
-        }
-      );
-
+          {
+            is_shipper: type === 1 ? true : false,
+          }
+        );
+      }
       return res.status(STATUS.OK).json({
         message: "Cập nhập thành công",
       });
