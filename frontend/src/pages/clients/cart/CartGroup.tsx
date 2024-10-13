@@ -1,12 +1,11 @@
-import { useCallback, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ICart } from "@/types/cart";
-import CartItem from "./CartItem";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { useMediaQuery } from "usehooks-ts";
 import useCart from "@/store/cart.store";
+import { ICart } from "@/types/cart";
+import { motion } from "framer-motion";
+import { useCallback, useState } from "react";
+import { Link } from "react-router-dom";
+import { useMediaQuery } from "usehooks-ts";
+import CartItem from "./CartItem";
 
 interface CartGroupProps {
 	cart: ICart;

@@ -1,8 +1,9 @@
 import OverlayViolet from "@/components/OverlayViolet";
 import instance from "@/config/instance";
 import { useAuth } from "@/hooks/auth";
-import { useRouterHistory } from "@/hooks/router";
 import { loginAccount } from "@/service/account";
+import { getCountMyShoppingCart, pagingCartV2 } from "@/service/cart";
+import useCart from "@/store/cart.store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { useState } from "react";
@@ -23,8 +24,6 @@ import {
 } from "../../components/ui/form";
 import { Input } from "../../components/ui/input";
 import SignInWithFacebookOrGoogle from "./SignInWithFacebookOrGoogle";
-import useCart from "@/store/cart.store";
-import { getCountMyShoppingCart, pagingCart } from "@/service/cart";
 const Login = () => {
 	const [searchParams,SetURLSearchParams] = useSearchParams();
 	const router = useNavigate()
@@ -56,10 +55,10 @@ const Login = () => {
 			setIsLoggedIn?.(true);
 			instance.defaults.headers.common.Authorization = `Bearer ${data?.accessToken}`;
 			const [carts, totalCountCart] = await Promise.all([
-				pagingCart({ pageSize: 9999999999999 }),
+				pagingCartV2(),
 				getCountMyShoppingCart(),
 			]);
-			setCarts(carts?.data?.data?.content);
+			setCarts(carts?.data?.listData);
 			setTotalCart(totalCountCart?.data?.count);
 			toast.success(data?.message);
 			const historyUrl = searchParams.get('url')
@@ -84,19 +83,19 @@ const Login = () => {
 		<div className="h-full">
 			<OverlayViolet />
 
-			<div className="absolute left-3 top-3  flex justify-between items-center pr-5">
+			<div className="absolute flex items-center justify-between pr-5 left-3 top-3">
 				<Link
 					to={"/"}
-					className="dark:bg-slate-600 relative flex items-center justify-center max-w-36 p-3 bg-white rounded-lg shadow-lg"
+					className="relative flex items-center justify-center p-3 bg-white rounded-lg shadow-lg dark:bg-slate-600 max-w-36"
 				>
 					<IoIosArrowRoundBack size={20} className="mr-4" /> Trang chủ
 				</Link>
 			</div>
-			<div className="dark:bg-slate-800 w-full  max-w-xs md:max-w-sm mx-auto my-auto mt-24 md:mt-12  px-8 py-9 bg-white shadow-md border border-gray-200 rounded-2xl">
+			<div className="w-full max-w-xs px-8 mx-auto my-auto mt-24 bg-white border border-gray-200 shadow-md dark:bg-slate-800 md:max-w-sm md:mt-12 py-9 rounded-2xl">
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)}>
-						<div className=" space-y-5 ">
-							<h2 className="text-center text-xl font-bold mb-10">Đăng nhập</h2>
+						<div className="space-y-5 ">
+							<h2 className="mb-10 text-xl font-bold text-center">Đăng nhập</h2>
 							<SignInWithFacebookOrGoogle />
 							{/* end line */}
 							<div className="space-y-1">
@@ -134,13 +133,13 @@ const Login = () => {
 														<FaRegEyeSlash
 															onClick={() => setIsPassword((prev) => !prev)}
 															size={18}
-															className="absolute top-1/2 right-5 -translate-y-1/2 cursor-pointer "
+															className="absolute -translate-y-1/2 cursor-pointer top-1/2 right-5 "
 														/>
 													) : (
 														<FaRegEye
 															onClick={() => setIsPassword((prev) => !prev)}
 															size={18}
-															className="absolute top-1/2 right-5 -translate-y-1/2 cursor-pointer"
+															className="absolute -translate-y-1/2 cursor-pointer top-1/2 right-5"
 														/>
 													)}
 												</div>
@@ -154,13 +153,13 @@ const Login = () => {
 
 						<Link
 							to={"/auth/forgot-password"}
-							className="float-end text-blue-500 mt-2 "
+							className="mt-2 text-blue-500 float-end "
 						>
 							Quên mật khẩu ?
 						</Link>
 						<Button
 							type="submit"
-							className="w-full mt-3 mb-6 text-white text-base font-bold bg-blue-500 hover:bg-blue-400"
+							className="w-full mt-3 mb-6 text-base font-bold text-white bg-blue-500 hover:bg-blue-400"
 						>
 							Đăng nhập
 						</Button>

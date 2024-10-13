@@ -3,7 +3,7 @@ const endpoint = "/cart";
 type addToCartType = {
 	productId: string;
 	quantity: number;
-	attribute: string;
+	attribute: string | null;
 };
 type pagingCart = {
 	pageSize: number;
@@ -11,6 +11,10 @@ type pagingCart = {
 export const pagingCart = (payload: pagingCart) => {
 	const uri = `${endpoint}/pagingCart`;
 	return instance.post(uri, payload);
+};
+export const pagingCartV2 = () => {
+	const uri = `${endpoint}/pagingCartV2`;
+	return instance.get(uri);
 };
 export const addProductToCart = (data: addToCartType) => {
 	const uri = `${endpoint}/addProductCart`;
@@ -42,7 +46,7 @@ export const pagingNewCart = (payload: {
 type buyNowServicesType = {
 	productId: string;
 	quantity: number;
-	attribute: string;
+	attribute: string | null;
 };
 export const buyNowSevices = (payload: buyNowServicesType) => {
 	const uri = `${endpoint}/productToOrder`;

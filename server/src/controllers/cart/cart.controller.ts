@@ -574,7 +574,7 @@ class CartController {
         });
 
       const existingCartItem = await CartItemModel.findById(id).populate(
-        "attribute"
+        "attribute product"
       );
 
       if (!existingCartItem) {
@@ -588,13 +588,19 @@ class CartController {
       console.log("existingCartItem", existingCartItem);
 
       if (quantity) {
-        if (!(existingCartItem.attribute as IAttribute)._id) {
+        if (!(existingCartItem?.product as any)?.is_simple && !(existingCartItem?.attribute as IAttribute)?._id ) {
           return res.status(STATUS.BAD_REQUEST).json({
             message: "Sản phẩm không còn loại này",
           });
         }
-
-        if (quantity > (existingCartItem.attribute as IAttribute).quantity) {
+        if ((existingCartItem?.product as any)?.is_simple && quantity > (existingCartItem?.product as any)?.quantity) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: `Chỉ còn ${
+              (existingCartItem.attribute as IAttribute).quantity
+            } sản phẩm loại hàng này`,
+          });
+        }
+        if (!(existingCartItem?.product as any)?.is_simple && quantity > (existingCartItem.attribute as IAttribute)?.quantity ) {
           return res.status(STATUS.BAD_REQUEST).json({
             message: `Chỉ còn ${
               (existingCartItem.attribute as IAttribute).quantity
@@ -625,8 +631,7 @@ class CartController {
         if (checkAttribute.quantity < quantityDefauld) {
           quantityDefauld = checkAttribute.quantity;
         }
-      }
-
+      }      
       const updatedProduct = await CartItemModel.findByIdAndUpdate(
         id,
         {
@@ -685,7 +690,7 @@ class CartController {
         message: "Thay đổi thành công",
         data: result,
       });
-    } catch (error: any) {
+    } catch (error: any) {      
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
       });
