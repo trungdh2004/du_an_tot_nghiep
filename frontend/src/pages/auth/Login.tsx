@@ -25,8 +25,8 @@ import {
 import { Input } from "../../components/ui/input";
 import SignInWithFacebookOrGoogle from "./SignInWithFacebookOrGoogle";
 const Login = () => {
-	const [searchParams,SetURLSearchParams] = useSearchParams();
-	const router = useNavigate()
+	const [searchParams, SetURLSearchParams] = useSearchParams();
+	const router = useNavigate();
 	const { setCarts, setTotalCart } = useCart();
 	const { setAuthUser, setIsLoggedIn } = useAuth();
 	const formSchema = z.object({
@@ -46,8 +46,6 @@ const Login = () => {
 			password: "",
 		},
 	});
-
-	
 	const onSubmit = async (payload: z.infer<typeof formSchema>) => {
 		try {
 			const { data } = await loginAccount(payload);
@@ -61,13 +59,13 @@ const Login = () => {
 			setCarts(carts?.data?.listData);
 			setTotalCart(totalCountCart?.data?.count);
 			toast.success(data?.message);
-			const historyUrl = searchParams.get('url')
+			const historyUrl = searchParams.get("url");
 
-			if(historyUrl) {
+			if (historyUrl) {
 				const url = decodeURIComponent(historyUrl);
 				window.location.href = url;
-			}else {
-				router("/")
+			} else {
+				router("/");
 			}
 		} catch (error) {
 			setAuthUser?.(undefined);
