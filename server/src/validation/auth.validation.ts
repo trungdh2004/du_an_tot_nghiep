@@ -51,3 +51,15 @@ export const socialUserValidation = Joi.object({
     "any.required": "Bạn chưa nhập loại đăng nhập",
   }),
 });
+
+export const changePassValidation = Joi.object({
+  passwordOld: Joi.string().min(6).required().messages({}),
+  passwordNew: Joi.string().min(6).required().messages({}),
+  confirmPassword: Joi.string()
+    .min(6)
+    .valid(Joi.ref("passwordNew"))
+    .required()
+    .messages({
+      "any.only": "Nhập lại mật khẩu không đúng",
+    }),
+});
