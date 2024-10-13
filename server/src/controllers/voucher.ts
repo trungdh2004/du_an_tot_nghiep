@@ -86,14 +86,14 @@ export const handleAmountVoucher = (
           status: true,
           amount: totalMoney,
           valueAmount: 0,
-          message: "Tổng số tiền không thỏa mãn",
+          message: "",
         };
       } else {
         return {
           status: true,
           amount: downAmount,
           valueAmount: amount,
-          message: "Tổng số tiền không thỏa mãn",
+          message: "",
         };
       }
     } else {
@@ -103,7 +103,7 @@ export const handleAmountVoucher = (
         percentAmount > voucher.maxAmount ? voucher.maxAmount : percentAmount;
 
       return {
-        status: false,
+        status: true,
         amount: checkDownVoucher,
         valueAmount: totalMoney - checkDownVoucher,
         message: "",
