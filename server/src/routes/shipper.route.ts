@@ -7,6 +7,7 @@ const routerShipper = Router();
 routerShipper.post("/registerShipper",authentication, shipperController.registerShipper);
 routerShipper.post("/paging",authentication, shipperController.pagingShipper);
 routerShipper.post("/getShipperById/:id",authentication, shipperController.getShipperById);
+routerShipper.post("/actionListShipper",authentication, shipperController.actionListShipper);
 routerShipper.get("/getCurrentShipper",authentication, shipperController.getByCurrentShipper);
 routerShipper.get("/getListOrderMap",authenticationShipper, shipperController.getListOrderShipperMap);
 routerShipper.get("/getOrderByCode/:code",authenticationShipper, shipperController.getOrderByCode);
