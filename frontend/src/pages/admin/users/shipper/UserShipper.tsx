@@ -1,14 +1,12 @@
-import React, { useEffect, useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 
-import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
+import DialogConfirm from "@/components/common/DialogConfirm";
+import TableComponent from "@/components/common/TableComponent";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import TableComponent from "@/components/common/TableComponent";
-import { useDebounceCallback } from "usehooks-ts";
-import { parseISO, format } from "date-fns";
 import {
 	DropdownMenu,
-	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
@@ -17,41 +15,75 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { HiOutlineDotsVertical } from "react-icons/hi";
-import { Badge } from "@/components/ui/badge";
-import DialogConfirm from "@/components/common/DialogConfirm";
-import { toast } from "sonner";
-import { BanManyUser, banUser, pagingUser, unBanManyUser, unBanUser } from "@/service/user-admin";
 import { Input } from "@/components/ui/input";
-import { IoFilter } from "react-icons/io5";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { IUser } from "@/contexts/AuthContext";
+import { pagingShipper } from "@/service/shipper";
+import {
+	BanManyUser,
+	banUser,
+	unBanManyUser,
+	unBanUser,
+} from "@/service/user-admin";
 import { SearchObjectType } from "@/types/searchObjecTypes";
+import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
+import { format, parseISO } from "date-fns";
+import { CiLock, CiUnlock } from "react-icons/ci";
+import { HiOutlineDotsVertical } from "react-icons/hi";
+import { IoFilter } from "react-icons/io5";
+import { toast } from "sonner";
+import { useDebounceCallback } from "usehooks-ts";
+import { BsPersonFillCheck } from "react-icons/bs";
+import { cn } from "@/lib/utils";
 interface IData {
 	_id: string;
-	full_name: string;
-	email: string;
-	provider: string | null;
-	avatarUrl: string;
-	is_admin: boolean;
-	blocked_at: boolean;
+	user: IUser;
+	fullName: string;
+	birthDate: string;
+	idCitizen: string;
+	avatar: string;
+	phone: string;
+	is_block: boolean;
+	active: boolean;
+	block_at: null;
+	totalIncome: number;
+	city: {
+		name: string;
+		idProvince: string;
+		_id: string;
+	};
+	district: {
+		name: string;
+		idDistrict: string;
+		_id: string;
+	};
+	commune: {
+		name: string;
+		idCommune: string;
+		_id: string;
+	};
+	address: string;
 	createdAt: string;
+	updatedAt: string;
+	__v: number;
 }
 
-const ShipperIndex = () => {
+const UserShipper = () => {
 	const [rowSelection, setRowSelection] = useState<RowSelectionState>({}); // xử lí selected
-  const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
-  console.log(listRowSeleted);
-  const listIdUser :any = listRowSeleted.map((user) => {
-    return user._id;
-  })
-  console.log(listIdUser);
-  
+	const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
+	const listIdUser: any = listRowSeleted.map((user) => {
+		return user._id;
+	});
 	const [openBanId, setopenBanId] = useState<string | null>(null);
 	const [isPending, startTransition] = useTransition();
-  	const [openUnbanId, setopenUnbanId] = useState<string | null>(null);
-	const [openBanManyId, setopenBanManyId] = useState<string | boolean | null>(null);
-	const [openUnbanManyId, setopenUnbanManyId] = useState<string | boolean | null>(null);
-  
+	const [openUnbanId, setopenUnbanId] = useState<string | null>(null);
+	const [openBanManyId, setopenBanManyId] = useState<string | boolean | null>(
+		null,
+	);
+	const [openUnbanManyId, setopenUnbanManyId] = useState<
+		string | boolean | null
+	>(null);
+
 	const debounced = useDebounceCallback((inputValue: string) => {
 		setSearchObject((prev) => ({
 			...prev,
@@ -83,7 +115,8 @@ const ShipperIndex = () => {
 
 	const handlePagingUser = async () => {
 		try {
-			const { data } = await pagingUser(searchObject)
+			const { data } = await pagingShipper(searchObject);
+
 			setData(data.content);
 			setResponse({
 				pageIndex: data.pageIndex,
@@ -117,27 +150,27 @@ const ShipperIndex = () => {
 		} catch (error) {
 			toast.error("Bỏ Cấm người dùng thất bại");
 		}
-  };
-  
-  const handleBanMany = async (id: string) => {
+	};
+
+	const handleBanMany = async (id: string) => {
 		try {
 			const { data } = await BanManyUser(id);
 			setopenBanManyId(null);
-      handlePagingUser();
-      setListRowSelected([]);
+			handlePagingUser();
+			setListRowSelected([]);
 			setRowSelection({});
 			toast.success("Cấm mục người dùng thành công");
 		} catch (error) {
 			toast.error("Cấm mục người dùng thất bại");
 		}
-  };
-  
-  const handleUnBanMany = async (id: string) => {
+	};
+
+	const handleUnBanMany = async (id: string) => {
 		try {
 			const { data } = await unBanManyUser(id);
-      setopenUnbanManyId(null);
-      setListRowSelected([])
-      setRowSelection({})
+			setopenUnbanManyId(null);
+			setListRowSelected([]);
+			setRowSelection({});
 			handlePagingUser();
 			toast.success("Bỏ cấm mục người dùng thành công");
 		} catch (error) {
@@ -149,9 +182,9 @@ const ShipperIndex = () => {
 			...prev,
 			pageSize: value,
 			pageIndex: 1,
-    })); 
-  };
-  
+		}));
+	};
+
 	const columns: ColumnDef<IData>[] = [
 		{
 			id: "select",
@@ -188,47 +221,41 @@ const ShipperIndex = () => {
 		{
 			accessorKey: "full_name",
 			header: () => {
-				return <div className="text-xs md:text-base">Tên</div>;
+				return <div className="text-xs md:text-base">Họ tên</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="text-xs md:text-base">{row?.original?.full_name}</div>
+					<div className="flex items-center gap-1 text-xs md:text-base">
+						<div className="text-xs">
+							<p> {row?.original?.fullName}</p>
+						</div>
+					</div>
 				);
 			},
 		},
 		{
-			accessorKey: "email",
+			accessorKey: "address",
 			header: () => {
-				return <div className="text-xs md:text-base">Email</div>;
+				return <div className="text-xs md:text-base">Địa chỉ</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="text-xs md:text-base">{row?.original?.email}</div>
+					<div className="text-xs md:text-base">{row?.original?.address}</div>
 				);
 			},
 		},
 		{
-			accessorKey: "avatarUrl",
+			accessorKey: "avatar",
 			header: () => {
 				return <div className="text-xs md:text-base">Ảnh</div>;
 			},
 			cell: ({ row }) => {
 				return (
 					<img
-						src={row.original.avatarUrl || "/avatar_25.jpg"}
+						src={row.original.avatar || "/avatar_25.jpg"}
 						className="md:w-[40px] md:h-[40px] w-[30px] h-[30px] rounded-full"
 					/>
 				);
-			},
-		},
-		{
-			accessorKey: "provider",
-			header: () => {
-				return <div className="text-xs md:text-base">Phương thức</div>;
-			},
-			cell: ({ row }) => {
-				const value = `${row.getValue("provider") === "google.com" ? "Google" : "Đăng ký"}`;
-				return <div className="text-xs font-medium md:text-base">{value}</div>;
 			},
 		},
 		{
@@ -237,13 +264,9 @@ const ShipperIndex = () => {
 				return <div className="text-xs md:text-base">Ngày tạo</div>;
 			},
 			cell: ({ row }) => {
-				const parsedDate = parseISO(row.original.createdAt);
+				const parsedDate = parseISO(row.original.createdAt as string);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
-				return (
-					<div className="text-xs md:text-base">
-						{formattedDate}
-					</div>
-				);
+				return <div className="text-xs md:text-base">{formattedDate}</div>;
 			},
 		},
 		{
@@ -252,10 +275,10 @@ const ShipperIndex = () => {
 				return <div className="text-xs md:text-base">Trạng thái</div>;
 			},
 			cell: ({ row }) => {
-				const status = row.original.blocked_at ? "Bị cấm" : "Hoạt động";
+				const status = row.original.is_block ? "Bị cấm" : "Hoạt động";
 				return (
 					<Badge
-						className={`font-medium ${row.original.blocked_at ? "bg-[#cf4040]" : "bg-green-500"} text-center items-center text-xs text-nowrap leading-[14px]`}
+						className={`font-medium ${row.original.is_block ? "bg-[#cf4040]" : "bg-green-500"} text-center items-center text-xs text-nowrap leading-[14px]`}
 					>
 						{status}
 					</Badge>
@@ -276,7 +299,7 @@ const ShipperIndex = () => {
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
 							<DropdownMenuItem>Xem chi tiết</DropdownMenuItem>
-							{row?.original?.blocked_at ? (
+							{row?.original?.is_block ? (
 								<DropdownMenuItem
 									className="text-green-400"
 									onClick={() => setopenUnbanId(row?.original?._id)}
@@ -302,8 +325,8 @@ const ShipperIndex = () => {
 		setSearchObject((prev) => ({
 			...prev,
 			pageIndex: value.selected + 1,
-    }));
-    setRowSelection({});
+		}));
+		setRowSelection({});
 		setListRowSelected([]);
 	};
 
@@ -311,7 +334,7 @@ const ShipperIndex = () => {
 		<div className="flex flex-col gap-3">
 			<div className="flex flex-col gap-3">
 				<h4 className="text-base font-medium md:text-xl">
-					Danh sách người dùng
+					Danh sách người giao hàng
 				</h4>
 				<div className="flex justify-between">
 					<Input
@@ -319,29 +342,42 @@ const ShipperIndex = () => {
 						className="w-[40%] md:text-base text-xs"
 						onChange={(event) => debounced(event.target.value)}
 					/>
-					<div className="flex items-center justify-center gap-3">
-						{listIdUser.length !== 0 && searchObject.tab == 1 ? (
-							<Button
-                onClick={() => {
-                  setopenBanManyId(true) 
-                }}
-								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
-							>
-								Ẩn nhiều
-							</Button>
-						) : (
-							""
+					<div className={cn("hidden items-center justify-center gap-3", listIdUser.length !== 0 && 'flex')}>
+						{ searchObject.tab == 1 ? (
+							<>
+								<Button
+									onClick={() => {
+										setopenBanManyId(true);
+									}}
+									className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
+								>
+									<CiLock className="text-xl" />{" "}
+									<p className="px-1">Khoá nhiều</p>
+								</Button>
+								<Button
+									onClick={() => {
+										setopenUnbanManyId(true);
+									}}
+									className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
+								>
+									<CiUnlock className="text-xl" />{" "}
+									<p className="px-1">Mở khoá nhiều</p>
+								</Button>
+							</>
+						) :  (
+							<>
+								<Button
+									onClick={() => {
+										setopenBanManyId(true);
+									}}
+									className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
+								> 
+									<BsPersonFillCheck className="text-xl" />{" "}
+									<p className="px-1">Xác nhận nhiều</p>
+								</Button>
+							</>
 						)}
-						{listIdUser.length !== 0 && searchObject.tab == 2 && (
-							<Button
-                onClick={() => {
-                  setopenUnbanManyId(true) 
-                }}
-								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
-							>
-								Bỏ Ẩn nhiều
-							</Button>
-						)}
+
 						<div className="pr-5">
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
@@ -462,20 +498,20 @@ const ShipperIndex = () => {
 						onClick={() => {
 							setRowSelection({});
 							setListRowSelected([]);
-							setSearchObject((prev) => ({ ...prev, tab: 1,pageIndex:1 }));
+							setSearchObject((prev) => ({ ...prev, tab: 1, pageIndex: 1 }));
 						}}
 					>
-						Người dùng
+						Hoạt động
 					</TabsTrigger>
 					<TabsTrigger
 						value="2"
 						onClick={() => {
 							setRowSelection({});
 							setListRowSelected([]);
-							setSearchObject((prev) => ({ ...prev, tab: 2,pageIndex:1 }));
+							setSearchObject((prev) => ({ ...prev, tab: 2, pageIndex: 1 }));
 						}}
 					>
-						Người dùng bị cấm
+						Chờ xác nhận
 					</TabsTrigger>
 				</TabsList>
 			</Tabs>
@@ -533,4 +569,4 @@ const ShipperIndex = () => {
 	);
 };
 
-export default ShipperIndex;
+export default UserShipper;
