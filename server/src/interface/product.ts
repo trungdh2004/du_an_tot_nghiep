@@ -5,13 +5,13 @@ export interface ICategory {
   slug: string;
 }
 export interface IColor {
-  _id?: string;
+  _id: string;
   name: string;
   code: string;
   slug: string;
 }
 export interface ISize {
-  _id?: string;
+  _id: string;
   name: string;
   toHeight: number;
   fromHeight: number;

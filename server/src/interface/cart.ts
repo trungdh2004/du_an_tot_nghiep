@@ -75,6 +75,7 @@ export interface ProductFindCart {
   quantity: number;
   attributes: AttributeFind[];
   createdAt: Date;
+  slug: string;
 }
 
 // data new
@@ -109,6 +110,7 @@ export interface Item {
   attribute: ItemAttribute;
   is_simple: boolean;
   productId: string;
+  slug: string;
 }
 
 export interface ItemAttribute {
