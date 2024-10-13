@@ -14,15 +14,14 @@ import {
 } from "@/service/order";
 import { ObjectCheckoutOrder, ResponseData } from "@/types/ObjectCheckoutOrder";
 import { toast } from "sonner";
+import { IOrderMoneyValue } from "@/types/order";
 
 const OrderPage = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const paramsObject = Object.fromEntries(searchParams.entries());
-  const stateOrder = JSON.parse(paramsObject.state);
-  console.log(stateOrder);
-  
+	const stateOrder = JSON.parse(paramsObject.state);
 	const [orderParams, setOrderParams] = useState<any | {}>(stateOrder || {});
-  const [order, setOrder] = useState<any>({});
+	const [order, setOrder] = useState<any>({});
 	const { mutate } = useMutation({
 		mutationKey: ["orderPagingCart"],
 		mutationFn: async (valueOrder) => {
@@ -64,7 +63,9 @@ const OrderPage = () => {
 			};
 		},
 	);
-	const [moneyVoucher, setMoneyVoucher] = useState<number | null>(null);
+	const [moneyVoucher, setMoneyVoucher] = useState<IOrderMoneyValue | null>(
+		null,
+	);
 	useEffect(() => {
 		if (order?.address) {
 			setOrderCheckout((prev) => ({
@@ -129,6 +130,7 @@ const OrderPage = () => {
 						data={order}
 						setOrderCheckout={setOrderCheckout}
 						setMoneyVoucher={setMoneyVoucher}
+						stateOrder={stateOrder}
 					/>
 					<NoteOrder setOrderCheckout={setOrderCheckout} />
 					<PaymentMethod
