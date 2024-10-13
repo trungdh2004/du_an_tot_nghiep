@@ -1134,33 +1134,6 @@ class OrderController {
         });
       }
 
-      let voucherMain = null;
-
-      if (voucher) {
-        const existingVoucher = await VoucherModel.findById(voucher);
-
-        if (existingVoucher) {
-          const check = await OrderModel.findOne({
-            voucher: existingVoucher._id,
-            user: user?.id,
-          });
-
-          if (!check) {
-            const data = checkVoucher(existingVoucher);
-            if (data.check) {
-              voucherMain = data.voucher as IVoucher;
-            }
-            if (!data.check) {
-              voucherMain = null;
-            }
-          } else {
-            voucherMain = null;
-          }
-        } else {
-          voucherMain = null;
-        }
-      }
-
       const listCartItem = await CartItemModel.find<IndexCartItem>({
         _id: {
           $in: listId,
@@ -1204,13 +1177,63 @@ class OrderController {
         });
       }
 
-      const checkTotalMoney = listCartItem?.reduce((acc: number, item: any) => {
-        const totalMoney = item.quantity * (item?.attribute?.discount || 0);
-        return acc + totalMoney;
+      const listProduct = listCartItem.map((item) => {
+        const productId = item.product._id;
+        let totalMoney = 0;
+
+        if (item.is_simple) {
+          totalMoney = item.product.discount * item.quantity;
+        } else {
+          totalMoney = item.attribute.discount * item.quantity;
+        }
+
+        return {
+          productId,
+          totalMoney,
+        };
+      });
+
+      const totalMoney = listCartItem.reduce((sum, item) => {
+        let total = 0;
+        if (item.is_simple) {
+          total = item.product.discount * item.quantity;
+        } else {
+          total = item.attribute.discount * item.quantity;
+        }
+        return sum + total;
       }, 0);
-      if (voucherMain) {
-        if (voucherMain.minimumOrderValue > checkTotalMoney) {
+
+      let voucherMain = null;
+
+      if (voucher) {
+        const existingVoucher = await VoucherModel.findOne({
+          _id: voucher,
+        });
+
+        if (!existingVoucher) {
           voucherMain = null;
+        } else {
+          const check = await OrderModel.findOne({
+            voucher: existingVoucher._id,
+            user: user?.id,
+          });
+          if (!check) {
+            const data = checkVoucher(existingVoucher);
+
+            if (data.check) {
+              const amountVoucher = handleAmountVoucher(
+                existingVoucher,
+                totalMoney,
+                listProduct
+              );
+
+              if (amountVoucher.status) {
+                voucherMain = existingVoucher;
+              }
+            }
+          }else {
+            voucherMain = null;
+          }
         }
       }
 
