@@ -22,6 +22,7 @@ import {
 import {
 	deletedById,
 	deleteMany,
+	exportServiceProduct,
 	pagingProduct,
 	unDeletedById,
 	unDeleteMany,
@@ -38,6 +39,9 @@ import { toast } from "sonner";
 import { ICategory } from "@/types/category";
 import { IoIosRemoveCircle, IoIosCheckmarkCircle } from "react-icons/io";
 import { Badge } from "@/components/ui/badge";
+import axios from "axios";
+import { FaFileExport } from "react-icons/fa";
+import { TooltipComponent } from "@/components/common/TooltipComponent";
 
 const ProductIndex = () => {
 	const queryClient = useQueryClient();
@@ -236,7 +240,7 @@ const ProductIndex = () => {
 		},
 		//discount
 		{
-			accessorKey: "price",
+			accessorKey: "discount",
 			header: () => {
 				return <div className="md:text-base text-xs">Giá KM</div>;
 			},
@@ -303,7 +307,9 @@ const ProductIndex = () => {
 			cell: ({ row }) => {
 				return (
 					<div className=" text-center">
-						{row?.original?.is_hot && <Badge className="bg-rose-500">HOT</Badge>}
+						{row?.original?.is_hot && (
+							<Badge className="bg-rose-500">HOT</Badge>
+						)}
 					</div>
 				);
 			},
@@ -351,6 +357,21 @@ const ProductIndex = () => {
 		},
 	];
 
+	const handleExportProduct = async () => {
+		try {
+			const { data } = await exportServiceProduct();
+			const blob = new Blob([data]);
+			const url = window.URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.style.display = "none";
+			a.href = url;
+			a.download = "danh_sach_san_pham.xlsx";
+			document.body.appendChild(a);
+			a.click();
+			window.URL.revokeObjectURL(url);
+		} catch (error) {}
+	};
+
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex flex-col gap-3">
@@ -377,6 +398,15 @@ const ProductIndex = () => {
 								Bỏ ẩn tất cả
 							</Button>
 						)}
+
+						<TooltipComponent label="Xuất dữ liệu hiện tại">
+							<Button 
+								variant={"secondary"}
+								onClick={() => handleExportProduct()}
+							>
+								<FaFileExport size={20} className="mr-1" /> Xuất
+							</Button>
+						</TooltipComponent>
 
 						<Link to={"/admin/product/add"}>
 							<Button variant={"add"}>Thêm sản phẩm</Button>
