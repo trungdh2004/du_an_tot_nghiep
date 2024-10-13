@@ -308,6 +308,7 @@ class CartController {
               is_hot: 1,
               is_simple: 1,
               createdAt: 1,
+              slug: 1,
             },
           },
           {
@@ -345,6 +346,7 @@ class CartController {
               is_simple: item.is_simple,
               createdAt: item.createdAt,
               productId: item.product._id,
+              slug: item.product.slug,
             };
             findCart.items.push(data);
             return acc;
@@ -428,7 +430,9 @@ class CartController {
                 is_simple: item.is_simple,
                 createdAt: item.createdAt,
                 productId: item.product._id,
+                slug: item.product.slug,
               },
+              
             ],
             is_simple: item.is_simple,
           };
