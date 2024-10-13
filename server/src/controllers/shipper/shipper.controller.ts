@@ -258,7 +258,7 @@ class ShipperController {
 
   async actionListShipper(req: RequestModel, res: Response) {
     try {
-      const { listId = [], type = 1,isBlock } = req.body;
+      const { listId = [], type = 1, isBlock } = req.body;
 
       if (listId.length === 0) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -279,15 +279,14 @@ class ShipperController {
       }
 
       const listUser = findListShipper.map((shipper) => shipper.user);
-      const payloadUpdate:{
-        [key:string]:any
-      } ={
-      };
-      if(isBlock){
-        payloadUpdate.is_block =  type === 1 ? true : false;
-        payloadUpdate.block_at =  type === 1 ? new Date().toISOString() : null
-      }else {
-        payloadUpdate.active =  type === 1 ? true : false;
+      const payloadUpdate: {
+        [key: string]: any;
+      } = {};
+      if (isBlock) {
+        payloadUpdate.is_block = type === 1 ? true : false;
+        payloadUpdate.block_at = type === 1 ? new Date().toISOString() : null;
+      } else {
+        payloadUpdate.active = type === 1 ? true : false;
       }
       const updateListShipper = await ShipperModel.updateMany(
         {
@@ -297,7 +296,7 @@ class ShipperController {
         },
         payloadUpdate
       );
-      if(!isBlock){
+      if (!isBlock) {
         const updateUser = await UserModel.updateMany(
           {
             _id: {
@@ -312,10 +311,59 @@ class ShipperController {
       return res.status(STATUS.OK).json({
         message: "Cập nhập thành công",
       });
-    } catch (error:any) {
+    } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
       });
+    }
+  }
+
+  async shipperDetailAdmin(req: RequestModel, res: Response) {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn shipper",
+        });
+      }
+
+      const existingShipper = await ShipperModel.findById(id).populate({
+        path: "user",
+        select: {
+          _id: 1,
+          fullName: 1,
+          email: 1,
+          point: 1,
+          avatarUrl: 1,
+        },
+      });
+
+      if (!existingShipper)
+        return res
+          .status(STATUS.BAD_REQUEST)
+          .json({ message: "Không có shipper nào" });
+
+      const listOrder = await OrderModel.find({
+        shipper: id,
+        statusList: {
+          $in: 4,
+        },
+      })
+        .populate("orderItems")
+        .sort({
+          createdAt: -1,
+        });
+
+      return res.status(STATUS.OK).json({
+        message:"Lấy thông tin thành công",
+        shipper:existingShipper,
+        orders:listOrder,
+      })
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+        message:error.message,
+      })
     }
   }
 

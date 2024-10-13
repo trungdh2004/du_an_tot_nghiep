@@ -15,5 +15,6 @@ routerShipper.put("/updateStatusShippingOrder/:id",authenticationShipper, shippe
 routerShipper.put("/updateStatusShippedOrder/:id",authenticationShipper, shipperController.updateStatusShippedOrder);
 routerShipper.post("/getListOrderSuccessShipper",authenticationShipper, shipperController.getListOrderSuccessShipper);
 routerShipper.post("/pagingOrderShipper",authenticationShipper, shipperController.pagingOrderShipper);
+routerShipper.get("/getDetailShipper",authentication, shipperController.shipperDetailAdmin);
 
 export default routerShipper;
