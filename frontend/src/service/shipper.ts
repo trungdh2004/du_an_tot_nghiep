@@ -33,3 +33,5 @@ export const updateActionShippers = ({
 	type?: number;
 	isBlock?:boolean
 }) => instance.put(`/shipper/actionListShipper`, { listId, type,isBlock });
+export const getDetailShipperById = (id:string) =>
+	instance.get(`/shipper/getDetailShipper/${id}`);

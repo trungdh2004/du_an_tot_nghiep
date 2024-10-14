@@ -85,6 +85,8 @@ const CartItem = ({
 			setErrors,
 		});
 	};	
+	console.log(">>>Item",item);
+	
 	return (
 		<div key={item._id} className="flex items-center item-group">
 			<div
@@ -194,7 +196,7 @@ const CartItem = ({
 									size="mobile"
 									className="w-20"
 									defaultValue={item?.quantity}
-									maxTotal={item?.attribute?.quantity}
+									maxTotal={item?.quantity || item?.attribute?.quantity}
 									getValue={handleChangeQuantity}
 								/>
 							) : (
