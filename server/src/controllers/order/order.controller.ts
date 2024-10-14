@@ -1230,7 +1230,7 @@ class OrderController {
                 voucherMain = existingVoucher;
               }
             }
-          }else {
+          } else {
             voucherMain = null;
           }
         }
@@ -1277,11 +1277,6 @@ class OrderController {
           message: "Bạn chưa chọn địa chỉ",
         });
       }
-      const findLocationShop = await LocationModel.findOne();
-
-      const longShop = findLocationShop?.long || long;
-      const latShop = findLocationShop?.lat || lat;
-
       const findLocationShop = await LocationModel.findOne();
 
       const longShop = findLocationShop?.long || long;
@@ -1513,14 +1508,6 @@ class OrderController {
         voucher: voucher || null,
         addressId: address._id,
       };
-
-      console.log({
-        order:newOrder,
-        listOrderItem:listOrderItem,
-        listCartItem,
-        totalMoney2,
-        voucherMain
-      })
 
       const stateJson = JSON.stringify(stateValue);
 
