@@ -21,6 +21,7 @@ export interface IOrder extends Document {
     deliveredDate?:string;
     cancelOrderDate?:string;
     cancelBy?:number;
+    noteCancel:string | null;
     shippingCost:number;
     estimatedDeliveryDate:string;
     paymentMethod:number;

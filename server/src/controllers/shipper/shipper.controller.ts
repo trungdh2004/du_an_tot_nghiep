@@ -645,6 +645,66 @@ class ShipperController {
       });
     }
   }
+
+  async pagingOrderShipperAdmin(req: RequestModel, res: Response) {
+    try {
+      const {id} = req.params;
+      const pageIndex = Number(req.query.page) || 1;
+      const { status = 2 } = req.body;
+
+      let limit = 10;
+      let skip = (pageIndex - 1) * limit || 0;
+
+      let queryStatus = {};
+
+      if (status === 4) {
+        queryStatus = {
+          statusList: {
+            $in: [4],
+          },
+        };
+      } else {
+        queryStatus = {
+          status: status,
+        };
+      }
+
+      const existingShipper = await ShipperModel.findById(id);
+
+      if(!existingShipper) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Không có shipper"
+        })
+      }
+
+      const listOrder = await OrderModel.find({
+        ...queryStatus,
+        shipper:id,
+      })
+        .sort({ confirmedDate: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate("address");
+
+      const count = await OrderModel.countDocuments({
+        status: status,
+        shipper: id,
+      });
+
+      const result = formatDataPaging({
+        limit,
+        pageIndex,
+        data: listOrder,
+        count: count,
+      });
+
+      return res.status(STATUS.OK).json(result);
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
 }
 
 export default new ShipperController();

@@ -8,6 +8,7 @@ import React, { useEffect, useState } from "react";
 import OrderSelectShipper from "./OrderSelectShipper";
 import { cn } from "@/lib/utils";
 import OrderCancelConfirm from "./OrderCancelConfirm";
+import { toast } from "sonner";
 
 const OrderInforAddress = ({ data, getOrderById }: any) => {
 	const [pageIndex, setPageIndex] = useState(1);
@@ -16,7 +17,8 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 			const data = await confirmOrder(id);
 			getOrderById();
 			return data;
-		} catch (error) {
+		} catch (error:any) {
+			toast.error(error?.response?.data?.message);
 			console.log(error);
 		}
 	};
