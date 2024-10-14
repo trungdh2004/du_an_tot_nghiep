@@ -58,8 +58,6 @@ class AuthController {
         provider: "credential",
       });
 
-      console.log({ existingEmail });
-
       if (!existingEmail) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Email chưa được đăng kí , mời bạn đăng kí tài khoản",

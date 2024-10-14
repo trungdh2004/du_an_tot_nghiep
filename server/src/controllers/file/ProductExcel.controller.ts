@@ -5,12 +5,31 @@ import ProductModel from "../../models/products/Product.schema";
 import AttributeModel from "../../models/products/Attribute.schema";
 import STATUS from "../../utils/status";
 import { ListColor } from "../../interface/cart";
-import { IAttribute, IColor, ISize } from "../../interface/product";
+import { IAttribute, IAttributeV2, ICategory, IColor, ISize } from "../../interface/product";
+import ColorModel from "../../models/products/Color.schema";
+import SizeModel from "../../models/products/Size.schema";
+import CategoryModel from "../../models/products/Category.schema";
+
+interface IProductExcel {
+  name: string;
+  price: number;
+  discount: number;
+  description: string;
+  thumbnail: string;
+  images: { url: string }[];
+  slug: string;
+  is_simple: boolean;
+  is_hot: boolean;
+  category: ICategory;
+  quantity: number;
+  attribute: IAttributeV2[];
+  listColor: IColor[];
+  listSize: ISize[];
+}
 
 class ProductExcelController {
   async exportExcelProduct(req: Request, res: Response) {
     try {
-      console.log(1);
 
       const data = [
         {
@@ -81,17 +100,7 @@ class ProductExcelController {
       // Chuyển đổi sheet sang JSON
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-      const mapColor = new Map()
-
-      const listData = jsonData?.map((item: any) => {
-        const listColor = JSON.parse(item.DANH_SACH_MAU)
-
-        if(listColor.length > 0) {
-          listColor.map((color:IColor) => {
-            
-          })
-        }
-        
+      const listData: IProductExcel[] = jsonData?.map((item: any) => {
         return {
           name: item.TEN,
           price: item.GIA,
@@ -109,9 +118,96 @@ class ProductExcelController {
           listSize: JSON.parse(item.DANH_SACH_KICH_THUOC),
         };
       });
+
+      const mapColor = new Map();
+      const mapSize = new Map();
+      const mapCategory = new Map();
+
+      for (let product of listData) {
+        if (!mapCategory.get(product.category._id)) {
+          const newCategory = await CategoryModel.create({
+            name: product.category.name,
+            description: product.category.description,
+          });
+          mapCategory.set(product.category._id, newCategory._id);
+        }
+        
+        for(let color of product.listColor) {
+          if(!mapColor.get(color._id)) { 
+            const newColor = await ColorModel.create({
+              name:color.name,
+              code: color.code,
+            })
+
+            mapColor.set(color._id, newColor._id);
+          }
+        }
+
+        for(let size of product.listSize) {
+          if(!mapSize.get(size._id)) { 
+            const newSize = await SizeModel.create({
+              name:size.name,
+              fromHeight: size.fromHeight,
+              fromWeight: size.fromWeight,
+              toHeight: size.toHeight,
+              toWeight: size.toWeight
+            })
+
+            mapSize.set(size._id, newSize._id);
+          }
+        }
+
+        const dataNewAttribute = product.attribute.map(attribute => {
+          if(!attribute) return
+
+          const color = mapColor.get(attribute.color._id)
+          const size = mapSize.get(attribute.size._id)
+
+          return {
+            color,
+            size,
+            price:attribute.price,
+            discount:attribute.discount,
+            quantity:attribute.quantity
+          }
+        }) 
+
+        let listId:string[] = []
+
+        if(dataNewAttribute.length > 0) {
+          const newAttribute = await AttributeModel.create(dataNewAttribute)
+
+          newAttribute.map(attribute => {
+            listId.push(attribute._id)
+          })
+
+        }
+
+        await ProductModel.create({
+          name: product.name,
+          price: product.price,
+          discount: product.discount,
+          description:product.description,
+          quantity: product.quantity,
+          thumbnail:product.thumbnail,
+          images: product.images,
+          is_simple:product.is_simple,
+          is_hot:product.is_hot,
+          category:mapCategory.get(product.category._id),
+          attributes:listId
+        })
+        
+      }
       // Trả về dữ liệu JSON từ file Excel
-      res.json(listData);
-    } catch (error:any) {
+      return res.json({
+        key: Array.from(mapCategory.keys()),
+        value: Array.from(mapCategory.values()),
+        keyColor: Array.from(mapColor.values()),
+        valueColor: Array.from(mapColor.values()),
+        keySize: Array.from(mapSize.values()),
+        valueSize: Array.from(mapSize.values()),
+      });
+    } catch (error: any) {
       return res.status(500).json({ error: error.message });
     }
   }
@@ -399,7 +495,11 @@ class ProductExcelController {
 
       // Gửi buffer như là response
       res.send(excelBuffer);
-    } catch (error) {}
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message
+      })
+    }
   }
 }
 
