@@ -351,6 +351,7 @@ class CartController {
               createdAt: item.createdAt,
               productId: item.product._id,
               slug: item.product.slug,
+              totalQuantity:item.is_simple ? item.product.quantity : item.attribute?.quantity
             };
             findCart.items.push(data);
             return acc;
@@ -435,6 +436,7 @@ class CartController {
                 createdAt: item.createdAt,
                 productId: item.product._id,
                 slug: item.product.slug,
+                totalQuantity:item.is_simple ? item.product.quantity : item.attribute?.quantity
               },
               
             ],
