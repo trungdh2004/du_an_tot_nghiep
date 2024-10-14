@@ -19,9 +19,9 @@ import { IListColorAttribute, IListSizeAttribute } from "@/types/product";
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { IoBanOutline } from "react-icons/io5";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import Attribute from "./Attribute";
-import { Link } from "react-router-dom";
 
 interface CartItemProps {
 	cart?: ICart;
@@ -48,6 +48,7 @@ const CartItem = ({
 	attributeAlreadyExists,
 	onCheckedChange,
 }: CartItemProps) => {
+	const [quantity, setQuantity] = useState(item?.quantity); 
 	const [isOpen, setIsOpen] = useState(false);
 	const { carts, setItemCart, setCarts, setTotalCart } = useCart();
 	const [errors, setErrors] = useState({
@@ -56,6 +57,7 @@ const CartItem = ({
 	});
 	const { updateAttributeItemCart } = useUpdateAttributeItemCart();
 	const handleChangeQuantity = useDebounce(async (value: number) => {
+		setQuantity(value); 
 		try {
 			await updateCartItem(item?._id as string, { quantity: value });
 			const { data } = await getCountMyShoppingCart();
@@ -193,8 +195,8 @@ const CartItem = ({
 								<InputQuantity
 									size="mobile"
 									className="w-20"
-									defaultValue={item?.quantity}
-									maxTotal={item?.attribute?.quantity}
+									defaultValue={quantity}
+									maxTotal={item?.attribute ? item?.attribute?.quantity : item?.totalQuantity }
 									getValue={handleChangeQuantity}
 								/>
 							) : (
@@ -224,11 +226,11 @@ const CartItem = ({
 				</span>
 			</div>
 			<div className="hidden lg:flex w-[15.4265%] text-center items-center justify-center">
-				{item?.attribute?._id && item?.attribute?.quantity || item?.is_simple ? (
+				{(item?.attribute?._id && item?.attribute?.quantity) || item?.is_simple ? (
 					<InputQuantity
 						size="small"
-						defaultValue={item?.quantity}
-						maxTotal={item?.quantity || item?.attribute?.quantity }
+						defaultValue={quantity}
+						maxTotal={item?.attribute ? item?.attribute?.quantity : item?.totalQuantity }
 						getValue={handleChangeQuantity}
 					/>
 				) : (

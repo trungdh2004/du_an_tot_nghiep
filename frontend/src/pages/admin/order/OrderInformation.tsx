@@ -102,6 +102,13 @@ const OrderInformation = ({ data, getOrderById }: any) => {
 								</p>
 							</div>
 							<hr />
+							<div className="flex justify-between">
+								<p className="font-medium text-sm text-black">Voucher</p>
+								<p className="font-normal text-sm text-black pr-3">
+									- {formatCurrency(data.voucherAmount)}
+								</p>
+							</div>
+							<hr />
 							<div className="flex justify-between bg-main">
 								<p className="font-medium text-sm text-black">
 									Tổng thanh toán

@@ -386,7 +386,7 @@ class ProductController {
           thumbnail,
           category,
           quantitySold,
-          quantity: quantityAttribute,
+          quantity:is_simple ? quantity : quantityAttribute,
           images,
           attributes: dataAttributes,
           slug: slugProduct,
