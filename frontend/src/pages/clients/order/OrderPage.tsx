@@ -119,7 +119,7 @@ const OrderPage = () => {
 	return (
 		<>
 			<div className=" w-full min-h-screen">
-				<div className="bg-magic"></div>
+				<div className=""></div>
 				<div className="lg:px-[130px] md:px-[65px] px-0">
 					<AddressOrder
 						data={order}

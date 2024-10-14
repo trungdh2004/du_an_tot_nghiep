@@ -10,6 +10,7 @@ import { FaRegCircleXmark } from "react-icons/fa6";
 import { IVoucher } from "@/types/voucher";
 import { takeApplyDiscountCode } from "@/service/voucher";
 import { IOrderMoneyValue } from "@/types/order";
+
 interface Props {
 	data: any;
 	setOrderCheckout: (order: any) => void;
@@ -106,7 +107,7 @@ const Vorcher = ({
 							<div className="flex items-center gap-4">
 								<div className="bg-[#e7e7e7] p-3">
 									<img
-										src={Outofstock}
+										src={`/NUC.svg`}
 										alt=""
 										className="rounded-full w-16 h-16"
 									/>

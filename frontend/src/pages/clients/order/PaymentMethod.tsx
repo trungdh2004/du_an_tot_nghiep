@@ -126,7 +126,7 @@ const PaymentMethod = ({
 							<div className="flex justify-between gap-3">
 								<p className="lg:text-base md:text-base text-sm">Giảm giá</p>
 								<span className="">
-									{formatCurrency(moneyVoucher?.amount as number)}
+									- {formatCurrency(moneyVoucher?.amount as number)}
 								</span>
 							</div>
 						)}
