@@ -1230,7 +1230,7 @@ class OrderController {
                 voucherMain = existingVoucher;
               }
             }
-          }else {
+          } else {
             voucherMain = null;
           }
         }
@@ -1886,9 +1886,13 @@ class OrderController {
           shipper: { $ne: null },
         };
       } else {
-        shipperQuery = {
-          shipper: null,
-        };
+        if(status === 6) {
+          shipperQuery = {}
+        }else {
+          shipperQuery = {
+            shipper: null,
+          };
+        }
       }
 
       const listOrder = await OrderModel.find({
@@ -1976,6 +1980,7 @@ class OrderController {
               status: 6,
               date: existingOrder?.cancelOrderDate,
               message: "Đơn hàng đã hủy",
+              sub: existingOrder.noteCancel,
             };
           }
           if (item === 5) {
@@ -2065,7 +2070,7 @@ class OrderController {
           return false;
         }
 
-        if (typeof orderItem.attribute === "string") {
+        if (!orderItem.attribute) {
           return true;
         }
 
@@ -2457,7 +2462,7 @@ class OrderController {
         });
       }
 
-      if (existingOrder.status !== 1) {
+      if (existingOrder.status !== 1 && cancelBy !== 3) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Đơn hàng không thể hủy",
         });
