@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import React, { memo, useEffect, useRef, useState, useCallback } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { GoPlus } from "react-icons/go";
 import { HiMiniMinus } from "react-icons/hi2";
 
@@ -45,7 +45,9 @@ const InputQuantity: React.FC<InputQuantityProps> = ({
 		},
 		[value, updateValue],
 	);
-
+useEffect(() => {
+	setValue(defaultValue);
+	}, [defaultValue]);
 	// useEffect(() => {
 	// 	updateValue(defaultValue);
 	// }, [defaultValue, updateValue]);

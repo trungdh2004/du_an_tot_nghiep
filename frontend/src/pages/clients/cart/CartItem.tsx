@@ -19,9 +19,9 @@ import { IListColorAttribute, IListSizeAttribute } from "@/types/product";
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { IoBanOutline } from "react-icons/io5";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import Attribute from "./Attribute";
-import { Link } from "react-router-dom";
 
 interface CartItemProps {
 	cart?: ICart;
@@ -87,8 +87,6 @@ const CartItem = ({
 			setErrors,
 		});
 	};	
-	console.log(">>>Item",item);
-	
 	return (
 		<div key={item._id} className="flex items-center item-group">
 			<div
@@ -198,7 +196,7 @@ const CartItem = ({
 									size="mobile"
 									className="w-20"
 									defaultValue={quantity}
-									maxTotal={item?.attribute?.quantity || item?.quantity }
+									maxTotal={item?.attribute ? item?.attribute?.quantity : item?.totalQuantity }
 									getValue={handleChangeQuantity}
 								/>
 							) : (
@@ -232,7 +230,7 @@ const CartItem = ({
 					<InputQuantity
 						size="small"
 						defaultValue={quantity}
-						maxTotal={item?.attribute?.quantity || item?.quantity }
+						maxTotal={item?.attribute ? item?.attribute?.quantity : item?.totalQuantity }
 						getValue={handleChangeQuantity}
 					/>
 				) : (
