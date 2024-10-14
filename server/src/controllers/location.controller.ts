@@ -7,8 +7,6 @@ class LocationController {
     try {
       const { long, lat } = req.body;
 
-      console.log({ long, lat });
-
       let findLocation = await LocationModel.findOne();
 
       if (!findLocation) {

@@ -98,8 +98,6 @@ class SearchController {
           };
         }
 
-        console.log(query);
-
         const listBlog = await BlogsModel.find({
           ...query,
           isPublish: true,

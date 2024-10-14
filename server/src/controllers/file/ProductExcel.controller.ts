@@ -30,7 +30,6 @@ interface IProductExcel {
 class ProductExcelController {
   async exportExcelProduct(req: Request, res: Response) {
     try {
-      console.log(1);
 
       const data = [
         {
