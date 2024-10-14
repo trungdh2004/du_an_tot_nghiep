@@ -2,6 +2,7 @@ import AccountLayout from "@/layout/AcountLayout";
 import MainLayout from "@/layout/MainLayout";
 import UserIndex from "@/pages/admin/users/UserIndex";
 import AccountIndex from "@/pages/clients/account/AccountIndex";
+import ChangePassword from "@/pages/clients/account/ChangePassword";
 import PaymentIndex from "@/pages/clients/account/PaymentIndex";
 import OrderManagements from "@/pages/clients/account/Purchase";
 import PurchaseOrder from "@/pages/clients/account/PurchaseOrder";
@@ -56,6 +57,10 @@ const MainRouter = [
 					{
 						path: "payment",
 						element: <PaymentIndex />,
+					},
+					{
+						path: "password",
+						element: <ChangePassword />,
 					},
 				],
 			},
