@@ -33,6 +33,8 @@ const Vorcher = ({
 				code: data.voucherCode,
 				listId: stateOrder.listId,
 			});
+			console.log(check);
+
 			setVoucher(check.data.voucher);
 			setShow(true);
 			if (check.data !== null) {
@@ -56,15 +58,16 @@ const Vorcher = ({
 
 	useEffect(() => {
 		if (data?.voucherMain) {
-			console.log("data:", data);
+			console.log("data:", data?.voucherMain);
 			setOrderCheckout((prev: any) => {
-				return { ...prev, voucher: data?.voucherMain?._id };
+				return { ...prev, voucher: data?.voucherMain?.voucher?._id };
 			});
-			setVoucher(data?.voucherMain);
-			setMoneyVoucher(data?.voucherMain.discountValue);
+			setVoucher(data?.voucherMain?.voucher);
+			setMoneyVoucher({ amount: data?.voucherMain?.amountVoucher });
 			setShow(true);
 		}
 	}, [data]);
+	// console.log(voucher.voucher);
 
 	return (
 		<div className="py-2">

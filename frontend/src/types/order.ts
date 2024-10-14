@@ -105,10 +105,7 @@ export interface IListStatusOrderDate {
 }
 
 export interface IOrderMoneyValue {
-	status: boolean;
 	amount: number;
-	valueAmount: number;
-	message: string;
 }
 
 

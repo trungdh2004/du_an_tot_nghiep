@@ -136,16 +136,19 @@ const PaymentMethod = ({
 								Tổng thanh toán :
 							</p>
 							<span className="lg:text-2xl md:text-xl text-xl text-[#f78138]">
-								{orderCheckout.addressId === undefined
+								{totalCost === 0
 									? formatCurrency(0)
-									: moneyVoucher !== null
-										? formatCurrency(
-												(orderCheckout?.shippingCost as number) +
-													(moneyVoucher?.valueAmount as number),
-											)
-										: formatCurrency(
-												totalCost + (orderCheckout?.shippingCost as number),
-											)}
+									: orderCheckout.addressId === undefined
+										? formatCurrency(0)
+										: moneyVoucher !== null
+											? formatCurrency(
+													totalCost +
+														(orderCheckout?.shippingCost as number) -
+														(moneyVoucher?.amount as number),
+												)
+											: formatCurrency(
+													totalCost + (orderCheckout?.shippingCost as number),
+												)}
 							</span>
 						</div>
 					</div>
@@ -165,16 +168,19 @@ const PaymentMethod = ({
 						<p className="text-sm">Tổng thanh toán</p>
 
 						<span className="text-base self-end text-[#f78138]">
-							{orderCheckout.addressId === undefined
+							{totalCost === 0
 								? formatCurrency(0)
-								: moneyVoucher !== null
-									? formatCurrency(
-											(orderCheckout?.shippingCost as number) +
-												(moneyVoucher?.valueAmount as number),
-										)
-									: formatCurrency(
-											totalCost + (orderCheckout?.shippingCost as number),
-										)}
+								: orderCheckout.addressId === undefined
+									? formatCurrency(0)
+									: moneyVoucher !== null
+										? formatCurrency(
+												totalCost +
+													(orderCheckout?.shippingCost as number) -
+													(moneyVoucher?.amount as number),
+											)
+										: formatCurrency(
+												totalCost + (orderCheckout?.shippingCost as number),
+											)}
 						</span>
 					</div>
 					<Button
