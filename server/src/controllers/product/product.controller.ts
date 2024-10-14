@@ -628,8 +628,6 @@ class ProductController {
         rating,
       } = req.body;
 
-      console.log({ sort });
-
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
       let queryKeyword = keyword
@@ -745,7 +743,6 @@ class ProductController {
           },
         };
       }
-      console.log({ querySort });
 
       const listProduct = await ProductModel.find({
         ...queryKeyword,

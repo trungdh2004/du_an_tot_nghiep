@@ -349,7 +349,6 @@ class OrderController {
     try {
       const user = req.user;
       const { listId, addressId, voucher, paymentMethod, note } = req.body;
-      console.log(req.body);
 
       if (paymentMethod !== 1) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -1278,6 +1277,10 @@ class OrderController {
           message: "Bạn chưa chọn địa chỉ",
         });
       }
+      const findLocationShop = await LocationModel.findOne();
+
+      const longShop = findLocationShop?.long || long;
+      const latShop = findLocationShop?.lat || lat;
 
       const findLocationShop = await LocationModel.findOne();
 
@@ -2095,11 +2098,11 @@ class OrderController {
       const checkQuantity = existingOrder.orderItems.find((item) => {
         const itemData = item as IOrderItem;
         if (itemData.is_simple) {
-          const check = itemData.product.quantity < itemData.quantity;
+          const check = itemData.product?.quantity < itemData.quantity;
           return check;
         }
 
-        if (itemData.quantity > itemData.attribute.quantity) {
+        if (itemData.quantity > itemData.attribute?.quantity) {
           return true;
         }
 
