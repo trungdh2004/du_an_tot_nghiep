@@ -65,7 +65,7 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 					<div className="flex justify-between">
 						<p className="font-medium text-sm text-black">Tổng tiền</p>
 						<p className="font-medium text-sm text-red-500">
-							{formatCurrency(data.totalMoney)}
+							{formatCurrency(data.amountToPay)}
 						</p>
 					</div>
 				</div>
