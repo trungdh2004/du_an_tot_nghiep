@@ -5,6 +5,7 @@ function Dog(name, breed) {
 
 }
 console.log("Dog: " + name);
+console.log("Dog: " + name);
 
 Dog.prototype.bark = function () {
   return `${this.name} says woof!`;
