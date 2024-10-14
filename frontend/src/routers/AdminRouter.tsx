@@ -61,7 +61,7 @@ const AdminRouter = [
 				element: <UserShipper />,
 			},
 			{
-				path: "users/shipper/detail",
+				path: "users/shipper/:id/detail",
 				element: <UserShipperDetail />,
 			},
 			// Quản lý sản phẩm
