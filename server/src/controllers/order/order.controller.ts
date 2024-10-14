@@ -1279,6 +1279,11 @@ class OrderController {
         });
       }
 
+      const findLocationShop = await LocationModel.findOne();
+
+      const longShop = findLocationShop?.long || long;
+      const latShop = findLocationShop?.lat || lat;
+
       let address = await AddressModel.findById(addressId);
 
       if (!address) {
@@ -1292,7 +1297,7 @@ class OrderController {
           $geoNear: {
             near: {
               type: "Point",
-              coordinates: [long, lat],
+              coordinates: [longShop, latShop],
             },
             distanceField: "dist",
             spherical: true,
@@ -1505,6 +1510,14 @@ class OrderController {
         voucher: voucher || null,
         addressId: address._id,
       };
+
+      console.log({
+        order:newOrder,
+        listOrderItem:listOrderItem,
+        listCartItem,
+        totalMoney2,
+        voucherMain
+      })
 
       const stateJson = JSON.stringify(stateValue);
 
