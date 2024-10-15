@@ -1,5 +1,6 @@
 import { Dialog } from "@/components/ui/dialog";
 import { getBlogDetailClient } from "@/service/blog";
+import { IBlogs } from "@/types/blogs";
 import { DialogContent } from "@radix-ui/react-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -33,8 +34,8 @@ const BlogDetail = () => {
 	const htmlContent = md.render(markdownContent as any);
 	return (
 		<div className="padding mx-auto py-12">
-			<div className="grid grid-cols-12 gap-5 w-full overflow-visible ">
-				<div className="col-span-3 hidden lg:block pr-5 overflow-visible">
+			<div className="grid grid-cols-12 gap-8 w-full overflow-visible ">
+				<div className="col-span-2 hidden lg:block pr-5 overflow-visible">
 					<div className="sticky top-0">
 						<h3 className="text-base pb-2 font-medium hidden lg:block">
 							{blog?.data?.user_id?.full_name}
@@ -60,8 +61,8 @@ const BlogDetail = () => {
 					</div>
 				</div>
 
-				<div className="col-span-12 lg:col-span-6 ">
-					<h3 className="text-xl md:text-2xl md:font-bold text-[#222222] ">
+				<div className="col-span-12 lg:col-span-7  lg:px-8">
+					<h3 className="text-xl md:text-2xl font-bold text-[#222222] ">
 						{blog?.data?.title}
 					</h3>
 					{/* user-information */}
@@ -91,7 +92,12 @@ const BlogDetail = () => {
 						</div>
 					</div>
 					{/* blog?.data-content */}
-					<div className={"[&>table]:border-collapse [&>table]:border-gray-400  [&>th]:border [&>td]:border "} dangerouslySetInnerHTML={{ __html: htmlContent }} />
+					<div
+						className={
+							"[&>table]:border-collapse [&>table]:border-gray-400  [&>th]:border [&>td]:border "
+						}
+						dangerouslySetInnerHTML={{ __html: htmlContent }}
+					/>
 					{/* Related-blog?.data */}
 					<div className="mt-10">
 						<hr />
@@ -116,13 +122,13 @@ const BlogDetail = () => {
 					</div>
 				</div>
 
-				<div className="col-span-12 lg:col-span-3">
+				<div className="col-span-12 lg:col-span-3 lg:pl-3">
 					<h3 className="text-base pb-2 font-medium mt-4 lg:mt-0 border-b border-gray-300">
 						Bài viết khác
 					</h3>
 					<div className="gap-6 mt-2 ">
 						{blog?.orther &&
-							blog?.orther?.map((item: IBlog) => (
+							blog?.orther?.map((item: IBlogs) => (
 								<Link to={`/blogDetail/${item._id}`}>
 									<div className="border rounded-md w-full p-2 flex hover:shadow mt-2">
 										<div className="w-20 h-20   overflow-hidden">
