@@ -12,6 +12,7 @@ import { FaTruckFast } from "react-icons/fa6";
 import { TbBasketCancel, TbClipboardPlus } from "react-icons/tb";
 import ChartOrderShipper from "./ChartOrderShipper";
 import ListOrder from "./ListOrder";
+import { string } from 'zod';
 
 const UserShipperDetail = () => {
 	const { id } = useParams();
@@ -143,7 +144,7 @@ const UserShipperDetail = () => {
 				</div> */}
 			</div>
 			<div className="mt-3">
-				<ListOrder/>
+				<ListOrder id={id as string}/>
 			{/* <h4 className="text-base font-medium md:text-xl">Thông tin được hàng</h4>
 			<div className="grid grid-cols-1 gap-6 mt-3 md:grid-cols-3">
 				<StatCard

@@ -3,25 +3,26 @@ import { useEffect, useState } from "react";
 import TableComponent from "@/components/common/TableComponent";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { pagingOrderShipper } from "@/service/shipper";
+import { pagingOrderShipper, pagingOrderShipperById } from "@/service/shipper";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { format, parseISO } from "date-fns";
 import { toast } from "sonner";
-interface IData {
-	_id: string;
-	full_name: string;
-	email: string;
-	provider: string | null;
-	avatarUrl: string;
-	is_admin: boolean;
-	blocked_at: boolean;
-	createdAt: string;
-}
+import { TbBasketCancel, TbClipboardPlus } from "react-icons/tb";
+import { FaTruckFast } from "react-icons/fa6";
+import { LiaMapMarkedAltSolid } from "react-icons/lia";
+import { IShipperListOrder } from "@/types/shipper.interface";
+import { AxiosError } from "axios";
+import { formatCurrency } from "@/common/func";
+import { Link } from "react-router-dom";
+import { IoEyeSharp } from "react-icons/io5";
 interface ISearchObjectOderShipper {
-    pageIndex: number,
-    status: number
+	pageIndex: number;
+	status: number;
 }
-const ListOrder = () => {
+type Props = {
+	id: string;
+};
+const ListOrder = ({ id }: Props) => {
 	const [rowSelection, setRowSelection] = useState<RowSelectionState>({}); // xử lí selected
 	const [response, setResponse] = useState({
 		pageIndex: 1,
@@ -32,16 +33,16 @@ const ListOrder = () => {
 	});
 	const [searchObject, setSearchObject] = useState<ISearchObjectOderShipper>({
 		pageIndex: 1,
-		status: 1
+		status: 1,
 	});
-	const [data, setData] = useState<IData[]>([]);
+	const [data, setData] = useState<IShipperListOrder[]>([]);
 	useEffect(() => {
-		// handlePagingOder();
+		handlePagingOder();
 	}, [searchObject]);
 
 	const handlePagingOder = async () => {
 		try {
-			const { data } = await pagingOrderShipper(searchObject.pageIndex, searchObject.status);
+			const { data } = await pagingOrderShipperById(id, searchObject);
 			setData(data.content);
 			setResponse({
 				pageIndex: data.pageIndex,
@@ -51,7 +52,9 @@ const ListOrder = () => {
 				totalOptionPage: data.totalOptionPage,
 			});
 		} catch (error) {
-			toast.error("Không lấy được data người dùng");
+			if(error instanceof AxiosError){
+				toast.error(error?.response?.data?.message);
+			}
 		}
 	};
 	const handleChangePageSize = (value: number) => {
@@ -59,54 +62,83 @@ const ListOrder = () => {
 			...prev,
 			pageSize: value,
 			pageIndex: 1,
-    })); 
-  };
-  
-	const columns: ColumnDef<IData>[] = [
+		}));
+	};
+
+	const columns: ColumnDef<IShipperListOrder>[] = [
 		{
-			accessorKey: "full_name",
+			accessorKey: "code",
 			header: () => {
-				return <div className="text-xs md:text-base">Tên</div>;
+				return <div className="text-xs md:text-base">Mã</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="text-xs md:text-base">{row?.original?.full_name}</div>
+					<div className="text-xs md:text-base">{row?.original?.code}</div>
 				);
 			},
 		},
 		{
-			accessorKey: "email",
+			accessorKey: "address.username",
 			header: () => {
-				return <div className="text-xs md:text-base">Email</div>;
+				return <div className="text-xs md:text-base">Tên người nhận</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="text-xs md:text-base">{row?.original?.email}</div>
+					<div className="text-xs md:text-base">{row?.original?.address.username}</div>
 				);
 			},
 		},
 		{
-			accessorKey: "avatarUrl",
+			accessorKey: "address.phone",
 			header: () => {
-				return <div className="text-xs md:text-base">Ảnh</div>;
+				return <div className="text-xs md:text-base">Số điện thoại</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<img
-						src={row.original.avatarUrl || "/avatar_25.jpg"}
-						className="md:w-[40px] md:h-[40px] w-[30px] h-[30px] rounded-full"
-					/>
+					<div className="text-xs md:text-base">{row?.original?.address.phone}</div>
 				);
 			},
 		},
 		{
-			accessorKey: "provider",
+			accessorKey: "address.address",
 			header: () => {
-				return <div className="text-xs md:text-base">Phương thức</div>;
+				return <div className="text-xs md:text-base">Địa chỉ</div>;
 			},
 			cell: ({ row }) => {
-				const value = `${row.getValue("provider") === "google.com" ? "Google" : "Đăng ký"}`;
-				return <div className="text-xs font-medium md:text-base">{value}</div>;
+				return (
+					<div className="text-xs md:text-base">{row?.original?.address.address}</div>
+				);
+			},
+		},
+		{
+			accessorKey: "address.detailAddress",
+			header: () => {
+				return <div className="text-xs md:text-base">Địa chỉ cụ thể</div>;
+			},
+			cell: ({ row }) => {
+				return (
+					<div className="text-xs md:text-base">{row?.original?.address.detailAddress}</div>
+				);
+			},
+		},
+		{
+			accessorKey: "totalMoney",
+			header: () => {
+				return <div className="text-xs md:text-base">Tổng tiền đơn hàng</div>;
+			},
+			cell: ({ row }) => {
+				return (
+					<div className="text-xs text-red-500 md:text-base">{formatCurrency(row?.original?.totalMoney)}</div>
+				);
+			},
+		},
+		{
+			accessorKey: "status",
+			header: () => {
+				return <div className="text-xs md:text-base">Trạng thái</div>;
+			},
+			cell: ({ row }) => {
+				return <div className="text-xs font-medium md:text-base">{row?.original?.status}</div>;
 			},
 		},
 		{
@@ -117,65 +149,90 @@ const ListOrder = () => {
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.createdAt);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
+				return <div className="text-xs md:text-base">{formattedDate}</div>;
+			},
+		},
+		{
+			id: "actions",
+			enableHiding: false,
+			cell: ({ row }) => {
 				return (
-					<div className="text-xs md:text-base">
-						{formattedDate}
+					<div>
+						<Link to={`/admin/order/${row.original._id}`}>
+							<IoEyeSharp className="text-blue-400 cursor-pointer" size={25} />
+						</Link>
 					</div>
 				);
 			},
 		},
-		{
-			id: "status",
-			header: () => {
-				return <div className="text-xs md:text-base">Trạng thái</div>;
-			},
-			cell: ({ row }) => {
-				const status = row.original.blocked_at ? "Bị cấm" : "Hoạt động";
-				return (
-					<Badge
-						className={`font-medium ${row.original.blocked_at ? "bg-[#cf4040]" : "bg-green-500"} text-center items-center text-xs text-nowrap leading-[14px]`}
-					>
-						{status}
-					</Badge>
-				);
-			},
-		},
+		
 	];
 
 	const handleChangePage = (value: any) => {
 		setSearchObject((prev) => ({
 			...prev,
 			pageIndex: value.selected + 1,
-    }));
-    setRowSelection({});
+		}));
+		setRowSelection({});
 	};
 
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex flex-col gap-3">
 				<h4 className="text-base font-medium md:text-xl">
-					Danh sách người dùng
+					Danh sách đơn hàng giao
+					<button onClick={handlePagingOder}>CALL API</button>
 				</h4>
 			</div>
 			<Tabs value={`${searchObject.status}`} className="w-full">
-				<TabsList className="grid w-full grid-cols-2">
+				<TabsList className="grid w-full grid-cols-4">
 					<TabsTrigger
 						value="1"
 						onClick={() => {
 							setRowSelection({});
-							setSearchObject((prev) => ({ ...prev, status: 1,pageIndex:1 }));
+							setSearchObject((prev) => ({ ...prev, status: 1, pageIndex: 1 }));
 						}}
 					>
-						Người dùng
+						<div className="flex items-center gap-x-1">
+							<TbClipboardPlus size={18} className="text-blue-300" />
+							<p>Đơn hàng mới</p>
+						</div>
 					</TabsTrigger>
 					<TabsTrigger
 						value="2"
 						onClick={() => {
 							setRowSelection({});
-							setSearchObject((prev) => ({ ...prev, status: 2,pageIndex:1 }));
+							setSearchObject((prev) => ({ ...prev, status: 2, pageIndex: 1 }));
 						}}
 					>
-						Người dùng bị cấm
+						<div className="flex items-center gap-x-1">
+							<FaTruckFast size={18} className="text-blue-500" />
+							<p>Đơn hàng đang giao</p>
+						</div>
+					</TabsTrigger>
+					<TabsTrigger
+						value="3"
+						onClick={() => {
+							setRowSelection({});
+							setSearchObject((prev) => ({ ...prev, status: 3, pageIndex: 1 }));
+						}}
+					>
+						<div className="flex items-center gap-x-1">
+							<LiaMapMarkedAltSolid size={18} className="text-green-500" />
+							<p>Đơn hàng giao thành công</p>
+						</div>
+					</TabsTrigger>
+					<TabsTrigger
+						value="4"
+						onClick={() => {
+							setRowSelection({});
+							setSearchObject((prev) => ({ ...prev, status: 4, pageIndex: 1 }));
+						}}
+					>
+						<div className="flex items-center gap-x-1">
+							<TbBasketCancel size={18} className="text-red-500" />
+							<p>Đơn hàng giao thất bại</p>
+						</div>
 					</TabsTrigger>
 				</TabsList>
 			</Tabs>
@@ -192,7 +249,7 @@ const ListOrder = () => {
 				pageCount={response.pageCount}
 				totalElement={response.totalElement}
 				handleChangePageSize={handleChangePageSize}
-			/>			
+			/>
 		</div>
 	);
 };

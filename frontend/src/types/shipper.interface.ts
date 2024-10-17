@@ -133,3 +133,67 @@ export interface IShipperDetail {
 		__v: number;
 	}[];
 }
+export interface IShipperListOrder {
+	_id: string;
+	user: string;
+	code: string;
+	address: {
+		location: {
+			type: string;
+			coordinates: number[];
+		};
+		_id: string;
+		user: string;
+		username: string;
+		is_main: boolean;
+		phone: string;
+		city: {
+			name: string;
+			idProvince: string;
+			_id: string;
+		};
+		district: {
+			name: string;
+			idDistrict: string;
+			_id: string;
+		};
+		commune: {
+			name: string;
+			idCommune: string;
+			_id: string;
+		};
+		address: string;
+		detailAddress: string;
+		deleted: boolean;
+		createdAt: string;
+		updatedAt: string;
+		__v: number;
+	};
+	status: number;
+	statusList: number[];
+	voucherAmount: number;
+	voucher: any;
+	voucherVersion: any;
+	totalMoney: number;
+	amountToPay: number;
+	confirmedDate: string;
+	shippingDate: string;
+	shippedDate: string;
+	deliveredDate: any;
+	cancelOrderDate: any;
+	cancelBy: any;
+	noteCancel: any;
+	distance: number;
+	shippingCost: number;
+	estimatedDeliveryDate: string;
+	paymentMethod: number;
+	paymentStatus: boolean;
+	payment: any;
+	note: string;
+	shipper: string;
+	orderItems: string[];
+	orderDate: string;
+	createdAt: string;
+	updatedAt: string;
+	__v: number;
+}
