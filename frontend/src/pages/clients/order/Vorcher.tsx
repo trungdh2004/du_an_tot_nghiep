@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import voucher1 from "@/assets/voucher.png";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,20 +9,20 @@ import { toast } from "sonner";
 import { FaRegCircleXmark } from "react-icons/fa6";
 import { IVoucher } from "@/types/voucher";
 import { takeApplyDiscountCode } from "@/service/voucher";
+import { IOrderMoneyValue } from "@/types/order";
+
 interface Props {
 	data: any;
 	setOrderCheckout: (order: any) => void;
-	setMoneyVoucher: (money: number) => void;
+	setMoneyVoucher: Dispatch<SetStateAction<IOrderMoneyValue | null>>;
+	stateOrder: any;
 }
-const Vorcher = ({ data, setOrderCheckout, setMoneyVoucher }: Props) => {
-	const arrayTotal = data?.data?.map((product: any) => {
-		return product.totalAmount;
-	});
-
-	const totalCost = arrayTotal?.reduce(
-		(acc: number, value: number) => acc + value,
-		0,
-	);
+const Vorcher = ({
+	data,
+	setOrderCheckout,
+	setMoneyVoucher,
+	stateOrder,
+}: Props) => {
 	const [voucher, setVoucher] = useState<IVoucher | null | undefined>(
 		data?.voucher,
 	);
@@ -32,46 +32,46 @@ const Vorcher = ({ data, setOrderCheckout, setMoneyVoucher }: Props) => {
 		try {
 			const check = await takeApplyDiscountCode({
 				code: data.voucherCode,
-				totalMoney: totalCost,
+				listId: stateOrder.listId,
 			});
-			setVoucher(check.data.data);
+			console.log(check);
+
+			setVoucher(check.data.voucher);
 			setShow(true);
-			if (check.data.data !== null) {
+			if (check.data !== null) {
 				setOrderCheckout((prev: any) => {
-					return { ...prev, voucher: check.data.data._id };
+					return { ...prev, voucher: check.data.voucher._id };
 				});
-				setMoneyVoucher(check.data.data.discountValue);
+				setMoneyVoucher(check.data.valueCheck);
 			} else {
 				alert("Mã voucher không đúng hoặc đã hết hạn sử dụng!");
 			}
 		} catch (error) {
 			setVoucher(null);
 			setShow(true);
+			setOrderCheckout((prev: any) => {
+				return { ...prev, voucher: null };
+			});
+			setMoneyVoucher(null);
 			toast.error("Không có voucher nào ");
 		}
 	};
 
 	useEffect(() => {
 		if (data?.voucherMain) {
-			console.log("data:", data);
+			console.log("data:", data?.voucherMain);
 			setOrderCheckout((prev: any) => {
-				return { ...prev, voucher: data?.voucherMain?._id };
+				return { ...prev, voucher: data?.voucherMain?.voucher?._id };
 			});
-			setVoucher(data?.voucherMain);
-			setMoneyVoucher(data?.voucherMain.discountValue);
-			setShow(true)
+			setVoucher(data?.voucherMain?.voucher);
+			setMoneyVoucher({ amount: data?.voucherMain?.amountVoucher });
+			setShow(true);
 		}
 	}, [data]);
+	// console.log(voucher.voucher);
 
 	return (
 		<div className="py-2">
-			<button
-				onClick={() => {
-					console.log({ voucher });
-				}}
-			>
-				click
-			</button>
 			<div className="flex flex-col bg-white lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow">
 				<div className="flex lg:flex-row gap-3  items-center  justify-between py-2">
 					<div className="col-span-3">
@@ -107,7 +107,7 @@ const Vorcher = ({ data, setOrderCheckout, setMoneyVoucher }: Props) => {
 							<div className="flex items-center gap-4">
 								<div className="bg-[#e7e7e7] p-3">
 									<img
-										src={Outofstock}
+										src={`/NUC.svg`}
 										alt=""
 										className="rounded-full w-16 h-16"
 									/>
@@ -122,10 +122,7 @@ const Vorcher = ({ data, setOrderCheckout, setMoneyVoucher }: Props) => {
 									<p className="text-xs font-light text-gray-500">
 										HXD :{" "}
 										{voucher?.endDate
-											? format(
-													new Date(voucher?.endDate),
-													"yyyy-MM-dd HH:mm:ss",
-												)
+											? format(new Date(voucher?.endDate), "yyyy-MM-dd")
 											: "Sai time"}
 									</p>
 								</div>
@@ -137,6 +134,7 @@ const Vorcher = ({ data, setOrderCheckout, setMoneyVoucher }: Props) => {
 									setOrderCheckout((prev: any) => {
 										return { ...prev, voucher: null };
 									});
+									setMoneyVoucher(null);
 									reset();
 								}}
 							>
