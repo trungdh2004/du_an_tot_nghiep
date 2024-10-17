@@ -9,8 +9,9 @@ import { LiaBirthdayCakeSolid, LiaMapMarkedAltSolid } from "react-icons/lia";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { FaTruckFast } from "react-icons/fa6";
-import { TbBasketCancel } from "react-icons/tb";
+import { TbBasketCancel, TbClipboardPlus } from "react-icons/tb";
 import ChartOrderShipper from "./ChartOrderShipper";
+import ListOrder from "./ListOrder";
 
 const UserShipperDetail = () => {
 	const { id } = useParams();
@@ -51,48 +52,83 @@ const UserShipperDetail = () => {
 			<h4 className="text-base font-medium md:text-xl">
 				Thông tin chi tiết người giao hàng
 			</h4>
-			<div className="mt-3">
-				<div className="overflow-hidden border rounded-xl box-shadow">
-					<div className="flex items-center p-6">
-						<div className="flex flex-col items-center mb-6">
-							<img
-								src={optimizeCloudinaryUrl(infoDetailShipper?.shipper?.avatar as string, 120, 120)}
-								alt=""
-								className="object-cover w-32 h-32 mb-4 border-4 border-gray-200 rounded-full"
-							/>
-							<h3 className="text-base font-medium md:text-lg">
-								{infoDetailShipper?.shipper?.fullName}
-							</h3>
+			<div className="flex items-start gap-4 mt-3">
+				<div className="w-3/5 overflow-hidden border rounded-xl box-shadow">
+					<div className="p-6 ">
+						<div className="flex items-start justify-between">
+							<div className="flex flex-col items-center w-4/5 mb-6">
+								<img
+									src={optimizeCloudinaryUrl(
+										infoDetailShipper?.shipper?.avatar as string,
+										110,
+										110,
+									)}
+									alt=""
+									className="object-cover w-32 h-32 mb-4 border-4 border-gray-200 rounded-full"
+								/>
+
+								<button className="flex items-center px-4 py-2 font-bold text-white bg-red-500 rounded-full hover:bg-red-600 focus:outline-none focus:shadow-outline">
+									<FaLock className="mr-2" />
+									Khóa tài khoản
+								</button>
+							</div>
+							<div className="grid grid-cols-2 gap-7">
+								<InfoField
+									icon={<FaRegAddressCard className="text-gray-400" />}
+									label="Họ tên"
+									value={infoDetailShipper?.shipper?.fullName as string}
+								/>
+								<InfoField
+									icon={<FaRegAddressCard className="text-gray-400" />}
+									label="Số căn cước"
+									value={infoDetailShipper?.shipper?.idCitizen as string}
+								/>
+								<InfoField
+									icon={<FiPhone className="text-gray-400" />}
+									label="Điện thoại"
+									value={infoDetailShipper?.shipper?.phone as string}
+								/>
+								<InfoField
+									icon={<LiaBirthdayCakeSolid className="text-gray-400" />}
+									label="Ngày sinh"
+									value={new Date(
+										infoDetailShipper?.shipper?.birthDate as string,
+									).toLocaleDateString()}
+								/>
+								<div className="col-span-2">
+								<InfoField
+							icon={<FaMapMarkerAlt className="text-gray-400" />}
+							label="Địa chỉ"
+							value={infoDetailShipper?.shipper?.address.concat(infoDetailShipper?.shipper?.address).concat(infoDetailShipper?.shipper?.address) as string}
+						/>
+								</div>
+							</div>
 						</div>
-						<div className="grid grid-cols-1 gap-y-1.5">
-							<InfoField
-								icon={<FaRegAddressCard className="text-gray-400" />}
-								label="Số căn cước"
-								value={infoDetailShipper?.shipper?.idCitizen as string}
-							/>
-							<InfoField
-								icon={<FiPhone className="text-gray-400" />}
-								label="Điện thoại"
-								value={infoDetailShipper?.shipper?.phone as string}
-							/>
-							<InfoField
-								icon={<LiaBirthdayCakeSolid className="text-gray-400" />}
-								label="Ngày sinh"
-								value={new Date(infoDetailShipper?.shipper?.birthDate as string).toLocaleDateString()}
-							/>
-							<InfoField
-								icon={<FaMapMarkerAlt className="text-gray-400" />}
-								label="Địa chỉ"
-								value={infoDetailShipper?.shipper?.address as string}
-							/>
-						</div>
-						<div className="flex justify-center mt-8">
-							<button className="flex items-center px-4 py-2 font-bold text-white bg-red-500 rounded-full hover:bg-red-600 focus:outline-none focus:shadow-outline">
-								<FaLock className="mr-2" />
-								Khóa tài khoản
-							</button>
-						</div>
+						
 					</div>
+				</div>
+				<div className="grid flex-grow grid-cols-2 gap-5 ">
+					<StatCard
+						icon={<TbClipboardPlus size={40} className="text-blue-300" />}
+						count={orderStats.successful}
+						label="Đơn hàng mới"
+					/>
+					<StatCard
+						icon={<FaTruckFast size={40} className="text-blue-500" />}
+						count={orderStats.inProgress}
+						label="Đơn hàng đang giao"
+					/>
+					<StatCard
+						icon={<LiaMapMarkedAltSolid size={40} className="text-green-500" />}
+						count={orderStats.successful}
+						label="Đơn hàng giao thành công"
+					/>
+
+					<StatCard
+						icon={<TbBasketCancel size={40} className="text-red-500" />}
+						count={orderStats.failed}
+						label="Đơn hàng giao thất bại"
+					/>
 				</div>
 				{/* <div className="p-6 border rounded-xl box-shadow">
 					<h5 className="mb-6 text-base font-medium md:text-lg">
@@ -106,7 +142,10 @@ const UserShipperDetail = () => {
 					</div>
 				</div> */}
 			</div>
-			<div className="grid grid-cols-1 gap-6 mt-8 md:grid-cols-3">
+			<div className="mt-3">
+				<ListOrder/>
+			{/* <h4 className="text-base font-medium md:text-xl">Thông tin được hàng</h4>
+			<div className="grid grid-cols-1 gap-6 mt-3 md:grid-cols-3">
 				<StatCard
 					icon={<LiaMapMarkedAltSolid size={40} className="text-green-500" />}
 					count={orderStats.successful}
@@ -122,17 +161,26 @@ const UserShipperDetail = () => {
 					count={orderStats.failed}
 					label="Đơn hàng giao thất bại"
 				/>
+			</div> */}
 			</div>
 		</div>
 	);
 };
 
-const InfoField = ({ icon, label, value }: { icon: ReactNode; label: string; value: string }) => (
-	<div className="flex items-center ">
+const InfoField = ({
+	icon,
+	label,
+	value,
+}: {
+	icon: ReactNode;
+	label: string;
+	value: string;
+}) => (
+	<div className="flex items-center w-full">
 		<div className="mr-3 text-xl">{icon}</div>
-		<div>
+		<div className="flex-grow min-w-0">
 			<p className="text-sm font-medium text-gray-500">{label}</p>
-			<p className="text-base text-gray-800">{value}</p>
+			<p className="flex-grow text-base text-gray-800 truncate">{value}</p>
 		</div>
 	</div>
 );
