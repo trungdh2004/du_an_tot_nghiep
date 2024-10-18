@@ -35,3 +35,5 @@ export const updateActionShippers = ({
 }) => instance.put(`/shipper/actionListShipper`, { listId, type,isBlock });
 export const getDetailShipperById = (id:string) =>
 	instance.get(`/shipper/getDetailShipper/${id}`);
+export const pagingOrderShipperById = (id:string,{pageIndex=0, status=1}) =>
+	instance.post(`/shipper/getDetailShipperAdmin/${id}`, { pageIndex,status });
