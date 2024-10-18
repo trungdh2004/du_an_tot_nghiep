@@ -11,6 +11,7 @@ import OrderItemsModel from "../../models/order/OrderProduct.schema";
 import { socketNotificationOrderClient } from "../../socket/socketNotifycationClient.service";
 import { resolveSoa } from "dns";
 import UserModel from "../../models/User.Schema";
+import CustomerModel from "../../models/Customer.schema";
 
 class ShipperController {
   async registerShipper(req: RequestModel, res: Response) {
@@ -344,26 +345,37 @@ class ShipperController {
           .status(STATUS.BAD_REQUEST)
           .json({ message: "Không có shipper nào" });
 
-      const listOrder = await OrderModel.find({
+      const countOrderConfirm = await OrderModel.countDocuments({
+        status: 2,
         shipper: id,
-        statusList: {
-          $in: 4,
+      });
+      const countOrderRunning = await OrderModel.countDocuments({
+        status: 3,
+        shipper: id,
+      });
+      const countOrderSuccess = await OrderModel.countDocuments({
+        status: {
+          $in: [4, 5],
         },
-      })
-        .populate("orderItems")
-        .sort({
-          createdAt: -1,
-        });
+        shipper: id,
+      });
+      const countOrderCancel = await OrderModel.countDocuments({
+        status: 6,
+        shipper: id,
+      });
 
       return res.status(STATUS.OK).json({
-        message:"Lấy thông tin thành công",
-        shipper:existingShipper,
-        orders:listOrder,
-      })
-    } catch (error:any) {
+        message: "Lấy thông tin thành công",
+        shipper: existingShipper,
+        countOrderConfirm,
+        countOrderRunning,
+        countOrderSuccess,
+        countOrderCancel,
+      });
+    } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
-        message:error.message,
-      })
+        message: error.message,
+      });
     }
   }
 
@@ -535,6 +547,31 @@ class ShipperController {
         });
       });
 
+      console.log("updateOrder", updateOrder);
+
+      const customer = await CustomerModel.findOne({
+        userId: updateOrder?.user,
+      });
+
+      if (customer) {
+        CustomerModel.findByIdAndUpdate(customer._id, {
+          $inc: {
+            totalOrder: 1,
+            totalOrderSuccess: 1,
+            totalProductSuccess: existingOrder?.orderItems?.length,
+            totalMoney: existingOrder?.totalMoney,
+          },
+        });
+      } else {
+        CustomerModel.create({
+          userId: updateOrder?.user,
+          totalOrder: 1,
+          totalOrderSuccess: 1,
+          totalProductSuccess: existingOrder?.orderItems?.length,
+          totalMoney: existingOrder?.totalMoney,
+        });
+      }
+
       socketNotificationOrderClient(
         updateOrder?.code as string,
         4,
@@ -648,7 +685,7 @@ class ShipperController {
 
   async pagingOrderShipperAdmin(req: RequestModel, res: Response) {
     try {
-      const {id} = req.params;
+      const { id } = req.params;
       const pageIndex = Number(req.query.page) || 1;
       const { status = 2 } = req.body;
 
@@ -671,15 +708,15 @@ class ShipperController {
 
       const existingShipper = await ShipperModel.findById(id);
 
-      if(!existingShipper) {
+      if (!existingShipper) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Không có shipper"
-        })
+          message: "Không có shipper",
+        });
       }
 
       const listOrder = await OrderModel.find({
         ...queryStatus,
-        shipper:id,
+        shipper: id,
       })
         .sort({ confirmedDate: -1 })
         .skip(skip)

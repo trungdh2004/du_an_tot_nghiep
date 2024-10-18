@@ -30,10 +30,10 @@ const Search = () => {
 				setLoading(true);
 				const { data } = await searchPopupService({ keyword });
 				const fakeData = {
-					listBlog: [...data?.listBlog,...data?.listBlog,...data?.listBlog,...data?.listBlog,...data?.listBlog,...data?.listBlog,...data?.listBlog],
-					listProduct:[...data?.listProduct,...data?.listProduct,...data?.listProduct,...data?.listProduct,...data?.listProduct,...data?.listProduct,...data?.listProduct],
+					listBlog: data?.listBlog || [],
+					listProduct:data?.listProduct || [],
 				}
-				setAutocomplete(fakeData);
+				setAutocomplete(data);
 			} catch (error) {
 				if (error instanceof AxiosError) {
 					toast.error(error.response?.data.message);
@@ -108,11 +108,11 @@ const Search = () => {
 							(autocomplete as ISearchPopup)?.listProduct?.length > 0 && "flex",
 						)}
 					>
-						<p className="text-lg font-medium text-black/85">Sản phẩm</p>
+						<p className="text-base font-medium text-black/85">Sản phẩm</p>
 						<Link
 						onClick={handleChangePath}
 							to={`/search?topic=product&q=${encodeURIComponent(textKeyWord)}`}
-							className="hover:text-red-500"
+							className="hover:text-blue-500 text-sm"
 						>
 							Xem thêm
 						</Link>
@@ -149,11 +149,11 @@ const Search = () => {
 							(autocomplete as ISearchPopup)?.listBlog?.length > 0 && "flex",
 						)}
 					>
-						<p className="text-lg font-medium text-black/85">Bài viết</p>
+						<p className="text-base font-medium text-black/85">Bài viết</p>
 						<Link
 						onClick={handleChangePath}
 							to={`/search?topic=blog&q=${encodeURIComponent(textKeyWord)}`}
-							className="hover:text-red-500"
+							className="hover:text-blue-500 text-sm"
 						>
 							Xem thêm
 						</Link>
