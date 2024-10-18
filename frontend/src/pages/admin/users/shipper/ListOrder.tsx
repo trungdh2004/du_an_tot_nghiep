@@ -33,7 +33,7 @@ const ListOrder = ({ id }: Props) => {
 	});
 	const [searchObject, setSearchObject] = useState<ISearchObjectOderShipper>({
 		pageIndex: 1,
-		status: 1,
+		status: 2,
 	});
 	const [data, setData] = useState<IShipperListOrder[]>([]);
 	useEffect(() => {
@@ -175,19 +175,7 @@ const ListOrder = ({ id }: Props) => {
 				</h4>
 			</div>
 			<Tabs value={`${searchObject.status}`} className="w-full">
-				<TabsList className="grid w-full grid-cols-4">
-					<TabsTrigger
-						value="1"
-						onClick={() => {
-							setRowSelection({});
-							setSearchObject((prev) => ({ ...prev, status: 1, pageIndex: 1 }));
-						}}
-					>
-						<div className="flex items-center gap-x-1">
-							<TbClipboardPlus size={18} className="text-blue-300" />
-							<p>Đơn hàng mới</p>
-						</div>
-					</TabsTrigger>
+				<TabsList className="grid w-full grid-cols-4 ">
 					<TabsTrigger
 						value="2"
 						onClick={() => {
@@ -196,8 +184,8 @@ const ListOrder = ({ id }: Props) => {
 						}}
 					>
 						<div className="flex items-center gap-x-1">
-							<FaTruckFast size={18} className="text-blue-500" />
-							<p>Đơn hàng đang giao</p>
+							<TbClipboardPlus size={18} className="text-blue-300" />
+							<p className="hidden md:block">Đơn hàng mới</p>
 						</div>
 					</TabsTrigger>
 					<TabsTrigger
@@ -208,8 +196,8 @@ const ListOrder = ({ id }: Props) => {
 						}}
 					>
 						<div className="flex items-center gap-x-1">
-							<LiaMapMarkedAltSolid size={18} className="text-green-500" />
-							<p>Đơn hàng giao thành công</p>
+							<FaTruckFast size={18} className="text-blue-500" />
+							<p className="hidden md:block">Đơn hàng đang giao</p>
 						</div>
 					</TabsTrigger>
 					<TabsTrigger
@@ -220,8 +208,20 @@ const ListOrder = ({ id }: Props) => {
 						}}
 					>
 						<div className="flex items-center gap-x-1">
+							<LiaMapMarkedAltSolid size={18} className="text-green-500" />
+							<p className="hidden md:block">Đơn hàng giao thành công</p>
+						</div>
+					</TabsTrigger>
+					<TabsTrigger
+						value="6"
+						onClick={() => {
+							setRowSelection({});
+							setSearchObject((prev) => ({ ...prev, status: 6, pageIndex: 1 }));
+						}}
+					>
+						<div className="flex items-center gap-x-1">
 							<TbBasketCancel size={18} className="text-red-500" />
-							<p>Đơn hàng giao thất bại</p>
+							<p className="hidden md:block">Đơn hàng giao thất bại</p>
 						</div>
 					</TabsTrigger>
 				</TabsList>
