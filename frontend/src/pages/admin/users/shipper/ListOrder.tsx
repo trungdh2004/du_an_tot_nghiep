@@ -133,15 +133,6 @@ const ListOrder = ({ id }: Props) => {
 			},
 		},
 		{
-			accessorKey: "status",
-			header: () => {
-				return <div className="text-xs md:text-base">Trạng thái</div>;
-			},
-			cell: ({ row }) => {
-				return <div className="text-xs font-medium md:text-base">{row?.original?.status}</div>;
-			},
-		},
-		{
 			accessorKey: "createdAt",
 			header: () => {
 				return <div className="text-xs md:text-base">Ngày tạo</div>;
@@ -181,7 +172,6 @@ const ListOrder = ({ id }: Props) => {
 			<div className="flex flex-col gap-3">
 				<h4 className="text-base font-medium md:text-xl">
 					Danh sách đơn hàng giao
-					<button onClick={handlePagingOder}>CALL API</button>
 				</h4>
 			</div>
 			<Tabs value={`${searchObject.status}`} className="w-full">
