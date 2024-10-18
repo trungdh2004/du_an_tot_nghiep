@@ -19,6 +19,7 @@ import ChartOrderShipper from "./ChartOrderShipper";
 import ListOrder from "./ListOrder";
 import { string } from "zod";
 import { Badge } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const UserShipperDetail = () => {
 	const { id } = useParams();
@@ -95,42 +96,37 @@ const UserShipperDetail = () => {
 			<h4 className="text-base font-medium md:text-xl">
 				Thông tin chi tiết người giao hàng
 			</h4>
-			<div className="flex items-start gap-4 mt-3">
-				<div className="w-3/5 overflow-hidden border rounded-xl box-shadow">
+			<div className="flex flex-col items-start gap-4 mt-3 md:flex-row">
+				<div className="overflow-hidden border max-md:w-full md:w-3/5 md:min-w-[60%] rounded-xl box-shadow">
 					<div className="p-6 ">
-						<div className="flex items-start justify-between">
+						<div className="flex flex-col items-start justify-between lg:flex-row">
 							<div className="flex flex-col items-center w-4/5 mb-6">
-								<img
-									src={optimizeCloudinaryUrl(
-										infoDetailShipper?.shipper?.avatar as string,
-										110,
-										110,
-									)}
-									alt=""
-									className="object-cover w-32 h-32 mb-4 border-4 border-gray-200 rounded-full"
-								/>
-								<p
-									className={`font-medium text-white px-3 py-1.5 rounded-lg mb-3 ${infoDetailShipper?.shipper?.block_at ? "bg-[#cf4040]" : "bg-green-500"} text-center items-center text-xs text-nowrap leading-[14px]`}
-								>
-									{infoDetailShipper?.shipper?.block_at
-										? "Đang bị khoá"
-										: "Đang hoạt động"}
-								</p>
+								<div>
+									<img
+										src={optimizeCloudinaryUrl(
+											infoDetailShipper?.shipper?.avatar as string,
+											110,
+											110,
+										)}
+										alt=""
+										className={cn("object-cover w-32 h-32 mb-4 border-4  rounded-full", infoDetailShipper?.shipper?.block_at ? "border-[#cf4040]" : "border-green-500")}
+									/>
+								</div>
 								{infoDetailShipper?.shipper?.is_block ? (
 									<button
 										onClick={handleUnBlock}
-										className="flex items-center px-4 py-2 font-bold text-white bg-green-500 rounded-full hover:bg-green-600 focus:outline-none focus:shadow-outline"
+										className="flex items-center px-2.5 py-1.5 font-bold text-white bg-green-500 rounded-full hover:bg-green-600 focus:outline-none focus:shadow-outline"
 									>
 										<FaUnlockAlt className="mr-2" />
-										Mở khoá tài khoản
+										<span className="text-xs">Mở khoá tài khoản</span>
 									</button>
 								) : (
 									<button
 										onClick={handleBlock}
-										className="flex items-center px-4 py-2 font-bold text-white bg-red-500 rounded-full hover:bg-red-600 focus:outline-none focus:shadow-outline"
+										className="flex items-center  px-2.5 py-1.5 font-bold text-white bg-red-500 rounded-full hover:bg-red-600 focus:outline-none focus:shadow-outline"
 									>
 										<FaLock className="mr-2" />
-										Khóa tài khoản
+										<span className="text-xs">Khóa tài khoản</span>
 									</button>
 								)}
 								
@@ -173,7 +169,7 @@ const UserShipperDetail = () => {
 						</div>
 					</div>
 				</div>
-				<div className="grid flex-grow grid-cols-2 gap-5 ">
+				<div className="grid flex-grow w-full grid-cols-2 gap-5">
 					<StatCard
 						icon={<TbClipboardPlus size={40} className="text-blue-300" />}
 						count={orderStats.successful}
