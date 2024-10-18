@@ -181,7 +181,6 @@ const ListOrder = ({ id }: Props) => {
 			<div className="flex flex-col gap-3">
 				<h4 className="text-base font-medium md:text-xl">
 					Danh sách đơn hàng giao
-					<button onClick={handlePagingOder}>CALL API</button>
 				</h4>
 			</div>
 			<Tabs value={`${searchObject.status}`} className="w-full">

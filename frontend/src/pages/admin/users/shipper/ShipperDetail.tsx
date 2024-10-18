@@ -1,9 +1,14 @@
 import { ReactNode, useEffect, useState } from "react";
 import { optimizeCloudinaryUrl } from "@/common/localFunction";
-import { getDetailShipperById } from "@/service/shipper";
+import { getDetailShipperById, updateActionShippers } from "@/service/shipper";
 import { IShipperDetail } from "@/types/shipper.interface";
 import { AxiosError } from "axios";
-import { FaMapMarkerAlt, FaRegAddressCard, FaLock } from "react-icons/fa";
+import {
+	FaMapMarkerAlt,
+	FaRegAddressCard,
+	FaLock,
+	FaUnlockAlt,
+} from "react-icons/fa";
 import { FiPhone } from "react-icons/fi";
 import { LiaBirthdayCakeSolid, LiaMapMarkedAltSolid } from "react-icons/lia";
 import { useParams } from "react-router-dom";
@@ -12,7 +17,8 @@ import { FaTruckFast } from "react-icons/fa6";
 import { TbBasketCancel, TbClipboardPlus } from "react-icons/tb";
 import ChartOrderShipper from "./ChartOrderShipper";
 import ListOrder from "./ListOrder";
-import { string } from 'zod';
+import { string } from "zod";
+import { Badge } from "lucide-react";
 
 const UserShipperDetail = () => {
 	const { id } = useParams();
@@ -42,11 +48,47 @@ const UserShipperDetail = () => {
 		})();
 	}, [id]);
 
-	const chartData = [
-		{ name: "Thành công", orders: orderStats.successful, color: "#4CAF50" },
-		{ name: "Đang giao", orders: orderStats.inProgress, color: "#2196F3" },
-		{ name: "Thất bại", orders: orderStats.failed, color: "#F44336" },
-	];
+	const handleBlock = async () => {
+		try {
+			await updateActionShippers({
+				listId: [id as string],
+				type: 1,
+				isBlock: true,
+			});
+			const { data } = await getDetailShipperById(id as string);
+			delete data.message;
+			setInfoDetailShipper(data);
+			setOrderStats({
+				successful: data.successfulOrders || 0,
+				inProgress: data.inProgressOrders || 0,
+				failed: data.failedOrders || 0,
+			});
+			toast.success("Đã cấm người dùng thành công");
+		} catch (error) {
+			toast.error("Cấm người dùng thất bại");
+		}
+	};
+
+	const handleUnBlock = async () => {
+		try {
+			await updateActionShippers({
+				listId: [id as string],
+				type: 2,
+				isBlock: true,
+			});
+			const { data } = await getDetailShipperById(id as string);
+			delete data.message;
+			setInfoDetailShipper(data);
+			setOrderStats({
+				successful: data.successfulOrders || 0,
+				inProgress: data.inProgressOrders || 0,
+				failed: data.failedOrders || 0,
+			});
+			toast.success("Bỏ cấm người dùng thành công");
+		} catch (error) {
+			toast.error("Bỏ Cấm người dùng thất bại");
+		}
+	};
 
 	return (
 		<div className="">
@@ -67,11 +109,31 @@ const UserShipperDetail = () => {
 									alt=""
 									className="object-cover w-32 h-32 mb-4 border-4 border-gray-200 rounded-full"
 								/>
-
-								<button className="flex items-center px-4 py-2 font-bold text-white bg-red-500 rounded-full hover:bg-red-600 focus:outline-none focus:shadow-outline">
-									<FaLock className="mr-2" />
-									Khóa tài khoản
-								</button>
+								<p
+									className={`font-medium text-white px-3 py-1.5 rounded-lg mb-3 ${infoDetailShipper?.shipper?.block_at ? "bg-[#cf4040]" : "bg-green-500"} text-center items-center text-xs text-nowrap leading-[14px]`}
+								>
+									{infoDetailShipper?.shipper?.block_at
+										? "Đang bị khoá"
+										: "Đang hoạt động"}
+								</p>
+								{infoDetailShipper?.shipper?.is_block ? (
+									<button
+										onClick={handleUnBlock}
+										className="flex items-center px-4 py-2 font-bold text-white bg-green-500 rounded-full hover:bg-green-600 focus:outline-none focus:shadow-outline"
+									>
+										<FaUnlockAlt className="mr-2" />
+										Mở khoá tài khoản
+									</button>
+								) : (
+									<button
+										onClick={handleBlock}
+										className="flex items-center px-4 py-2 font-bold text-white bg-red-500 rounded-full hover:bg-red-600 focus:outline-none focus:shadow-outline"
+									>
+										<FaLock className="mr-2" />
+										Khóa tài khoản
+									</button>
+								)}
+								
 							</div>
 							<div className="grid grid-cols-2 gap-7">
 								<InfoField
@@ -97,15 +159,18 @@ const UserShipperDetail = () => {
 									).toLocaleDateString()}
 								/>
 								<div className="col-span-2">
-								<InfoField
-							icon={<FaMapMarkerAlt className="text-gray-400" />}
-							label="Địa chỉ"
-							value={infoDetailShipper?.shipper?.address.concat(infoDetailShipper?.shipper?.address).concat(infoDetailShipper?.shipper?.address) as string}
-						/>
+									<InfoField
+										icon={<FaMapMarkerAlt className="text-gray-400" />}
+										label="Địa chỉ"
+										value={
+											infoDetailShipper?.shipper?.address
+												.concat(infoDetailShipper?.shipper?.address)
+												.concat(infoDetailShipper?.shipper?.address) as string
+										}
+									/>
 								</div>
 							</div>
 						</div>
-						
 					</div>
 				</div>
 				<div className="grid flex-grow grid-cols-2 gap-5 ">
@@ -144,8 +209,8 @@ const UserShipperDetail = () => {
 				</div> */}
 			</div>
 			<div className="mt-3">
-				<ListOrder id={id as string}/>
-			{/* <h4 className="text-base font-medium md:text-xl">Thông tin được hàng</h4>
+				<ListOrder id={id as string} />
+				{/* <h4 className="text-base font-medium md:text-xl">Thông tin được hàng</h4>
 			<div className="grid grid-cols-1 gap-6 mt-3 md:grid-cols-3">
 				<StatCard
 					icon={<LiaMapMarkedAltSolid size={40} className="text-green-500" />}
