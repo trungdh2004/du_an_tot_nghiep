@@ -35,6 +35,7 @@ import { socketNotificationAdmin } from "../../socket/socketNotifycationServer.s
 import { TYPE_NOTIFICATION_ADMIN } from "../../config/typeNotification";
 import { formatCurrency } from "../../config/func";
 import LocationModel from "../../models/Location.schema";
+import CustomerModel from "../../models/Customer.schema";
 
 const long = +process.env.LONGSHOP! || 105.62573250208116;
 const lat = +process.env.LATSHOP! || 21.045193948892585;
@@ -1886,9 +1887,9 @@ class OrderController {
           shipper: { $ne: null },
         };
       } else {
-        if(status === 6) {
-          shipperQuery = {}
-        }else {
+        if (status === 6) {
+          shipperQuery = {};
+        } else {
           shipperQuery = {
             shipper: null,
           };
@@ -2495,6 +2496,22 @@ class OrderController {
           now: true,
         }
       );
+
+      const customer = await CustomerModel.findOne({
+        userId: successOrder?.user,
+      });
+
+      if (customer) {
+        CustomerModel.findByIdAndUpdate(customer._id, {
+          $inc: { totalOrder: 1, totalOrderCancel: 1 },
+        });
+      } else {
+        CustomerModel.create({
+          userId: successOrder?.user,
+          totalOrder: 1,
+          totalOrderCancel: 1,
+        });
+      }
 
       return res.status(STATUS.OK).json({
         message: "Hủy đơn hàng thành công",
