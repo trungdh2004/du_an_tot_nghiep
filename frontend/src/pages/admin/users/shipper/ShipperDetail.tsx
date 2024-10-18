@@ -24,23 +24,13 @@ import { cn } from "@/lib/utils";
 const UserShipperDetail = () => {
 	const { id } = useParams();
 	const [infoDetailShipper, setInfoDetailShipper] = useState<IShipperDetail>();
-	const [orderStats, setOrderStats] = useState({
-		successful: 0,
-		inProgress: 0,
-		failed: 0,
-	});
-
 	useEffect(() => {
 		(async () => {
 			try {
 				const { data } = await getDetailShipperById(id as string);
 				delete data.message;
 				setInfoDetailShipper(data);
-				setOrderStats({
-					successful: data.successfulOrders || 0,
-					inProgress: data.inProgressOrders || 0,
-					failed: data.failedOrders || 0,
-				});
+				
 			} catch (error) {
 				if (error instanceof AxiosError) {
 					toast.error(error?.response?.data?.message);
@@ -59,11 +49,6 @@ const UserShipperDetail = () => {
 			const { data } = await getDetailShipperById(id as string);
 			delete data.message;
 			setInfoDetailShipper(data);
-			setOrderStats({
-				successful: data.successfulOrders || 0,
-				inProgress: data.inProgressOrders || 0,
-				failed: data.failedOrders || 0,
-			});
 			toast.success("Đã cấm người dùng thành công");
 		} catch (error) {
 			toast.error("Cấm người dùng thất bại");
@@ -80,11 +65,6 @@ const UserShipperDetail = () => {
 			const { data } = await getDetailShipperById(id as string);
 			delete data.message;
 			setInfoDetailShipper(data);
-			setOrderStats({
-				successful: data.successfulOrders || 0,
-				inProgress: data.inProgressOrders || 0,
-				failed: data.failedOrders || 0,
-			});
 			toast.success("Bỏ cấm người dùng thành công");
 		} catch (error) {
 			toast.error("Bỏ Cấm người dùng thất bại");
@@ -172,23 +152,23 @@ const UserShipperDetail = () => {
 				<div className="grid flex-grow w-full grid-cols-2 gap-5">
 					<StatCard
 						icon={<TbClipboardPlus size={40} className="text-blue-300" />}
-						count={orderStats.successful}
+						count={infoDetailShipper?.countOrderConfirm as number}
 						label="Đơn hàng mới"
 					/>
 					<StatCard
 						icon={<FaTruckFast size={40} className="text-blue-500" />}
-						count={orderStats.inProgress}
+						count={infoDetailShipper?.countOrderRunning as number}
 						label="Đơn hàng đang giao"
 					/>
 					<StatCard
 						icon={<LiaMapMarkedAltSolid size={40} className="text-green-500" />}
-						count={orderStats.successful}
+						count={infoDetailShipper?.countOrderSuccess as number}
 						label="Đơn hàng giao thành công"
 					/>
 
 					<StatCard
 						icon={<TbBasketCancel size={40} className="text-red-500" />}
-						count={orderStats.failed}
+						count={infoDetailShipper?.countOrderCancel as number}
 						label="Đơn hàng giao thất bại"
 					/>
 				</div>
