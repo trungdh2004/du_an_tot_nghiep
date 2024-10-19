@@ -29,7 +29,7 @@ const ProductOrder = ({ data }: any) => {
 							className="lg:flex flex-col gap-3 bg-white my-2 py-2 lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow"
 							key={index}
 						>
-							<div className="flex flex-col gap-3 my-4">
+							<div className="flex flex-col gap-3 my-2 md:my-4">
 								{product?.items?.map(
 									(productItem: ProductOrderItem, index: number) => {
 										return (
@@ -38,14 +38,16 @@ const ProductOrder = ({ data }: any) => {
 												key={index}
 											>
 												<div className="lg:col-span-3 md:col-span-3 col-span-1">
-													<div className="flex lg:flex-row items-center gap-3">
-														<img
-															src={productItem.thumbnail}
-															alt="Product3"
-															className="cursor-pointer w-14 h-14"
-														/>
-														<div className="flex lg:flex-row md:flex-row flex-col  lg:gap-3 md:gap-3 gap-1">
-															<h3 className="lg:w-[350px] md:w-[320px] w-[290px] truncate lg:text-base text-sm font-medium">
+													<div className="flex  items-center gap-3">
+														<div className="w-14 h-14 cursor-pointer block">
+															<img
+																src={productItem.thumbnail}
+																alt="Product3"
+																className="w-full h-full"
+															/>
+														</div>
+														<div className="flex flex-1 md:flex-row flex-col  lg:gap-3 md:gap-3 gap-1">
+															<h3 className="line-clamp-2 w-full lg:text-base text-sm font-medium">
 																{productItem.name}
 															</h3>
 															{productItem?.is_simple === true ? (
@@ -92,7 +94,7 @@ const ProductOrder = ({ data }: any) => {
 									},
 								)}
 								<hr />
-								<div className="flex items-center justify-between gap-4 px-4 pt-3 lg:self-end md:self-end">
+								<div className="flex items-center justify-between gap-4 px-4 md:pt-3 lg:self-end md:self-end">
 									<p className="text-xs lg:text-sm md:text-sm ">
 										Tổng số tiền ({product.items.length} sản phẩm) :
 									</p>
