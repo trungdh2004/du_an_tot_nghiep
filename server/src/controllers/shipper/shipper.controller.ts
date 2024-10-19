@@ -550,7 +550,7 @@ class ShipperController {
       console.log("updateOrder", updateOrder);
 
       const customer = await CustomerModel.findOne({
-        userId: updateOrder?.user,
+        user: updateOrder?.user,
       });
 
       if (customer) {
@@ -564,7 +564,7 @@ class ShipperController {
         });
       } else {
         CustomerModel.create({
-          userId: updateOrder?.user,
+          user: updateOrder?.user,
           totalOrder: 1,
           totalOrderSuccess: 1,
           totalProductSuccess: existingOrder?.orderItems?.length,
@@ -697,7 +697,7 @@ class ShipperController {
       if (status === 4) {
         queryStatus = {
           statusList: {
-            $in: [4],
+            $in: [4,5],
           },
         };
       } else {

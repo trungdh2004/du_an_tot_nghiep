@@ -2498,7 +2498,7 @@ class OrderController {
       );
 
       const customer = await CustomerModel.findOne({
-        userId: successOrder?.user,
+        user: successOrder?.user,
       });
 
       if (customer) {
@@ -2507,7 +2507,7 @@ class OrderController {
         });
       } else {
         CustomerModel.create({
-          userId: successOrder?.user,
+          user: successOrder?.user,
           totalOrder: 1,
           totalOrderCancel: 1,
         });
