@@ -11,6 +11,7 @@ import BlogPage from "@/pages/clients/blogs/BLogPage";
 import CartPage from "@/pages/clients/cart/CartPage";
 import DetailProduct from "@/pages/clients/detail-home/page";
 import HomePage from "@/pages/clients/home/page";
+import IntroducePage from "@/pages/clients/introduce/IntroducePage";
 import OrderProcessing from "@/pages/clients/order/OrderProcessing";
 import WrapperSearch from "@/pages/clients/search/WrapperSearch";
 import ShopProduct from "@/pages/clients/shop/ShopProduct";
@@ -29,6 +30,7 @@ const MainRouter = [
 			{ path: "table", element: <UserIndex /> },
 			{ path: "cart", element: <CartPage /> },
 			{ path: "shop", element: <ShopProduct /> },
+			{ path: "introduce",element: <IntroducePage />},
 			{
 				path: "search",
 				element: <WrapperSearch />,
