@@ -265,7 +265,7 @@ const VoucherList = () => {
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
 							<DropdownMenuItem className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full text-start cursor-pointer">
-								<Link to={`/admin/voucher/${row.original?._id}/edit`}>
+								<Link to={`/admin/product/voucher/${row.original?._id}/edit`}>
 									Sửa voucher
 								</Link>
 							</DropdownMenuItem>
@@ -303,7 +303,7 @@ const VoucherList = () => {
 					/>
 					<div className="flex items-center gap-4">
 						<Link
-							to={"/admin/voucher/add"}
+							to={"/admin/product/voucher/add"}
 							className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border px-5 py-1.5 rounded"
 						>
 							Thêm voucher

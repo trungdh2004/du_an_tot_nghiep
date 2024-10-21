@@ -74,22 +74,22 @@ const Color = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 		[searchParams, setSearchParams, setSearchParamsObject, query],
 	);
 	return (
-		<div className="w-full flex flex-col gap-3 lg:py-2 py-1">
+		<div className="flex flex-col w-full gap-3 py-1 lg:py-2">
 			<div
-				className="flex justify-between items-center cursor-pointer"
+				className="flex items-center justify-between cursor-pointer"
 				onClick={!check ? () => setCheck(true) : () => setCheck(false)}
 			>
-				<h3 className="text-uppercase py-1 font-semibold leading-7 tracking-wide lg:text-base md:text-sm sm:text-xs">
+				<h3 className="py-1 font-semibold leading-7 tracking-wide text-uppercase lg:text-base md:text-sm sm:text-xs">
 					Màu sắc
 				</h3>
 				{!check ? (
 					<FaAngleDown
-						className="cursor-pointer transition-transform"
+						className="transition-transform cursor-pointer"
 						onClick={() => setCheck(true)}
 					/>
 				) : (
 					<FaAngleUp
-						className="cursor-pointer transition-transform"
+						className="transition-transform cursor-pointer"
 						onClick={() => setCheck(false)}
 					/>
 				)}
@@ -103,7 +103,7 @@ const Color = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 				<div className="grid grid-cols-4 gap-1">
 					{colors?.map((color: any) => {
             return (
-							<TooltipComponent label={color.name} side="bottom">
+							<TooltipComponent key={color?._id} label={color.name} side="bottom">
 								<div
 									className="flex flex-col items-center gap-3"
 									key={color._id}
@@ -125,7 +125,7 @@ const Color = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 										onCheckedChange={handleCheckedColor(color._id)}
 									/>
 
-									{/* <span className="font-medium lg:text-sm text-xs">
+									{/* <span className="text-xs font-medium lg:text-sm">
 									{color.name}
 								</span> */}
 								</div>

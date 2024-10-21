@@ -32,7 +32,8 @@ const OrderInformation = ({ data, getOrderById }: any) => {
 							<TableHeader>
 								<TableRow>
 									<TableHead className="">Sản phẩm</TableHead>
-									<TableHead>Phận loại</TableHead>
+									<TableHead className=""></TableHead>
+									<TableHead>Phân loại</TableHead>
 									<TableHead>Số lượng</TableHead>
 									<TableHead>Giá</TableHead>
 									<TableHead className="text-right">Thành tiền</TableHead>
@@ -41,25 +42,25 @@ const OrderInformation = ({ data, getOrderById }: any) => {
 							<TableBody>
 								{data?.orderItems?.map((pro: any) => (
 									<TableRow key={pro._id}>
-										<TableCell className="font-medium">
+										<TableCell className="font-medium" colSpan={2}>
 											<div className="flex items-center gap-3">
 												<img
 													src={pro.product.thumbnail}
 													alt=""
 													className="w-12 h-12"
 												/>
-												<h4 className="w-[400px] truncate">
+												<h4 className=" truncate">
 													{pro.product.name}
 												</h4>
 											</div>
 										</TableCell>
-										<TableCell className="text-center">
-											{pro.color.name},{pro.size}
+										<TableCell >
+											{pro.variant}
 										</TableCell>
-										<TableCell className="text-center">
+										<TableCell >
 											{pro.quantity}
 										</TableCell>
-										<TableCell>{formatCurrency(pro.price)}</TableCell>
+										<TableCell >{formatCurrency(pro.price)}</TableCell>
 										<TableCell className="text-right">
 											{formatCurrency(pro.totalMoney)}
 										</TableCell>
@@ -68,7 +69,7 @@ const OrderInformation = ({ data, getOrderById }: any) => {
 							</TableBody>
 							<TableFooter>
 								<TableRow>
-									<TableCell colSpan={4}>Tổng tiền</TableCell>
+									<TableCell colSpan={5}>Tổng tiền</TableCell>
 									<TableCell className="text-right text-red-500">
 										{formatCurrency(totalCost)}
 									</TableCell>
@@ -101,12 +102,19 @@ const OrderInformation = ({ data, getOrderById }: any) => {
 								</p>
 							</div>
 							<hr />
+							<div className="flex justify-between">
+								<p className="font-medium text-sm text-black">Voucher</p>
+								<p className="font-normal text-sm text-black pr-3">
+									- {formatCurrency(data.voucherAmount)}
+								</p>
+							</div>
+							<hr />
 							<div className="flex justify-between bg-main">
 								<p className="font-medium text-sm text-black">
 									Tổng thanh toán
 								</p>
 								<p className="font-medium text-sm text-red-500 pr-3">
-									{formatCurrency(data.totalMoney)}
+									{formatCurrency(data.amountToPay)}
 								</p>
 							</div>
 						</div>

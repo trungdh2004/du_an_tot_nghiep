@@ -10,6 +10,8 @@ import ProductModel from "../../models/products/Product.schema";
 import OrderItemsModel from "../../models/order/OrderProduct.schema";
 import { socketNotificationOrderClient } from "../../socket/socketNotifycationClient.service";
 import { resolveSoa } from "dns";
+import UserModel from "../../models/User.Schema";
+import CustomerModel from "../../models/Customer.schema";
 
 class ShipperController {
   async registerShipper(req: RequestModel, res: Response) {
@@ -69,7 +71,7 @@ class ShipperController {
 
   async pagingShipper(req: RequestModel, res: Response) {
     try {
-      const { pageSize, pageIndex, active, isBlock, keyword } = req.body;
+      const { pageSize, pageIndex, active, isBlock, keyword, tab } = req.body;
 
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
@@ -95,7 +97,11 @@ class ShipperController {
           is_block: isBlock,
         };
       }
-
+      if (tab) {
+        queryActive = {
+          active: tab === 1,
+        };
+      }
       const listData = await ShipperModel.find({
         ...queryKeyword,
         ...queryActive,
@@ -193,30 +199,30 @@ class ShipperController {
 
   async getShipperById(req: RequestModel, res: Response) {
     try {
-      const {id} = req.params
+      const { id } = req.params;
 
-      if(!id) {
+      if (!id) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Bạn chưa chọn shipper"
-        })
+          message: "Bạn chưa chọn shipper",
+        });
       }
 
-      const existingShipper = await ShipperModel.findById(id)
+      const existingShipper = await ShipperModel.findById(id);
 
-      if(!existingShipper) { 
+      if (!existingShipper) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Không có shipper nào"
-        })
+          message: "Không có shipper nào",
+        });
       }
 
       return res.status(STATUS.OK).json({
-        message:"Lấy thông tin thành công",
-        data:existingShipper
-      })
-    } catch (error:any) {
+        message: "Lấy thông tin thành công",
+        data: existingShipper,
+      });
+    } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
-      })
+      });
     }
   }
 
@@ -226,9 +232,9 @@ class ShipperController {
 
       const listOrder = await OrderModel.find({
         shipper: shipper?.id,
-        status:{
-          $in:[2,3]
-        }
+        status: {
+          $in: [2, 3],
+        },
       })
         .populate(["address"])
         .select({
@@ -244,6 +250,128 @@ class ShipperController {
         });
 
       return res.status(STATUS.OK).json(listOrder);
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async actionListShipper(req: RequestModel, res: Response) {
+    try {
+      const { listId = [], type = 1, isBlock } = req.body;
+
+      if (listId.length === 0) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn shipper",
+        });
+      }
+
+      const findListShipper = await ShipperModel.find({
+        _id: {
+          $in: listId,
+        },
+      });
+
+      if (findListShipper.length === 0) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có shipper nào",
+        });
+      }
+
+      const listUser = findListShipper.map((shipper) => shipper.user);
+      const payloadUpdate: {
+        [key: string]: any;
+      } = {};
+      if (isBlock) {
+        payloadUpdate.is_block = type === 1 ? true : false;
+        payloadUpdate.block_at = type === 1 ? new Date().toISOString() : null;
+      } else {
+        payloadUpdate.active = type === 1 ? true : false;
+      }
+      const updateListShipper = await ShipperModel.updateMany(
+        {
+          _id: {
+            $in: listId,
+          },
+        },
+        payloadUpdate
+      );
+      if (!isBlock) {
+        const updateUser = await UserModel.updateMany(
+          {
+            _id: {
+              $in: [...listUser],
+            },
+          },
+          {
+            is_shipper: type === 1 ? true : false,
+          }
+        );
+      }
+      return res.status(STATUS.OK).json({
+        message: "Cập nhập thành công",
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async shipperDetailAdmin(req: RequestModel, res: Response) {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn shipper",
+        });
+      }
+
+      const existingShipper = await ShipperModel.findById(id).populate({
+        path: "user",
+        select: {
+          _id: 1,
+          fullName: 1,
+          email: 1,
+          point: 1,
+          avatarUrl: 1,
+        },
+      });
+
+      if (!existingShipper)
+        return res
+          .status(STATUS.BAD_REQUEST)
+          .json({ message: "Không có shipper nào" });
+
+      const countOrderConfirm = await OrderModel.countDocuments({
+        status: 2,
+        shipper: id,
+      });
+      const countOrderRunning = await OrderModel.countDocuments({
+        status: 3,
+        shipper: id,
+      });
+      const countOrderSuccess = await OrderModel.countDocuments({
+        status: {
+          $in: [4, 5],
+        },
+        shipper: id,
+      });
+      const countOrderCancel = await OrderModel.countDocuments({
+        status: 6,
+        shipper: id,
+      });
+
+      return res.status(STATUS.OK).json({
+        message: "Lấy thông tin thành công",
+        shipper: existingShipper,
+        countOrderConfirm,
+        countOrderRunning,
+        countOrderSuccess,
+        countOrderCancel,
+      });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
@@ -345,8 +473,12 @@ class ShipperController {
         });
       });
 
-      socketNotificationOrderClient(updateOrder?.code as string, 3, `${updateOrder?.user}`, updateOrder?._id as string);
-
+      socketNotificationOrderClient(
+        updateOrder?.code as string,
+        3,
+        `${updateOrder?.user}`,
+        updateOrder?._id as string
+      );
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập đơn hàng đang giao",
@@ -415,8 +547,37 @@ class ShipperController {
         });
       });
 
-      socketNotificationOrderClient(updateOrder?.code as string, 4, `${updateOrder?.user}`, updateOrder?._id as string);
+      console.log("updateOrder", updateOrder);
 
+      const customer = await CustomerModel.findOne({
+        user: updateOrder?.user,
+      });
+
+      if (customer) {
+        CustomerModel.findByIdAndUpdate(customer._id, {
+          $inc: {
+            totalOrder: 1,
+            totalOrderSuccess: 1,
+            totalProductSuccess: existingOrder?.orderItems?.length,
+            totalMoney: existingOrder?.totalMoney,
+          },
+        });
+      } else {
+        CustomerModel.create({
+          user: updateOrder?.user,
+          totalOrder: 1,
+          totalOrderSuccess: 1,
+          totalProductSuccess: existingOrder?.orderItems?.length,
+          totalMoney: existingOrder?.totalMoney,
+        });
+      }
+
+      socketNotificationOrderClient(
+        updateOrder?.code as string,
+        4,
+        `${updateOrder?.user}`,
+        updateOrder?._id as string
+      );
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập đơn hàng giao thành công",
@@ -470,39 +631,42 @@ class ShipperController {
     }
   }
 
-  async pagingOrderShipper(req:RequestShipper, res:Response){
+  async pagingOrderShipper(req: RequestShipper, res: Response) {
     try {
       const shipper = req.shipper;
       const pageIndex = Number(req.query.page) || 1;
-      const {status = 2} = req.body 
+      const { status = 2 } = req.body;
 
       let limit = 10;
       let skip = (pageIndex - 1) * limit || 0;
 
-      let queryStatus = {}
+      let queryStatus = {};
 
-
-      if(status === 4) {
+      if (status === 4) {
         queryStatus = {
-          statusList:{
-            $in:[4]
-          }
-        }
-      }else {
+          statusList: {
+            $in: [4],
+          },
+        };
+      } else {
         queryStatus = {
-          status: status
-        }
+          status: status,
+        };
       }
 
       const listOrder = await OrderModel.find({
         ...queryStatus,
-        shipper: shipper?.id
-      }).sort({confirmedDate:-1}).skip(skip).limit(limit).populate("address")
+        shipper: shipper?.id,
+      })
+        .sort({ confirmedDate: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate("address");
 
       const count = await OrderModel.countDocuments({
         status: status,
-        shipper: shipper?.id
-      })
+        shipper: shipper?.id,
+      });
 
       const result = formatDataPaging({
         limit,
@@ -511,11 +675,71 @@ class ShipperController {
         count: count,
       });
 
-      return res.status(STATUS.OK).json(result)
-    } catch (error:any) {
+      return res.status(STATUS.OK).json(result);
+    } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
+      });
+    }
+  }
+
+  async pagingOrderShipperAdmin(req: RequestModel, res: Response) {
+    try {
+      const { id } = req.params;
+      const pageIndex = Number(req.query.page) || 1;
+      const { status = 2 } = req.body;
+
+      let limit = 10;
+      let skip = (pageIndex - 1) * limit || 0;
+
+      let queryStatus = {};
+
+      if (status === 4) {
+        queryStatus = {
+          statusList: {
+            $in: [4,5],
+          },
+        };
+      } else {
+        queryStatus = {
+          status: status,
+        };
+      }
+
+      const existingShipper = await ShipperModel.findById(id);
+
+      if (!existingShipper) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có shipper",
+        });
+      }
+
+      const listOrder = await OrderModel.find({
+        ...queryStatus,
+        shipper: id,
       })
+        .sort({ confirmedDate: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate("address");
+
+      const count = await OrderModel.countDocuments({
+        status: status,
+        shipper: id,
+      });
+
+      const result = formatDataPaging({
+        limit,
+        pageIndex,
+        data: listOrder,
+        count: count,
+      });
+
+      return res.status(STATUS.OK).json(result);
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
     }
   }
 }

@@ -78,75 +78,85 @@ const User = () => {
 				<DropdownMenuSeparator
 					className={cn(!authUser?.is_admin && "hidden")}
 				/>
-				<DropdownMenuItem
-					className={cn(
-						" hidden",
-						authUser?.is_admin || authUser?.is_staff ? "block" : "hidden",
-					)}
+				<Link
+					to={regex.test(location.pathname) ? "/" : "/admin"}
+					className="block w-full h-full cursor-pointer"
 				>
-					<Link
-						to={regex.test(location.pathname) ? "/" : "/admin"}
-						className="block w-full h-full"
+					<DropdownMenuItem
+						className={cn(
+							" hidden",
+							authUser?.is_admin || authUser?.is_staff ? "block" : "hidden",
+						)}
 					>
-						{regex.test(location.pathname)
-							? "Trở về trang khách hàng"
-							: "Vào trang quản trị"}
-					</Link>
-				</DropdownMenuItem>
-
+						<p>
+							{regex.test(location.pathname)
+								? "Trở về trang khách hàng"
+								: "Vào trang quản trị"}
+						</p>
+					</DropdownMenuItem>
+				</Link>
 				<DropdownMenuSeparator
 					className={cn(regex.test(location.pathname) ? "hidden" : "block")}
 				/>
-				<DropdownMenuItem
-					className={cn(regex.test(location.pathname) ? "hidden" : "block")}
+				<Link
+					to={"/account/profile"}
+					className="block w-full h-full cursor-pointer"
 				>
-					<Link to={"/account/profile"} className="block w-full h-full">
+					<DropdownMenuItem
+						className={cn(regex.test(location.pathname) ? "hidden" : "block")}
+					>
 						Tài khoản của tôi
-					</Link>
-				</DropdownMenuItem>
-				<DropdownMenuItem
-					className={cn(regex.test(location.pathname) ? "hidden" : "block")}
-				>
-					<Link to={"/"} className="block w-full h-full">
+					</DropdownMenuItem>
+				</Link>
+				<Link to={"/"} className="block w-full h-full cursor-pointer">
+					<DropdownMenuItem
+						className={cn(regex.test(location.pathname) ? "hidden" : "block")}
+					>
 						Địa chỉ
-					</Link>
-				</DropdownMenuItem>
+					</DropdownMenuItem>
+				</Link>
 				<DropdownMenuSeparator
 					className={cn(regex.test(location.pathname) ? "hidden" : "block")}
 				/>
-				<DropdownMenuItem
-					className={cn(
-						!regex.test(location.pathname) &&
-							!authUser?.is_shipper &&
-							!authUser?.is_admin
-							? "block"
-							: "hidden",
-					)}
+				<Link
+					to={"/shipper/auth"}
+					className="block w-full h-full cursor-pointer"
 				>
-					<Link to={"/shipper/auth"} className="block w-full h-full">
-						Đăng ký vận chuyển
-					</Link>
-				</DropdownMenuItem>
-				<DropdownMenuItem
-					className={cn(
-						!regex.test(location.pathname) &&
-							authUser?.is_shipper &&
-							!authUser?.is_admin
-							? "block"
-							: "hidden",
-					)}
+					<DropdownMenuItem
+						className={cn(
+							!regex.test(location.pathname) &&
+								!authUser?.is_shipper &&
+								!authUser?.is_admin
+								? "block"
+								: "hidden",
+						)}
+					>
+						Đăng ký giao hàng
+					</DropdownMenuItem>
+				</Link>
+				<Link to={"/shipper"} className="block w-full h-full cursor-pointer">
+					<DropdownMenuItem
+						className={cn(
+							!regex.test(location.pathname) &&
+								authUser?.is_shipper &&
+								!authUser?.is_admin
+								? "block"
+								: "hidden",
+						)}
+					>
+						Giao hàng
+					</DropdownMenuItem>
+				</Link>
+				<Link
+					to="/account/purchase"
+					className="block w-full h-full cursor-pointer"
 				>
-					<Link to={"/"} className="block w-full h-full">
-						Vận chuyển
-					</Link>
-				</DropdownMenuItem>
-				<DropdownMenuItem
-					className={cn(regex.test(location.pathname) ? "hidden" : "block")}
-				>
-					<Link to="/account/purchase" className="block w-full h-full">
+					<DropdownMenuItem
+						className={cn(regex.test(location.pathname) ? "hidden" : "block")}
+					>
 						Đơn hàng
-					</Link>
-				</DropdownMenuItem>
+					</DropdownMenuItem>
+				</Link>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					onClick={handleLogout}

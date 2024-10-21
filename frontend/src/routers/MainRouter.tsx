@@ -2,6 +2,8 @@ import AccountLayout from "@/layout/AcountLayout";
 import MainLayout from "@/layout/MainLayout";
 import UserIndex from "@/pages/admin/users/UserIndex";
 import AccountIndex from "@/pages/clients/account/AccountIndex";
+import ChangePassword from "@/pages/clients/account/ChangePassword";
+import PaymentIndex from "@/pages/clients/account/PaymentIndex";
 import OrderManagements from "@/pages/clients/account/Purchase";
 import PurchaseOrder from "@/pages/clients/account/PurchaseOrder";
 import Address from "@/pages/clients/address/Address";
@@ -10,15 +12,14 @@ import BlogPage from "@/pages/clients/blogs/BLogPage";
 import CartPage from "@/pages/clients/cart/CartPage";
 import DetailProduct from "@/pages/clients/detail-home/page";
 import HomePage from "@/pages/clients/home/page";
+import IntroducePage from "@/pages/clients/introduce/IntroducePage";
 import OrderProcessing from "@/pages/clients/order/OrderProcessing";
+import WrapperSearch from "@/pages/clients/search/WrapperSearch";
 import ShopProduct from "@/pages/clients/shop/ShopProduct";
 import NotFound from "@/pages/NotFound";
 import { Navigate } from "react-router-dom";
-import SearchPostsPage from "@/pages/clients/search/SearchPostsPage";
-import SearchProductPage from "@/pages/clients/search/SearchProductPage";
-import WrapperSearch from "@/pages/clients/search/WrapperSearch";
-import PaymentIndex from "@/pages/clients/account/PaymentIndex";
 import AddressIndex from "@/pages/clients/address/AddressIndex";
+
 const MainRouter = [
 	{
 		path: "/",
@@ -32,19 +33,10 @@ const MainRouter = [
 			{ path: "table", element: <UserIndex /> },
 			{ path: "cart", element: <CartPage /> },
 			{ path: "shop", element: <ShopProduct /> },
+			{ path: "introduce",element: <IntroducePage />},
 			{
 				path: "search",
 				element: <WrapperSearch />,
-				children: [
-					{
-						path: "",
-						element: <SearchProductPage />,
-					},
-					{
-						path: "posts",
-						element: <SearchPostsPage />,
-					},
-				],
 			},
 			{
 				path: "/account",
@@ -71,6 +63,10 @@ const MainRouter = [
 						element: <PaymentIndex />,
 					},
 					{ path: "addressNew", element: <AddressIndex /> },
+					{
+						path: "password",
+						element: <ChangePassword />,
+					},
 				],
 			},
 		],

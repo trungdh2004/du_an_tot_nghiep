@@ -22,7 +22,8 @@ import routerComment from "./comment.route";
 import routerEvaluate from "./evaluate.route";
 import routerSystem from "./sysTem.router";
 import routerPayment from "./payment";
-// import routerExcel from "./excel.route";
+import routerExcel from "./excel.route";
+import routerCustomer from "./customer.route";
 // import routerTest from "./test.route";
 
 const router = Router();
@@ -49,7 +50,8 @@ router.use("/comment", routerComment);
 router.use("/evaluate", routerEvaluate);
 router.use("/system", routerSystem);
 router.use("/payment", routerPayment);
-// router.use("/file", routerExcel);
+router.use("/file", routerExcel);
+router.use("/customer", routerCustomer);
 
 // router.use("/test", routerTest);
 

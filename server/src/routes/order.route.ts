@@ -5,8 +5,8 @@ import orderController from "../controllers/order/order.controller";
 import authorizationStaff from "../middlewares/authoricationStaff";
 const routerOrder = Router();
 
-routerOrder.post("/createOrderPayUponReceipt", authentication, orderController.createOrderPayUponReceipt);
-routerOrder.post("/pagingCartOrder", authentication, orderController.pagingCartOrder);
+routerOrder.post("/createOrderPayUponReceipt", authentication, orderController.createOrderPayUponReceiptV2);
+routerOrder.post("/pagingCartOrder", authentication, orderController.pagingCartState);
 routerOrder.post("/createStateUrlCart", authentication, orderController.createStateUrlCart);
 routerOrder.get("/returnVnPay", authentication, orderController.returnOrderVnPay);
 routerOrder.post("/createOrderVNPayPayment", authentication, orderController.createOrderVNPayPayment);

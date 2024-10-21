@@ -22,6 +22,8 @@ import {
 import {
 	deletedById,
 	deleteMany,
+	exportServiceProduct,
+	importServiceProduct,
 	pagingProduct,
 	unDeletedById,
 	unDeleteMany,
@@ -38,9 +40,16 @@ import { toast } from "sonner";
 import { ICategory } from "@/types/category";
 import { IoIosRemoveCircle, IoIosCheckmarkCircle } from "react-icons/io";
 import { Badge } from "@/components/ui/badge";
+import axios from "axios";
+import { FaFileExport } from "react-icons/fa";
+import { TooltipComponent } from "@/components/common/TooltipComponent";
+import { LuImport } from "react-icons/lu";
+import { useProcessBarLoadingEventNone } from "@/store/useSidebarAdmin";
 
 const ProductIndex = () => {
 	const queryClient = useQueryClient();
+	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
+		useProcessBarLoadingEventNone();
 	const [searchObject, setSearchObject] = useState<SearchObjectTypeProduct>({
 		pageIndex: 1,
 		pageSize: 5,
@@ -236,7 +245,7 @@ const ProductIndex = () => {
 		},
 		//discount
 		{
-			accessorKey: "price",
+			accessorKey: "discount",
 			header: () => {
 				return <div className="md:text-base text-xs">Giá KM</div>;
 			},
@@ -303,7 +312,9 @@ const ProductIndex = () => {
 			cell: ({ row }) => {
 				return (
 					<div className=" text-center">
-						{row?.original?.is_hot && <Badge className="bg-rose-500">HOT</Badge>}
+						{row?.original?.is_hot && (
+							<Badge className="bg-rose-500">HOT</Badge>
+						)}
 					</div>
 				);
 			},
@@ -351,6 +362,43 @@ const ProductIndex = () => {
 		},
 	];
 
+	const handleExportProduct = async () => {
+		try {
+			setOpenProcessLoadingEventNone();
+			const { data } = await exportServiceProduct();
+			const blob = new Blob([data]);
+			const url = window.URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.style.display = "none";
+			a.href = url;
+			a.download = "danh_sach_san_pham.xlsx";
+			document.body.appendChild(a);
+			a.click();
+			window.URL.revokeObjectURL(url);
+		} catch (error) {
+		} finally {
+			setCloseProcessLoadingEventNone();
+		}
+	};
+
+	const handleImportExcel = async (file: File) => {
+		try {
+			setOpenProcessLoadingEventNone();
+			const form = new FormData();
+			form.append("file", file);
+
+			await importServiceProduct(form);
+			queryClient.invalidateQueries({
+				queryKey: ["paging", searchObject],
+			});
+			toast.success("Nhập dữ liệu thành công");
+		} catch (error: any) {
+			toast.error("Nhập dữ liệu thất bại");
+		} finally {
+			setCloseProcessLoadingEventNone();
+		}
+	};
+
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex flex-col gap-3">
@@ -377,6 +425,35 @@ const ProductIndex = () => {
 								Bỏ ẩn tất cả
 							</Button>
 						)}
+						<TooltipComponent label="Xuất dữ liệu hiện tại">
+							<>
+								<label
+									htmlFor="importPro"
+									className="h-10 p-2 bg-white rounded-sm font-medium text-sm border flex items-center text-[#7f7f7f] hover:bg-gray-100 cursor-pointer"
+								>
+									<LuImport size={20} className="mr-1" /> Nhập
+								</label>
+								<input
+									type="file"
+									id="importPro"
+									className="hidden"
+									accept=".xlsx,.xls"
+									onChange={(e) => {
+										const files = e.target.files as FileList;
+										handleImportExcel(files[0]);
+									}}
+								/>
+							</>
+						</TooltipComponent>
+
+						<TooltipComponent label="Xuất dữ liệu hiện tại">
+							<Button
+								variant={"secondary"}
+								onClick={() => handleExportProduct()}
+							>
+								<FaFileExport size={20} className="mr-1" /> Xuất
+							</Button>
+						</TooltipComponent>
 
 						<Link to={"/admin/product/add"}>
 							<Button variant={"add"}>Thêm sản phẩm</Button>

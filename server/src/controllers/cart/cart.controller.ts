@@ -9,6 +9,14 @@ import ProductModel from "../../models/products/Product.schema";
 import mongoose from "mongoose";
 import { IAttribute, IColor, IProduct, ISize } from "../../interface/product";
 import AttributeModel from "../../models/products/Attribute.schema";
+import {
+  IndexCartItem,
+  IndexResAcc,
+  ListColor,
+  ListSize,
+  ProductFindCart,
+} from "../../interface/cart";
+import { accessSync } from "fs";
 
 interface RowIColor {
   colorId: string;
@@ -23,6 +31,7 @@ interface RowISize {
   list: IAttribute[];
   quantity: number;
 }
+
 class CartController {
   async pagingCart(req: RequestModel, res: Response) {
     try {
@@ -250,10 +259,6 @@ class CartController {
         };
       });
 
-      // const dataList = await CartItemModel.find({
-      //   cart:existingCart._id
-      // }).populate(["product","attribute"])
-
       const countProduct = await CartItemModel.countDocuments({
         cart: existingCart._id,
       });
@@ -267,6 +272,183 @@ class CartController {
       return res.status(STATUS.OK).json({
         message: "Lấy thành công ",
         data: data,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async pagingCartV2(req: RequestModel, res: Response) {
+    try {
+      const listCartItem = await CartItemModel.find<IndexCartItem>({})
+        .populate([
+          {
+            path: "product",
+            populate: {
+              path: "attributes",
+              populate: [
+                {
+                  path: "color",
+                },
+                {
+                  path: "size",
+                },
+              ],
+            },
+            select: {
+              _id: 1,
+              name: 1,
+              discount: 1,
+              price: 1,
+              thumbnail: 1,
+              attributes: 1,
+              quantity: 1,
+              is_hot: 1,
+              is_simple: 1,
+              createdAt: 1,
+              slug: 1,
+            },
+          },
+          {
+            path: "attribute",
+            // match: { $ne: null },
+            populate: [
+              {
+                path: "color",
+              },
+              {
+                path: "size",
+              },
+            ],
+          },
+        ])
+        .sort({ createdAt: -1 });
+
+        console.log({
+          listCartItem
+        })
+
+      const listData = listCartItem?.reduce(
+        (acc: IndexResAcc[], item: IndexCartItem) => {
+          const findCart = acc.find(
+            (sub) => sub?.product._id === item.product._id
+          );
+
+          if (findCart) {
+            const data = {
+              quantity: item.quantity,
+              _id: item._id,
+              thumbnail: item.product.thumbnail,
+              name: item.product.name,
+              discount: item.is_simple
+                ? item.product.discount
+                : item.attribute?.discount || 0,
+              price: item.is_simple ? item.product.price : item.attribute?.price  || 0,
+              attribute: item.attribute,
+              is_simple: item.is_simple,
+              createdAt: item.createdAt,
+              productId: item.product._id,
+              slug: item.product.slug,
+              totalQuantity:item.is_simple ? item.product.quantity : item.attribute?.quantity
+            };
+            findCart.items.push(data);
+            return acc;
+          }
+
+          const listAttribute = item.product.attributes || [];
+
+          let listColor: ListColor[] = [];
+          let listSize: ListSize[] = [];
+
+          if (!item?.is_simple) {
+            listColor = listAttribute?.reduce((acc: ListColor[], item) => {
+              let group = acc.find(
+                (g) =>
+                  g.colorId.toString() ===
+                  ((item.color as IColor)._id?.toString() as string)
+              );
+              // Nếu nhóm không tồn tại, tạo nhóm mới
+              if (!group) {
+                group = {
+                  colorId: (item.color as IColor)._id as string,
+                  colorName: (item.color as IColor).name as string,
+                  list: [item],
+                  quantity: item.quantity,
+                  colorCode: (item.color as IColor).code,
+                };
+                acc.push(group);
+                return acc;
+              }
+
+              // Thêm đối tượng vào nhóm tương ứng
+              group.list.push(item);
+              group.quantity = group.quantity + item.quantity;
+              return acc;
+            }, []);
+
+            listSize = listAttribute?.reduce((acc: ListSize[], item) => {
+              let group = acc.find(
+                (g) =>
+                  g.sizeId.toString() ===
+                  ((item.size as ISize)._id?.toString() as string)
+              );
+              // Nếu nhóm không tồn tại, tạo nhóm mới
+              if (!group) {
+                group = {
+                  sizeId: (item.size as ISize)._id as string,
+                  sizeName: (item.size as ISize).name as string,
+                  list: [item],
+                  quantity: item.quantity,
+                };
+                acc.push(group);
+                return acc;
+              }
+
+              // Thêm đối tượng vào nhóm tương ứng
+              group.list.push(item);
+              group.quantity = group.quantity + item.quantity;
+              return acc;
+            }, []);
+          }
+
+          const data: IndexResAcc = {
+            product: item.product,
+            createdAt: item.createdAt,
+            attributes: item.product.attributes,
+            listColor: listColor,
+            listSize: listSize,
+            items: [
+              {
+                quantity: item.quantity,
+                _id: item._id,
+                thumbnail: item.product.thumbnail,
+                name: item.product.name,
+                discount: item.is_simple
+                  ? item.product.discount
+                  : item.attribute?.discount || 0,
+                price: item.is_simple
+                  ? item.product.price
+                  : item.attribute?.price || 0,
+                attribute: item.attribute,
+                is_simple: item.is_simple,
+                createdAt: item.createdAt,
+                productId: item.product._id,
+                slug: item.product.slug,
+                totalQuantity:item.is_simple ? item.product.quantity : item.attribute?.quantity
+              },
+              
+            ],
+            is_simple: item.is_simple,
+          };
+          return [...acc, data];
+        },
+        []
+      );
+
+      return res.status(STATUS.OK).json({
+        listData,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
@@ -311,11 +493,8 @@ class CartController {
       });
 
       if (existingProductCart) {
-        const data = await CartItemModel.findOneAndUpdate(
-          {
-            product: productId,
-            attribute: attribute,
-          },
+        const data = await CartItemModel.findByIdAndUpdate(
+          existingProductCart?._id,
           {
             quantity: existingProductCart.quantity + +quantity,
           },
@@ -346,11 +525,19 @@ class CartController {
         });
       }
 
+      if (existingProduct.quantity < quantity) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Số lượng vượt quá",
+          toast: true,
+        });
+      }
+
       const newCartItem = await CartItemModel.create({
         product: productId,
         quantity: +quantity,
         attribute,
         cart: existingCart._id,
+        is_simple: existingProduct.is_simple,
       });
 
       if (!newCartItem) {
@@ -393,7 +580,7 @@ class CartController {
         });
 
       const existingCartItem = await CartItemModel.findById(id).populate(
-        "attribute"
+        "attribute product"
       );
 
       if (!existingCartItem) {
@@ -404,16 +591,20 @@ class CartController {
 
       let quantityDefauld = quantity || existingCartItem?.quantity;
 
-      console.log("existingCartItem", existingCartItem);
-
       if (quantity) {
-        if (!(existingCartItem.attribute as IAttribute)._id) {
+        if (!(existingCartItem?.product as any)?.is_simple && !(existingCartItem?.attribute as IAttribute)?._id ) {
           return res.status(STATUS.BAD_REQUEST).json({
             message: "Sản phẩm không còn loại này",
           });
         }
-
-        if (quantity > (existingCartItem.attribute as IAttribute).quantity) {
+        if ((existingCartItem?.product as any)?.is_simple && quantity > (existingCartItem?.product as any)?.quantity) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: `Chỉ còn ${
+              (existingCartItem.attribute as IAttribute).quantity
+            } sản phẩm loại hàng này`,
+          });
+        }
+        if (!(existingCartItem?.product as any)?.is_simple && quantity > (existingCartItem.attribute as IAttribute)?.quantity ) {
           return res.status(STATUS.BAD_REQUEST).json({
             message: `Chỉ còn ${
               (existingCartItem.attribute as IAttribute).quantity
@@ -444,8 +635,7 @@ class CartController {
         if (checkAttribute.quantity < quantityDefauld) {
           quantityDefauld = checkAttribute.quantity;
         }
-      }
-
+      }      
       const updatedProduct = await CartItemModel.findByIdAndUpdate(
         id,
         {
@@ -504,7 +694,7 @@ class CartController {
         message: "Thay đổi thành công",
         data: result,
       });
-    } catch (error: any) {
+    } catch (error: any) {      
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
       });
@@ -680,10 +870,11 @@ class CartController {
         quantity: +quantity,
         attribute,
         cart: existingCart._id,
+        is_simple: existingProduct.is_simple,
       });
 
       const stateValue = {
-        listId:[newCartItem?._id],
+        listId: [newCartItem?._id],
         voucher: null,
       };
 

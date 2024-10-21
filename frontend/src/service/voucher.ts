@@ -4,7 +4,7 @@ import { IVoucher } from "@/types/voucher";
 const url = "voucher";
 export const takeApplyDiscountCode = (payload: {
 	code: string;
-	totalMoney: number;
+	listId: string[];
 }) => {
 	return instance.post(`${url}/getCheck`, payload);
 };

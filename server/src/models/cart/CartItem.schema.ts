@@ -15,15 +15,20 @@ const CartItemSchema = new mongoose.Schema(
       required: true,
       default: 1,
     },
-    cart:{
-        type: mongoose.Types.ObjectId,
-        ref: "Cart",
-        required: true,
+    cart: {
+      type: mongoose.Types.ObjectId,
+      ref: "Cart",
+      required: true,
     },
-    attribute:{
+    attribute: {
       type: mongoose.Types.ObjectId,
       ref: "Attribute",
+      default: null
+    },
+    is_simple: {
+      type: Boolean,
       required: true,
+      default: false,
     },
   },
   {

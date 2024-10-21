@@ -342,10 +342,6 @@ class AddressController {
           
       //   }
       // })
-      console.log("long:",typeof +process.env.LONGSHOP!);
-      console.log("let:",typeof +process.env.LATSHOP!);
-      
-
       const nearbyLocations = await AddressModel.aggregate([
         {
           $geoNear: {

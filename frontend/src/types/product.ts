@@ -33,6 +33,7 @@ export interface IProductDetail {
 	};
 	quantitySold: number;
 	quantity: number;
+	is_simple:boolean;
 	isSpecial: boolean;
 	attributes?: [IAttribute];
 	createdAt?: string;
@@ -75,4 +76,15 @@ export interface IFilterProduct {
 	size: string[];
 	fieldSort: string;
 	sort: 1 | -1;
+}
+export interface IProductSearch {
+	discount: number;
+	name: string;
+	price: number;
+	quantity: number;
+	quantitySold: number;
+	rating: number;
+	slug: string;
+	thumbnail: string;
+	_id: string;
 }

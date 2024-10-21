@@ -10,7 +10,7 @@ import OutOfStock from "@/assets/OutofStock.png";
 const Product = ({ productShop }: any) => {
 	return (
 		<div className="w-full pt-9">
-			<div className="grid w-full lg:grid-cols-4 md:grid-cols-3 grid-cols-2 lg:gap-9 md:gap-7 gap-2">
+			<div className="grid w-full grid-cols-2 gap-2 lg:grid-cols-4 md:grid-cols-3 lg:gap-9 md:gap-7">
 				{productShop?.content?.map((product: IProduct) => {
 					const listColor = product.attributes.reduce(
 						(acc: IColor[], item: any) => {
@@ -35,14 +35,15 @@ const Product = ({ productShop }: any) => {
 					);
 					return (
 						<Link
+							key={product?._id}
 							to={`/shop/detail/${encodeURIComponent(product?.slug || "")}`}
 						>
-							<div className="group rounded-sm overflow-hidden">
+							<div className="overflow-hidden rounded-sm group">
 								<div>
 									<div className="relative overflow-hidden border bg-[#F4F4F4] flex justify-center items-center max-w-full min-w-full box-shadow rounded-xl ">
-										{/* <img src={bn1} className='py-6 w-full h-full' /> */}
-										<div className="relative group inline-block w-full aspect-square">
-											<div className="bg-white transition duration-500 transform group-hover:scale-50">
+										{/* <img src={bn1} className='w-full h-full py-6' /> */}
+										<div className="relative inline-block w-full group aspect-square">
+											<div className="transition duration-500 transform bg-white group-hover:scale-50">
 												<img
 													className="object-cover w-full h-full aspect-square"
 													src={optimizeCloudinaryUrl(
@@ -53,11 +54,11 @@ const Product = ({ productShop }: any) => {
 													alt="Image 1"
 												/>
 											</div>
-											<div className="bg-white absolute top-0 left-0 transition duration-500 opacity-0 group-hover:opacity-100">
+											<div className="absolute top-0 left-0 transition duration-500 bg-white opacity-0 group-hover:opacity-100">
 												<img
-													className="w-full h-full object-cover aspect-square"
+													className="object-cover w-full h-full aspect-square"
 													src={optimizeCloudinaryUrl(
-														product?.images[1]?.url || "",
+														product?.images[0]?.url || "",
 														350,
 														370,
 													)}
@@ -75,19 +76,21 @@ const Product = ({ productShop }: any) => {
 												</div>
 											)}
 										</div>
-										<div className="absolute w-full flex justify-center items-center -bottom-10 group-hover:bottom-8 transition-all duration-300 ease-in-out">
+										<div className="absolute flex items-center justify-center w-full transition-all duration-300 ease-in-out -bottom-10 group-hover:bottom-8">
 											<div className="flex justify-center gap-1 items-center lg:w-[200px] w-[150px] lg:text-base text-sm lg:py-2 py-1 bg-opacity-30 border text-white bg-[#232323] text-center leading-[40px] border-none transition-transform hover:scale-90 hover:bg-[#f5f5f5] hover:text-[#262626] duration-300">
 												<IoEyeOutline />
-												<p className="lg:text-sm text-xs">Xem chi tiết</p>
+												<p className="text-xs lg:text-sm">Xem chi tiết</p>
 											</div>
 										</div>
-										<div className="absolute left-3 top-5 text-center rounded-full w-[35px] h-[35px]  p-1 bg-[#f54040]">
-											<p className="lg:text-[12px] text-xs pt-1 text-white">
-												{Math.floor(product.discount * 100 / product.price)}%
-											</p>
-										</div>
+										{product?.is_hot && (
+											<div className="absolute left-3 top-5 text-center rounded-full w-[35px] h-[35px]  p-1 bg-[#f54040]">
+												<p className="lg:text-[12px] text-xs pt-1 text-white">
+													HOT
+												</p>
+											</div>
+										)}
 									</div>
-									<div className="flex flex-col gap-1 sm:gap-2 py-2">
+									<div className="flex flex-col gap-1 py-2 sm:gap-2">
 										<h3 className=" md:text-[18px] text-sm text-[#1A1E26] font-semibold w-70 overflow-hidden overflow-ellipsis whitespace-nowrap line-clamp-1">
 											{product.name}
 										</h3>
@@ -100,8 +103,8 @@ const Product = ({ productShop }: any) => {
 												<FaStar className="text-yellow-400" size={10} />
 											</div>
 										</div>
-										<div className="flex gap-2  justify-between items-center ">
-											<div className="flex items-center  gap-2">
+										<div className="flex items-center justify-between gap-2 ">
+											<div className="flex items-center gap-2">
 												<span className="md:text-base text-xs justify-start font-[500] text-red-500">
 													{formatCurrency(product?.discount || 0)}
 												</span>
@@ -110,7 +113,7 @@ const Product = ({ productShop }: any) => {
 												</span>
 											</div>
 											<div>
-												<p className="lg:text-sm text-xs">
+												<p className="text-xs lg:text-sm">
 													Đã bán {product.quantitySold}
 												</p>
 											</div>
@@ -136,7 +139,10 @@ function ListColorComponent({ listColor }: { listColor: IColor[] }) {
 		<div className="flex items-center">
 			<div className="flex items-center justify-start -space-x-[6px]  *:inline-block  *:rounded-full">
 				{listColor.splice(0, 4)?.map((color: any) => (
-					<div className="p-[2px] rounded-full bg-white size-4 md:size-[20px]">
+					<div
+						key={color?._id}
+						className="p-[2px] rounded-full bg-white size-4 md:size-[20px]"
+					>
 						<p
 							style={{ background: `${color?.code}` }}
 							className="size-3 md:size-4 rounded-full shadow-[inset_-1px_1px_2px_rgba(0,0,0,0.5)]"
