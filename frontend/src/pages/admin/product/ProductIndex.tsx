@@ -23,6 +23,7 @@ import {
 	deletedById,
 	deleteMany,
 	exportServiceProduct,
+	importServiceProduct,
 	pagingProduct,
 	unDeletedById,
 	unDeleteMany,
@@ -42,9 +43,13 @@ import { Badge } from "@/components/ui/badge";
 import axios from "axios";
 import { FaFileExport } from "react-icons/fa";
 import { TooltipComponent } from "@/components/common/TooltipComponent";
+import { LuImport } from "react-icons/lu";
+import { useProcessBarLoadingEventNone } from "@/store/useSidebarAdmin";
 
 const ProductIndex = () => {
 	const queryClient = useQueryClient();
+	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
+		useProcessBarLoadingEventNone();
 	const [searchObject, setSearchObject] = useState<SearchObjectTypeProduct>({
 		pageIndex: 1,
 		pageSize: 5,
@@ -359,6 +364,7 @@ const ProductIndex = () => {
 
 	const handleExportProduct = async () => {
 		try {
+			setOpenProcessLoadingEventNone();
 			const { data } = await exportServiceProduct();
 			const blob = new Blob([data]);
 			const url = window.URL.createObjectURL(blob);
@@ -369,7 +375,28 @@ const ProductIndex = () => {
 			document.body.appendChild(a);
 			a.click();
 			window.URL.revokeObjectURL(url);
-		} catch (error) {}
+		} catch (error) {
+		} finally {
+			setCloseProcessLoadingEventNone();
+		}
+	};
+
+	const handleImportExcel = async (file: File) => {
+		try {
+			setOpenProcessLoadingEventNone();
+			const form = new FormData();
+			form.append("file", file);
+
+			await importServiceProduct(form);
+			queryClient.invalidateQueries({
+				queryKey: ["paging", searchObject],
+			});
+			toast.success("Nhập dữ liệu thành công");
+		} catch (error: any) {
+			toast.error("Nhập dữ liệu thất bại");
+		} finally {
+			setCloseProcessLoadingEventNone();
+		}
 	};
 
 	return (
@@ -398,9 +425,29 @@ const ProductIndex = () => {
 								Bỏ ẩn tất cả
 							</Button>
 						)}
+						<TooltipComponent label="Xuất dữ liệu hiện tại">
+							<>
+								<label
+									htmlFor="importPro"
+									className="h-10 p-2 bg-white rounded-sm font-medium text-sm border flex items-center text-[#7f7f7f] hover:bg-gray-100 cursor-pointer"
+								>
+									<LuImport size={20} className="mr-1" /> Nhập
+								</label>
+								<input
+									type="file"
+									id="importPro"
+									className="hidden"
+									accept=".xlsx,.xls"
+									onChange={(e) => {
+										const files = e.target.files as FileList;
+										handleImportExcel(files[0]);
+									}}
+								/>
+							</>
+						</TooltipComponent>
 
 						<TooltipComponent label="Xuất dữ liệu hiện tại">
-							<Button 
+							<Button
 								variant={"secondary"}
 								onClick={() => handleExportProduct()}
 							>

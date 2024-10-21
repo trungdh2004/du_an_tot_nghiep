@@ -279,9 +279,6 @@ class DashboardController {
         0
       );
 
-      console.log({startOfDay,endOfDay});
-      
-
       const countNew = await OrderModel.countDocuments({
         status: 1,
         orderDate: {
