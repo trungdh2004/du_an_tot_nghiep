@@ -72,7 +72,7 @@ const Home = () => {
           <h1 className="font-semibold text-[80px] ">
             Save your data storage here.
           </h1>
-<p className="w-[390px] text-[19px] pt-5 pb-8">
+          <p className="w-[390px] text-[19px] pt-5 pb-8">
             Data Warehouse is a data storage area that has been tested for
             security, so you can store your data here safely but not be afraid
             of being stolen by others.
@@ -122,7 +122,7 @@ const Home = () => {
             <div>
               <img
                 className="pt-7"
-src="https://s3-alpha-sig.figma.com/img/4848/bd8b/6441ecd1919c84f36a65eabdc8138a2c?Expires=1729468800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=SKgemvz2fq15Dkg7UEfLtb-eeqrwjpeARoe74~jQpdqBtejjnr5uEVC5jJTQMpsBVicK0u9P5gnZrWZRq67unqz~prO8qNAmh6Zo02loTZfmrllT-4zVfUeo7ifUPS-GIVZQ39HKoTLPHXubcyFKCkM35WYr6S9d5kxHr2AqTNVxNYpL3MKwt~WfshCmHGDZBBkYtIFBCEyHFqXYFUsAWQzpnFutX705VnxUVr79DBmLgROr3Z-V6gj1-OXVoVKUcSb6JiXcXuzpyEJksDkpxoSkEi-GxYiO7J4TQbAg3~t4DbIqM30rPJwsPAo1XskdsBsVKZ1T21D~uAyx81jq~A__"
+                src="https://s3-alpha-sig.figma.com/img/4848/bd8b/6441ecd1919c84f36a65eabdc8138a2c?Expires=1729468800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=SKgemvz2fq15Dkg7UEfLtb-eeqrwjpeARoe74~jQpdqBtejjnr5uEVC5jJTQMpsBVicK0u9P5gnZrWZRq67unqz~prO8qNAmh6Zo02loTZfmrllT-4zVfUeo7ifUPS-GIVZQ39HKoTLPHXubcyFKCkM35WYr6S9d5kxHr2AqTNVxNYpL3MKwt~WfshCmHGDZBBkYtIFBCEyHFqXYFUsAWQzpnFutX705VnxUVr79DBmLgROr3Z-V6gj1-OXVoVKUcSb6JiXcXuzpyEJksDkpxoSkEi-GxYiO7J4TQbAg3~t4DbIqM30rPJwsPAo1XskdsBsVKZ1T21D~uAyx81jq~A__"
                 alt=""
               />
             </div>
@@ -169,7 +169,7 @@ src="https://s3-alpha-sig.figma.com/img/4848/bd8b/6441ecd1919c84f36a65eabdc8138a
               />
             </div>
             <div>
-<h2 className="font-semibold text-center m-2 text-[20px]">
+              <h2 className="font-semibold text-center m-2 text-[20px]">
                 Security Code
               </h2>
               <p className="w-[220px] text-[#4B5D68] pb-3">
@@ -252,7 +252,7 @@ src="https://s3-alpha-sig.figma.com/img/4848/bd8b/6441ecd1919c84f36a65eabdc8138a
               DataWarehouse
             </h2>
           </div>
-<div className="pt-8 cursor-pointer">
+          <div className="pt-8 cursor-pointer">
             <p className="text-[18px] font-semibold ">Warehouse Society, 234</p>
             <p className="text-[18px] font-semibold">
               Bahagia Ave Street PRBW 29281
@@ -311,3 +311,4 @@ src="https://s3-alpha-sig.figma.com/img/4848/bd8b/6441ecd1919c84f36a65eabdc8138a
 };
 
 export default Home;
+
