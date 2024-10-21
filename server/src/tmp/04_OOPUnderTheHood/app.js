@@ -9,6 +9,10 @@ console.log("Dog: " + name);
 console.log("Dog: " + name);
 console.log("Dog: " + name);
 console.log("Dog: " + name);
+console.log("Dog: " + name);
+console.log("Dog: " + name);
+console.log("Dog: " + name);
+console.log("Dog: " + name);
 
 
 Dog.prototype.bark = function () {
