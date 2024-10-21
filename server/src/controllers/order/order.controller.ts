@@ -35,6 +35,7 @@ import { socketNotificationAdmin } from "../../socket/socketNotifycationServer.s
 import { TYPE_NOTIFICATION_ADMIN } from "../../config/typeNotification";
 import { formatCurrency } from "../../config/func";
 import LocationModel from "../../models/Location.schema";
+import CustomerModel from "../../models/Customer.schema";
 
 const long = +process.env.LONGSHOP! || 105.62573250208116;
 const lat = +process.env.LATSHOP! || 21.045193948892585;
@@ -349,7 +350,6 @@ class OrderController {
     try {
       const user = req.user;
       const { listId, addressId, voucher, paymentMethod, note } = req.body;
-      console.log(req.body);
 
       if (paymentMethod !== 1) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -1134,33 +1134,6 @@ class OrderController {
         });
       }
 
-      let voucherMain = null;
-
-      if (voucher) {
-        const existingVoucher = await VoucherModel.findById(voucher);
-
-        if (existingVoucher) {
-          const check = await OrderModel.findOne({
-            voucher: existingVoucher._id,
-            user: user?.id,
-          });
-
-          if (!check) {
-            const data = checkVoucher(existingVoucher);
-            if (data.check) {
-              voucherMain = data.voucher as IVoucher;
-            }
-            if (!data.check) {
-              voucherMain = null;
-            }
-          } else {
-            voucherMain = null;
-          }
-        } else {
-          voucherMain = null;
-        }
-      }
-
       const listCartItem = await CartItemModel.find<IndexCartItem>({
         _id: {
           $in: listId,
@@ -1204,13 +1177,63 @@ class OrderController {
         });
       }
 
-      const checkTotalMoney = listCartItem?.reduce((acc: number, item: any) => {
-        const totalMoney = item.quantity * (item?.attribute?.discount || 0);
-        return acc + totalMoney;
+      const listProduct = listCartItem.map((item) => {
+        const productId = item.product._id;
+        let totalMoney = 0;
+
+        if (item.is_simple) {
+          totalMoney = item.product.discount * item.quantity;
+        } else {
+          totalMoney = item.attribute.discount * item.quantity;
+        }
+
+        return {
+          productId,
+          totalMoney,
+        };
+      });
+
+      const totalMoney = listCartItem.reduce((sum, item) => {
+        let total = 0;
+        if (item.is_simple) {
+          total = item.product.discount * item.quantity;
+        } else {
+          total = item.attribute.discount * item.quantity;
+        }
+        return sum + total;
       }, 0);
-      if (voucherMain) {
-        if (voucherMain.minimumOrderValue > checkTotalMoney) {
+
+      let voucherMain = null;
+
+      if (voucher) {
+        const existingVoucher = await VoucherModel.findOne({
+          _id: voucher,
+        });
+
+        if (!existingVoucher) {
           voucherMain = null;
+        } else {
+          const check = await OrderModel.findOne({
+            voucher: existingVoucher._id,
+            user: user?.id,
+          });
+          if (!check) {
+            const data = checkVoucher(existingVoucher);
+
+            if (data.check) {
+              const amountVoucher = handleAmountVoucher(
+                existingVoucher,
+                totalMoney,
+                listProduct
+              );
+
+              if (amountVoucher.status) {
+                voucherMain = existingVoucher;
+              }
+            }
+          } else {
+            voucherMain = null;
+          }
         }
       }
 
@@ -1255,6 +1278,10 @@ class OrderController {
           message: "Bạn chưa chọn địa chỉ",
         });
       }
+      const findLocationShop = await LocationModel.findOne();
+
+      const longShop = findLocationShop?.long || long;
+      const latShop = findLocationShop?.lat || lat;
 
       let address = await AddressModel.findById(addressId);
 
@@ -1269,7 +1296,7 @@ class OrderController {
           $geoNear: {
             near: {
               type: "Point",
-              coordinates: [long, lat],
+              coordinates: [longShop, latShop],
             },
             distanceField: "dist",
             spherical: true,
@@ -1860,9 +1887,13 @@ class OrderController {
           shipper: { $ne: null },
         };
       } else {
-        shipperQuery = {
-          shipper: null,
-        };
+        if (status === 6) {
+          shipperQuery = {};
+        } else {
+          shipperQuery = {
+            shipper: null,
+          };
+        }
       }
 
       const listOrder = await OrderModel.find({
@@ -1950,6 +1981,7 @@ class OrderController {
               status: 6,
               date: existingOrder?.cancelOrderDate,
               message: "Đơn hàng đã hủy",
+              sub: existingOrder.noteCancel,
             };
           }
           if (item === 5) {
@@ -2039,7 +2071,7 @@ class OrderController {
           return false;
         }
 
-        if (typeof orderItem.attribute === "string") {
+        if (!orderItem.attribute) {
           return true;
         }
 
@@ -2059,11 +2091,11 @@ class OrderController {
       const checkQuantity = existingOrder.orderItems.find((item) => {
         const itemData = item as IOrderItem;
         if (itemData.is_simple) {
-          const check = itemData.product.quantity < itemData.quantity;
+          const check = itemData.product?.quantity < itemData.quantity;
           return check;
         }
 
-        if (itemData.quantity > itemData.attribute.quantity) {
+        if (itemData.quantity > itemData.attribute?.quantity) {
           return true;
         }
 
@@ -2431,7 +2463,7 @@ class OrderController {
         });
       }
 
-      if (existingOrder.status !== 1) {
+      if (existingOrder.status !== 1 && cancelBy !== 3) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Đơn hàng không thể hủy",
         });
@@ -2464,6 +2496,22 @@ class OrderController {
           now: true,
         }
       );
+
+      const customer = await CustomerModel.findOne({
+        user: successOrder?.user,
+      });
+
+      if (customer) {
+        CustomerModel.findByIdAndUpdate(customer._id, {
+          $inc: { totalOrder: 1, totalOrderCancel: 1 },
+        });
+      } else {
+        CustomerModel.create({
+          user: successOrder?.user,
+          totalOrder: 1,
+          totalOrderCancel: 1,
+        });
+      }
 
       return res.status(STATUS.OK).json({
         message: "Hủy đơn hàng thành công",

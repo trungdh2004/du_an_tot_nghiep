@@ -92,9 +92,6 @@ export const socketNewOrderShipperClient = async (order:any,shipper:string) => {
   const io = getIo()
   const socket = getSocket(shipper);
 
-  console.log({socket,shipper,order});
-  
-
   io.to(socket).emit("newOrderShipper", order)
 
 }

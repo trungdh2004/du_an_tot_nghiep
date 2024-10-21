@@ -1,7 +1,7 @@
 import { AiOutlineUsergroupAdd } from "react-icons/ai";
-import { BsTruckFront } from "react-icons/bs";
 import { CiDeliveryTruck, CiShoppingTag, CiStopwatch } from "react-icons/ci";
 import { FaBox } from "react-icons/fa";
+import { FaTruckFast } from "react-icons/fa6";
 import { GrAnalytics, GrBlog } from "react-icons/gr";
 import {
 	HiOutlineCheckCircle,
@@ -182,7 +182,7 @@ const sidebarConfig: any[] = [
 			},
 			{
 				path: "/ordership",
-				icon: BsTruckFront,
+				icon: FaTruckFast ,
 				isVisible: true,
 				label: "Đơn giao hàng ",
 			},

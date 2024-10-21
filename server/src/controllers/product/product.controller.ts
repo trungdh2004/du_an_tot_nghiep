@@ -1,17 +1,13 @@
 import { Request, Response } from "express";
-import STATUS from "../../utils/status";
-import ProductModel from "../../models/products/Product.schema";
-import CategoryModel from "../../models/products/Category.schema";
-import { productValidations } from "../../validation/product.validation";
-import { IAttribute, IColor, ISize } from "../../interface/product";
-import AttributeModel from "../../models/products/Attribute.schema";
-import { RequestModel } from "../../interface/models";
-import { generateSlugs } from "../../middlewares/generateSlug";
-import { Types } from "mongoose";
 import { formatDataPaging } from "../../common/pagingData";
+import { RequestModel } from "../../interface/models";
+import { IAttribute, IColor, ISize } from "../../interface/product";
+import { generateSlugs } from "../../middlewares/generateSlug";
 import CartItemModel from "../../models/cart/CartItem.schema";
-
-const ObjectId = require("mongoose").Types.ObjectId;
+import AttributeModel from "../../models/products/Attribute.schema";
+import ProductModel from "../../models/products/Product.schema";
+import STATUS from "../../utils/status";
+import { productValidations } from "../../validation/product.validation";
 
 interface RowIColor {
   colorId: string;
@@ -386,7 +382,7 @@ class ProductController {
           thumbnail,
           category,
           quantitySold,
-          quantity: quantityAttribute,
+          quantity:is_simple ? quantity : quantityAttribute,
           images,
           attributes: dataAttributes,
           slug: slugProduct,
@@ -628,8 +624,6 @@ class ProductController {
         rating,
       } = req.body;
 
-      console.log({ sort });
-
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
       let queryKeyword = keyword
@@ -745,7 +739,6 @@ class ProductController {
           },
         };
       }
-      console.log({ querySort });
 
       const listProduct = await ProductModel.find({
         ...queryKeyword,

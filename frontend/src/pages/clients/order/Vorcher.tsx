@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import voucher1 from "@/assets/voucher.png";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,20 +9,20 @@ import { toast } from "sonner";
 import { FaRegCircleXmark } from "react-icons/fa6";
 import { IVoucher } from "@/types/voucher";
 import { takeApplyDiscountCode } from "@/service/voucher";
+import { IOrderMoneyValue } from "@/types/order";
+
 interface Props {
 	data: any;
 	setOrderCheckout: (order: any) => void;
-	setMoneyVoucher: (money: number) => void;
+	setMoneyVoucher: Dispatch<SetStateAction<IOrderMoneyValue | null>>;
+	stateOrder: any;
 }
-const Vorcher = ({ data, setOrderCheckout, setMoneyVoucher }: Props) => {
-	const arrayTotal = data?.data?.map((product: any) => {
-		return product.totalAmount;
-	});
-
-	const totalCost = arrayTotal?.reduce(
-		(acc: number, value: number) => acc + value,
-		0,
-	);
+const Vorcher = ({
+	data,
+	setOrderCheckout,
+	setMoneyVoucher,
+	stateOrder,
+}: Props) => {
 	const [voucher, setVoucher] = useState<IVoucher | null | undefined>(
 		data?.voucher,
 	);
@@ -32,56 +32,56 @@ const Vorcher = ({ data, setOrderCheckout, setMoneyVoucher }: Props) => {
 		try {
 			const check = await takeApplyDiscountCode({
 				code: data.voucherCode,
-				totalMoney: totalCost,
+				listId: stateOrder.listId,
 			});
-			setVoucher(check.data.data);
+			console.log(check);
+
+			setVoucher(check.data.voucher);
 			setShow(true);
-			if (check.data.data !== null) {
+			if (check.data !== null) {
 				setOrderCheckout((prev: any) => {
-					return { ...prev, voucher: check.data.data._id };
+					return { ...prev, voucher: check.data.voucher._id };
 				});
-				setMoneyVoucher(check.data.data.discountValue);
+				setMoneyVoucher(check.data.valueCheck);
 			} else {
 				alert("Mã voucher không đúng hoặc đã hết hạn sử dụng!");
 			}
 		} catch (error) {
 			setVoucher(null);
 			setShow(true);
+			setOrderCheckout((prev: any) => {
+				return { ...prev, voucher: null };
+			});
+			setMoneyVoucher(null);
 			toast.error("Không có voucher nào ");
 		}
 	};
 
 	useEffect(() => {
 		if (data?.voucherMain) {
-			console.log("data:", data);
+			console.log("data:", data?.voucherMain);
 			setOrderCheckout((prev: any) => {
-				return { ...prev, voucher: data?.voucherMain?._id };
+				return { ...prev, voucher: data?.voucherMain?.voucher?._id };
 			});
-			setVoucher(data?.voucherMain);
-			setMoneyVoucher(data?.voucherMain.discountValue);
-			setShow(true)
+			setVoucher(data?.voucherMain?.voucher);
+			setMoneyVoucher({ amount: data?.voucherMain?.amountVoucher });
+			setShow(true);
 		}
 	}, [data]);
+	// console.log(voucher.voucher);
 
 	return (
 		<div className="py-2">
-			<button
-				onClick={() => {
-					console.log({ voucher });
-				}}
-			>
-				click
-			</button>
 			<div className="flex flex-col bg-white lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow">
 				<div className="flex lg:flex-row gap-3  items-center  justify-between py-2">
 					<div className="col-span-3">
 						<div className="flex pl-4 gap-3 items-center">
 							<img src={voucher1} alt="" className="w-8 h-8" />
-							<h3 className="lg:text-lg md:text-base text-sm">Voucher</h3>
+							<h3 className="lg:text-lg md:text-base text-sm hidden md:block">Voucher</h3>
 						</div>
 					</div>
 					<div className="flex text-center pr-4 gap-2 items-center">
-						<h5 className="lg:text-base text-sm w-[50%]">Mã voucher</h5>
+						<h5 className="lg:text-base text-sm w-[50%] hidden md:block">Mã voucher</h5>
 						<form
 							action=""
 							onSubmit={handleSubmit(onSubmit)}
@@ -103,47 +103,50 @@ const Vorcher = ({ data, setOrderCheckout, setMoneyVoucher }: Props) => {
 							<h3 className="text-red-400">Bạn chưa có voucher nào</h3>
 						</div>
 					) : (
-						<div className="flex bg-white py-3 pl-4 items-center gap-3">
-							<div className="flex items-center gap-4">
-								<div className="bg-[#e7e7e7] p-3">
-									<img
-										src={Outofstock}
-										alt=""
-										className="rounded-full w-16 h-16"
+						<div className="p-2">
+							<div className="flex p-1 items-center border rounded-md justify-between pr-2 max-w-[400px]">
+								<div className="flex items-center gap-3 flex-1">
+									<div className="bg-orange-500 p-2 rounded-sm">
+										<img
+											src={`/NUC_white.svg`}
+											alt=""
+											className="rounded-full w-16 h-16"
+										/>
+									</div>
+									<div className="flex flex-col gap-1">
+										<p className="text-sm font-medium text-gray-700">
+											Giảm {voucher?.discountValue}
+											{voucher?.discountType === 1
+												? "đ"
+												: `%, giảm tối đa ${voucher?.maxAmount}đ`}
+										</p>
+										<p className="text-sm text-gray-600">
+											Đơn tối thiểu : {voucher?.minimumOrderValue}đ
+										</p>
+										<p className="text-xs font-light text-gray-500">
+											HXD :
+											{voucher?.endDate
+												? format(new Date(voucher?.endDate), "yyyy-MM-dd")
+												: "Sai time"}  - {voucher?.type === "1" ? "Tất cả" : "Một số sản phẩm"}
+										</p>
+									</div>
+								</div>
+								<div
+									onClick={() => {
+										setVoucher(null);
+										setShow(false);
+										setOrderCheckout((prev: any) => {
+											return { ...prev, voucher: null };
+										});
+										setMoneyVoucher(null);
+										reset();
+									}}
+								>
+									<FaRegCircleXmark
+										size={20}
+										className="text-red-400 cursor-pointer hover:text-red-600"
 									/>
 								</div>
-								<div className="flex flex-col gap-1">
-									<h5 className="text-sm font-medium text-gray-700">
-										{voucher?.code}
-									</h5>
-									<h5 className="text-sm font-medium text-gray-700">
-										{voucher?.name}
-									</h5>
-									<p className="text-xs font-light text-gray-500">
-										HXD :{" "}
-										{voucher?.endDate
-											? format(
-													new Date(voucher?.endDate),
-													"yyyy-MM-dd HH:mm:ss",
-												)
-											: "Sai time"}
-									</p>
-								</div>
-							</div>
-							<div
-								onClick={() => {
-									setVoucher(null);
-									setShow(false);
-									setOrderCheckout((prev: any) => {
-										return { ...prev, voucher: null };
-									});
-									reset();
-								}}
-							>
-								<FaRegCircleXmark
-									size={20}
-									className="text-red-400 cursor-pointer"
-								/>
 							</div>
 						</div>
 					))}
