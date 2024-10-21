@@ -21,7 +21,7 @@ const PaymentIndex = () => {
   
   const [searchObject, setSearchObject] = useState<ISearchObjectPayment>({
     pageIndex: 1,
-    pageSize: 1,
+    pageSize: 3,
   })
   const { data } = useQuery({
     queryKey: ['payment', searchObject],
@@ -56,13 +56,13 @@ const PaymentIndex = () => {
         <div className="grid grid-cols-12 gap-6 xl:gap-8 mt-5 ">
           {data?.content?.map((item: IPayment, index: number) => {
             return (
-              <div key={index} className="border border-blue-200 bg-gray-100 rounded-[8px] px-4 py-2 col-span-12 min-[600px]:col-span-6 min-[900px]:col-span-6 ">
-                <p className="text-sm font-semibold pb-2 ">Mã đơn hàng: <span className="">{item?.codeOrder}</span></p>
+              <div key={index} className="border border-blue-200 bg-gray-100 rounded-[8px] px-4 py-2 col-span-12  min-[900px]:col-span-6 ">
+                <p className="text-sm font-semibold pb-2">Mã đơn hàng: <span className="">{item?.codeOrder}</span></p>
                 <p className="">Có giao dịch thanh toán online với số tiên
                   <span className="text-red-500 font-semibold pl-1">{formatQuantity(
                     item?.amount, "₫",)}</span>
-                  , vui lòng kiểm tra thông tin.</p>
-                <p className="text-gray-500 text-sm text-right">{format(item?.createdAt || "", "hh:mm dd/MM/yyyy")}</p>
+                  , vui long kiểm tra thông tin.</p>
+                <p className="text-gray-500 text-sm text-right pt-2">{format(item?.createdAt || "", "hh:mm dd/MM/yyyy")}</p>
               </div>
             )
           })}

@@ -28,3 +28,16 @@ export interface IAddress {
         coordinates:number[]
     }
 }
+export interface ICity {
+	idProvince: string;
+	name: string;
+}
+
+export interface IDistrict {
+	idDistrict: string;
+	name: string;
+}
+export interface ICommune {
+	idCommune: string;
+	name: string;
+}

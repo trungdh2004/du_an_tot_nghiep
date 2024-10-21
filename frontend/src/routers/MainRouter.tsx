@@ -18,6 +18,8 @@ import WrapperSearch from "@/pages/clients/search/WrapperSearch";
 import ShopProduct from "@/pages/clients/shop/ShopProduct";
 import NotFound from "@/pages/NotFound";
 import { Navigate } from "react-router-dom";
+import AddressIndex from "@/pages/clients/address/AddressIndex";
+
 const MainRouter = [
 	{
 		path: "/",
@@ -60,6 +62,7 @@ const MainRouter = [
 						path: "payment",
 						element: <PaymentIndex />,
 					},
+					{ path: "addressNew", element: <AddressIndex /> },
 					{
 						path: "password",
 						element: <ChangePassword />,
