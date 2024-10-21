@@ -17,18 +17,18 @@ routerUpload.post(
     uploadCloud.single("image")(req, res, (err: any) => {
       if (err) {
         // Xử lý lỗi tải ảnh lên
-        console.error("Error uploading image:", err.message);
+        console.error("Error uploading image:", err);
 
         if (err instanceof multer.MulterError) {
           // Xử lý lỗi Multer
           return res
             .status(STATUS.BAD_REQUEST)
-            .json({ error: "Multer error: " + err.message });
-        } else if (err.message.includes("Cloudinary")) {
+            .json({ error: "Multer error: " + err?.message });
+        } else if (err?.message?.includes("Cloudinary")) {
           // Xử lý lỗi từ Cloudinary
           return res
             .status(STATUS.INTERNAL)
-            .json({ error: "Cloudinary error: " + err.message });
+            .json({ error: "Cloudinary error: " + err?.message });
         } else {
           // Xử lý các lỗi khác
           return res
