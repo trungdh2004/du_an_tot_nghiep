@@ -1,4 +1,3 @@
-
 export interface IAddress {
 	username: string;
 	phone: string;
@@ -20,13 +19,13 @@ export interface IAddress {
 	user: string;
 	address: string;
 	detailAddress: string;
-    deleted:boolean;
-    createdAt:string;
-    updatedAt:string;
-    location:{
-        type:string;
-        coordinates:number[]
-    }
+	deleted: boolean;
+	createdAt: string;
+	updatedAt: string;
+	location: {
+		type: string;
+		coordinates: number[];
+	};
 }
 export interface ICity {
 	idProvince: string;

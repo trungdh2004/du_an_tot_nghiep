@@ -40,6 +40,9 @@ const AddressIndex = () => {
 	const handleEdit = (id: string) => {
 		setOpenEditById(id);
 	};
+	const handleCLoseEdit = () => {
+		setOpenEditById(null);
+	};
 
 	const handleDelete = () => {
 		mutate(openDeleteById as string);
@@ -98,9 +101,12 @@ const AddressIndex = () => {
 			<div className="padding">
 				<div className="flex flex-col gap-2  w-full pt-5">
 					<div className="flex justify-between items-center pb-4">
-						<h2 className="text-black font-semibold">Địa chỉ của bạn</h2>
+						<h2 className="text-black font-semibold text-lg">Địa chỉ của bạn</h2>
 						<div className="">
-							<Button onClick={() => handleCreate()} className="">
+							<Button
+								onClick={() => handleCreate()}
+								className="rounded-full text-xs px-4 bg-gradient-to-r from-gray-600 to-gray-900 hover:from-gray-500 hover:to-gray-800 transition-all duration-300 ease-in-out"
+							>
 								Thêm địa chỉ
 							</Button>
 						</div>
@@ -116,7 +122,7 @@ const AddressIndex = () => {
 								return (
 									<div className="w-full col-span-12  " key={index}>
 										<div
-											className={`w-full p-2 sm:p-5 lg:px-8 bg-slate-100 rounded-xl flex justify-between ${address.is_main === true ? `border-2 border-green-500` : ` `}`}
+											className={`w-full p-2 sm:p-5 lg:px-8 bg-white box-shadow border rounded-xl flex justify-between ${address.is_main === true ? `border-2 border-green-500` : ` `}`}
 										>
 											<div className="flex flex-col gap-2 sm:w-20px sm:col-span-2">
 												<p className="text-[14px]">
@@ -173,6 +179,13 @@ const AddressIndex = () => {
 							content={"Bạn có chắc chắn muốn xóa địa chỉ này không?"}
 							handleSubmit={() => handleDelete()}
 							title="Xóa địa chỉ"
+						/>
+					)}
+					{!!openEditById && (
+						<EditAddress
+							open={!!openEditById}
+							handleClose={handleCLoseEdit}
+							id={openEditById}
 						/>
 					)}
 				</div>
