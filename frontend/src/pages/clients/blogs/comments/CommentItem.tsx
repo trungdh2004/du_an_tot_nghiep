@@ -4,17 +4,16 @@ import TYPE_COMMENT from "@/config/typeComment";
 import { useAuth } from "@/hooks/auth";
 import { cn } from "@/lib/utils";
 import {
-  createComment,
-  getListComments,
-  reactionsComment,
+	createComment,
+	getListComments,
+	reactionsComment,
 } from "@/service/comment";
-import {
-  Comment,
-  IPageComment
-} from "@/types/TypeObjectComment";
+import { Comment, IPageComment } from "@/types/TypeObjectComment";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Reaction from "./Reaction";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
 type Props = {
 	comment: Comment;
 	setComment: Dispatch<SetStateAction<Comment[]>>;
@@ -39,30 +38,30 @@ const CommentItem = ({ comment, setComment }: Props) => {
 		cmtParent: any,
 	) => {
 		try {
-			console.log("cmtpr", cmtParent);
-
 			const { data } = await getListComments({
 				pageSize: 5,
 				commentId: comment?._id,
 				commentType: TYPE_COMMENT.COMMENT,
 				pageIndex: newPageIndex || 1,
 			});
-			console.log(data);
-			
 			setComment((prev) => {
 				return prev?.map((comment) => {
 					if (comment._id === cmtParent._id) {
 						return {
 							...comment,
-							replies: [
-								...comment.replies,
-								...data.content
-							].reduce((acc, reply) => {
-								if (!acc.some((existingReply:any) => existingReply._id === reply._id)) {
-									acc.push(reply); // Nếu chưa tồn tại, thêm vào
-								}
-								return acc;
-							}, []),
+							replies: [...comment.replies, ...data.content].reduce(
+								(acc, reply) => {
+									if (
+										!acc.some(
+											(existingReply: any) => existingReply._id === reply._id,
+										)
+									) {
+										acc.push(reply); // Nếu chưa tồn tại, thêm vào
+									}
+									return acc;
+								},
+								[],
+							),
 							pageIndexReplies: data.pageIndex,
 						};
 					}
@@ -70,13 +69,13 @@ const CommentItem = ({ comment, setComment }: Props) => {
 				});
 			});
 			setCheck(data);
-			console.log(comment);
 			return data;
 		} catch (error) {
-			console.log(error);
+			if (error instanceof AxiosError) {
+				toast.error(error?.response?.data?.message);
+			}
 		}
 	};
-
 	const handlOpenFeedback = (
 		commentId: string,
 		userRep?: string,
@@ -109,7 +108,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 
 			setComment((prev) => {
 				return prev?.map((comment) => {
-					if (data.commentType === TYPE_COMMENT.PRODUCT) {
+					if (data.commentType === TYPE_COMMENT.BLOGS) {
 						if (comment._id === commentId) {
 							return {
 								...comment,
@@ -140,7 +139,9 @@ const CommentItem = ({ comment, setComment }: Props) => {
 			});
 			return data;
 		} catch (error) {
-			console.log(error);
+			if(error instanceof AxiosError){
+				toast.error(error?.response?.data?.message);
+			}
 		}
 	};
 	// [...(comment.reactions || []), authUser?._id]
@@ -152,11 +153,9 @@ const CommentItem = ({ comment, setComment }: Props) => {
 		}
 		try {
 			const { data } = await reactionsComment(commentId, false);
-			console.log(data);
-			
 			setComment((prev) => {
 				return prev?.map((comment) => {
-					if (data.commentType === TYPE_COMMENT.PRODUCT) {
+					if (data.commentType === TYPE_COMMENT.BLOGS) {
 						if (comment._id === commentId) {
 							return {
 								...comment,
@@ -176,8 +175,6 @@ const CommentItem = ({ comment, setComment }: Props) => {
 								return reply;
 							});
 							newComment.replies = newReplies;
-							console.log({ newComment, comment, newReplies });
-
 							return newComment;
 						} else {
 							return comment;
@@ -188,7 +185,9 @@ const CommentItem = ({ comment, setComment }: Props) => {
 			});
 			return data;
 		} catch (error) {
-			console.log(error);
+			if (error instanceof AxiosError) {
+				toast.error(error?.response?.data?.message);
+			}
 		}
 	};
 
@@ -220,14 +219,13 @@ const CommentItem = ({ comment, setComment }: Props) => {
 					return comment;
 				});
 			});
-			console.log("cmt sub", comment);
-
 			setContent("");
-
 			handleClose();
 			return data;
 		} catch (error) {
-			console.log(error);
+			if (error instanceof AxiosError) {
+				toast.error(error?.response?.data?.message);
+			}
 		}
 	};
 	const handleChange = (content: string) => {
@@ -313,7 +311,10 @@ const CommentItem = ({ comment, setComment }: Props) => {
 				comment?.replies?.map((comment: any) => {
 					const isFeedbackOpen = openFeedback === comment?._id;
 					return (
-						<div key={comment?._id} className="flex items-start w-full gap-1 pl-8 md:gap-3">
+						<div
+							key={comment?._id}
+							className="flex items-start w-full gap-1 pl-8 md:gap-3"
+						>
 							<div className="border rounded-full size-6 md:size-8">
 								<img
 									src={comment?.user?.avatarUrl || `/avatar_25.jpg`}

@@ -1,8 +1,8 @@
 import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import TYPE_COMMENT from "@/config/typeComment";
 import { useAuth } from "@/hooks/auth";
@@ -11,6 +11,8 @@ import { Comment } from "@/types/TypeObjectComment";
 import { Dispatch, SetStateAction } from "react";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import Actions from "./Actions";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
 
 interface IProps {
 	handlOpenFeedback: () => void;
@@ -28,22 +30,15 @@ const Reaction = ({
 	setComment,
 }: IProps) => {
 	const { authUser } = useAuth();
-	// console.log(comment);
-	// console.log(Props);
 
 	const checkLike = comment?.reactions.includes(authUser?._id);
-	// console.log(checkLike);
-	// interface Props {
-	// 	comment: Comment;
-	// }
-	const handleDeleteComment = async (props: Comment) => {
-		console.log(props);
 
+	const handleDeleteComment = async (props: Comment) => {
 		try {
 			const { data } = await deleteComment(props?._id);
 			console.log(data);
 			setComment((prev) => {
-				if (props.commentType === TYPE_COMMENT.PRODUCT) {
+				if (props.commentType === TYPE_COMMENT.BLOGS) {
 					return prev?.filter((comment) => comment._id !== props._id);
 				}
 				return prev?.map((comment) =>
@@ -59,7 +54,9 @@ const Reaction = ({
 			});
 			return data;
 		} catch (error) {
-			console.log(error);
+			if(error instanceof AxiosError){
+				toast.error(error?.response?.data?.message);
+			}
 		}
 	};
 

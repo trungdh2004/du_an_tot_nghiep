@@ -19,8 +19,10 @@ import { toast } from "sonner";
 import CommentItem from "./CommentItem";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ModalSheetComment = () => {
+	const QueryClient = useQueryClient();
 	const { id } = useParams();
 	const { authUser, isLoggedIn } = useAuth();
 	// const [openSheet, setOpenSheet] = useState(false);
@@ -66,7 +68,11 @@ const ModalSheetComment = () => {
 					content,
 					id as string,
 					TYPE_COMMENT.BLOGS,
+					id
 				);
+				QueryClient.invalidateQueries({
+					queryKey:['blogDetail']
+				})
 				setComments((prevComments) => [data?.data, ...prevComments]);
 				setContent("");
 				setOpen(false);
@@ -79,8 +85,6 @@ const ModalSheetComment = () => {
 		}
 	};
 	const handleNextPage = () => {
-		console.log("Running next page");
-
 		const pageIndex = pagination?.pageIndex + 1;
 		fetchingDataComments(pageIndex);
 	};
@@ -121,6 +125,7 @@ const ModalSheetComment = () => {
 					</h3>
 
 					<InfiniteScroll
+						className="space-y-2"
 						dataLength={pagination?.totalAllOptions}
 						next={handleNextPage}
 						hasMore={pagination?.pageIndex < pagination?.totalPage}
@@ -146,11 +151,11 @@ const ModalSheetComment = () => {
 						endMessage={<p style={{ textAlign: "center" }}></p>}
 					>
 						{comments?.map((comment: any) => (
-							<CommentItem
-								comment={comment}
-								setComment={setComments}
-								key={comment?._id}
-							/>
+								<CommentItem
+									comment={comment}
+									setComment={setComments}
+									key={comment?._id}
+								/>
 						))}
 					</InfiniteScroll>
 				</div>

@@ -9,6 +9,8 @@ import { FaRegHeart } from "react-icons/fa6";
 import { Link, useParams } from "react-router-dom";
 import { Remarkable } from "remarkable";
 import ModalSheetComment from "./comments/ModalSheetComment";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
 
 const BlogDetail = () => {
 	const { id } = useParams();
@@ -17,9 +19,12 @@ const BlogDetail = () => {
 		queryFn: async () => {
 			try {
 				const { data } = await getBlogDetailClient(id as string);
+				console.log("blogDetail",data);
 				return data;
 			} catch (error) {
-				console.log(error);
+				if(error instanceof AxiosError){
+					toast.error(error?.response?.data?.message);
+				}
 			}
 		},
 	});
@@ -55,7 +60,7 @@ const BlogDetail = () => {
 									<FaRegComment size={20} />
 								</span>
 								<span className="text-lg font-medium">
-									{blog?.data?.countLike}
+									{blog?.data?.comments_count}
 								</span>
 							</div>
 						</div>
@@ -115,7 +120,7 @@ const BlogDetail = () => {
 						<div className="flex items-center gap-2 ">
 								<ModalSheetComment/>
 							<span className="text-lg font-medium">
-								{blog?.data?.countLike}
+								{blog?.data?.comments_count}
 							</span>
 						</div>
 					</div>
