@@ -29,6 +29,7 @@ import VoucherList from "@/pages/admin/Vouchers/VoucherList";
 import PrivateRouter from "./PrivateRouter";
 import UserShipper from "@/pages/admin/users/shipper/UserShipper";
 import UserShipperDetail from "@/pages/admin/users/shipper/ShipperDetail";
+import ChatIndex from "../pages/admin/Chat/ChatIndex";
 
 const AdminRouter = [
 	{
@@ -182,6 +183,12 @@ const AdminRouter = [
 			{
 				path: "location",
 				element: <LocationIndex />,
+			},
+
+			// chat
+			{
+				path: "chat",
+				element: <ChatIndex />,
 			},
 		],
 	},
