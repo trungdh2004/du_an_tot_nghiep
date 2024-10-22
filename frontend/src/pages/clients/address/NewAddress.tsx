@@ -18,7 +18,7 @@ import {
 	callDistrict,
 } from "@/service/address";
 import { Button } from "@/components/ui/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -80,9 +80,19 @@ const NewAddress = ({ open, handleClose }: IProps) => {
 	const [districts, setDistricts] = useState<IDistrict[]>([]);
 	const [commune, setCommune] = useState<ICommune[]>([]);
 	const [query, setQuery] = useState("");
-	const [citys, setCitys] = useState<ICity[]>(
-		queryClient.getQueryData<ICity[]>(["city"]) || [],
-	);
+	// const [citys, setCitys] = useState<ICity[]>(
+	// 	queryClient.getQueryData<ICity[]>(["city"]) || [],
+	// );
+	// console.log(citys);
+	const { data: citys, isLoading } = useQuery<ICity[]>({
+		queryKey: ["city"],
+		queryFn: async () => {
+			const { data } = await callCity();
+			return data;
+		},
+		staleTime: Infinity,
+	});
+
 	const form = useForm({
 		resolver: zodResolver(formSchema),
 	});
@@ -94,6 +104,7 @@ const NewAddress = ({ open, handleClose }: IProps) => {
 				queryKey: ["address"],
 			});
 			toast.success("Bạn thêm địa chỉ thành công");
+			handleClose();
 		},
 		onError: () => {
 			toast.error("Bạn thêm địa chỉ thất bại");
@@ -132,7 +143,9 @@ const NewAddress = ({ open, handleClose }: IProps) => {
 		setQuery(address);
 	};
 
-	const onSubmit = () => {};
+	const onSubmit = (dataForm: any) => {
+		mutate(dataForm);
+	};
 	return (
 		<>
 			<Dialog open={open} onOpenChange={handleClose}>
