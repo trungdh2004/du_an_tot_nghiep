@@ -8,13 +8,13 @@ import { formatDataPaging } from "../common/pagingData";
 import TagsModel from "../models/Tags.schema";
 import { generateSlugs } from "../middlewares/generateSlug";
 
-function randomThreeConsecutiveNumbers(a:number) {
-  if(a < 3) {
-      return 0
+function randomThreeConsecutiveNumbers(a: number) {
+  if (a < 3) {
+    return 0;
   }
   const start = Math.floor(Math.random() * (a - 3));
-  
-  return start
+
+  return start;
 }
 
 class BlogController {
@@ -484,30 +484,87 @@ class BlogController {
         _id: {
           $ne: existingBlog?._id,
         },
-        isPublish:true
+        isPublish: true,
       });
 
-      const random = randomThreeConsecutiveNumbers(countBlog)
+      const random = randomThreeConsecutiveNumbers(countBlog);
 
       const listBlogOrther = await BlogsModel.find({
         _id: {
           $ne: existingBlog?._id,
         },
-        isPublish:true
-      }).skip(random).limit(3).populate("user_id")
-
-
+        isPublish: true,
+      })
+        .skip(random)
+        .limit(3)
+        .populate("user_id");
 
       return res.status(STATUS.OK).json({
         message: "Lấy thành công",
         data: existingBlog,
-        orther:listBlogOrther
+        orther: listBlogOrther,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error?.message,
       });
     }
+  }
+
+  async reactions(req: RequestModel, res: Response) {
+    try {
+      const { isLike = true } = req.body;
+      const { id } = req.params;
+      const user = req.user;
+
+      if (!id)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Chưa nhập bài viết",
+        });
+
+      const existingBlog = await BlogsModel.findById(id);
+
+      if (!existingBlog)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có blog này",
+        });
+
+      let blog;
+
+      if (isLike) {
+        blog = await BlogsModel.findByIdAndUpdate(
+          id,
+          {
+            $inc: {
+              countLike: 1,
+            },
+            $addToSet: {
+              reactions: user?.id,
+            },
+          },
+          { new: true }
+        );
+      } else {
+        blog = await BlogsModel.findByIdAndUpdate(
+          id,
+          {
+            $inc: {
+              countLike: 1,
+            },
+
+            $pull: {
+              reactions: user?.id,
+            },
+          },
+          { new: true }
+        );
+      }
+
+      return res.status(STATUS.OK).json({
+        blog,
+        message:"Like thành công"
+      })
+    } catch (error) {}
   }
 }
 
