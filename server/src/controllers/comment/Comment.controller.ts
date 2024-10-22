@@ -11,7 +11,7 @@ class CommentController {
   async createComment(req: RequestModel, res: Response) {
     try {
       const user = req.user;
-      const { content, commentId, commentType } = req.body;
+      const { content, commentId, commentType, parent_id } = req.body;
 
       if (!content || !commentId || !commentType) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -36,6 +36,14 @@ class CommentController {
           });
         }
 
+        if (parent_id) {
+          await BlogsModel.findByIdAndUpdate(parent_id, {
+            $inc: {
+              comments_count: 1,
+            },
+          });
+        }
+
         await CommentModel.findByIdAndUpdate(existingComment._id, {
           $inc: {
             replies_count: +1,
@@ -54,6 +62,12 @@ class CommentController {
       if (commentType === TYPE_COMMENT.BLOGS) {
         const existingComment = await BlogsModel.findById(commentId);
 
+        await BlogsModel.findByIdAndUpdate(existingComment?._id, {
+          $inc: {
+            comments_count: 1,
+          },
+        });
+
         if (!existingComment) {
           return res.status(STATUS.BAD_REQUEST).json({
             message: "Không có bài viết nào",
@@ -66,7 +80,8 @@ class CommentController {
         content,
         commentType,
         comment_id: commentId,
-      })
+        parent_id
+      });
 
       const commentRes = await CommentModel.findById(newComment?._id).populate({
         path: "user",
@@ -77,7 +92,7 @@ class CommentController {
           is_admin: 1,
           is_staff: 1,
         },
-      })
+      });
 
       return res.status(STATUS.OK).json({
         message: "Tạo comment thành công",

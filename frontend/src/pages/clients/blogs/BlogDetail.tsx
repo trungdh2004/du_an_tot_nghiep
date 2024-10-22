@@ -1,5 +1,6 @@
 import { Dialog } from "@/components/ui/dialog";
 import { getBlogDetailClient } from "@/service/blog";
+import { IBlogs } from "@/types/blogs";
 import { DialogContent } from "@radix-ui/react-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -8,7 +9,6 @@ import { FaRegHeart } from "react-icons/fa6";
 import { Link, useParams } from "react-router-dom";
 import { Remarkable } from "remarkable";
 import ModalSheetComment from "./comments/ModalSheetComment";
-import { IBlogs } from "@/types/blogs";
 
 const BlogDetail = () => {
 	const { id } = useParams();
@@ -35,8 +35,8 @@ const BlogDetail = () => {
 	const htmlContent = md.render(markdownContent as any);
 	return (
 		<div className="py-12 mx-auto padding">
-			<div className="grid w-full grid-cols-12 gap-5 overflow-visible ">
-				<div className="hidden col-span-3 pr-5 overflow-visible lg:block">
+			<div className="grid w-full grid-cols-12 gap-8 overflow-visible ">
+				<div className="hidden col-span-2 pr-5 overflow-visible lg:block">
 					<div className="sticky top-0">
 						<h3 className="hidden pb-2 text-base font-medium lg:block">
 							{blog?.data?.user_id?.full_name}
@@ -62,8 +62,8 @@ const BlogDetail = () => {
 					</div>
 				</div>
 
-				<div className="col-span-12 lg:col-span-6 ">
-					<h3 className="text-xl md:text-2xl md:font-bold text-[#222222] ">
+				<div className="col-span-12 lg:col-span-7 lg:px-8">
+					<h3 className="text-xl md:text-2xl font-bold text-[#222222] ">
 						{blog?.data?.title}
 					</h3>
 					{/* user-information */}
@@ -93,7 +93,12 @@ const BlogDetail = () => {
 						</div>
 					</div>
 					{/* blog?.data-content */}
-					<div className={"[&>table]:border-collapse [&>table]:border-gray-400  [&>th]:border [&>td]:border "} dangerouslySetInnerHTML={{ __html: htmlContent }} />
+					<div
+						className={
+							"[&>table]:border-collapse [&>table]:border-gray-400  [&>th]:border [&>td]:border "
+						}
+						dangerouslySetInnerHTML={{ __html: htmlContent }}
+					/>
 					{/* Related-blog?.data */}
 					<div className="mt-10">
 						<hr />
@@ -116,7 +121,7 @@ const BlogDetail = () => {
 					</div>
 				</div>
 
-				<div className="col-span-12 lg:col-span-3">
+				<div className="col-span-12 lg:col-span-3 lg:pl-3">
 					<h3 className="pb-2 mt-4 text-base font-medium border-b border-gray-300 lg:mt-0">
 						Bài viết khác
 					</h3>

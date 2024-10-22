@@ -30,6 +30,11 @@ const CommentProSchema = new mongoose.Schema(
     },
     comment_id: {
       type: mongoose.Types.ObjectId,
+      required:true
+    },
+    parent_id:{
+      type: mongoose.Types.ObjectId,
+      default:null
     },
     replies: {
       type: Array,

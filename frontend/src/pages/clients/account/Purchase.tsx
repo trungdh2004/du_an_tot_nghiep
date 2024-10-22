@@ -126,13 +126,13 @@ const OrderManagements = () => {
 						))}
 					</ul>
 				</div>
-				<div className="h-[500px">
-					{isLoading && (
+				{isLoading && (
+					<div className="h-[500px]">
 						<div className="">
 							<LoadingTable />
 						</div>
-					)}
-				</div>
+					</div>
+				)}
 				{!isLoading &&
 					orderData &&
 					orderData?.map((item: IOrderList) => {
@@ -198,7 +198,7 @@ const OrderManagements = () => {
 																					<h3 className="text-sm md:text-[16px] font-medium line-clamp-2 ">
 																						{itemOrder?.product.name}
 																					</h3>
-																					<div className="flex flex-row md:flex-col gap-x-3">
+																					<div className="flex flex-row items-end md:items-start md:flex-col gap-x-3">
 																						<p className="text-base text-[#0000008A] flex gap-x-1 pt-1">
 																							<span className="hidden md:block">
 																								Phân loại hàng:
@@ -213,12 +213,6 @@ const OrderManagements = () => {
 																					</div>
 																				</div>
 																				<div className="w-full md:w-[25%] text-red-500 text-xs md:text-sm flex items-end md:items-center font-medium ">
-																					{/* <span className="text-gray-500 line-through pr-3">
-                                            {formatQuantity(
-                                              itemOrder?.product.price,
-                                              "₫",
-                                            )}
-                                          </span> */}
 																					<span className="w-full md:text-right pr-3">
 																						{formatQuantity(
 																							itemOrder?.price,
@@ -234,13 +228,11 @@ const OrderManagements = () => {
 														)}
 
 														<div className="w-full flex justify-between items-center py-3">
-															{/*  */}
 															{item.status === 5 && (
 																<div className="w-full">
 																	{itemOrderList?.is_evaluate === true ? (
 																		<div className="">
-																			{/* <button className="flex items-center px-3 py-2 cursor-pointer text-blue-500 
-                                       border border-blue-500 hover:bg-blue-100 rounded-sm text-sm ">Xem đánh giá</button> */}
+																			
 																			<span className="text-blue-500 text-sm">
 																				Đã đánh giá
 																			</span>
@@ -273,7 +265,7 @@ const OrderManagements = () => {
 															<div className="flex item-center justify-end w-full">
 																<p className="text-right text-sm md:text-base lg:font-medium md:flex md:items-center ">
 																	Tổng số tiền{" "}
-																	<span className="hidden md:block">
+																	<span className="hidden md:block mr-1">
 																		({itemOrderList?.items.length as number} sản
 																		phẩm):
 																	</span>
@@ -346,7 +338,7 @@ const OrderManagements = () => {
 						);
 					})}
 				{orderData?.length === 0 && (
-					<div className="w-full h-[300px] flex flex-col justify-center items-center">
+					<div className="w-full h-[300px] box-shadow rounded-sm flex flex-col justify-center items-center bg-white my-5">
 						<div className="w-20">
 							<img
 								src="https://toinh-ecommerce.vercel.app/images/no-order.png"
