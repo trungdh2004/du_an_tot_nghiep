@@ -21,7 +21,7 @@ const sidebarAccount = [
     },
     {
         name:"Địa chỉ",
-        path:"/account/address",
+        path:"/account/addressnew",
         icon: GrLocation
     },
     {

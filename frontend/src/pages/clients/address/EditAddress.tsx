@@ -11,19 +11,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import {
+	callCity,
 	callCommune,
 	callDistrict,
 	editAddress,
 	getAddressById,
 } from "@/service/address";
 import { Button } from "@/components/ui/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import AddressLocation from "./AddressLocation";
 import MapComponent from "@/components/map/Map";
 import MapSearchLocation from "@/components/map/MapSearchLocation";
+import { ICity, ICommune, IDistrict } from "@/types/address";
 
 const formSchema = z.object({
 	username: z
@@ -68,18 +70,6 @@ const formSchema = z.object({
 	location: z.array(z.number()),
 });
 
-interface ICity {
-	idProvince: string;
-	name: string;
-}
-
-interface IDistrict extends ICity {
-	idDistrict: string;
-}
-interface ICommune extends IDistrict {
-	idCommune: string;
-}
-
 interface IProps {
 	open: boolean;
 	id: string;
@@ -91,20 +81,25 @@ const EditAddress = ({ open, handleClose, id }: IProps) => {
 	const { mutate } = useMutation({
 		mutationFn: async (dataNew: any) => editAddress({ id, dataNew }),
 		onSuccess: () => {
-			handleClose();
 			toast.success("Bạn cập nhật địa chỉ thành công");
 			queryClient.invalidateQueries({
 				queryKey: ["address"],
 			});
+			handleClose();
 		},
 		onError: () => {
 			handleClose();
 			toast.error("Bạn cập nhật địa chỉ thất bại");
 		},
 	});
-	const [citys, setCitys] = useState<ICity[]>(
-		queryClient.getQueryData<ICity[]>(["city"]) || [],
-	);
+	const { data: citys = [], isLoading } = useQuery<ICity[]>({
+		queryKey: ["city"],
+		queryFn: async () => {
+			const { data } = await callCity();
+			return data;
+		},
+		staleTime: Infinity,
+	});
 	const [districts, setDistricts] = useState<IDistrict[]>([]);
 	const [commune, setCommune] = useState<ICommune[]>([]);
 	const form = useForm({
