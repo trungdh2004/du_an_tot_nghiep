@@ -80,11 +80,11 @@ const User = () => {
 				/>
 				<Link
 					to={regex.test(location.pathname) ? "/" : "/admin"}
-					className="block w-full h-full cursor-pointer"
+					className="cursor-pointer"
 				>
 					<DropdownMenuItem
 						className={cn(
-							" hidden",
+							" hidden cursor-pointer",
 							authUser?.is_admin || authUser?.is_staff ? "block" : "hidden",
 						)}
 					>
@@ -96,34 +96,42 @@ const User = () => {
 					</DropdownMenuItem>
 				</Link>
 				<DropdownMenuSeparator
-					className={cn(regex.test(location.pathname) ? "hidden" : "block")}
+					className={cn("cursor-pointer",regex.test(location.pathname) ? "hidden" : "block")}
 				/>
 				<Link
 					to={"/account/profile"}
-					className="block w-full h-full cursor-pointer"
+					className=" cursor-pointer"
 				>
 					<DropdownMenuItem
-						className={cn(regex.test(location.pathname) ? "hidden" : "block")}
+						className={cn("cursor-pointer",regex.test(location.pathname) ? "hidden" : "block")}
 					>
 						Tài khoản của tôi
 					</DropdownMenuItem>
 				</Link>
-				<Link to={"/"} className="block w-full h-full cursor-pointer">
+				<Link to={"/account/address"} className="cursor-pointer">
 					<DropdownMenuItem
-						className={cn(regex.test(location.pathname) ? "hidden" : "block")}
+						className={cn("cursor-pointer",regex.test(location.pathname) ? "hidden" : "block")}
 					>
 						Địa chỉ
 					</DropdownMenuItem>
 				</Link>
-				<DropdownMenuSeparator
-					className={cn(regex.test(location.pathname) ? "hidden" : "block")}
-				/>
 				<Link
-					to={"/shipper/auth"}
-					className="block w-full h-full cursor-pointer"
+					to="/account/purchase"
+					className="cursor-pointer"
 				>
 					<DropdownMenuItem
-						className={cn(
+						className={cn("cursor-pointer",regex.test(location.pathname) ? "hidden" : "block")}
+					>
+						Đơn hàng
+					</DropdownMenuItem>
+				</Link>
+				<DropdownMenuSeparator />
+				<Link
+					to={"/shipper/auth"}
+					className="cursor-pointer"
+				>
+					<DropdownMenuItem
+						className={cn("cursor-pointer",
 							!regex.test(location.pathname) &&
 								!authUser?.is_shipper &&
 								!authUser?.is_admin
@@ -134,10 +142,10 @@ const User = () => {
 						Đăng ký giao hàng
 					</DropdownMenuItem>
 				</Link>
-				<Link to={"/shipper"} className="block w-full h-full cursor-pointer">
+				<Link to={"/shipper"} className="cursor-pointer">
 					<DropdownMenuItem
 						className={cn(
-							!regex.test(location.pathname) &&
+							"cursor-pointer",!regex.test(location.pathname) &&
 								authUser?.is_shipper &&
 								!authUser?.is_admin
 								? "block"
@@ -145,16 +153,6 @@ const User = () => {
 						)}
 					>
 						Giao hàng
-					</DropdownMenuItem>
-				</Link>
-				<Link
-					to="/account/purchase"
-					className="block w-full h-full cursor-pointer"
-				>
-					<DropdownMenuItem
-						className={cn(regex.test(location.pathname) ? "hidden" : "block")}
-					>
-						Đơn hàng
 					</DropdownMenuItem>
 				</Link>
 				<DropdownMenuSeparator />

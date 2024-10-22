@@ -62,7 +62,7 @@ const MainRouter = [
 						path: "payment",
 						element: <PaymentIndex />,
 					},
-					{ path: "addressNew", element: <AddressIndex /> },
+					{ path: "address", element: <AddressIndex /> },
 					{
 						path: "password",
 						element: <ChangePassword />,
