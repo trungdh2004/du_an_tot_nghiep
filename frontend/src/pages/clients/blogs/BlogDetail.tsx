@@ -1,28 +1,32 @@
 import { Dialog } from "@/components/ui/dialog";
-import { getBlogDetailClient } from "@/service/blog";
+import { actionUpdateReactions, getBlogDetailClient } from "@/service/blog";
 import { IBlogs } from "@/types/blogs";
 import { DialogContent } from "@radix-ui/react-dialog";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { format } from "date-fns";
-import { FaRegComment } from "react-icons/fa";
 import { FaRegHeart } from "react-icons/fa6";
 import { Link, useParams } from "react-router-dom";
 import { Remarkable } from "remarkable";
-import ModalSheetComment from "./comments/ModalSheetComment";
-import { AxiosError } from "axios";
 import { toast } from "sonner";
+import ModalSheetComment from "./comments/ModalSheetComment";
+import { useAuth } from "@/hooks/auth";
+import { useCurrentRouteAndNavigation } from "@/hooks/router";
+import { FaHeart } from "react-icons/fa";
 
 const BlogDetail = () => {
 	const { id } = useParams();
+	const { authUser, isLoggedIn } = useAuth();
+	const  QueryClient = useQueryClient();
+	const handleCurrentRoute = useCurrentRouteAndNavigation();
 	const { data: blog } = useQuery({
 		queryKey: ["blogDetail", id],
 		queryFn: async () => {
 			try {
 				const { data } = await getBlogDetailClient(id as string);
-				console.log("blogDetail",data);
 				return data;
 			} catch (error) {
-				if(error instanceof AxiosError){
+				if (error instanceof AxiosError) {
 					toast.error(error?.response?.data?.message);
 				}
 			}
@@ -38,6 +42,21 @@ const BlogDetail = () => {
 	});
 	const markdownContent = blog?.data?.content;
 	const htmlContent = md.render(markdownContent as any);
+	const handleUpdateReactions = async () => {
+		if (isLoggedIn) {
+			try {
+				const isLike = blog?.data?.reactions?.includes(authUser?._id);
+				await actionUpdateReactions({ id: id as string, isLike: !isLike });
+				QueryClient.invalidateQueries({queryKey:['blogDetail']})
+			} catch (error) {
+				if (error instanceof AxiosError) {
+					toast.error(error?.response?.data?.message);
+				}
+			}
+		} else {
+			handleCurrentRoute();
+		}
+	};
 	return (
 		<div className="py-12 mx-auto padding">
 			<div className="grid w-full grid-cols-12 gap-8 overflow-visible ">
@@ -48,17 +67,26 @@ const BlogDetail = () => {
 						</h3>
 						<div className="flex gap-6 pt-2 border-t border-gray-300">
 							<div className="flex items-center gap-2 text-[#757575] ">
-								<span>
-									<FaRegHeart size={20} />
+								<span
+									onClick={handleUpdateReactions}
+									className="cursor-pointer"
+								>
+									{blog?.data?.reactions?.includes(authUser?._id) ? (
+										<FaHeart
+											size={20}
+											fill="#ef4444"
+											className="text-red-500 fill-red-500"
+										/>
+									) : (
+										<FaRegHeart size={20} />
+									)}
 								</span>
 								<span className="text-lg font-medium">
 									{blog?.data?.countLike}
 								</span>
 							</div>
 							<div className="flex items-center gap-2 text-[#757575]">
-								<span>
-									<FaRegComment size={20} />
-								</span>
+								<ModalSheetComment />
 								<span className="text-lg font-medium">
 									{blog?.data?.comments_count}
 								</span>
@@ -110,15 +138,23 @@ const BlogDetail = () => {
 					</div>
 					<div className="flex  gap-6 pt-3 text-[#757575]">
 						<div className="flex items-center gap-2 ">
-							<span>
-								<FaRegHeart size={20} />
+							<span onClick={handleUpdateReactions} className="cursor-pointer">
+								{blog?.data?.reactions?.includes(authUser?._id) ? (
+									<FaHeart
+										size={20}
+										fill="#ef4444"
+										className="text-red-500 fill-red-500"
+									/>
+								) : (
+									<FaRegHeart size={20} />
+								)}
 							</span>
 							<span className="text-lg font-medium">
 								{blog?.data?.countLike}
 							</span>
 						</div>
 						<div className="flex items-center gap-2 ">
-								<ModalSheetComment/>
+							<ModalSheetComment />
 							<span className="text-lg font-medium">
 								{blog?.data?.comments_count}
 							</span>

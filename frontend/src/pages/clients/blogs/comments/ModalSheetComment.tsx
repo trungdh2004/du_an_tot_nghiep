@@ -20,6 +20,7 @@ import CommentItem from "./CommentItem";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
 
 const ModalSheetComment = () => {
 	const QueryClient = useQueryClient();
@@ -38,7 +39,7 @@ const ModalSheetComment = () => {
 	const [comments, setComments] = useState<Comment[]>([]);
 
 	useEffect(() => {
-			fetchingDataComments(1);		
+		fetchingDataComments(1);
 	}, []);
 	const fetchingDataComments = async (pageIndex: number) => {
 		try {
@@ -68,11 +69,11 @@ const ModalSheetComment = () => {
 					content,
 					id as string,
 					TYPE_COMMENT.BLOGS,
-					id
+					id,
 				);
 				QueryClient.invalidateQueries({
-					queryKey:['blogDetail']
-				})
+					queryKey: ["blogDetail"],
+				});
 				setComments((prevComments) => [data?.data, ...prevComments]);
 				setContent("");
 				setOpen(false);
@@ -96,26 +97,33 @@ const ModalSheetComment = () => {
 		setOpen(false);
 	};
 	return (
-		<Sheet >
+		<Sheet>
 			<SheetTrigger>
 				<FaRegComment size={20} />
 			</SheetTrigger>
-			<SheetContent id="scrollableDiv" className="min-w-[45%] pt-12 overflow-y-auto scroll-custom ">
-				<SheetHeader >
+			<SheetContent
+				id="scrollableDiv"
+				className="min-w-[45%] pt-12 overflow-y-auto scroll-custom "
+			>
+				<SheetHeader>
 					<SheetTitle>
-						<CommentEditor
-							avatar={optimizeCloudinaryUrl(
-								authUser?.avatarUrl as string,
-								60,
-								60,
-							)}
-							onSubmit={onSubmitComment}
-							handleChange={handleChange}
-							handleClose={handleClose}
-							content={content}
-							handleOpen={() => setOpen(true)}
-							openComment={open}
-						/>
+						{isLoggedIn ? (
+							<CommentEditor
+								avatar={optimizeCloudinaryUrl(
+									authUser?.avatarUrl as string,
+									60,
+									60,
+								)}
+								onSubmit={onSubmitComment}
+								handleChange={handleChange}
+								handleClose={handleClose}
+								content={content}
+								handleOpen={() => setOpen(true)}
+								openComment={open}
+							/>
+						) : (
+							<h3>Đăng nhập để có thể bình luận</h3>
+						)}
 					</SheetTitle>
 				</SheetHeader>
 				{/* Danh sách comments */}
@@ -132,18 +140,18 @@ const ModalSheetComment = () => {
 						loader={
 							<div className="space-y-3">
 								<div className="flex items-center gap-2">
-								<Skeleton	 className="rounded-full size-7 md:size-10" />
-								<div className="">
-									<Skeleton className="w-1/3"/>
-									<Skeleton className="w-full"/>
-								</div>
+									<Skeleton className="rounded-full size-7 md:size-10" />
+									<div className="">
+										<Skeleton className="w-1/3" />
+										<Skeleton className="w-full" />
+									</div>
 								</div>
 								<div className="flex items-center gap-2">
-								<Skeleton	 className="rounded-full size-7 md:size-10" />
-								<div className="">
-									<Skeleton className="w-1/3"/>
-									<Skeleton className="w-full"/>
-								</div>
+									<Skeleton className="rounded-full size-7 md:size-10" />
+									<div className="">
+										<Skeleton className="w-1/3" />
+										<Skeleton className="w-full" />
+									</div>
 								</div>
 							</div>
 						}
@@ -151,11 +159,11 @@ const ModalSheetComment = () => {
 						endMessage={<p style={{ textAlign: "center" }}></p>}
 					>
 						{comments?.map((comment: any) => (
-								<CommentItem
-									comment={comment}
-									setComment={setComments}
-									key={comment?._id}
-								/>
+							<CommentItem
+								comment={comment}
+								setComment={setComments}
+								key={comment?._id}
+							/>
 						))}
 					</InfiniteScroll>
 				</div>

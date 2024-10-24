@@ -27,11 +27,6 @@ const Actions = ({ handleDelete }: Props) => {
 			<DropdownMenuContent className="w-auto min-w-[2rem]" align="end">
 				<DropdownMenuItem>
 					<div className="flex items-center gap-2.5 cursor-pointer">
-						<GoPencil /> <span className="text-nowrap">Chỉnh sửa</span>
-					</div>
-				</DropdownMenuItem>
-				<DropdownMenuItem>
-					<div className="flex items-center gap-2.5 cursor-pointer">
 						<HiOutlineTrash /> <span className="text-nowrap" onClick={()=>handleDelete()}>Xoá</span>
 					</div>
 				</DropdownMenuItem>
