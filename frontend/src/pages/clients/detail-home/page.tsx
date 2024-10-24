@@ -25,6 +25,8 @@ const DetailProduct = () => {
 			return data?.data;
 		},
 	});
+	console.log(data);
+
 	return (
 		<div className="">
 			<div className="padding ">

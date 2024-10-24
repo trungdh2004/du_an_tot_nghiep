@@ -33,7 +33,7 @@ export interface IProductDetail {
 	};
 	quantitySold: number;
 	quantity: number;
-	is_simple:boolean;
+	is_simple: boolean;
 	isSpecial: boolean;
 	attributes?: [IAttribute];
 	createdAt?: string;
@@ -41,6 +41,9 @@ export interface IProductDetail {
 	slug?: string;
 	listColor?: IListColorAttribute[];
 	listSize?: IListSizeAttribute[];
+	rating: number;
+	ratingCount: number;
+	ratingQuantity: number;
 }
 export interface IListSizeAttribute {
 	sizeId: string;
