@@ -40,7 +40,7 @@ const CartPreview = ({ totalCart, carts }: Props) => {
 								</div>
 							</div>
 							<p className="text-sm text-red-500">
-								{formatCurrency(cart?.attribute?.discount || 0)}
+								{formatCurrency(cart?.attribute?.discount || cart?.product?.price)}
 							</p>
 						</div>
 					);
