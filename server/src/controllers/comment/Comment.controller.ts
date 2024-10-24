@@ -221,7 +221,15 @@ class CommentController {
           ...queryMongoose,
         },
         { new: true }
-      );
+      ).populate({
+        path:"user",
+        select:{
+          _id:1,
+          full_name:1,
+          email:1,
+          avatarUrl:1
+        }
+      });
 
       return res.status(STATUS.OK).json(newComment);
     } catch (error: any) {

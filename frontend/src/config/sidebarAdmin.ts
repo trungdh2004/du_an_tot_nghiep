@@ -66,6 +66,11 @@ const sidebarConfig: any[] = [
 		],
 	},
 	{
+		path: "/chat",
+		isVisible: true,
+		label: "Trò chuyện",
+	},
+	{
 		path: "/product",
 		isVisible: true,
 		label: "Sản phẩm",
