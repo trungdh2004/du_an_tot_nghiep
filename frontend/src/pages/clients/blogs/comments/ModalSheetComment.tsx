@@ -105,27 +105,24 @@ const ModalSheetComment = () => {
 				id="scrollableDiv"
 				className="min-w-[45%] pt-12 overflow-y-auto scroll-custom "
 			>
-				<SheetHeader>
-					<SheetTitle>
-						{isLoggedIn ? (
-							<CommentEditor
-								avatar={optimizeCloudinaryUrl(
-									authUser?.avatarUrl as string,
-									60,
-									60,
-								)}
-								onSubmit={onSubmitComment}
-								handleChange={handleChange}
-								handleClose={handleClose}
-								content={content}
-								handleOpen={() => setOpen(true)}
-								openComment={open}
-							/>
-						) : (
-							<h3>Đăng nhập để có thể bình luận</h3>
+				{isLoggedIn ? (
+					<CommentEditor
+						avatar={optimizeCloudinaryUrl(
+							authUser?.avatarUrl as string,
+							60,
+							60,
 						)}
-					</SheetTitle>
-				</SheetHeader>
+						onSubmit={onSubmitComment}
+						handleChange={handleChange}
+						handleClose={handleClose}
+						content={content}
+						handleOpen={() => setOpen(true)}
+						openComment={open}
+					/>
+				) : (
+					<h3>Đăng nhập để có thể bình luận</h3>
+				)}
+
 				{/* Danh sách comments */}
 				<div className="mt-6">
 					<h3 className="mb-3 text-lg font-semibold text-gray-400">
@@ -160,6 +157,7 @@ const ModalSheetComment = () => {
 					>
 						{comments?.map((comment: any) => (
 							<CommentItem
+								parrent_id={id as string}
 								comment={comment}
 								setComment={setComments}
 								key={comment?._id}

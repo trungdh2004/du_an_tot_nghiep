@@ -16,9 +16,10 @@ import { AxiosError } from "axios";
 import { toast } from "sonner";
 type Props = {
 	comment: Comment;
+	parrent_id:string;
 	setComment: Dispatch<SetStateAction<Comment[]>>;
 };
-const CommentItem = ({ comment, setComment }: Props) => {
+const CommentItem = ({ comment,parrent_id, setComment }: Props) => {
 	const { authUser, isLoggedIn } = useAuth();
 	const [content, setContent] = useState(``);
 	const [pageIndex, setPageIndex] = useState(1);
@@ -195,6 +196,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 				content,
 				comment?._id as string,
 				TYPE_COMMENT.COMMENT,
+				parrent_id
 			);
 			setComment((prev) => {
 				return prev?.map((comment) => {
