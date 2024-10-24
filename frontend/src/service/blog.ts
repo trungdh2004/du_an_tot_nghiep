@@ -40,3 +40,7 @@ export const getBlogDetailClient = (id: string) => {
 	const uri = `/blogs/detailClient/${id}`;
 	return instance.get(uri);
 };
+export const actionUpdateReactions = ({id,isLike}:{id:string,isLike:boolean}) => {
+	const uri = `/blogs/reactions/${id}`;
+	return instance.put(uri,{isLike});
+};

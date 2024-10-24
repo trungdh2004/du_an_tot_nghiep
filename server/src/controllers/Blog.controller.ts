@@ -515,8 +515,7 @@ class BlogController {
     try {
       const { isLike = true } = req.body;
       const { id } = req.params;
-      const user = req.user;
-
+      const user = req.user;      
       if (!id)
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Chưa nhập bài viết",
@@ -549,7 +548,7 @@ class BlogController {
           id,
           {
             $inc: {
-              countLike: 1,
+              countLike: -1,
             },
 
             $pull: {

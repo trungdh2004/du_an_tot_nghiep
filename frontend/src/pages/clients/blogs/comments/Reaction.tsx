@@ -29,14 +29,12 @@ const Reaction = ({
 	comment,
 	setComment,
 }: IProps) => {
-	const { authUser } = useAuth();
-
+	const { authUser, isLoggedIn } = useAuth();	
 	const checkLike = comment?.reactions.includes(authUser?._id);
 
 	const handleDeleteComment = async (props: Comment) => {
 		try {
 			const { data } = await deleteComment(props?._id);
-			console.log(data);
 			setComment((prev) => {
 				if (props.commentType === TYPE_COMMENT.BLOGS) {
 					return prev?.filter((comment) => comment._id !== props._id);
@@ -54,7 +52,7 @@ const Reaction = ({
 			});
 			return data;
 		} catch (error) {
-			if(error instanceof AxiosError){
+			if (error instanceof AxiosError) {
 				toast.error(error?.response?.data?.message);
 			}
 		}
@@ -105,8 +103,9 @@ const Reaction = ({
 					</div>
 				)}
 			</div>
-
-			<Actions handleDelete={() => handleDeleteComment(comment)} />
+			{(isLoggedIn && comment?.user?._id == authUser?._id) && (
+				<Actions handleDelete={() => handleDeleteComment(comment)} />
+			)}
 		</div>
 	);
 };

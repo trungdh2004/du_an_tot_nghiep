@@ -103,9 +103,6 @@ const CommentItem = ({ comment, setComment }: Props) => {
 		}
 		try {
 			const { data } = await reactionsComment(commentId, true);
-			console.log(data);
-			console.log(commentId);
-
 			setComment((prev) => {
 				return prev?.map((comment) => {
 					if (data.commentType === TYPE_COMMENT.BLOGS) {
