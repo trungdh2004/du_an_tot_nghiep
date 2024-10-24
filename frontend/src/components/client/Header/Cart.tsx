@@ -16,6 +16,8 @@ const Cart = () => {
 	const { totalCart, cartsPreviews } = useCart();
 	const { isLoggedIn } = useAuth();
 	const navigateIsLogin = useCurrentRouteAndNavigation();
+	console.log(">>>> Cart", cartsPreviews);
+	
 	return (
 		<Link
 			to={"/cart"}

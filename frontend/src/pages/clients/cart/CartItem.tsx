@@ -125,7 +125,7 @@ const CartItem = ({
 				</div>
 				<div
 					className={cn(
-						"flex flex-col justify-start px-2.5 py-1.5 sm:w-full md:w-5/6",
+						"flex flex-col justify-start px-2.5 py-1.5 sm:w-full md:w-5/6 min-w-0",
 						!item?.attribute?._id || !item?.attribute?.quantity
 							? "w-[70%]"
 							: "w-[73%]",
@@ -133,7 +133,7 @@ const CartItem = ({
 				>
 					<Link
 						to={`/shop/detail/${decodeURI(cart?.product?.slug as string)}`}
-						className="max-sm:truncate"
+						className="truncate"
 					>
 						{item.name}
 					</Link>

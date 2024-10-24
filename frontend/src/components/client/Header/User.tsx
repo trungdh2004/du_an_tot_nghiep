@@ -100,7 +100,7 @@ const User = () => {
 				/>
 				<Link
 					to={"/account/profile"}
-					className=" cursor-pointer"
+					className="cursor-pointer "
 				>
 					<DropdownMenuItem
 						className={cn("cursor-pointer",regex.test(location.pathname) ? "hidden" : "block")}
@@ -155,7 +155,6 @@ const User = () => {
 						Giao hàng
 					</DropdownMenuItem>
 				</Link>
-				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					onClick={handleLogout}
 					className="font-semibold text-red-500"
