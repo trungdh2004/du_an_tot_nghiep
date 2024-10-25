@@ -100,12 +100,11 @@ class EvaluateController {
 
   async pagingEvaluate(req: Request, res: Response) {
     try {
-      const pageIndex = Number(req.query.page) || 1;
+      
+      const { id } = req.params
+      const { rating,pageIndex } = req.body
       let limit = 5;
       let skip = (pageIndex - 1) * limit || 0;
-      const { id } = req.params
-      const { rating } = req.body
-
       if (!id) return res.status(STATUS.BAD_REQUEST).json({
         message: "Bạn chưa chọn sản phẩm"
       })
