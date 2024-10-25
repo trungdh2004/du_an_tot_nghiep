@@ -1,7 +1,7 @@
 import instance from "@/config/instance";
 
-export const getPagingNotification = (page: number) =>
-	instance.get(`/notification/paging?page=${page}`);
+export const getPagingNotification = (page: number,before?:string | null) =>
+	instance.get(`/notification/paging?page=${page}${before ? "&before=" + before : ""}`);
 
 export const watchedNotification = (id: string, isRead: boolean) =>
 	instance.put(`/notification/watched/${id}`, {
@@ -15,8 +15,8 @@ export const deleteNotification = (id: string) =>
 	instance.delete(`/notification/delete/${id}`);
 
 
-export const pagingNotificationAdmin =  (page: number) =>
-	instance.get(`/notification/pagingNotificationAdmin?page=${page}`);
+export const pagingNotificationAdmin =  (page: number,before?:string | null) =>
+	instance.get(`/notification/pagingNotificationAdmin?page=${page}${before ? "&before=" + before : ""}`);
 
 export const watchedNotificationAdmin = (id: string, isRead: boolean) =>
 	instance.put(`/notification/watchedNotificationAdmin/${id}`, {

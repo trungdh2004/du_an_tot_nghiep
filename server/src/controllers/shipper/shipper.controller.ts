@@ -547,7 +547,6 @@ class ShipperController {
         });
       });
 
-      console.log("updateOrder", updateOrder);
 
       const customer = await CustomerModel.findOne({
         user: updateOrder?.user,

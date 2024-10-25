@@ -604,11 +604,11 @@ class OrderController {
       //     $in: listId,
       //   },
       // });
-      // socketNotificationAdmin(
-      //   `<p>Đơn hàng: <span style="color:blue;font-weight:500;">${newOrder.code}</span> vừa được đặt, vui lòng kiểm tra thông tin</p>`,
-      //   TYPE_NOTIFICATION_ADMIN.ORDER,
-      //   newOrder._id
-      // );
+      socketNotificationAdmin(
+        `<p>Đơn hàng: <span style="color:blue;font-weight:500;">${newOrder.code}</span> vừa được đặt, vui lòng kiểm tra thông tin</p>`,
+        TYPE_NOTIFICATION_ADMIN.ORDER,
+        newOrder._id
+      );
 
       return res.status(STATUS.OK).json({
         message: "Tạo đơn hàng thành công",
@@ -1735,18 +1735,18 @@ class OrderController {
         }
       );
 
-      // socketNotificationAdmin(
-      //   `<p>Đơn hàng <span style="color:blue;font-weight:500;">${updateOder?.code}</span> vừa được đặt, vui lòng kiểm tra thông tin</p>`,
-      //   TYPE_NOTIFICATION_ADMIN.ORDER,
-      //   updateOder?._id
-      // );
-      // socketNotificationAdmin(
-      //   `<p>Có giao dịch thanh toán online với số tiền : <span style="color:red;font-weight:500;">${formatCurrency(
-      //     payment?.amount
-      //   )}</span>, vui lòng kiểm tra thông tin</p>`,
-      //   TYPE_NOTIFICATION_ADMIN.PAYMENT,
-      //   `${payment?._id}`
-      // );
+      socketNotificationAdmin(
+        `<p>Đơn hàng <span style="color:blue;font-weight:500;">${updateOder?.code}</span> vừa được đặt, vui lòng kiểm tra thông tin</p>`,
+        TYPE_NOTIFICATION_ADMIN.ORDER,
+        updateOder?._id
+      );
+      socketNotificationAdmin(
+        `<p>Có giao dịch thanh toán online với số tiền : <span style="color:red;font-weight:500;">${formatCurrency(
+          payment?.amount
+        )}</span>, vui lòng kiểm tra thông tin</p>`,
+        TYPE_NOTIFICATION_ADMIN.PAYMENT,
+        `${payment?._id}`
+      );
 
       if (state) {
         const data = JSON.parse(state as string);
