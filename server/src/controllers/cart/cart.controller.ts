@@ -326,10 +326,6 @@ class CartController {
         ])
         .sort({ createdAt: -1 });
 
-        console.log({
-          listCartItem
-        })
-
       const listData = listCartItem?.reduce(
         (acc: IndexResAcc[], item: IndexCartItem) => {
           const findCart = acc.find(

@@ -1,22 +1,48 @@
-import { Button } from "@/components/ui/button";
-import React from "react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import ChatContent from "./components/ChatContent";
+import Conversation from "./components/Conversation";
+import { useEffect, useState } from "react";
+import { useMediaQuery } from "usehooks-ts";
 
 const ChatIndex = () => {
+	const matches = useMediaQuery("(max-width: 768px)"); 
+	const [selectedChat, setSelectedChat] = useState<string>('');
+	const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false); 
+	useEffect(() => {
+		handleDialogOpenChange(Boolean(selectedChat))
+	}, [ selectedChat]);
+
+	const handleDialogOpenChange = (open: boolean) => {
+		setIsDialogOpen(open);
+		if (!open) {
+			setSelectedChat(''); 
+		}
+	};
 	return (
-		<div className="grid grid-cols-3 gap-4 h-[calc(100vh-120px)]">
-			<div className="col-span-1 bg-white border box-shadow rounded-md h-full">
-				<header className="flex items-center justify-between w-full p-3 border-b h-[60px]">
-					<p className="text-xl font-semibold text-blue-500">Trò chuyện</p>
-				</header>
+		<>
+			<div className="grid grid-cols-3 gap-4 h-[calc(100vh-120px)]">
+				<div className="h-full col-span-3 bg-white border rounded-md md:col-span-1 box-shadow">
+					<Conversation setSelectedChat={setSelectedChat} />
+				</div>
+				{!matches && ( 
+					<div className="hidden h-full col-span-2 bg-white border rounded-md box-shadow md:block">
+						<div className="h-full ">
+							<ChatContent />
+						</div>
+					</div>
+				)}
 			</div>
-			<div className="col-span-2 bg-white border box-shadow rounded-md h-full">
-				<header className="flex items-center justify-between w-full px-3 border-b h-[60px]">
-					<div className="size-10 rounded-full border overflow-hidden">
-                        <img src="/avatar_25.jpg" alt="" />
-                    </div>
-				</header>
-			</div>
-		</div>
+			{matches && ( 
+				<Dialog open={isDialogOpen} onOpenChange={handleDialogOpenChange}>
+					<DialogTitle/>
+					<DialogContent  className="w-screen h-screen max-w-full p-0 md:hidden">
+					<div className="w-screen h-screen max-w-full p-0 ">
+						<ChatContent />
+					</div>
+					</DialogContent>
+				</Dialog>
+			)}
+		</>
 	);
 };
 

@@ -30,6 +30,9 @@ import PrivateRouter from "./PrivateRouter";
 import UserShipper from "@/pages/admin/users/shipper/UserShipper";
 import UserShipperDetail from "@/pages/admin/users/shipper/ShipperDetail";
 import ChatIndex from "../pages/admin/Chat/ChatIndex";
+import LayoutChat from "@/pages/admin/Chat/LayoutChat";
+import ChatInit from "@/pages/admin/Chat/ChatInit";
+import ChatBox from "@/pages/admin/Chat/ChatBox";
 
 const AdminRouter = [
 	{
@@ -188,7 +191,17 @@ const AdminRouter = [
 			// chat
 			{
 				path: "chat",
-				element: <ChatIndex />,
+				element: <LayoutChat></LayoutChat>,
+				children:[
+					{
+						path: "",
+						element: <ChatInit />,
+					},
+					{
+						path: ":id",
+						element: <ChatBox />,
+					},
+				]
 			},
 		],
 	},

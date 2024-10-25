@@ -20,6 +20,13 @@ class EvaluateController {
           message: "Bạn truyền thiếu dữ liệu",
         });
       }
+
+      if(rating < 1 || rating > 5) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Rating phải từ 1 - 5",
+        });
+      }
+
       const listOrderProduct = await OrderItemsModel.find({
         _id: {
           $in: [...listId],
@@ -94,7 +101,7 @@ class EvaluateController {
   async pagingEvaluate(req: Request, res: Response) {
     try {
       const pageIndex = Number(req.query.page) || 1;
-      let limit = 10;
+      let limit = 5;
       let skip = (pageIndex - 1) * limit || 0;
       const { id } = req.params
       const { rating } = req.body
@@ -109,9 +116,6 @@ class EvaluateController {
           rating: rating,
         }
       }
-
-      console.log({ queryRating });
-
 
       const listEvaluate = await EvaluateModel.find({
         ...queryRating,
