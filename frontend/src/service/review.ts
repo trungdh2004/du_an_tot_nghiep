@@ -1,4 +1,10 @@
 import instance from "@/config/instance";
 
-export const getReviewProduct = (id: string, rating: number | null) =>
-	instance.post(`/evaluate/paging/${id}`, rating);
+export const getReviewProduct = (
+	id: string,
+	searchRating: {
+		pageIndex: number;
+		pageSize: number;
+		rating: number | null;
+	},
+) => instance.post(`/evaluate/paging/${id}`, searchRating);

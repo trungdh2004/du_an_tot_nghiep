@@ -12,21 +12,33 @@ type Props = {
 const ProductDetailsAndReviews = ({ product, isLoading }: Props) => {
 	const [step, setStep] = useState(1);
 	const steps = ["Mô tả", "Bình luận", "Đánh giá"];
-	const [rating, setRating] = useState<number | null>(null);
+	const [searchRating, setSearchRating] = useState<{
+		pageIndex: number;
+		pageSize: number;
+		rating: number | null;
+	}>(() => ({
+		pageIndex: 1,
+		pageSize: 5,
+		rating: null,
+	}));
+
 	const [dataReview, setDataReview] = useState();
 	useEffect(() => {
 		if (!product?._id) return;
 
 		(async () => {
 			try {
-				const { data } = await getReviewProduct(product._id as string, rating);
+				const { data } = await getReviewProduct(
+					product._id as string,
+					searchRating,
+				);
 				setDataReview(data);
 				return data;
 			} catch (error) {
 				console.error("Error fetching review product", error);
 			}
 		})();
-	}, [product?._id, rating]);
+	}, [product?._id, searchRating]);
 	return (
 		<div>
 			<ul className="flex items-center justify-center text-xl font-medium py-3 *:cursor-pointer *:px-5 [&>li+li]:border-l [&>li]:border-gray-200 last:border-none">
@@ -50,7 +62,7 @@ const ProductDetailsAndReviews = ({ product, isLoading }: Props) => {
 			{step === 3 && (
 				<ProductReview
 					dataReview={dataReview}
-					setRating={setRating}
+					setSearchRating={setSearchRating}
 					product={product}
 				/>
 			)}
