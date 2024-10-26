@@ -1,3 +1,4 @@
+import ChatAction from "@/components/chat/ChatAction";
 import Footer from "@/components/client/Footer";
 import Header from "@/components/client/Header";
 import OverlayVioletV2 from "@/components/OverlayVioletV2";
@@ -17,6 +18,8 @@ const MainLayout = () => {
 				<Outlet />
 			</main>
 			<Footer />
+
+			<ChatAction />
 			<ScrollRestoration />
 		</div>
 	);
