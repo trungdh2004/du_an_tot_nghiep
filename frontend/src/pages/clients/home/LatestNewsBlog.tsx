@@ -1,4 +1,5 @@
 import { pagingBlogs } from "@/service/blog";
+import { IBlogs } from "@/types/blogs";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -18,15 +19,15 @@ const LatestNewsBlog = () => {
 		})();
 	}, []);
 	return (
-		<div className="padding my-20">
-			<div className=" relative flex flex-col sm:flex-row sm:items-end justify-between mb-12 lg:mb-14 text-neutral-900 dark:text-neutral-50">
-				<h2 className="text-3xl md:text-4xl font-semibold">
+		<div className="my-20 padding">
+			<div className="relative flex flex-col justify-between mb-12  sm:flex-row sm:items-end lg:mb-14 text-neutral-900 dark:text-neutral-50">
+				<h2 className="text-3xl font-semibold md:text-4xl">
 					Những tin tức mới nhất. <span>Từ blog Ciseco</span>
 				</h2>
 			</div>
-			<div className="grid lg:grid-cols-2 gap-6 md:gap-8">
-				<div className="group relative flex flex-col h-full">
-					<div className="block flex-shrink-0 flex-grow relative w-full h-0 aspect-w-4 aspect-h-3 rounded-3xl overflow-hidden">
+			<div className="grid gap-6 lg:grid-cols-2 md:gap-8">
+				<div className="relative flex flex-col h-full group">
+					<div className="relative flex-grow flex-shrink-0 block w-full h-0 overflow-hidden aspect-w-4 aspect-h-3 rounded-3xl">
 						<div className="w-full h-full ">
 							<img
 								src={
@@ -38,38 +39,38 @@ const LatestNewsBlog = () => {
 							/>
 						</div>
 					</div>
-					<div className=" mt-8 pr-10 flex flex-col">
-						<h2 className="block font-semibold text-neutral-900 dark:text-neutral-100 transition-colors text-lg sm:text-2xl capitalize">
+					<div className="flex flex-col pr-10 mt-8 ">
+						<h2 className="block text-lg font-semibold capitalize transition-colors text-neutral-900 dark:text-neutral-100 sm:text-2xl">
 							{newBlogs?.[0]?.meta_title}
 						</h2>
-						<span className="hidden sm:block mt-4 text-neutral-500 dark:text-neutral-400">
+						<span className="hidden mt-4 sm:block text-neutral-500 dark:text-neutral-400">
 							<span className="line-clamp-2">
 								{newBlogs?.[0]?.meta_description}
 							</span>
 						</span>
-						<div className="inline-flex items-center fledx-wrap text-neutral-800 dark:text-neutral-200 text-sm mt-5">
+						<div className="inline-flex items-center mt-5 text-sm fledx-wrap text-neutral-800 dark:text-neutral-200">
 							<Link
 								to={`/blogs/${newBlogs?.[0]?._id}`}
-								className="flex-shrink-0 relative flex items-center space-x-2"
+								className="relative flex items-center flex-shrink-0 space-x-2"
 							>
-								<div className="wil-avatar relative flex-shrink-0 inline-flex items-center justify-center text-neutral-100 uppercase font-semibold shadow-inner rounded-full h-7 w-7 text-sm ring-1 ring-white dark:ring-neutral-900">
+								<div className="relative inline-flex items-center justify-center flex-shrink-0 text-sm font-semibold uppercase rounded-full shadow-inner wil-avatar text-neutral-100 h-7 w-7 ring-1 ring-white dark:ring-neutral-900">
 									<img
 										src={
 											newBlogs?.[0]?.user?.avatarUrl ||
 											"https://ciseco-nextjs.vercel.app/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FImage-1.e0d669ee.png&w=128&q=75"
 										}
 										alt=""
-										className="absolute inset-0 w-full h-full object-cover rounded-full"
+										className="absolute inset-0 object-cover w-full h-full rounded-full"
 									/>
 								</div>
-								<span className="block text-neutral-6000 hover:text-black dark:text-neutral-300 dark:hover:text-white font-medium">
+								<span className="block font-medium text-neutral-6000 hover:text-black dark:text-neutral-300 dark:hover:text-white">
 									{newBlogs?.[0]?.user?.full_name}
 								</span>
 							</Link>
 							<span className="text-neutral-500 dark:text-neutral-400 mx-[6px] font-medium">
 								·
 							</span>
-							<span className="text-neutral-500 dark:text-neutral-400 font-normal line-clamp-1">
+							<span className="font-normal text-neutral-500 dark:text-neutral-400 line-clamp-1">
 								{" "}
 								{format(
 									newBlogs?.[0]?.published_at || new Date(),
@@ -83,21 +84,21 @@ const LatestNewsBlog = () => {
 					{newBlogs?.slice(1).map?.((blog) => (
 						<div className="flex">
 							<div className="flex flex-col h-full py-2">
-								<h2 className="block font-semibold text-base">
-									<Link to={""} className="line-clamp-2 capitalize">
+								<h2 className="block text-base font-semibold">
+									<Link to={""} className="capitalize line-clamp-2">
 										{blog?.meta_title}
 									</Link>
 								</h2>
-								<span className="hidden sm:block my-3 text-slate-500 dark:text-slate-400 ">
+								<span className="hidden my-3 sm:block text-slate-500 dark:text-slate-400 ">
 									<span className="line-clamp-2">{blog?.meta_description}</span>
 								</span>
-								<div className="mt-auto hidden sm:block">
-									<div className="inline-flex items-center fledx-wrap text-neutral-800 dark:text-neutral-200 text-sm leading-none">
+								<div className="hidden mt-auto sm:block">
+									<div className="inline-flex items-center text-sm leading-none fledx-wrap text-neutral-800 dark:text-neutral-200">
 										<Link
 											to={""}
-											className="flex-shrink-0 relative flex items-center space-x-2"
+											className="relative flex items-center flex-shrink-0 space-x-2"
 										>
-											<div className="wil-avatar relative flex-shrink-0 inline-flex items-center justify-center text-neutral-100 uppercase font-semibold shadow-inner rounded-full h-7 w-7 text-sm ring-1 ring-white dark:ring-neutral-900">
+											<div className="relative inline-flex items-center justify-center flex-shrink-0 text-sm font-semibold uppercase rounded-full shadow-inner wil-avatar text-neutral-100 h-7 w-7 ring-1 ring-white dark:ring-neutral-900">
 												<img
 													src={
 														blog?.user?.avatarUrl ||
@@ -107,21 +108,21 @@ const LatestNewsBlog = () => {
 													className="object-cover w-full h-full rounded-3xl"
 												/>
 											</div>
-											<span className="block text-neutral-6000 hover:text-black dark:text-neutral-300 dark:hover:text-white font-medium">
+											<span className="block font-medium text-neutral-6000 hover:text-black dark:text-neutral-300 dark:hover:text-white">
 												{blog?.user?.full_name}
 											</span>
 										</Link>
 										<span className="text-neutral-500 dark:text-neutral-400 mx-[6px] font-medium">
 											·
 										</span>
-										<span className="text-neutral-500 dark:text-neutral-400 font-normal line-clamp-1">
+										<span className="font-normal text-neutral-500 dark:text-neutral-400 line-clamp-1">
 											{" "}
 											{format(blog?.published_at || new Date(), "dd-MM-yyyy")}
 										</span>
 									</div>
 								</div>
 							</div>
-							<div className="block relative h-full flex-shrink-0 w-2/5 sm:w-1/3 ml-3 sm:ml-5">
+							<div className="relative flex-shrink-0 block w-2/5 h-full ml-3 sm:w-1/3 sm:ml-5">
 								<div className="absolute inset-0">
 									<img
 										src={
