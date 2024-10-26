@@ -4,7 +4,6 @@ import { formatCurrency } from "@/common/func";
 import Countdown from "./CoutDown";
 
 const DealProductSection: React.FC = () => {
-  const countdownDate = new Date(2024, 12, 26);
   return (
     <section className="py-12 bg-[#f6f8fa]">
       <div className="padding">
@@ -40,7 +39,7 @@ const DealProductSection: React.FC = () => {
           </div>
           <div className="relative flex justify-center lg:w-1/2 lg:justify-start">
             <motion.div
-              className="absolute bg-[#ddecea] rounded-full inset-x-6 inset-y-14 md:inset-y-7  md:inset-x-10"
+              className="absolute bg-gradient-to-br from-[#9cffe97d] to-[#6b6bd56b] rounded-full inset-x-6 inset-y-14 md:inset-y-5  md:inset-x-12"
               initial={{ scale: 1 }}
               animate={{ scale: 1.05 }}
               transition={{

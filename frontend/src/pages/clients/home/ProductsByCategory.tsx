@@ -19,7 +19,6 @@ const ProductsByCategory = ({ id }: { id: string }) => {
 			}
 		})();
 	}, [id]);
-	console.log(products);
 
 	return (
 		<Swiper
@@ -29,7 +28,7 @@ const ProductsByCategory = ({ id }: { id: string }) => {
 			// loop={true}
 			slidesOffsetAfter={40}
 			slidesOffsetBefore={40}
-			className="swiper-wrapper bg-neutral-100/70 cursor-pointer"
+			className="swiper-wrapper  cursor-pointer"
 			modules={[FreeMode]}
 			breakpoints={{
 				320: {
