@@ -132,7 +132,7 @@ const Product = ({ productShop }: any) => {
 
 export default Product;
 
-function ListColorComponent({ listColor }: { listColor: IColor[] }) {
+export function ListColorComponent({ listColor }: { listColor: IColor[] }) {
 	const count = listColor.length > 4 ? listColor.length - 4 : 0;
 
 	return (

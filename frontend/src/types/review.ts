@@ -16,3 +16,12 @@ export interface Review {
 	createdAt: string;
 	updatedAt: string;
 }
+
+export interface SearchRatingState {
+	pageIndex: number;
+	pageSize: number;
+	totalPage: number;
+	totalOptionPage: number;
+	totalAllOptions: number;
+	content: Review[] | [];
+}

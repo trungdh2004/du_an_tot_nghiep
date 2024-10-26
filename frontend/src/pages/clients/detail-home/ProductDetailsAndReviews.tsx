@@ -3,8 +3,10 @@ import { IProductDetail } from "@/types/product";
 import { useEffect, useState } from "react";
 import Comments from "./Comments/page";
 import DescProduct from "./DescProduct";
-import ProductReview from "./ProductReview";
+import ProductReview from "./review/ProductReview";
 import { getReviewProduct } from "@/service/review";
+import { SearchRatingState } from "@/types/review";
+import ProductRelated from "./ProductRelated";
 type Props = {
 	product?: IProductDetail;
 	isLoading?: boolean;
@@ -14,31 +16,33 @@ const ProductDetailsAndReviews = ({ product, isLoading }: Props) => {
 	const steps = ["Mô tả", "Bình luận", "Đánh giá"];
 	const [searchRating, setSearchRating] = useState<{
 		pageIndex: number;
-		pageSize: number;
 		rating: number | null;
 	}>(() => ({
 		pageIndex: 1,
-		pageSize: 5,
 		rating: null,
 	}));
 
-	const [dataReview, setDataReview] = useState();
-	useEffect(() => {
+	const [dataReview, setDataReview] = useState<SearchRatingState | null>(null);
+	const handleRating = async () => {
 		if (!product?._id) return;
 
-		(async () => {
-			try {
-				const { data } = await getReviewProduct(
-					product._id as string,
-					searchRating,
-				);
-				setDataReview(data);
-				return data;
-			} catch (error) {
-				console.error("Error fetching review product", error);
-			}
-		})();
-	}, [product?._id, searchRating]);
+		try {
+			const { data } = await getReviewProduct(
+				product._id as string,
+				searchRating,
+			);
+			setDataReview(data);
+			return data;
+		} catch (error) {
+			console.error("Error fetching review product", error);
+		}
+	};
+
+	useEffect(() => {
+		console.log("abc");
+
+		handleRating();
+	}, [product?._id, searchRating?.pageIndex, searchRating?.rating]);
 	return (
 		<div>
 			<ul className="flex items-center justify-center text-xl font-medium py-3 *:cursor-pointer *:px-5 [&>li+li]:border-l [&>li]:border-gray-200 last:border-none">
@@ -66,6 +70,7 @@ const ProductDetailsAndReviews = ({ product, isLoading }: Props) => {
 					product={product}
 				/>
 			)}
+			{/* <ProductRelated product={dataReview} /> */}
 		</div>
 	);
 };
