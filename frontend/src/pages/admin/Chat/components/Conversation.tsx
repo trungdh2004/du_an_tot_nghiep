@@ -1,84 +1,124 @@
+import { calculateTimeDistance } from "@/common/func";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search } from 'lucide-react';
-import { Dispatch, SetStateAction } from 'react';
-type Props = {
-    setSelectedChat:Dispatch<SetStateAction<string>>;
+import { useAuth } from "@/hooks/auth";
+import { cn } from "@/lib/utils";
+import { pagingConversation } from "@/service/chat";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
+export interface IConversation {
+	user: {
+		avatarUrl: string;
+		email: string;
+		full_name: string;
+		_id: string;
+	};
+	createdAt: string;
+	lastContent: string;
+	lastMessage: string;
+	lastRead: "USER" | "ADMIN"[];
+	lastSender: "USER" | "ADMIN";
+	status: boolean;
+	updatedAt: string;
+	_id: string;
 }
-const Conversation = ({setSelectedChat}:Props) => {
-  const chats = [
-    {
-      id: 1,
-      name: 'Olivia',
-      avatar: '/api/placeholder/32/32',
-      lastMessage: 'Need to go for lunch?',
-      time: '1:32PM',
-      online: true
-    },
-    {
-      id: 2,
-      name: 'Scarlett',
-      avatar: '/api/placeholder/32/32',
-      lastMessage: 'Typing...',
-      time: '12:24PM',
-      online: true,
-      unread: 2
-    },
-  ];
-  return (
-      <div >
-        <div className="p-4 border-b">
-          <h1 className="mb-4 text-xl font-semibold">Messages</h1>
-          <div className="relative">
-            <Search className="absolute w-4 h-4 text-gray-500 left-3 top-3" />
-            <Input 
-              placeholder="Search Chat" 
-              className="pl-9"
-            />
-          </div>
-        </div>
-        <ScrollArea className="h-[calc(100vh-200px)]">
-          <div className="p-2">
-            <h3 className="px-2 py-1 text-sm text-gray-500">ACTIVE CHATS</h3>
-            {chats.map((chat) => (
-              <div
-                key={chat.id}
-                className="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-gray-100"
-                onClick={() => {
-                  setSelectedChat(String(chat?.id));
-                }}
-              >
-                <div className="relative">
-                  <Avatar>
-                    <AvatarImage src={chat.avatar} />
-                    <AvatarFallback>{chat.name[0]}</AvatarFallback>
-                  </Avatar>
-                  {chat.online && (
-                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
-                  )}
-                </div>
-                <div className="flex-1">
-                  <div className="flex justify-between">
-                    <span className="font-medium">{chat.name}</span>
-                    <span className="text-sm text-gray-500">{chat.time}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-500">{chat.lastMessage}</span>
-                    {chat.unread && (
-                      <Badge variant="secondary" className="bg-green-100">
-                        {chat.unread}
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-      </div>     
-  );
+
+type PropState = {
+	content: IConversation[];
+	pageIndex: number;
+	totalPage: number;
+	totalAllOptions: number;
+};
+const Conversation = () => {
+	const [conversation, setConversation] = useState<PropState>({
+		content: [],
+		pageIndex: 1,
+		totalPage: 0,
+		totalAllOptions: 0,
+	});
+	const [isLoad,setIsLoad] = useState(false)
+	const { socket } = useAuth();
+
+	useEffect(() => {
+		(async () => {
+			try {
+				const { data } = await pagingConversation(1);
+				setConversation(data);
+			} catch (error) {} finally {
+				setIsLoad(true)
+			}
+		})();
+	}, []);
+
+	useEffect(() => {
+		if (socket) {
+			socket.on("updateConversation", (dataConver: any) => {
+				const dataFilter = conversation?.content?.filter(
+					(item) => item?._id !== dataConver?._id,
+				);
+				console.log({
+					dataConver,
+					dataFilter,
+					content: conversation?.content,
+					conversation
+				});
+
+				setConversation((prev) => {
+					return {
+						...prev,
+						content: [dataConver, ...dataFilter],
+					};
+				});
+			});
+		}
+	}, [isLoad]);
+	return (
+		<div className="flex flex-col h-full">
+			<div className="p-4 border-b">
+				<h1 className=" text-xl font-semibold">Messages</h1>
+			</div>
+			<div className="flex-1 overflow-y-auto scroll-custom">
+				<div className="p-2">
+					<h3 className="px-2 py-1 text-sm text-gray-500">ACTIVE CHATS</h3>
+					{conversation?.content.map((chat) => (
+						<Link to={"/admin/chat/" + chat?._id} key={chat._id}>
+							<div
+								className="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-gray-100"
+								onClick={() => {}}
+							>
+								<div className="relative">
+									<Avatar>
+										<AvatarImage src={chat?.user?.avatarUrl} />
+										<AvatarFallback>{chat.user.full_name[0]}</AvatarFallback>
+									</Avatar>
+								</div>
+								<div className="flex-1">
+									<div className="flex justify-between">
+										<span className="font-medium">{chat.user.full_name}</span>
+										<span className="text-xs text-gray-500">
+											{calculateTimeDistance(chat?.lastMessage, true)}
+										</span>
+									</div>
+									<div className="flex justify-between">
+										<span className={cn("text-sm text-gray-500 line-clamp-1")}>
+											{chat.lastSender === "ADMIN" && "Bạn: "}
+											{chat.lastContent}
+										</span>
+										{/* {chat.unread && (
+											<Badge variant="secondary" className="bg-green-100">
+												{chat.unread}
+											</Badge>
+										)} */}
+									</div>
+								</div>
+							</div>
+						</Link>
+					))}
+				</div>
+			</div>
+			<div className="w-full h-6 bg-white"></div>
+		</div>
+	);
 };
 
 export default Conversation;
