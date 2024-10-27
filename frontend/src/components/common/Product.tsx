@@ -43,8 +43,8 @@ const Product = ({ productShop }: any) => {
 							// Nếu nhóm không tồn tại, tạo nhóm mới
 							if (!group) {
 								group = {
-									_id: (item.color as ISize)._id as string,
-									name: (item.color as ISize).name as string,
+									_id: (item.size as ISize)._id as string,
+									name: (item.size as ISize).name as string,
 								};
 								acc.push(group);
 								return acc;
@@ -175,10 +175,11 @@ export function ListColorComponent({ listColor }: { listColor: IColor[] }) {
 	);
 }
 export function ListSizeComponent({ listSize }: { listSize: ISize[] }) {
+	const count = listSize.length > 3 ? listSize.length - 3 : 0;
 	return (
 		<div className="flex items-center">
 			<div className="flex items-center justify-start gap-x-1">
-				{listSize?.map((size) => (
+				{listSize?.slice(0,3)?.map((size) => (
 					<div
 						key={size?._id}
 						className="flex items-center justify-center px-1.5 border border-gray-500 rounded "
@@ -187,6 +188,7 @@ export function ListSizeComponent({ listSize }: { listSize: ISize[] }) {
 					</div>
 				))}
 			</div>
+			{count > 0 && <span className="text-sm font-semibold">+{count}</span>}
 		</div>
 	);
 }
