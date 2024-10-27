@@ -39,8 +39,6 @@ const ProductDetailsAndReviews = ({ product, isLoading }: Props) => {
 	};
 
 	useEffect(() => {
-		console.log("abc");
-
 		handleRating();
 	}, [product?._id, searchRating?.pageIndex, searchRating?.rating]);
 	return (

@@ -44,6 +44,7 @@ export interface IProductDetail {
 	rating: number;
 	ratingCount: number;
 	ratingQuantity: number;
+	viewCount: number;
 }
 export interface IListSizeAttribute {
 	sizeId: string;
