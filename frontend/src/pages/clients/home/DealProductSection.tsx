@@ -5,7 +5,7 @@ import Countdown from "./CoutDown";
 
 const DealProductSection: React.FC = () => {
   return (
-    <section className="py-12 bg-[#f6f8fa]">
+    <section className="py-12 ">
       <div className="padding">
         <div className="flex flex-col items-center gap-10 lg:flex-row">
           {/* Nội dung sản phẩm */}
