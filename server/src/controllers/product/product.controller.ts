@@ -219,7 +219,24 @@ class ProductController {
         },
       })
         .skip(random)
-        .limit(6);
+        .limit(6)
+        .populate([
+          {
+            path: "attributes",
+            populate: [
+              {
+                path: "color",
+                model: "Color",
+              },
+              {
+                path: "size",
+                model: "Size",
+              },
+            ],
+          },
+          "category",
+        ])
+        .exec();
 
       return res.status(STATUS.OK).json({
         data: {
