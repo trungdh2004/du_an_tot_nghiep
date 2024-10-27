@@ -70,7 +70,6 @@ const ProductDetailsAndReviews = ({ product, isLoading }: Props) => {
 					product={product}
 				/>
 			)}
-			{/* <ProductRelated product={dataReview} /> */}
 		</div>
 	);
 };

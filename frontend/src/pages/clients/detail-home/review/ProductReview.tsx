@@ -138,15 +138,17 @@ const ProductReview = ({ dataReview, setSearchRating, product }: Props) => {
 
 			<ListReview dataReview={dataReview} />
 			<div className="flex justify-center py-4">
-				<Paginations
-					pageCount={dataReview?.totalPage as number}
-					handlePageClick={(event: any) => {
-						setSearchRating((prev) => {
-							return { ...prev, pageIndex: event.selected + 1 };
-						});
-					}}
-					forcePage={0}
-				/>
+				{(dataReview?.content?.length as number) > 0 && (
+					<Paginations
+						pageCount={dataReview?.totalPage as number}
+						handlePageClick={(event: any) => {
+							setSearchRating((prev) => {
+								return { ...prev, pageIndex: event.selected + 1 };
+							});
+						}}
+						forcePage={0}
+					/>
+				)}
 			</div>
 		</div>
 	);
