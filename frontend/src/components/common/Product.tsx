@@ -153,7 +153,7 @@ const Product = ({ productShop }: any) => {
 
 export default Product;
 
-function ListColorComponent({ listColor }: { listColor: IColor[] }) {
+export function ListColorComponent({ listColor }: { listColor: IColor[] }) {
 	const count = listColor.length > 4 ? listColor.length - 4 : 0;
 
 	return (
@@ -174,7 +174,7 @@ function ListColorComponent({ listColor }: { listColor: IColor[] }) {
 		</div>
 	);
 }
-function ListSizeComponent({ listSize }: { listSize: ISize[] }) {
+export function ListSizeComponent({ listSize }: { listSize: ISize[] }) {
 	return (
 		<div className="flex items-center">
 			<div className="flex items-center justify-start gap-x-1">

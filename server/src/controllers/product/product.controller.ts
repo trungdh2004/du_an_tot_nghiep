@@ -219,7 +219,7 @@ class ProductController {
         },
       })
         .skip(random)
-        .limit(4);
+        .limit(6);
 
       return res.status(STATUS.OK).json({
         data: {
