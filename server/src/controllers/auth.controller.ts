@@ -730,7 +730,7 @@ class AuthController {
         full_name,
         avatarUrl,
         phone,
-      });
+      },{new:true});
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập thành công",

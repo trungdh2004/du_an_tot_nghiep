@@ -59,12 +59,12 @@ const CartGroup = ({
 						className="data-[state=checked]:bg-red-500 border-gray-300 data-[state=checked]:border-red-500"
 					/>
 				</div>
-				<div className="flex items-center justify-between w-full">
+				<div className="flex items-center justify-between w-full min-w-0">
 					<Link
 						to={`/shop/detail/${decodeURI(cart?.product?.slug as string)}`}
-						className="truncate text-sm md:text-base max-w-[70%] sm:max-w-[80%] md:max-w-full text-black hover:underline"
+						className="truncate text-sm md:text-base max-w-[70%] sm:max-w-[80%] md:max-w-full text-black hover:underline "
 					>
-						{cart?.product?.name}
+						{cart?.product?.name} {cart?.product?.name} {cart?.product?.name} {cart?.product?.name} {cart?.product?.name} {cart?.product?.name} {cart?.product?.name}
 					</Link>
 					<button
 						onClick={() => toggleEdit(cart?.product?._id as string)}

@@ -66,7 +66,7 @@ const ChangePassword = () => {
 		}
 	};
 	return (
-		<div className="w-full bg-white px-4 md:px-8">
+		<div className="w-full bg-white px-4 md:px-8 box-shadow rounded-md overflow-hidden">
 			<div className="py-2 md:py-5 border-b border-[#efedec]">
 				<h3 className="text-base md:text-lg text-[#333333] font-medium">
 					Thay đổi mật khẩu

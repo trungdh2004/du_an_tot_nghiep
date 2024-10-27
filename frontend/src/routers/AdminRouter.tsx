@@ -29,6 +29,10 @@ import VoucherList from "@/pages/admin/Vouchers/VoucherList";
 import PrivateRouter from "./PrivateRouter";
 import UserShipper from "@/pages/admin/users/shipper/UserShipper";
 import UserShipperDetail from "@/pages/admin/users/shipper/ShipperDetail";
+import ChatIndex from "../pages/admin/Chat/ChatIndex";
+import LayoutChat from "@/pages/admin/Chat/LayoutChat";
+import ChatInit from "@/pages/admin/Chat/ChatInit";
+import ChatContent from "@/pages/admin/Chat/components/ChatContent";
 
 const AdminRouter = [
 	{
@@ -182,6 +186,27 @@ const AdminRouter = [
 			{
 				path: "location",
 				element: <LocationIndex />,
+			},
+
+			// chat
+			{
+				path: "chat",
+				element: <LayoutChat></LayoutChat>,
+				children:[
+					{
+						path: "",
+						element: <ChatInit />,
+					},
+					{
+						path: ":id",
+						element: <ChatContent />,
+					},
+				]
+			},
+			{
+				path: "chatAdmin",
+				element: <ChatIndex/>,
+				
 			},
 		],
 	},
