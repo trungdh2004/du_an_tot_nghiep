@@ -16,6 +16,7 @@ import WrapperSearch from "@/pages/clients/search/WrapperSearch";
 import ShopProduct from "@/pages/clients/shop/ShopProduct";
 import NotFound from "@/pages/NotFound";
 import { Navigate } from "react-router-dom";
+import Contact from "@/pages/clients/contact/contact";
 const MainRouter = [
 	{
 		path: "/",
@@ -29,6 +30,8 @@ const MainRouter = [
 			{ path: "table", element: <UserIndex /> },
 			{ path: "cart", element: <CartPage /> },
 			{ path: "shop", element: <ShopProduct /> },
+			{ path: "contact", element: <Contact /> },
+			
 			{
 				path: "search",
 				element: <WrapperSearch />,
