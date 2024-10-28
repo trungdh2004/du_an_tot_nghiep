@@ -31,9 +31,15 @@ export const updateActionShippers = ({
 }: {
 	listId: string[];
 	type?: number;
-	isBlock?:boolean
-}) => instance.put(`/shipper/actionListShipper`, { listId, type,isBlock });
-export const getDetailShipperById = (id:string) =>
+	isBlock?: boolean;
+}) => instance.put(`/shipper/actionListShipper`, { listId, type, isBlock });
+export const getDetailShipperById = (id: string) =>
 	instance.get(`/shipper/getDetailShipper/${id}`);
-export const pagingOrderShipperById = (id:string,{pageIndex=0, status=1}) =>
-	instance.post(`/shipper/getDetailShipperAdmin/${id}`, { pageIndex,status });
+export const pagingOrderShipperById = (
+	id: string,
+	{ pageIndex = 0, status = 1 },
+) =>
+	instance.post(`/shipper/getDetailShipperAdmin/${id}`, { pageIndex, status });
+export const changeAccountShipper = () => {
+	instance.post(`shipper/changeAccountShipper`);
+};

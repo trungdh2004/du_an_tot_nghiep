@@ -87,7 +87,7 @@ const formSchema = z.object({
 });
 
 const ShipperAuth = () => {
-	const router = useNavigate()
+	const router = useNavigate();
 	const [districts, setDistricts] = useState<IDistrict[]>([]);
 	const [commune, setCommune] = useState<ICommune[]>([]);
 	const [previewUrl, setPreviewUrl] = useState({
@@ -108,9 +108,9 @@ const ShipperAuth = () => {
 	const onSubmit = async (payload: z.infer<typeof formSchema>) => {
 		try {
 			console.log("payload", payload);
-			const {data} = await registerShipper(payload as IShipper)
-			toast.success("Đăng kí tài khoản thành công")
-			router("/shipper/pending")
+			const { data } = await registerShipper(payload as IShipper);
+			toast.success("Đăng kí tài khoản thành công");
+			router("/shipper/pending");
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				toast.error(error.response?.data?.message);
@@ -147,7 +147,7 @@ const ShipperAuth = () => {
 		const address = `${value.name},${form.watch("district")?.name},${form.watch("city")?.name}`;
 		form.setValue("address", address);
 		form.setValue("commune", value);
-		form.clearErrors("address")
+		form.clearErrors("address");
 	};
 
 	const handleUploadFile = async (file: File) => {
@@ -383,7 +383,13 @@ const ShipperAuth = () => {
 										className="w-full mt-3 text-white text-base font-bold bg-blue-500 hover:bg-blue-400"
 										disabled={previewUrl?.isLoading}
 									>
-										{previewUrl?.isLoading &&  <AiOutlineLoading3Quarters size={20} className="animate-spin text-white mr-2" /> } Đăng kí
+										{previewUrl?.isLoading && (
+											<AiOutlineLoading3Quarters
+												size={20}
+												className="animate-spin text-white mr-2"
+											/>
+										)}{" "}
+										Đăng kí
 									</Button>
 								</form>
 							</Form>

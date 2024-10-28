@@ -62,12 +62,10 @@ const AccountShipperIndex = () => {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 	});
-	const { authUser, setAuthUser } = useAuth();
-	const [previewUrl, setPreviewUrl] = useState(() => {
-		return {
-			isLoading: false,
-			url: authUser?.avatarUrl || "",
-		};
+	// const { authUser, setAuthUser } = useAuth();
+	const [previewUrl, setPreviewUrl] = useState({
+		isLoading: false,
+		url: "",
 	});
 	const handleUploadFile = async (file: File) => {
 		try {
@@ -89,7 +87,7 @@ const AccountShipperIndex = () => {
 	};
 	const onSubmit = () => {};
 	return (
-		<div>
+		<div className="padding">
 			<header className="p-2 md:px-4 md:mb-4 sticky top-0 bg-main w-full z-10">
 				<h2 className="font-semibold text-xl sm:text-2xl leading-8">
 					Thông tin cá nhân
@@ -220,6 +218,27 @@ const AccountShipperIndex = () => {
 										</FormItem>
 									)}
 								/>
+								<FormField
+									control={form.control}
+									name="address"
+									render={({ field }) => (
+										<FormItem className="flex flex-col md:flex-row md:items-center pb-5 ">
+											<FormLabel className="w-full md:w-[40%] md:text-right text-sm md:text-base text-[rgba(85,85,85,.8)] pr-4">
+												Địa chỉ thường chú
+											</FormLabel>
+											<div className=" w-full">
+												<FormControl>
+													<Input
+														placeholder=""
+														{...field}
+														className="text-sm md:text-base"
+													/>
+												</FormControl>
+												<FormMessage className="pt-3" />
+											</div>
+										</FormItem>
+									)}
+								/>
 							</div>
 
 							<div className="order-1 md:order-2 w-full md:w-[35%] flex flex-col justify-center items-center border-b mb-10 md:mb-0 md:border-l border-gray-200 ">
@@ -232,8 +251,8 @@ const AccountShipperIndex = () => {
 												<div className="w-full flex flex-col justify-center items-center">
 													<div className="size-[100px]">
 														<img
-															src={previewUrl.url || ""}
-															className="relative w-full h-full border border-gray-300 rounded-full bg-gray-300"
+															src={previewUrl.url || "/avtUser.png"}
+															className=" w-full h-full object-cover  "
 															alt=""
 														/>
 														{previewUrl?.isLoading && (
