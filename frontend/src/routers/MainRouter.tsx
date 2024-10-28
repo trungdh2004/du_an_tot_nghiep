@@ -19,6 +19,7 @@ import ShopProduct from "@/pages/clients/shop/ShopProduct";
 import NotFound from "@/pages/NotFound";
 import { Navigate } from "react-router-dom";
 import AddressIndex from "@/pages/clients/address/AddressIndex";
+import TestComponent from "@/pages/clients/Test";
 
 const MainRouter = [
 	{
@@ -71,8 +72,8 @@ const MainRouter = [
 			},
 		],
 	},
-	// { path: "orderProcessing", element: <OrderProcessing /> },
-	{ path: "*", element: <NotFound /> },
 	{ path: "/orderprocessing", element: <OrderProcessing /> },
+	{ path: "/testComponent", element: <TestComponent /> },
+	{ path: "*", element: <NotFound /> },
 ];
 export default MainRouter;

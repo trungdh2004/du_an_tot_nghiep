@@ -1,103 +1,198 @@
-import React, { ChangeEvent, UIEvent } from "react";
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectLabel,
-	SelectTrigger,
-	SelectValue,
-	SelectScrollDownButton,
-	SelectScrollUpButton,
-} from "@/components/ui/select";
+import instance from "@/config/instance";
+import * as React from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import Select, { ActionMeta, GetOptionValue, components } from "react-select";
+
+const listMin = Array.from({ length: 60 }, (_, i) => i);
+const listHours = Array.from({ length: 24 }, (_, i) => ({
+	value: i + 1,
+	name: i + 1,
+}));
+
+type ActionTypes =
+	| "clear"
+	| "create-option"
+	| "deselect-option"
+	| "pop-value"
+	| "remove-value"
+	| "select-option"
+	| "set-value";
+export const customStyles = {
+	control: (provided: any, state: any) => ({
+		...provided,
+		width: "100%", // Làm cho control phủ toàn bộ chiều rộng
+		border: "1px solid #e2e8f0",
+		boxShadow: state.isFocused ? "0px 0px 0px 1.2px #101010" : "none",
+		"&:hover": {
+			borderColor: "#e2e8f0", // Border color on hover
+		},
+		cursor: "pointer",
+	}),
+	dropdownIndicator: () => ({
+		display: "none", // Ẩn con trỏ xuống
+	}),
+	indicatorSeparator: () => ({
+		display: "none", // Ẩn đường ngăn cách
+	}),
+	multiValue: () => ({
+		backgroundColor: "#1877f214",
+		display: "flex",
+		margin: "2px",
+		borderRadius: "5px",
+	}),
+	multiValueRemove: () => ({
+		borderRadius: "2px",
+		padding: "0 4px",
+		display: "flex",
+		"&:hover": {
+			backgroundColor: "transparent",
+		},
+		justifyContent: "center",
+		alignItems: "center",
+	}),
+	option: () => ({
+		backgroundColor: "transparent",
+		padding: "8px 12px",
+		fontSize: "inherit",
+		cursor: "pointer",
+		width: "100%",
+		display: "block",
+		"&:hover": {
+			backgroundColor: "#1877f214",
+		},
+	}),
+};
 
 const TestComponent = () => {
+	const [open, setOpen] = React.useState<boolean>(false);
+	const [value, setValue] = React.useState<any>(null);
+	const [options, setOption] = React.useState<any[]>([]);
+	const [searchObject, setSearchObject] = React.useState<any>({
+		pageIndex: 1,
+		totalOptionPage: 0,
+		totalAllOptions: 0,
+		totalPage: 0,
+	});
+	const [t, setT] = React.useState<any>(null);
+	const [keyword, setKeyword] = React.useState("");
+
+	const fetchData = async (page: number) => {
+		try {
+			const { data } = await instance.post("test/pagingTest", {
+				pageIndex: page,
+				keyword,
+			});
+
+			if (data?.content?.length > 0) {
+				// if (fillerOptions) {
+				// 	newOptions = newOptions.filter(fillerOptions);
+				// }
+				const newOptions = [...options, ...data?.content];
+				setOption(newOptions);
+				setSearchObject(data);
+			} else {
+				setOption([]);
+			}
+		} catch (error) {}
+	};
+
+	React.useEffect(() => {
+		if (open) {
+			getData();
+		}
+	}, [open, keyword]);
+
+	const getData = async () => {
+		let newPage = 1;
+		fetchData(newPage);
+	};
+
+	const loadPagingData = () => {
+		let page = searchObject.pageIndex;
+		fetchData(page + 1);
+	};
+
+	React.useEffect(() => {
+		console.log("options", options);
+	}, [options]);
+
+	const handleChangeText = (value: string) => {
+		if (t) {
+			clearTimeout(t);
+		}
+		setT(
+			setTimeout(() => {
+				setKeyword(value);
+			}, 500),
+		);
+	};
+
+	const renderOptions = () => {
+
+	}
+
 	return (
 		<div className="flex items-center justify-center w-full min-h-screen">
-			<Select>
-				<SelectTrigger className="w-[280px]">
-					<SelectValue placeholder="Select a timezone" />
-				</SelectTrigger>
-				<SelectContent
-					onScrollCapture={(e: UIEvent<HTMLDivElement>) => {
-						const target = e.target as HTMLInputElement;
-						if (
-							target.scrollHeight - target.scrollTop <
-							target.clientHeight + 50
-						) {
-							console.log("Scrolled to the bottom!");
-
-							return;
-						}
-						// console.log("scrollHeight:",e.target.scrollHeight - e.target.scrollTop);
-						// console.log("scroll:",e.target.clientHeight - 50);
-						// console.log("scrollHeight:",e.target.scrollHeight - e.target.scrollTop);
-						// console.log("scroll:",e.target.clientHeight - 50);
-						// console.log("scrollHeight:",e.target.scrollHeight - e.target.scrollTop);
-						// console.log("scroll:",e.target.clientHeight - 50);
+			<div className="w-[500px]">
+				<Select
+					isClearable={false}
+					value={value}
+					onChange={(options) => {
+						setValue(options);
 					}}
-				>
-					<SelectScrollUpButton>hehe</SelectScrollUpButton>
-
-					<SelectGroup>
-						<SelectLabel>North America</SelectLabel>
-						<SelectItem value="est">Eastern Standard Time (EST)</SelectItem>
-						<SelectItem value="cst">Central Standard Time (CST)</SelectItem>
-						<SelectItem value="mst">Mountain Standard Time (MST)</SelectItem>
-						<SelectItem value="pst">Pacific Standard Time (PST)</SelectItem>
-						<SelectItem value="akst">Alaska Standard Time (AKST)</SelectItem>
-						<SelectItem value="hst">Hawaii Standard Time (HST)</SelectItem>
-					</SelectGroup>
-					<SelectGroup>
-						<SelectLabel>Europe & Africa</SelectLabel>
-						<SelectItem value="gmt">Greenwich Mean Time (GMT)</SelectItem>
-						<SelectItem value="cet">Central European Time (CET)</SelectItem>
-						<SelectItem value="eet">Eastern European Time (EET)</SelectItem>
-						<SelectItem value="west">
-							Western European Summer Time (WEST)
-						</SelectItem>
-						<SelectItem value="cat">Central Africa Time (CAT)</SelectItem>
-						<SelectItem value="eat">East Africa Time (EAT)</SelectItem>
-					</SelectGroup>
-					<SelectGroup>
-						<SelectLabel>Asia</SelectLabel>
-						<SelectItem value="msk">Moscow Time (MSK)</SelectItem>
-						<SelectItem value="ist">India Standard Time (IST)</SelectItem>
-						<SelectItem value="cst_china">China Standard Time (CST)</SelectItem>
-						<SelectItem value="jst">Japan Standard Time (JST)</SelectItem>
-						<SelectItem value="kst">Korea Standard Time (KST)</SelectItem>
-						<SelectItem value="ist_indonesia">
-							Indonesia Central Standard Time (WITA)
-						</SelectItem>
-					</SelectGroup>
-					<SelectGroup>
-						<SelectLabel>Australia & Pacific</SelectLabel>
-						<SelectItem value="awst">
-							Australian Western Standard Time (AWST)
-						</SelectItem>
-						<SelectItem value="acst">
-							Australian Central Standard Time (ACST)
-						</SelectItem>
-						<SelectItem value="aest">
-							Australian Eastern Standard Time (AEST)
-						</SelectItem>
-						<SelectItem value="nzst">
-							New Zealand Standard Time (NZST)
-						</SelectItem>
-						<SelectItem value="fjt">Fiji Time (FJT)</SelectItem>
-					</SelectGroup>
-					<SelectGroup>
-						<SelectLabel>South America</SelectLabel>
-						<SelectItem value="art">Argentina Time (ART)</SelectItem>
-						<SelectItem value="bot">Bolivia Time (BOT)</SelectItem>
-						<SelectItem value="brt">Brasilia Time (BRT)</SelectItem>
-						<SelectItem value="clt">Chile Standard Time (CLT)</SelectItem>
-					</SelectGroup>
-					<SelectScrollDownButton asChild>hihi</SelectScrollDownButton>
-				</SelectContent>
-			</Select>
+					menuIsOpen={open}
+					onMenuOpen={() => {
+						setOpen(true);
+						setKeyword("");
+					}}
+					onMenuClose={() => {
+						setOpen(false);
+						setOption([]);
+						setSearchObject({
+							pageIndex: 1,
+							totalOptionPage: 0,
+							totalAllOptions: 0,
+							totalPage: 0,
+						});
+						setKeyword("");
+						setT(null);
+					}}
+					options={options}
+					formatOptionLabel={(item) => item?.name}
+					getOptionValue={(item) => item?.value}
+					classNamePrefix="react-select"
+					styles={customStyles}
+					onMenuScrollToBottom={(e) => {
+						if (searchObject.pageIndex < searchObject.totalPage) {
+							loadPagingData();
+						}
+					}}
+					components={{ Option: CustomOption }}
+					onInputChange={handleChangeText}
+					// placeholder={placeholder}
+					// classNames={customStyles}
+				/>
+			</div>
 		</div>
 	);
 };
 
 export default TestComponent;
+
+const CustomOption = (props: any) => {
+	console.log({ props });
+
+	return (
+		<components.Option {...props}>
+			<div style={{ display: "flex", alignItems: "center" }}>
+				{/* Tùy chỉnh thêm icon, hình ảnh hoặc kiểu dáng cho mỗi item */}
+				<img
+					src={`/avatar_25.jpg`}
+					alt=""
+					style={{ marginRight: "8px", borderRadius: "50%" }}
+				/>
+				<span>{props.data.name}</span>
+			</div>
+		</components.Option>
+	);
+};
