@@ -200,10 +200,7 @@ const ChatAction = () => {
 											)}
 										/>
 									</div>
-									<Button
-										variant={"ghost"}
-										type="submit"
-									>
+									<Button variant={"ghost"} type="submit">
 										<Send className="w-6 h-6 text-purple-500" />
 									</Button>
 								</form>
@@ -211,7 +208,9 @@ const ChatAction = () => {
 						</div>
 					</div>
 				</div>
-				<div className=" size-4 bg-blue-500 absolute bottom-[52px] right-4 rotate-45 "></div>
+				{openChat && (
+					<div className=" size-4 bg-blue-500 absolute bottom-[52px] right-4 rotate-45 "></div>
+				)}
 
 				<div
 					className="w-full h-full flex items-center justify-center "
