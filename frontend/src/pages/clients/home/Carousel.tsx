@@ -8,6 +8,8 @@ import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperType } from "swiper/types";
 const Carousel = () => {
+	const [isEnd, setIsEnd] = useState(false);
+	const [isBeginning, setIsBeginning] = useState(true);
 	// const [productSlide, setProductSlide] = useState<IProductSlider[]>([]);
 	// useEffect(() => {
 	// 	(async () => {
@@ -15,6 +17,10 @@ const Carousel = () => {
 	// 		setProductSlide(data?.data);
 	// 	})();
 	// }, []);
+	const handleSlideChange = (swiper: SwiperType) => {
+		setIsBeginning(swiper.isBeginning);
+		setIsEnd(swiper.isEnd);
+	};
 	const productSlide = [
 		{
 			label: "Sản phẩm 1",
@@ -61,20 +67,30 @@ const Carousel = () => {
 	const swiperRef = useRef<SwiperType>();
 	return (
 		<div className="py-8 padding">
-			<div className=" flex flex-col sm:flex-row items-end sm:items-center justify-between ">
+			<div className="flex flex-col items-end justify-between sm:flex-row sm:items-center">
 				<h2 className="text-2xl font-semibold sm:text-4xl sm:font-bold">
 					Sản phẩm mới mẻ
 				</h2>
 				<div className="flex items-center gap-7 *:flex *:items-center *:justify-center *:size-10 *:max-w-10 *:max-h-10 *:rounded-full *:border *:border-gray-200">
-					<button onClick={() => swiperRef.current?.slidePrev()}>
-						<PiArrowLeftThin size={32} className="text-slate-700" />
+				<button
+						onClick={() => swiperRef.current?.slidePrev()}
+						disabled={isBeginning}
+						className={`${
+							isBeginning ? "opacity-50 cursor-not-allowed" : ""
+						}`}
+					>
+						<PiArrowLeftThin size={26} className="text-slate-700" />
 					</button>
-					<button onClick={() => swiperRef.current?.slideNext()}>
-						<PiArrowRightThin size={32} className="text-slate-700" />
+					<button
+						onClick={() => swiperRef.current?.slideNext()}
+						disabled={isEnd}
+						className={`${isEnd ? "opacity-50 cursor-not-allowed" : ""}`}
+					>
+						<PiArrowRightThin size={26} className="text-slate-700" />
 					</button>
 				</div>
 			</div>
-			<div className=" mt-6 md:mt-14">
+			<div className="mt-6 md:mt-14">
 				<Swiper
 					className="h-[200px]"
 					// install Swiper modules
@@ -86,6 +102,7 @@ const Carousel = () => {
 					onBeforeInit={(swiper) => {
 						swiperRef.current = swiper;
 					}}
+					onSlideChange={(swiper) => handleSlideChange(swiper)}
 					breakpoints={{
 						320: {
 							slidesPerView: 1,
@@ -112,19 +129,19 @@ const Carousel = () => {
 				>
 					{productSlide?.map((slide) => (
 						<SwiperSlide className="h-full " key={slide?._id}>
-							<div className="h-full flex items-center justify-between bg-white box-shadow border rounded-lg p-5 relative">
+							<div className="relative flex items-center justify-between h-full p-5 bg-white border rounded-lg box-shadow">
 								<div className="flex-1 flex flex-col justify-between h-full z-[2]">
 									<div className="">
 										<span className="block text-sm text-slate-700">
 											{slide?.label}
 										</span>
-										<h2 className="line-clamp-2 mt-1 text-xl md:text-xl text-slate-900 font-semibold text-wrap">
+										<h2 className="mt-1 text-xl font-semibold line-clamp-2 md:text-xl text-slate-900 text-wrap">
 											{slide?.title}
 										</h2>
 									</div>
 									<div>
-										<button className="text-red-500 px-4 py-1 border rounded-full border-red-500 hover:bg-red-500 hover:text-white mt-1 ">
-											<span className="leading-4 font-medium">Mua ngay</span>
+										<button className="px-4 py-1 mt-1 text-red-500 border border-red-500 rounded-full hover:bg-red-500 hover:text-white ">
+											<span className="font-medium leading-4">Mua ngay</span>
 										</button>
 									</div>
 								</div>
