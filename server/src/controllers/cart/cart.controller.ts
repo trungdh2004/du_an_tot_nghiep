@@ -326,6 +326,10 @@ class CartController {
         ])
         .sort({ createdAt: -1 });
 
+        console.log({
+          listCartItem
+        })
+
       const listData = listCartItem?.reduce(
         (acc: IndexResAcc[], item: IndexCartItem) => {
           const findCart = acc.find(
@@ -340,13 +344,14 @@ class CartController {
               name: item.product.name,
               discount: item.is_simple
                 ? item.product.discount
-                : item.attribute.discount,
-              price: item.is_simple ? item.product.price : item.attribute.price,
+                : item.attribute?.discount || 0,
+              price: item.is_simple ? item.product.price : item.attribute?.price  || 0,
               attribute: item.attribute,
               is_simple: item.is_simple,
               createdAt: item.createdAt,
               productId: item.product._id,
               slug: item.product.slug,
+              totalQuantity:item.is_simple ? item.product.quantity : item.attribute?.quantity
             };
             findCart.items.push(data);
             return acc;
@@ -422,15 +427,16 @@ class CartController {
                 name: item.product.name,
                 discount: item.is_simple
                   ? item.product.discount
-                  : item.attribute.discount,
+                  : item.attribute?.discount || 0,
                 price: item.is_simple
                   ? item.product.price
-                  : item.attribute.price,
+                  : item.attribute?.price || 0,
                 attribute: item.attribute,
                 is_simple: item.is_simple,
                 createdAt: item.createdAt,
                 productId: item.product._id,
                 slug: item.product.slug,
+                totalQuantity:item.is_simple ? item.product.quantity : item.attribute?.quantity
               },
               
             ],
@@ -584,8 +590,6 @@ class CartController {
       }
 
       let quantityDefauld = quantity || existingCartItem?.quantity;
-
-      console.log("existingCartItem", existingCartItem);
 
       if (quantity) {
         if (!(existingCartItem?.product as any)?.is_simple && !(existingCartItem?.attribute as IAttribute)?._id ) {

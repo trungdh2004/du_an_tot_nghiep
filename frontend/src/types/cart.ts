@@ -12,6 +12,7 @@ export interface ICartItem {
 	quantitySold?: number;
 	attributeProduct: IAttribute[];
 	is_simple:boolean;
+	totalQuantity: number;
 }
 export interface ICart {
 	attributes: IAttribute[];

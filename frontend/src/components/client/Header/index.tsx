@@ -25,7 +25,7 @@ const Header = () => {
 			className={cn(
 				" w-full top-0 z-50  padding",
 				location.pathname === "/"
-					? "bg-transparent absolute"
+					? "bg-transparent fixed"
 					: "backdrop-blur-md fixed",
 				isScroll && "backdrop-blur-md",
 			)}

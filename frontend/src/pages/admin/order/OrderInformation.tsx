@@ -69,7 +69,7 @@ const OrderInformation = ({ data, getOrderById }: any) => {
 							</TableBody>
 							<TableFooter>
 								<TableRow>
-									<TableCell colSpan={4}>Tổng tiền</TableCell>
+									<TableCell colSpan={5}>Tổng tiền</TableCell>
 									<TableCell className="text-right text-red-500">
 										{formatCurrency(totalCost)}
 									</TableCell>
@@ -102,12 +102,19 @@ const OrderInformation = ({ data, getOrderById }: any) => {
 								</p>
 							</div>
 							<hr />
+							<div className="flex justify-between">
+								<p className="font-medium text-sm text-black">Voucher</p>
+								<p className="font-normal text-sm text-black pr-3">
+									- {formatCurrency(data.voucherAmount)}
+								</p>
+							</div>
+							<hr />
 							<div className="flex justify-between bg-main">
 								<p className="font-medium text-sm text-black">
 									Tổng thanh toán
 								</p>
 								<p className="font-medium text-sm text-red-500 pr-3">
-									{formatCurrency(data.totalMoney)}
+									{formatCurrency(data.amountToPay)}
 								</p>
 							</div>
 						</div>

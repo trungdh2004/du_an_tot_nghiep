@@ -20,7 +20,38 @@ import CartGroup from "./CartGroup";
 import { Skeleton } from "@/components/ui/skeleton";
 
 type CheckedState = Record<string, boolean>;
-
+type UseVouchersType = {
+	valueCheck: {
+		status: boolean;
+		amount: number;
+		valueAmount: number;
+		message: string;
+	};
+	voucher: {
+		_id: string;
+		name: string;
+		description: string;
+		code: string;
+		startDate: string;
+		endDate: string;
+		discountType: number;
+		discountValue: number;
+		usageLimit: number;
+		minimumOrderValue: number;
+		maxAmount: number;
+		usageCount: number;
+		status: number;
+		version: number;
+		modifiedDate: any;
+		modifiedBy: any;
+		listUseProduct: string[];
+		type: string;
+		user: string;
+		createdAt: string;
+		updatedAt: string;
+		__v: number;
+	};
+};
 const CartPage = () => {
 	const navigate = useNavigate();
 	const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +71,7 @@ const CartPage = () => {
 	});
 	const [discountCode, setDiscountCode] = useState<{
 		applyCode: string;
-		currentVoucherCode: IVoucher | null;
+		currentVoucherCode: UseVouchersType | null;
 		error: string;
 	}>({
 		applyCode: "",
@@ -74,6 +105,35 @@ const CartPage = () => {
 		}
 	}, [itemCart]);
 	useEffect(() => {
+		if(discountCode?.applyCode){
+			(async()=>{
+				try {
+					const listId = getAllSelectedItems() as string[];
+				const { data } = await takeApplyDiscountCode({
+					code: discountCode?.applyCode,
+					listId,
+				});
+				setDiscountCode((prev) => ({
+					...prev,
+					error:'',
+					currentVoucherCode: {
+						voucher: data?.voucher,
+						valueCheck: data?.valueCheck,
+					},
+				}));
+				} catch (error) {
+					if(error instanceof AxiosError){
+						setDiscountCode((prev) => ({
+							...prev,
+							error:error?.response?.data?.message,
+							currentVoucherCode: null,
+						}));
+					}
+				}
+				
+			})()
+		}
+		
 		const isAllChecked = carts?.every((cart) =>
 			cart.items.every(
 				(item) => !isItemValid(item) || checkedState[item?._id as string],
@@ -99,32 +159,32 @@ const CartPage = () => {
 			},
 			{ totalQuantity: 0, totalAmount: 0 },
 		);
-		if (
-			discountCode?.currentVoucherCode &&
-			totals.totalAmount < discountCode?.currentVoucherCode?.minimumOrderValue
-		) {
-			setDiscountCode((prev) => ({
-				...prev,
-				applyCode: "",
-				currentVoucherCode: null,
-				error:
-					"Giá trị tối thiểu của đơn hàng không đạt điều kiện để sử dụng voucher này",
-			}));
-		} else if (
-			discountCode?.currentVoucherCode &&
-			totals.totalAmount >= discountCode?.currentVoucherCode?.minimumOrderValue
-		) {
-			setDiscountCode((prev) => ({
-				...prev,
-				error: "",
-			}));
-		} else {
-			setDiscountCode((prev) => ({
-				...prev,
-				applyCode: "",
-				error: "",
-			}));
-		}
+		// if (
+		// 	discountCode?.currentVoucherCode &&
+		// 	!discountCode?.currentVoucherCode?.valueCheck?.status
+		// ) {
+		// 	setDiscountCode((prev) => ({
+		// 		...prev,
+		// 		applyCode: "",
+		// 		currentVoucherCode: null,
+		// 		error:
+		// 			"Giá trị tối thiểu của đơn hàng không đạt điều kiện để sử dụng voucher này",
+		// 	}));
+		// } else if (
+		// 	discountCode?.currentVoucherCode &&
+		// 	discountCode?.currentVoucherCode?.valueCheck?.status
+		// ) {
+		// 	setDiscountCode((prev) => ({
+		// 		...prev,
+		// 		error: "",
+		// 	}));
+		// } else {
+		// 	setDiscountCode((prev) => ({
+		// 		...prev,
+		// 		applyCode: "",
+		// 		error: "",
+		// 	}));
+		// }
 		setTotalSelectedAmount(totals || { totalQuantity: 0, totalAmount: 0 });
 		setAllChecked(isAllChecked || false);
 		fetchNewProductsInTheCart();
@@ -249,11 +309,18 @@ const CartPage = () => {
 	};
 	const handleApplyDiscount = async () => {
 		try {
+			const listId = getAllSelectedItems() as string[];
 			const { data } = await takeApplyDiscountCode({
 				code: discountCode?.applyCode,
-				totalMoney: totalSelectedAmount.totalAmount,
+				listId,
 			});
-			setDiscountCode((prev) => ({ ...prev, currentVoucherCode: data?.data }));
+			setDiscountCode((prev) => ({
+				...prev,
+				currentVoucherCode: {
+					voucher: data?.voucher,
+					valueCheck: data?.valueCheck,
+				},
+			}));
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				toast.error(error?.response?.data?.message);
@@ -270,15 +337,14 @@ const CartPage = () => {
 			const listId = getAllSelectedItems() as string[];
 			const payload = {
 				listId,
-				voucher: discountCode?.currentVoucherCode?._id || null,
+				voucher: discountCode?.currentVoucherCode?.voucher?._id || null,
 			};
 			if (listId.length <= 0) {
 				return toast.error("Bạn chưa chọn sản phẩm nào để đặt hàng!");
 			}
 			if (
 				discountCode?.currentVoucherCode &&
-				discountCode?.currentVoucherCode?.minimumOrderValue >
-					totalSelectedAmount?.totalAmount
+				!discountCode?.currentVoucherCode?.valueCheck?.status
 			) {
 				payload.voucher = null;
 			}
@@ -405,15 +471,17 @@ const CartPage = () => {
 												<div
 													className={cn(
 														"hidden  justify-between text-nowrap bg-red-500 text-xs md:text-sm text-white px-2.5 py-1 rounded-xl items-center gap-2",
-														discountCode?.currentVoucherCode && "max-md:flex",
+														discountCode?.currentVoucherCode?.valueCheck?.status && "max-md:flex",
 													)}
 												>
 													Giảm{" "}
-													{discountCode?.currentVoucherCode?.discountType == 1
+													{discountCode?.currentVoucherCode?.voucher
+														?.discountType == 2
 														? formatCurrency(
-																discountCode?.currentVoucherCode?.discountValue,
+																discountCode?.currentVoucherCode?.valueCheck
+																	?.amount,
 															)
-														: `${discountCode?.currentVoucherCode?.discountValue}%`}
+														: `${discountCode?.currentVoucherCode?.valueCheck?.amount}%`}
 													<button
 														onClick={() =>
 															setDiscountCode({
@@ -435,16 +503,17 @@ const CartPage = () => {
 												<div
 													className={cn(
 														"hidden max-sm:w-full justify-between text-nowrap bg-red-500 text-xs md:text-sm text-white px-2.5 py-1 rounded-xl items-center gap-2",
-														discountCode?.currentVoucherCode &&
+														discountCode?.currentVoucherCode?.valueCheck?.status &&
 															"hidden md:flex",
 													)}
 												>
 													Giảm{" "}
-													{discountCode?.currentVoucherCode?.discountType == 1
+													{discountCode?.currentVoucherCode?.voucher
+														?.discountType == 2
 														? formatCurrency(
-																discountCode?.currentVoucherCode?.discountValue,
+																discountCode?.currentVoucherCode?.valueCheck?.amount
 															)
-														: `${discountCode?.currentVoucherCode?.discountValue}%`}
+														: `${discountCode?.currentVoucherCode?.valueCheck?.amount}%`}
 													<button
 														onClick={() =>
 															setDiscountCode({
@@ -489,12 +558,12 @@ const CartPage = () => {
 													<Button
 														onClick={handleApplyDiscount}
 														disabled={
-															discountCode?.applyCode?.length < 9 ||
+															discountCode?.applyCode?.length < 3 ||
 															getAllSelectedItems()?.length <= 0
 														}
 														className={cn(
 															"h-8 md:h-10 w-full md:w-40 bg-red-500 hover:bg-red-600 text-white px-5",
-															(discountCode?.applyCode?.length < 9 ||
+															(discountCode?.applyCode?.length < 3 ||
 																getAllSelectedItems()?.length <= 0) &&
 																"pointer-events-none bg-black/35",
 														)}
@@ -551,7 +620,10 @@ const CartPage = () => {
 												</span>
 												:{" "}
 												<span className="font-medium text-red-500 md:text-lg">
-													{formatCurrency(totalSelectedAmount.totalAmount)}
+													{formatCurrency(
+														(discountCode?.currentVoucherCode as any)
+															?.valueAmount || totalSelectedAmount.totalAmount,
+													)}
 												</span>
 											</p>
 										</div>

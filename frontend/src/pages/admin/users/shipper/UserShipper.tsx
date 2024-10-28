@@ -18,24 +18,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { IUser } from "@/contexts/AuthContext";
+import { cn } from "@/lib/utils";
 import { pagingShipper, updateActionShippers } from "@/service/shipper";
-import {
-	BanManyUser,
-	banUser,
-	unBanManyUser,
-	unBanUser,
-} from "@/service/user-admin";
 import { SearchObjectType } from "@/types/searchObjecTypes";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
+import { AxiosError } from "axios";
 import { format, parseISO } from "date-fns";
+import { BsPersonFillCheck } from "react-icons/bs";
 import { CiLock, CiUnlock } from "react-icons/ci";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { IoFilter } from "react-icons/io5";
 import { toast } from "sonner";
 import { useDebounceCallback } from "usehooks-ts";
-import { BsPersonFillCheck } from "react-icons/bs";
-import { cn } from "@/lib/utils";
-import { AxiosError } from "axios";
+import { Link } from "react-router-dom";
 interface IData {
 	_id: string;
 	user: IUser;
@@ -311,7 +306,7 @@ const UserShipper = () => {
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
-							<DropdownMenuItem>Xem chi tiết</DropdownMenuItem>
+							<DropdownMenuItem><Link to={`http://localhost:4000/admin/users/shipper/${row?.original?._id}/detail`} className="block">Xem chi tiết</Link></DropdownMenuItem>
 							{row?.original?.is_block ? (
 								<DropdownMenuItem
 									className="text-green-400"

@@ -39,6 +39,17 @@ export const pagingProductOfVoucher = ({
 }) => instance.post(`${url}/pagingProductOfVoucher`, { pageIndex, keyword });
 
 export const exportServiceProduct = () =>
-	instance.post(`file/excelPro`,{}, {
-		responseType: "blob", // Quan trọng: đặt responseType là 'blob'
+	instance.post(
+		`file/excelPro`,
+		{},
+		{
+			responseType: "blob", // Quan trọng: đặt responseType là 'blob'
+		},
+	);
+
+export const importServiceProduct = (data:FormData) =>
+	instance.post(`file/import`, data, {
+		headers: {
+			"Content-Type": "multipart/form-data",
+		},
 	});
