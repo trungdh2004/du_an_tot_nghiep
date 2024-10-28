@@ -24,13 +24,13 @@ const ProductByCategory = () => {
 		})();
 	}, []);
 	return (
-		<div className="bg-neutral-50 mt-20 py-8 padding">
+		<div className="py-8 mt-20  padding">
 			<div className="flex flex-col items-center justify-center gap-y-12">
-				<h2 className="text-2xl font-semibold sm:text-4xl sm:font-bold text-center">
+				<h2 className="text-2xl font-semibold text-center sm:text-4xl sm:font-bold">
 					Đa dạng mẫu mã sản phẩm
 				</h2>
 				<ScrollArea className="max-sm:w-[300px] whitespace-nowrap rounded-full bg-white box-shadow">
-					<div className="flex w-max space-x-4 p-1">
+					<div className="flex p-1 space-x-4 w-max">
 						{category?.map((c) => (
 							<div
 								key={c._id}
@@ -51,7 +51,7 @@ const ProductByCategory = () => {
 				<div className="flex items-center justify-center ">
 					<Link
 						to={"/shop"}
-						className="flex items-center px-7 py-2 bg-blue-400 hover:bg-blue-700 text-white rounded-lg"
+						className="flex items-center py-2 text-white bg-blue-400 rounded-lg px-7 hover:bg-blue-700"
 					>
 						Xem thêm <GrFormNextLink />
 					</Link>

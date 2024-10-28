@@ -59,7 +59,7 @@ const DetailProduct = () => {
 							<>
 								<BreadcrumbSeparator />
 								<BreadcrumbItem>
-									<BreadcrumbPage>{data?.name}</BreadcrumbPage>
+									<BreadcrumbPage className="truncate max-w-52">{data?.name}</BreadcrumbPage>
 								</BreadcrumbItem>
 							</>
 						)}
