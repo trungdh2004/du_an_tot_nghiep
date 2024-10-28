@@ -180,6 +180,7 @@ const SelectPagingComponent = <T,>({
 						loadPagingData();
 					}
 				}}
+                
 				onInputChange={handleChangeText}
 				placeholder={placeholder}
 			/>
