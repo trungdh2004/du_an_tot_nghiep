@@ -552,7 +552,7 @@ class ShipperController {
       });
 
       if (customer) {
-        CustomerModel.findByIdAndUpdate(customer._id, {
+        await CustomerModel.findByIdAndUpdate(customer._id, {
           $inc: {
             totalOrder: 1,
             totalOrderSuccess: 1,
@@ -561,7 +561,7 @@ class ShipperController {
           },
         });
       } else {
-        CustomerModel.create({
+        await CustomerModel.create({
           user: updateOrder?.user,
           totalOrder: 1,
           totalOrderSuccess: 1,
