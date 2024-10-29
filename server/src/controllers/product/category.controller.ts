@@ -22,11 +22,12 @@ class categoryController {
           message: error.details[0].message,
         });
       }
-      const { name, description } = req.body;
+      const { name, description,thumbnail } = req.body;
 
       const newCategory = await CategoryModel.create({
         name,
         description,
+        thumbnail
       });
       return res.status(STATUS.OK).json({
         message: "Tạo loại thành công",
@@ -188,6 +189,9 @@ class categoryController {
       const { id } = req.params;
 
       const { error } = categoryValidation.validate(req.body);
+
+      const {name,description,thumbnail} = req.body;
+
       if (error) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: error.details[0].message,
@@ -207,7 +211,11 @@ class categoryController {
         });
       }
 
-      const newCategory = await CategoryModel.findByIdAndUpdate(id, req.body, {
+      const newCategory = await CategoryModel.findByIdAndUpdate(id, {
+        name,
+        description,
+        thumbnail
+      }, {
         new: true,
       });
 
