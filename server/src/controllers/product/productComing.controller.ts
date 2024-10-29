@@ -162,6 +162,50 @@ class ProductComingController {
     }
   }
 
+  async updateComing(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const { productId, date, active = false } = req.body;
+
+      if(!id || !productId ||!date) { 
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Lỗi thiếu dữ liệu",
+        });
+      } 
+
+      const existingProduct = await ProductComingModel.findById(id)
+
+      if (!existingProduct) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có ",
+        });
+      }
+
+      if(active) {
+        await ProductComingModel.updateMany(
+          {},
+          {
+            active: false,
+          }
+        );
+      }
+
+      const newUpdate = await ProductComingModel.findByIdAndUpdate(id,{
+        product:productId,
+        date,
+        active
+      })
+
+      return res.status(STATUS.OK).json({
+        message:"Sửa thành công"
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
   async findByActive(req: Request, res: Response) {
     try {
       const existingProduct = await ProductComingModel.findOne({
