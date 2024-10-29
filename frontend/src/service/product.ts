@@ -47,9 +47,21 @@ export const exportServiceProduct = () =>
 		},
 	);
 
-export const importServiceProduct = (data:FormData) =>
+export const importServiceProduct = (data: FormData) =>
 	instance.post(`file/import`, data, {
 		headers: {
 			"Content-Type": "multipart/form-data",
 		},
 	});
+
+export const pagingProductComing = (obj: any) =>
+	instance.post(`productComing/paging`, obj);
+
+export const createProductComing = (obj: any) =>
+	instance.post(`productComing/create`, obj);
+
+export const updateProductComing = (id: string) =>
+  instance.get(`productComing/active/${id}`);
+
+export const deleteProductComing = (id: string) =>
+	instance.delete(`productComing/delete/${id}`);

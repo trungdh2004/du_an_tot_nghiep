@@ -62,7 +62,7 @@ type GetOptionLabel<Option> = (option: Option) => ReactNode | string;
 type CommonProps<T> = {
 	value: T | T[] | undefined | null;
 	isMulti?: boolean;
-	options: T[];
+	options?: T[];
 	selectOption?: (option: T) => void;
 	selectProps?: any;
 	setValue?: (value: T, action: ActionTypes) => void;
