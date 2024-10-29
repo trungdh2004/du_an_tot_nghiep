@@ -68,7 +68,7 @@ const Product = ({ productShop }: any) => {
 													src={optimizeCloudinaryUrl(
 														product.thumbnail,
 														350,
-														370,
+														420,
 													)}
 													alt="Image 1"
 												/>
