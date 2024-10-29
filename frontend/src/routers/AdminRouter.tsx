@@ -33,6 +33,7 @@ import ChatIndex from "../pages/admin/Chat/ChatIndex";
 import LayoutChat from "@/pages/admin/Chat/LayoutChat";
 import ChatInit from "@/pages/admin/Chat/ChatInit";
 import ChatContent from "@/pages/admin/Chat/components/ChatContent";
+import CustomerList from "@/pages/admin/users/customer/CustomerList";
 
 const AdminRouter = [
 	{
@@ -67,6 +68,10 @@ const AdminRouter = [
 			{
 				path: "users/shipper/:id/detail",
 				element: <UserShipperDetail />,
+			},
+			{
+				path: "users/client",
+				element: <CustomerList />,
 			},
 			// Quản lý sản phẩm
 			{
@@ -192,7 +197,7 @@ const AdminRouter = [
 			{
 				path: "chat",
 				element: <LayoutChat></LayoutChat>,
-				children:[
+				children: [
 					{
 						path: "",
 						element: <ChatInit />,
@@ -201,12 +206,11 @@ const AdminRouter = [
 						path: ":id",
 						element: <ChatContent />,
 					},
-				]
+				],
 			},
 			{
 				path: "chatAdmin",
-				element: <ChatIndex/>,
-				
+				element: <ChatIndex />,
 			},
 		],
 	},
