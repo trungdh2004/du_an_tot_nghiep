@@ -282,7 +282,22 @@ class CartController {
 
   async pagingCartV2(req: RequestModel, res: Response) {
     try {
-      const listCartItem = await CartItemModel.find<IndexCartItem>({})
+      const user = req.user
+      let existingCart = await CartModel.findOne({
+        user: user?.id,
+      });
+
+      if (!existingCart) {
+        existingCart = await CartModel.create({
+          user: user?.id,
+        });
+      }
+
+
+
+      const listCartItem = await CartItemModel.find<IndexCartItem>({
+        cart:existingCart?._id
+      })
         .populate([
           {
             path: "product",
