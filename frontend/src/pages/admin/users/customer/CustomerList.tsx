@@ -221,6 +221,9 @@ const CustomerList = () => {
 	];
 	return (
 		<div>
+			<h4 className="font-medium md:text-xl text-base py-4">
+				Danh sách khách hàng
+			</h4>
 			<TableComponent
 				data={data}
 				columns={columns}

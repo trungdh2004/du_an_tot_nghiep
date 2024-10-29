@@ -34,6 +34,7 @@ import LayoutChat from "@/pages/admin/Chat/LayoutChat";
 import ChatInit from "@/pages/admin/Chat/ChatInit";
 import ChatContent from "@/pages/admin/Chat/components/ChatContent";
 import CustomerList from "@/pages/admin/users/customer/CustomerList";
+import ProductComing from "@/pages/admin/product/productComing/ProductComing";
 
 const AdminRouter = [
 	{
@@ -113,7 +114,11 @@ const AdminRouter = [
 			{
 				path: "product/add",
 				element: <ProductAddPage />,
-			},
+      },
+      {
+        path: "product/coming",
+        element: <ProductComing />,
+      },
 			// Quản lý biến thể
 			{
 				path: "variant/size",
