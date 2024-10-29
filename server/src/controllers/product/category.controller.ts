@@ -428,6 +428,60 @@ class categoryController {
       });
     }
   }
+
+  async activeCategory(req: RequestModel, res: Response) {
+    try {
+      const { id } = req.params;
+      const {active} = req.body
+
+      if (!id)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Chưa truyền id",
+        });
+
+      const existingCategory = await CategoryModel.findById(id);
+
+      if (!existingCategory)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có danh mục này",
+        });
+
+      const newUpdate = await CategoryModel.findByIdAndUpdate(
+        id,
+        {
+          active: !!active ? true : false,
+        },
+        { new: true }
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Cập nhập thành công",
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async listCategoryActive(req: RequestModel, res: Response) {
+    try {
+      const newUpdate = await CategoryModel.find(
+        {
+          active: true,
+        },
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Lấy thành công",
+        data:newUpdate
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
 }
 
 export default new categoryController();

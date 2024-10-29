@@ -19,6 +19,10 @@ const CategorySchema = new mongoose.Schema(
     deleted: {
       type: Boolean,
       default: false,
+    },
+    active:{
+      type: Boolean,
+      default:false
     }
     // products: [
     //   {
