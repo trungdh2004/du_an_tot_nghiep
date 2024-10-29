@@ -25,6 +25,14 @@ import { uploadFileService } from "@/service/upload";
 import { useState } from "react";
 import { useAuth } from "@/hooks/auth";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { ICity, ICommune, IDistrict } from "@/types/address";
+import { useNavigate } from "react-router-dom";
+import { callCity, callCommune, callDistrict } from "@/service/address";
+import { toast } from "sonner";
+import { changeAccountShipper } from "@/service/shipper";
+import { IShipper } from "@/types/shipper.interface";
+import { AxiosError } from "axios";
+import { useQuery } from "@tanstack/react-query";
 
 const formSchema = z.object({
 	fullName: z.string({ required_error: "Bạn chưa  nhập email" }),
@@ -59,14 +67,54 @@ const formSchema = z.object({
 		.nullable(),
 });
 const AccountShipperIndex = () => {
+	const router = useNavigate();
+	const [districts, setDistricts] = useState<IDistrict[]>([]);
+	const [commune, setCommune] = useState<ICommune[]>([]);
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
+	});
+	const { data: citys, isLoading } = useQuery<ICity[]>({
+		queryKey: ["city"],
+		queryFn: async () => {
+			const { data } = await callCity();
+			return data;
+		},
+		staleTime: Infinity,
 	});
 	// const { authUser, setAuthUser } = useAuth();
 	const [previewUrl, setPreviewUrl] = useState({
 		isLoading: false,
 		url: "",
 	});
+	const handleOnChangeCity = async (value: ICity) => {
+		try {
+			form.setValue("city", value);
+			form.setValue("address", value.name);
+			setDistricts([]);
+			const { data } = await callDistrict(value.idProvince);
+			setDistricts(data);
+			setCommune([]);
+		} catch (error: any) {
+			toast.error(error.response!.data!.message);
+		}
+	};
+	const handleOnChangeDistrict = async (value: IDistrict) => {
+		try {
+			form.setValue("district", value);
+			form.setValue("commune", null);
+			const address = form.getValues("city")?.name;
+			const { data } = await callCommune(value.idDistrict);
+			setCommune(data);
+		} catch (error: any) {
+			toast.error(error.response!.data!.message);
+		}
+	};
+	const handleOnChangeCommune = (value: ICommune) => {
+		const address = `${value.name},${form.watch("district")?.name},${form.watch("city")?.name}`;
+		form.setValue("address", address);
+		form.setValue("commune", value);
+		form.clearErrors("address");
+	};
 	const handleUploadFile = async (file: File) => {
 		try {
 			// setOpen();
@@ -85,7 +133,17 @@ const AccountShipperIndex = () => {
 			// setClose();
 		}
 	};
-	const onSubmit = () => {};
+	const onSubmit = async (value: z.infer<typeof formSchema>) => {
+		try {
+			const { data } = await changeAccountShipper(value as IShipper);
+			console.log("datassssssssss", data);
+			toast.success(data?.message);
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				toast.error(error?.response?.data?.message);
+			}
+		}
+	};
 	return (
 		<div className="padding">
 			<header className="p-2 md:px-4 md:mb-4 sticky top-0 bg-main w-full z-10">

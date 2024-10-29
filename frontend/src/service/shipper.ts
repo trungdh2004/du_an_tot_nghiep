@@ -3,7 +3,9 @@ import { IOrderShipper, IShipper } from "@/types/shipper.interface";
 
 export const registerShipper = async (obj: IShipper) =>
 	instance.post(`/shipper/registerShipper`, obj);
-
+export const changeAccountShipper = (obj: IShipper) => {
+	instance.post(`shipper/changeAccountShipper`, obj);
+};
 export const getCurrentShipper = async () =>
 	instance.get(`/shipper/getCurrentShipper`);
 
@@ -40,6 +42,3 @@ export const pagingOrderShipperById = (
 	{ pageIndex = 0, status = 1 },
 ) =>
 	instance.post(`/shipper/getDetailShipperAdmin/${id}`, { pageIndex, status });
-export const changeAccountShipper = () => {
-	instance.post(`shipper/changeAccountShipper`);
-};
