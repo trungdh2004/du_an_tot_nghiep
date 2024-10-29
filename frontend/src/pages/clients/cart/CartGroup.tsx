@@ -64,7 +64,7 @@ const CartGroup = ({
 						to={`/shop/detail/${decodeURI(cart?.product?.slug as string)}`}
 						className="truncate text-sm md:text-base max-w-[70%] sm:max-w-[80%] md:max-w-full text-black hover:underline "
 					>
-						{cart?.product?.name} {cart?.product?.name} {cart?.product?.name} {cart?.product?.name} {cart?.product?.name} {cart?.product?.name} {cart?.product?.name}
+						{cart?.product?.name}
 					</Link>
 					<button
 						onClick={() => toggleEdit(cart?.product?._id as string)}
