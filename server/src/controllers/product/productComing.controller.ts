@@ -60,6 +60,7 @@ class ProductComingController {
             price: 1,
             thumbnail: 1,
             quantity: 1,
+            discount:1
           },
         });
 
@@ -134,7 +135,16 @@ class ProductComingController {
         });
       }
 
-      const existingProduct = await ProductComingModel.findById(id);
+      const existingProduct = await ProductComingModel.findById(id).populate({
+        path:"product",
+        select:{
+          _id:1,
+          name:1,
+          thumbnail:1,
+          price:1,
+          discount:1
+        }
+      });
 
       if (!existingProduct) {
         return res.status(STATUS.BAD_REQUEST).json({
