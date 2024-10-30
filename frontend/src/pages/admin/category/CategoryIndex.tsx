@@ -31,6 +31,7 @@ const CategoryIndex = () => {
 	interface IData {
 		_id: string;
 		name: string;
+		thumbnail: string;
 		description: string;
 		deleted: boolean;
 		createdAt: string;
@@ -41,11 +42,15 @@ const CategoryIndex = () => {
 	const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
 	const listId = listRowSeleted.map((data: any) => {
 		return data._id;
-	})
+	});
 	const [data, setData] = useState<IData[]>([]);
 	const [openId, setOpenId] = useState<string | boolean>(false);
-	const [openUnhiddenCategory, setopenUnhiddenCategory] = useState<string | boolean>(false);
-	const [openHiddenCategory, setOpenHiddenCategory] = useState<string | boolean>(false);
+	const [openUnhiddenCategory, setopenUnhiddenCategory] = useState<
+		string | boolean
+	>(false);
+	const [openHiddenCategory, setOpenHiddenCategory] = useState<
+		string | boolean
+	>(false);
 	const [openManyCate, setOpenManyCate] = useState<string | boolean>(false);
 	const [openUnManyCate, setOpenUnManyCate] = useState<string | boolean>(false);
 	const debounced = useDebounceCallback((inputValue: string) => {
@@ -103,8 +108,8 @@ const CategoryIndex = () => {
 			const { data } = await hiddenManyCate(listId);
 			setOpenManyCate(false);
 			handleCategory();
-			setRowSelection({})
-			setListRowSelected([])
+			setRowSelection({});
+			setListRowSelected([]);
 			toast.success("Ẩn nhiều danh mục danh mục nhiều thành công");
 		} catch (error) {
 			toast.error("Ẩn danh mục nhiều thất bại");
@@ -151,6 +156,7 @@ const CategoryIndex = () => {
 	};
 	const columns: ColumnDef<IData>[] = [
 		{
+			accessorKey: "select",
 			id: "select",
 			header: ({ table }) => (
 				<Checkbox
@@ -184,6 +190,7 @@ const CategoryIndex = () => {
 		},
 		{
 			accessorKey: "name",
+			id: "name",
 			header: () => {
 				return <div className="md:text-base text-xs">Tên</div>;
 			},
@@ -194,13 +201,33 @@ const CategoryIndex = () => {
 			},
 		},
 		{
-			accessorKey: "description",
+			accessorKey: "thumbnail",
+			id: "thumbnail",
 			header: () => {
-				return <div className="md:text-base text-xs">Mô tả</div>;
+				return <div className="md:text-base text-xs">Ảnh</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs">
+					<div className="w-14 h-14">
+						<img
+							src={row?.original?.thumbnail}
+							alt="Chưa có ảnh"
+							className="w-full h-full"
+						/>
+					</div>
+				);
+			},
+		},
+		{
+			accessorKey: "description",
+			id: "description",
+
+			header: () => {
+				return <div className="md:text-base text-xs ">Mô tả</div>;
+			},
+			cell: ({ row }) => {
+				return (
+					<div className="md:text-base text-xs lg:w-[450px] md:w-[300px] w-[250px] truncate">
 						{row?.original?.description}
 					</div>
 				);
@@ -209,22 +236,23 @@ const CategoryIndex = () => {
 
 		{
 			accessorKey: "createdAt",
+			id: "createdAt",
 			header: () => {
 				return <div className="md:text-base text-xs">Ngày tạo</div>;
 			},
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.createdAt);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
-				return (
-					<div className="md:text-base text-xs">
-						{formattedDate}
-					</div>
-				);
+				return <div className="md:text-base text-xs">{formattedDate}</div>;
 			},
 		},
 		{
+			accessorKey: "actions",
 			id: "actions",
 			enableHiding: false,
+			header: () => {
+				return <div className="md:text-base text-xs">Hành động</div>;
+			},
 			cell: ({ row }) => {
 				return (
 					<DropdownMenu>
@@ -239,7 +267,7 @@ const CategoryIndex = () => {
 								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full text-start cursor-pointer"
 								onClick={() => setOpenId(row?.original?._id)}
 							>
-								Sửa thẻ tag
+								Sửa danh mục
 							</DropdownMenuItem>
 							{row?.original?.deleted ? (
 								<DropdownMenuItem
@@ -286,7 +314,9 @@ const CategoryIndex = () => {
 							>
 								Ẩn nhiều
 							</Button>
-						) : ''}
+						) : (
+							""
+						)}
 						{listId.length !== 0 && searchObject.tab == 2 && (
 							<Button
 								onClick={() => setOpenUnManyCate(true)}
