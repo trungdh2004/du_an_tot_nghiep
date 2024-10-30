@@ -60,8 +60,14 @@ export const pagingProductComing = (obj: any) =>
 export const createProductComing = (obj: any) =>
 	instance.post(`productComing/create`, obj);
 
-export const updateProductComing = (id: string) =>
-  instance.get(`productComing/active/${id}`);
+export const updateActiveProductComing = (id: string) =>
+	instance.get(`productComing/active/${id}`);
 
 export const deleteProductComing = (id: string) =>
 	instance.delete(`productComing/delete/${id}`);
+
+export const getProductComingById = (id: string) =>
+	instance.get(`productComing/findById/${id}`);
+
+export const updateProductComing = (id: string, object: any) =>
+	instance.put(`productComing/update/${id}`, object);
