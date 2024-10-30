@@ -220,17 +220,18 @@ const ProductComingAdd = ({ open, close, handleCustomer }: Props) => {
 									name="active"
 									render={({ field }) => {
 										return (
-											<FormItem className="w-2/6 flex flex-row items-start space-x-3 space-y-0 rounded-md border p-[6px] shadow mt-6">
-												<FormControl>
-													<Checkbox
-														checked={field.value}
-														onCheckedChange={field.onChange}
-														className="mt-1"
-													/>
-												</FormControl>
-												<div>
-													<FormLabel>Hoạt động</FormLabel>
-												</div>
+											<FormItem className="w-2/6">
+												<FormLabel>
+													<div className="flex flex-row items-center space-x-3 space-y-0 rounded-sm px-2 h-10 border mt-6 hover:bg-slate-100 cursor-pointer">
+														<FormControl>
+															<Checkbox
+																checked={field.value}
+																onCheckedChange={field.onChange}
+															/>
+														</FormControl>
+														<div>Hoạt động</div>
+													</div>
+												</FormLabel>
 											</FormItem>
 										);
 									}}
