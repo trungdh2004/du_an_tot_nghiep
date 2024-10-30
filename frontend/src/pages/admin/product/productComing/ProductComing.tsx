@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import {
 	deleteProductComing,
 	pagingProductComing,
+	updateActiveProductComing,
 	updateProductComing,
 } from "@/service/product";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
@@ -19,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { toast } from "sonner";
+
 interface Search {
 	pageIndex: number;
 	pageSize: number;
@@ -88,7 +90,7 @@ const ProductComing = () => {
 	};
 	const handleUpdateComing = async (id: string) => {
 		try {
-			await updateProductComing(id);
+			await updateActiveProductComing(id);
 			toast.success("Bạn cập nhật thành công");
 			handleCustomer();
 		} catch (error) {
@@ -220,6 +222,12 @@ const ProductComing = () => {
 							>
 								Xóa
 							</DropdownMenuItem>
+							<DropdownMenuItem
+								className="text-blue-400 cursor-pointer"
+								onClick={() => setOpen(row?.original?._id)}
+							>
+								Cập nhật
+							</DropdownMenuItem>
 							{!row?.original?.active && (
 								<DropdownMenuItem
 									className="text-green-400 cursor-pointer"
@@ -234,7 +242,7 @@ const ProductComing = () => {
 			},
 		},
 	];
-	const [open, setOpen] = useState(false);
+	const [open, setOpen] = useState<boolean | string>(false);
 	return (
 		<div>
 			<div className="flex justify-between py-4">
@@ -270,7 +278,8 @@ const ProductComing = () => {
 					close={() => {
 						setOpen(false);
 					}}
-					handleCustomer={handleCustomer}
+          handleCustomer={handleCustomer}
+          
 				/>
 			)}
 		</div>
