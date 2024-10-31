@@ -9,6 +9,7 @@ import Address from "@/pages/clients/address/Address";
 import BlogDetail from "@/pages/clients/blogs/BlogDetail";
 import BlogPage from "@/pages/clients/blogs/BLogPage";
 import CartPage from "@/pages/clients/cart/CartPage";
+import Contact from "@/pages/clients/contact/contact";
 import DetailProduct from "@/pages/clients/detail-home/page";
 import HomePage from "@/pages/clients/home/page";
 import OrderProcessing from "@/pages/clients/order/OrderProcessing";
@@ -16,7 +17,6 @@ import WrapperSearch from "@/pages/clients/search/WrapperSearch";
 import ShopProduct from "@/pages/clients/shop/ShopProduct";
 import NotFound from "@/pages/NotFound";
 import { Navigate } from "react-router-dom";
-import Contact from "@/pages/clients/contact/contact";
 const MainRouter = [
 	{
 		path: "/",
@@ -30,7 +30,7 @@ const MainRouter = [
 			{ path: "table", element: <UserIndex /> },
 			{ path: "cart", element: <CartPage /> },
 			{ path: "shop", element: <ShopProduct /> },
-			{ path: "contact", element: <Contact /> },
+			{ path: "contacts", element: <Contact />},
 			
 			{
 				path: "search",

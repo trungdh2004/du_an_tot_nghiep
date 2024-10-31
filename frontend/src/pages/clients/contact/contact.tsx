@@ -1,7 +1,7 @@
 import { Contact } from 'lucide-react'
 import React from 'react'
 
-export const contact = () => {
+ const contact = () => {
 
   return (
     <div className="bg-white">
@@ -9,7 +9,7 @@ export const contact = () => {
         <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8">
                 <img
-                    src="/du_an_tot_nghiep/frontend/public/image.jpg"
+                    src="https://th.bing.com/th/id/R.38fa125e216cf97d18e2ab141d7c2836?rik=6bOYUiLqRNdUBg&riu=http%3a%2f%2fwww.elle.vn%2fwp-content%2fuploads%2f2017%2f07%2f20%2fBo-anh-thoi-trang-Anh-sang-phuc-hung-3.jpg&ehk=7HcQJYJXZYtviIJTPGKlk4%2fkQ2%2f3IZQEisBMCSlJOeg%3d&risl=&pid=ImgRaw&r=0"
                     alt="Profile"
                     className="rounded-full object-cover w-64 h-64 lg:w-80 lg:h-80"
                 />
