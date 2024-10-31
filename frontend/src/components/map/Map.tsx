@@ -29,12 +29,12 @@ const MapComponent = ({
 	});
 
 	useEffect(() => {
-		if (longitude && latitude && zoom) {
+		if (longitude && latitude) {
 			setViewState((prev) => ({
 				...prev,
 				longitude,
 				latitude,
-				zoom
+				zoom:zoom || 15.5
 			}));
 		}
 	}, [longitude, latitude,zoom]);

@@ -5,11 +5,13 @@ export const createComment = (
 	content: string,
 	commentId: string,
 	commentType: string,
+	parent_id?: string
 ) => {
 	const data = instance.post(`/comment/createComment`, {
-		content: content,
-		commentId: commentId,
-		commentType: commentType,
+		content,
+		commentId,
+		commentType,
+		parent_id
 	});
 	return data;
 };

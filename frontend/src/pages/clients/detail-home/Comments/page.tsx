@@ -44,12 +44,6 @@ const Comments = ({ product }: Props) => {
 	}, [objectComment]);
 
 	const onSubmitComment = async () => {
-		console.log("value:", content);
-		// if (!isLoggedIn) {
-		// 	console.log("Bạn chưa đăng nhập");
-
-		// 	return;
-		// }
 		try {
 			const { data } = await createComment(
 				content,
@@ -94,7 +88,7 @@ const Comments = ({ product }: Props) => {
 
 			<div className="mt-10 space-y-5">
 				{comment?.map((comment: any) => {
-					return <CommentItem comment={comment} setComment={setComment} />;
+					return <CommentItem comment={comment} setComment={setComment} key={comment?._id}/>;
 				})}
 				{(check?.totalPage as number) > 0 &&
 					(check?.pageIndex as number) !== (check?.totalPage as number) && (

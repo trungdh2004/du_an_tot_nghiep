@@ -15,6 +15,7 @@ export const colorValidation = Joi.object({
 export const categoryValidation = Joi.object({
   name: Joi.string().required().messages({}),
   description: Joi.string().required().messages({}),
+  thumbnail:Joi.string().required().messages({}),
 });
 
 export const productValidations = Joi.object({

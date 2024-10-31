@@ -367,7 +367,7 @@ const PurchaseOrder = () => {
 								<div className="w-[35%] md:w-[25%] flex flex-col text-right">
 									<span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-base text-[rgba(0,0,0,.68)] leading-[160%]">
 										{formatQuantity(
-											data?.data?.totalMoney - data?.data?.shippingCost,
+											data?.data?.totalMoney,
 											"₫",
 										)}
 									</span>
@@ -377,10 +377,10 @@ const PurchaseOrder = () => {
 									</span>
 									<span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-base  text-[rgba(0,0,0,.68)] leading-[160%]">
 										{" "}
-										{data?.data?.voucherAmount}
+										- {formatQuantity(data?.data?.voucherAmount, "₫")}
 									</span>
 									<span className="py-3 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-red-500 text-sm md:text-lg leading-[160%]">
-										{formatQuantity(data?.data?.totalMoney, "₫")}
+										{formatQuantity(data?.data?.amountToPay, "₫")}
 									</span>
 								</div>
 							</div>

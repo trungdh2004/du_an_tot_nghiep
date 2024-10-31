@@ -1,19 +1,14 @@
-
 import { useAuth } from "@/hooks/auth";
-import { useEffect, useState } from "react";
 import {
-	deleteNotification,
-	getPagingNotification,
 	pagingNotificationAdmin,
-	watchedAllNotification,
-	watchedNotification,
-	watchedNotificationAdmin,
+	watchedNotificationAdmin
 } from "@/service/notification.service";
-import { toast } from "sonner";
 import {
 	INotificationAdmin,
 	ISearchObjectNotificationsAdmin,
 } from "@/types/notification.interface";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import Notification from "./Notification";
 
 const ActionsNotification = () => {
@@ -27,14 +22,14 @@ const ActionsNotification = () => {
 			totalOptionPage: 0,
 			totalPage: 0,
 		});
-	const [dataContent,setDataContent] = useState<INotificationAdmin[]>([])
+	const [before, setBefore] = useState<null | string>(null);
+
+	const [dataContent, setDataContent] = useState<INotificationAdmin[]>([]);
 	const [countNotRead, setCountNotRead] = useState(0);
 
 	useEffect(() => {
 		if (socket) {
 			socket.on("notificationAdmin", (notification: INotificationAdmin) => {
-				console.log("notification:",notification);
-				
 				setDataContent((prev) => {
 					const data = [notification, ...prev];
 					return data;
@@ -50,8 +45,9 @@ const ActionsNotification = () => {
 				try {
 					const { data } = await pagingNotificationAdmin(1);
 					setDataNotification(data);
+					setBefore(data?.before)
 					setCountNotRead(data.countNotificationNotRead);
-					setDataContent(data.content)
+					setDataContent(data.content);
 				} catch (error) {
 					setCountNotRead(0);
 				}
@@ -65,7 +61,7 @@ const ActionsNotification = () => {
 				totalPage: 0,
 			});
 			setCountNotRead(0);
-			setDataContent([])
+			setDataContent([]);
 		}
 	}, [isLoggedIn]);
 
@@ -74,6 +70,7 @@ const ActionsNotification = () => {
 			// if (dataNotification.pageIndex < dataNotification.totalPage) {
 			const { data } = await pagingNotificationAdmin(
 				dataNotification.pageIndex + 1,
+				before
 			);
 
 			setDataNotification((prev) => {
@@ -84,8 +81,7 @@ const ActionsNotification = () => {
 					pageIndex: data.pageIndex,
 				};
 			});
-			setDataContent(prev => ([...prev,...data.content]))
-
+			setDataContent((prev) => [...prev, ...data.content]);
 		} catch (error) {}
 	};
 
@@ -102,12 +98,12 @@ const ActionsNotification = () => {
 				};
 			});
 
-			setDataContent(prev => {
+			setDataContent((prev) => {
 				const newContent = prev.map((item) =>
 					item._id.toString() === data._id.toString() ? data : item,
 				);
-				return newContent
-			})
+				return newContent;
+			});
 			if (isRead) {
 				setCountNotRead((prev) => {
 					if (prev === 0) return prev;

@@ -7,7 +7,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 
 const Sliderv2 = () => {
 	return (
-		<div className="bg-gradient-to-br from-[#faf8f1] to-[#f6f3ef] xl:h-[860px] lg:h-[800px] md:h-[580px] sm:h-[500px] h-[350px] max-[420px]:h-[320px] w-full">
+		<div className="bg-gradient-to-br from-[#9cffe97d] to-[#6b6bd56b] md:h-screen sm:h-[500px] h-[350px] max-[420px]:h-[320px] w-full">
 			<div className="w-full h-full">
 				<div className="relative h-full">
 					<Swiper
@@ -26,7 +26,7 @@ const Sliderv2 = () => {
 								transition={{ duration: 0.5 }}
 								className="relative w-full h-full"
 							>
-								<div className="container relative flex items-center w-full h-full px-4 mx-auto">
+								<div className=" relative flex items-center w-full h-full padding">
 									<motion.div
 										initial={{ x: -160, opacity: 0 }}
 										animate={{ x: 0, opacity: 1 }}
@@ -39,7 +39,7 @@ const Sliderv2 = () => {
 											animate={{ x: 0, opacity: 1 }}
 											transition={{ duration: 0.8, delay: 0.1 }}
 										>
-											ToinhFashion!
+											NUC Shop!
 										</motion.div>
 										<motion.div
 											className="mt-2 text-2xl font-medium capitalize md:mt-5 md:text-4xl lg:text-6xl xl:text-7xl"
@@ -63,7 +63,7 @@ const Sliderv2 = () => {
 										</motion.div>
 									</motion.div>
 									<motion.div
-										className="absolute bottom-0 right-0 w-3/5 sm:w-1/2 md:-right-4 xl:-right-16"
+										className="absolute bottom-0 right-0 max-h-[90%] w-2/5 sm:w-2/5 md:-right-4 xl:-right-16"
 										initial={{ scale: 1.2 }}
 										animate={{ scale: 1 }}
 										transition={{ duration: 0.8 }}
@@ -85,7 +85,7 @@ const Sliderv2 = () => {
 								transition={{ duration: 0.5 }}
 								className="relative w-full h-full"
 							>
-								<div className="container relative flex items-center w-full h-full px-4 mx-auto">
+								<div className=" relative flex items-center w-full h-full padding mx-auto">
 									<motion.div
 										initial={{ x: -160, opacity: 0 }}
 										animate={{ x: 0, opacity: 1 }}
@@ -98,7 +98,7 @@ const Sliderv2 = () => {
 											animate={{ x: 0, opacity: 1 }}
 											transition={{ duration: 0.8, delay: 0.1 }}
 										>
-											ToinhFashion!
+											NUC Shop!
 										</motion.div>
 										<motion.div
 											className="mt-2 text-2xl font-medium capitalize md:mt-5 md:text-4xl lg:text-6xl xl:text-7xl"
@@ -122,7 +122,7 @@ const Sliderv2 = () => {
 										</motion.div>
 									</motion.div>
 									<motion.div
-										className="absolute bottom-0 right-0 w-3/5 sm:w-1/2 md:-right-4 xl:-right-16"
+										className="absolute bottom-0 right-0 max-h-[90%] w-2/5 lg:w-2/5 sm:w-1/2 md:-right-4 xl:-right-16"
 										initial={{ scale: 1.2 }}
 										animate={{ scale: 1 }}
 										transition={{ duration: 0.8 }}

@@ -292,7 +292,7 @@ const ShipperTranSport = () => {
 										{itemOrder?.product?.name}
 									</p>
 									<p className="line-clamp-1 text-xs">
-										Loại: {`${itemOrder?.color?.name}/${itemOrder?.size}`}
+										Loại: {`${itemOrder?.variant}`}
 									</p>
 									<p className="line-clamp-1 text-xs flex justify-between">
 										<span>Số lượng: {itemOrder?.quantity}</span>
