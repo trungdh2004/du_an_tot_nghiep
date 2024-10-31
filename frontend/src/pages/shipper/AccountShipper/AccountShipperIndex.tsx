@@ -32,7 +32,9 @@ import { toast } from "sonner";
 import { changeAccountShipper } from "@/service/shipper";
 import { IShipper } from "@/types/shipper.interface";
 import { AxiosError } from "axios";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import useStoreShipper from "@/store/useCurrentShipper";
+import AddressLocation from "@/pages/clients/address/AddressLocation";
 
 const formSchema = z.object({
 	fullName: z.string({ required_error: "Bạn chưa  nhập email" }),
@@ -70,9 +72,76 @@ const AccountShipperIndex = () => {
 	const router = useNavigate();
 	const [districts, setDistricts] = useState<IDistrict[]>([]);
 	const [commune, setCommune] = useState<ICommune[]>([]);
+	const { current, setCurrent } = useStoreShipper();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
+		defaultValues: {
+			fullName: current?.fullName || "",
+			phone: current?.phone || "",
+			idCitizen: current?.idCitizen || "",
+			birthDate: current?.birthDate ? new Date(current?.birthDate) : new Date(),
+			avatar: current?.avatar || "",
+			address: current?.address || "",
+			city: current?.city || {
+				idProvince: "",
+				name: "",
+			},
+			district: current?.district || {
+				idDistrict: "",
+				name: "",
+			},
+			commune: current?.commune || {
+				idCommune: "",
+				name: "",
+			},
+		},
 	});
+	const [previewUrl, setPreviewUrl] = useState({
+		isLoading: false,
+		url: current?.avatar || "",
+	});
+
+	console.log("shipper", current);
+	const handleUploadFile = async (file: File) => {
+		try {
+			// setOpen();
+			const formdata = new FormData();
+			formdata.append("image", file);
+			const { data } = await uploadFileService(formdata);
+			URL.revokeObjectURL(previewUrl.url);
+			setPreviewUrl({
+				url: data.path,
+				isLoading: false,
+			});
+			return data.path;
+		} catch (error) {
+			console.error(error);
+		} finally {
+			// setClose();
+		}
+	};
+	const { mutate } = useMutation({
+    mutationFn: async (data: IShipper) => {
+      return await changeAccountShipper(data as IShipper)
+    },
+    onSuccess: ({ data }) => {
+      if (setCurrent) {
+        console.log("data updated", data)
+        setCurrent(data);
+      }
+			toast.success(data?.message);
+    }
+	});
+	const onSubmit = async (value: z.infer<typeof formSchema>) => {
+		try {
+			const { data } = ;
+			console.log("datassssssssss", data);
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				toast.error(error?.response?.data?.message);
+			}
+		}
+	};
 	const { data: citys, isLoading } = useQuery<ICity[]>({
 		queryKey: ["city"],
 		queryFn: async () => {
@@ -80,11 +149,6 @@ const AccountShipperIndex = () => {
 			return data;
 		},
 		staleTime: Infinity,
-	});
-	// const { authUser, setAuthUser } = useAuth();
-	const [previewUrl, setPreviewUrl] = useState({
-		isLoading: false,
-		url: "",
 	});
 	const handleOnChangeCity = async (value: ICity) => {
 		try {
@@ -115,35 +179,7 @@ const AccountShipperIndex = () => {
 		form.setValue("commune", value);
 		form.clearErrors("address");
 	};
-	const handleUploadFile = async (file: File) => {
-		try {
-			// setOpen();
-			const formdata = new FormData();
-			formdata.append("image", file);
-			const { data } = await uploadFileService(formdata);
-			URL.revokeObjectURL(previewUrl.url);
-			setPreviewUrl({
-				url: data.path,
-				isLoading: false,
-			});
-			return data.path;
-		} catch (error) {
-			console.error(error);
-		} finally {
-			// setClose();
-		}
-	};
-	const onSubmit = async (value: z.infer<typeof formSchema>) => {
-		try {
-			const { data } = await changeAccountShipper(value as IShipper);
-			console.log("datassssssssss", data);
-			toast.success(data?.message);
-		} catch (error) {
-			if (error instanceof AxiosError) {
-				toast.error(error?.response?.data?.message);
-			}
-		}
-	};
+
 	return (
 		<div className="padding">
 			<header className="p-2 md:px-4 md:mb-4 sticky top-0 bg-main w-full z-10">
@@ -285,13 +321,18 @@ const AccountShipperIndex = () => {
 												Địa chỉ thường chú
 											</FormLabel>
 											<div className=" w-full">
-												<FormControl>
-													<Input
-														placeholder=""
-														{...field}
-														className="text-sm md:text-base"
-													/>
-												</FormControl>
+												<AddressLocation
+													field={field}
+													citys={citys || []}
+													districts={districts}
+													commune={commune}
+													iCity={form.watch("city")}
+													idDistrict={form.watch("district")}
+													idCommune={form.watch("commune")}
+													handleOnChangeCity={handleOnChangeCity}
+													handleOnChangeDistrict={handleOnChangeDistrict}
+													handleOnChangeCommune={handleOnChangeCommune}
+												/>
 												<FormMessage className="pt-3" />
 											</div>
 										</FormItem>
@@ -310,7 +351,7 @@ const AccountShipperIndex = () => {
 													<div className="size-[100px]">
 														<img
 															src={previewUrl.url || "/avtUser.png"}
-															className=" w-full h-full object-cover  "
+															className=" w-full h-full object-cover rounded-full "
 															alt=""
 														/>
 														{previewUrl?.isLoading && (
