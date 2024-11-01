@@ -70,10 +70,10 @@ const DealProductSection: React.FC = () => {
 							<h6 className="text-lg font-medium text-gray-500">
 								Kết thúc vào
 							</h6>
-							<Countdown />
+							<Countdown date={new Date(dealProduct?.date as string).toLocaleDateString() }/>
 						</div>
 					</div>
-					<div className="relative flex justify-center lg:w-1/2 lg:justify-start">
+					<div className="relative flex justify-center lg:w-1/2 ">
 						<motion.div
 							className="absolute bg-gradient-to-br from-[#9cffe97d] to-[#6b6bd56b] rounded-full inset-x-6 inset-y-14 md:inset-y-5  md:inset-x-12"
 							initial={{ scale: 1 }}
@@ -85,11 +85,13 @@ const DealProductSection: React.FC = () => {
 							}}
 						></motion.div>
 
-						<img
-							src={dealProduct?.product?.thumbnail}
-							alt={dealProduct?.product?.name}
-							className="relative z-10 h-auto max-w-full"
-						/>
+						<div className="relative z-10 h-auto max-w-96">
+						  <img
+  							src={dealProduct?.product?.thumbnail}
+  							alt={dealProduct?.product?.name}
+  							className="w-full h-full mix-blend-multiply"
+  						/>
+						</div>
 					</div>
 				</div>
 			</div>
