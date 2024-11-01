@@ -64,3 +64,9 @@ export const getCateById = async (id: string | number) => {
 	const data = await instance.get(`${urlConfig}/getProductByCategory/${id}`);
 	return data;
 };
+export const activeCategory = async ({id,active}:{id:string,active:boolean}) => {
+	return instance.put(`${urlConfig}/activeCate/${id}`,{active});
+};
+export const getCategoryActive =  () => {
+	return instance.get(`${urlConfig}/getCateActive`);
+};
