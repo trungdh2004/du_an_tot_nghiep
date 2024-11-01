@@ -33,6 +33,7 @@ const CategoryIndex = () => {
 	interface IData {
 		_id: string;
 		name: string;
+		thumbnail: string;
 		description: string;
 		deleted: boolean;
 		createdAt: string;
@@ -170,6 +171,7 @@ const CategoryIndex = () => {
 	};
 	const columns: ColumnDef<IData>[] = [
 		{
+			accessorKey: "select",
 			id: "select",
 			header: ({ table }) => (
 				<Checkbox
@@ -203,6 +205,7 @@ const CategoryIndex = () => {
 		},
 		{
 			accessorKey: "name",
+			id: "name",
 			header: () => {
 				return <div className="text-xs md:text-base">Tên</div>;
 			},
@@ -213,16 +216,34 @@ const CategoryIndex = () => {
 			},
 		},
 		{
-			accessorKey: "description",
+			accessorKey: "thumbnail",
+			id: "thumbnail",
 			header: () => {
-				return <div className="text-xs md:text-base">Mô tả</div>;
+				return <div className="text-xs md:text-base">Ảnh</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="text-xs truncate md:text-base max-w-60">
-						{row?.original?.description} {row?.original?.description}{" "}
-						{row?.original?.description} {row?.original?.description}{" "}
-						{row?.original?.description} {row?.original?.description}
+					<div className="w-14 h-14">
+						<img
+							src={row?.original?.thumbnail}
+							alt="Chưa có ảnh"
+							className="w-full h-full"
+						/>
+					</div>
+				);
+			},
+		},
+		{
+			accessorKey: "description",
+			id: "description",
+
+			header: () => {
+				return <div className="text-xs md:text-base ">Mô tả</div>;
+			},
+			cell: ({ row }) => {
+				return (
+					<div className="md:text-base text-xs lg:w-[450px] md:w-[300px] w-[250px] truncate">
+						{row?.original?.description}
 					</div>
 				);
 			},
@@ -230,34 +251,23 @@ const CategoryIndex = () => {
 
 		{
 			accessorKey: "createdAt",
+			id: "createdAt",
 			header: () => {
 				return <div className="text-xs md:text-base">View Home</div>;
 			},
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.createdAt);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
-				return (
-					<div className="text-xs md:text-base">
-						{/* {formattedDate} */}
-						<label className="relative mb-5 cursor-pointer">
-							<input
-								type="checkbox"
-								value=""
-								className="sr-only peer"
-								onChange={(e) => {
-									handleUpdateActive(row.original?._id,e.target.checked);
-								}}
-								defaultChecked={(row.original as any)?.active}
-							/>
-							<div className="peer h-5 w-9 rounded-full bg-gray-400 after:absolute after:top-[2px] after:left-[2px] after:h-4 after:w-4 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-indigo-900 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-200"></div>
-						</label>
-					</div>
-				);
+				return <div className="text-xs md:text-base">{formattedDate}</div>;
 			},
 		},
 		{
+			accessorKey: "actions",
 			id: "actions",
 			enableHiding: false,
+			header: () => {
+				return <div className="text-xs md:text-base">Hành động</div>;
+			},
 			cell: ({ row }) => {
 				return (
 					<DropdownMenu>

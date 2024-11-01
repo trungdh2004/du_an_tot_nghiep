@@ -26,7 +26,17 @@ import {
 	updateCategory,
 } from "@/service/category-admin";
 import instance from "@/config/instance";
-import { useProcessBarLoadingEventNone } from "@/store/useSidebarAdmin";
+import {
+	useProcessBarLoading,
+	useProcessBarLoadingEventNone,
+} from "@/store/useSidebarAdmin";
+import {
+	AiOutlineCloudUpload,
+	AiOutlineLoading3Quarters,
+} from "react-icons/ai";
+import { cn } from "@/lib/utils";
+import { uploadFileService } from "@/service/upload";
+import { ImageType } from "react-images-uploading";
 
 interface FormDialog {
 	open: boolean | string;
@@ -35,6 +45,7 @@ interface FormDialog {
 	handleClose: () => void;
 	handlePaging: () => void;
 }
+
 const formSchema = z.object({
 	name: z
 		.string({
@@ -43,6 +54,17 @@ const formSchema = z.object({
 		.min(1, {
 			message: "Tên danh mục không được để trống",
 		}),
+	thumbnail: z
+		.object({
+			url: z.string().optional(),
+			file: z.instanceof(File).optional(),
+		})
+		.refine(
+			(data) => {
+				return !!data.url;
+			},
+			{ message: "Nhập ảnh khác" },
+		),
 	description: z
 		.string({
 			message: "Mô tả danh mục không được để trống",
@@ -63,10 +85,36 @@ const CategoryAdd = ({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: "",
+			thumbnail: { url: "" },
 			description: "",
 		},
 	});
 	console.log(open);
+	const { isOpen, setOpen, setClose } = useProcessBarLoading();
+	const [isPending, setIsPending] = useState(false);
+	const [previewUrl, setPreviewUrl] = useState({
+		isLoading: false,
+		url: "",
+	});
+	const [image, setImage] = useState<ImageType>({});
+	const handleUploadFile = async (file: File) => {
+		try {
+			setOpen();
+			const formdata = new FormData();
+			formdata.append("image", file);
+			const { data } = await uploadFileService(formdata);
+			URL.revokeObjectURL(previewUrl.url);
+			setPreviewUrl({
+				url: data.path,
+				isLoading: false,
+			});
+			return data.path;
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setClose();
+		}
+	};
 
 	const onHandleUpdate = async (dataForm: any) => {
 		try {
@@ -101,7 +149,12 @@ const CategoryAdd = ({
 			(async () => {
 				try {
 					const { data } = await getCategory(open);
-					form.reset(data.data);
+					const dataReset = {
+						...data.data,
+						thumbnail: { url: data.data.thumbnail },
+					};
+					setImage({ dataURL: data.data.thumbnail });
+					form.reset(dataReset);
 				} catch (error) {
 					console.error("Error:", error);
 				}
@@ -109,11 +162,16 @@ const CategoryAdd = ({
 		}
 	}, [open]);
 
-	const onSubmit = (data: { name: string; description: string }) => {
+	const onSubmit = async (data: z.infer<typeof formSchema>) => {
+		let url = data.thumbnail.url;
+		if (data?.thumbnail?.file) {
+			url = await handleUploadFile(data?.thumbnail?.file as File);
+		}
+		const dataPush = { ...data, thumbnail: url };
 		if (typeof open === "string") {
-			onHandleUpdate(data);
+			onHandleUpdate(dataPush);
 		} else {
-			onHandleAdd(data);
+			onHandleAdd(dataPush);
 		}
 	};
 
@@ -142,6 +200,74 @@ const CategoryAdd = ({
 											<Input placeholder="Name" {...field} />
 										</FormControl>
 										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								disabled={isPending}
+								control={form.control}
+								name="thumbnail"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Ảnh sản phẩm</FormLabel>
+										<FormControl>
+											<div className="w-full ">
+												<label
+													htmlFor="file-upload"
+													className={cn("w-full relative ")}
+												>
+													<div className="relative w-full bg-white border rounded-sm">
+														<div
+															className={cn(
+																"w-full h-[160px] flex justify-center items-center flex-col",
+																image?.dataURL && "hidden",
+															)}
+														>
+															<AiOutlineCloudUpload size={50} strokeWidth={1} />
+															<h3 className="mt-2 text-sm font-medium text-gray-900">
+																<span>Chọn ảnh</span>
+															</h3>
+															<p className="mt-1 text-xs text-gray-500">
+																PNG, JPG, GIF.
+															</p>
+														</div>
+
+														<div
+															className={cn(
+																" relative flex justify-center items-center h-[160px]",
+																image?.dataURL ? "" : "hidden",
+															)}
+														>
+															<img
+																src={image?.dataURL}
+																className={cn(
+																	"size-[140px] object-cover border border-slate-100",
+																)}
+																id="preview"
+															/>
+														</div>
+													</div>
+												</label>
+												<input
+													type="file"
+													name=""
+													id="file-upload"
+													accept="image/jpeg, image/png,image/svg,image/jpg,image/webp"
+													onChange={(event) => {
+														const file = (event?.target as HTMLInputElement)
+															?.files?.[0] as File;
+														const url = URL.createObjectURL(file);
+														setImage({ dataURL: url, file: file });
+														field.onChange({ url, file });
+														form.clearErrors("thumbnail");
+													}}
+													hidden
+													className="hidden outline-none focus-visible:ring-0 "
+												/>
+											</div>
+										</FormControl>
+
+										<FormMessage className="text-xs" />
 									</FormItem>
 								)}
 							/>
