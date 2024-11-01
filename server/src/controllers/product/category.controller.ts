@@ -22,11 +22,12 @@ class categoryController {
           message: error.details[0].message,
         });
       }
-      const { name, description } = req.body;
+      const { name, description,thumbnail } = req.body;
 
       const newCategory = await CategoryModel.create({
         name,
         description,
+        thumbnail
       });
       return res.status(STATUS.OK).json({
         message: "Tạo loại thành công",
@@ -188,6 +189,9 @@ class categoryController {
       const { id } = req.params;
 
       const { error } = categoryValidation.validate(req.body);
+
+      const {name,description,thumbnail} = req.body;
+
       if (error) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: error.details[0].message,
@@ -207,7 +211,11 @@ class categoryController {
         });
       }
 
-      const newCategory = await CategoryModel.findByIdAndUpdate(id, req.body, {
+      const newCategory = await CategoryModel.findByIdAndUpdate(id, {
+        name,
+        description,
+        thumbnail
+      }, {
         new: true,
       });
 
@@ -421,6 +429,60 @@ class categoryController {
       return res.status(STATUS.OK).json({
         message: "Lấy thành công",
         data: listProductAndColor,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async activeCategory(req: RequestModel, res: Response) {
+    try {
+      const { id } = req.params;
+      const {active} = req.body
+
+      if (!id)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Chưa truyền id",
+        });
+
+      const existingCategory = await CategoryModel.findById(id);
+
+      if (!existingCategory)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có danh mục này",
+        });
+
+      const newUpdate = await CategoryModel.findByIdAndUpdate(
+        id,
+        {
+          active: !!active ? true : false,
+        },
+        { new: true }
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Cập nhập thành công",
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async listCategoryActive(req: RequestModel, res: Response) {
+    try {
+      const newUpdate = await CategoryModel.find(
+        {
+          active: true,
+        },
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Lấy thành công",
+        data:newUpdate
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({

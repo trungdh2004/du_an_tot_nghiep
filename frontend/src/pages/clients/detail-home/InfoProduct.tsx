@@ -51,6 +51,10 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 	const [exitsListSize, setExitsListSize] = useState<string[]>([]);
 	const [exitsListColor, setExitsListColor] = useState<string[]>([]);
 	const [totalQuantity, setTotalQuantity] = useState(0);
+	const [price, setPrice] = useState({
+		origin: product?.price,
+		discount: product?.discount,
+	});
 	const [chooseColorId, setChooseColorId] = useState("");
 	const [chooseSizeId, setChooseSizeId] = useState("");
 	const [attributeId, setAttributeId] = useState("");
@@ -69,23 +73,39 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						attribute?.color?._id === chooseColorId &&
 						attribute?.size?._id === chooseSizeId,
 				);
+				setPrice({
+					origin: currentAttribute?.price as number,
+					discount: currentAttribute?.discount as number,
+				});
 				setIsErrorAttribute(false);
 				setAttributeId(currentAttribute?._id || "");
-				setTotalQuantity(currentAttribute?.quantity || product?.quantity || 0);
+				setTotalQuantity(currentAttribute?.quantity as number);
 			} else if (chooseSizeId) {
 				const quantity = product?.listSize?.find(
 					(size) => size?.sizeId === chooseSizeId,
 				)?.quantity;
+				setPrice({
+					origin: product?.price as number,
+					discount: product?.discount as number,
+				});
 				setAttributeId("");
-				setTotalQuantity(quantity || product?.quantity || 0);
+				setTotalQuantity(quantity as number);
 			} else if (chooseColorId) {
 				const quantity = product?.listColor?.find(
 					(color) => color?.colorId === chooseColorId,
 				)?.quantity;
-				setTotalQuantity(quantity || product?.quantity || 0);
+				setPrice({
+					origin: product?.price as number,
+					discount: product?.discount as number,
+				});
+				setTotalQuantity(quantity as number);
 				setAttributeId("");
 			} else {
-				setTotalQuantity(product?.quantity || 0);
+				setPrice({
+					origin: product?.price as number,
+					discount: product?.discount as number,
+				});
+				setTotalQuantity(product?.quantity as number);
 				setAttributeId("");
 			}
 		};
@@ -127,6 +147,20 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 		}
 		if (!attributeId && !product?.is_simple) {
 			setIsErrorAttribute(true);
+			return;
+		}
+		const isOutOfStock = (quantity: number) => quantity <= 0;
+		const isSimpleProductOutOfStock =
+			product?.is_simple && isOutOfStock(product.quantity);
+		const currentProductAttribute = product?.attributes?.find(
+			(attribute) => attribute._id === attributeId,
+		);
+
+		if (
+			isSimpleProductOutOfStock ||
+			(attributeId && isOutOfStock(currentProductAttribute?.quantity as number))
+		) {
+			toast.error("Sản phẩm này tạm thời hết hàng");
 			return;
 		}
 		switch (action) {
@@ -208,7 +242,9 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 								</div>
 							</div>
 							<p className="flex items-center gap-1 text-nowrap max-md:border-none">
-								<span className="font-medium text-black">7</span>
+								<span className="font-medium text-black">
+									{product?.ratingCount}
+								</span>
 								Đánh giá
 							</p>
 							<p className="items-center hidden gap-1 md:flex text-nowrap">
@@ -218,24 +254,39 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 								Đã bán
 							</p>
 							<p className="items-center hidden gap-1 border-none md:flex text-nowrap">
-								<span className="font-medium text-black">7</span>
+								<span className="font-medium text-black">
+									{product?.viewCount}
+								</span>
 								Lượt xem
 							</p>
 						</div>
 					</div>
 					<div className="flex items-end gap-5 bg-[#fafafa] py-4 px-5 w-full">
-						<span className="text-base text-gray-500 line-through">
-							{formatCurrency(900000)}
+						<span
+							className={cn(
+								"text-base text-gray-500 line-through",
+								price?.origin == price?.discount && "hidden",
+							)}
+						>
+							{formatCurrency(price?.origin || 0)}
 						</span>
 						<p className="text-2xl font-medium text-blue-500">
-							{formatCurrency(product?.price || 0)}
+							{formatCurrency(price?.discount || 0)}
 						</p>
-						<span className="capitalize text-sm text-white font-medium bg-blue-500 px-1 py-0.5 rounded">
+						<span className=" hidden capitalize text-sm text-white font-medium bg-blue-500 px-1 py-0.5 rounded">
 							34% giảm
 						</span>
 					</div>
 					<div className="w-full space-y-3 md:space-y-5">
-						<p className={cn(" p-1.5 text-red-500 hidden text-xs",product?.is_simple && 'block')}>*Lưu ý: Đây là Sản phẩm tiêu chuẩn, không có tùy chọn màu và kích thước sản phẩm</p>
+						<p
+							className={cn(
+								" p-1.5 text-red-500 hidden text-xs",
+								product?.is_simple && "block",
+							)}
+						>
+							*Lưu ý: Đây là Sản phẩm tiêu chuẩn, không có tùy chọn màu và kích
+							thước sản phẩm
+						</p>
 						<div
 							className={cn(
 								"space-y-5 p-1.5 w-full",
@@ -276,9 +327,15 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 										className="bg-white"
 										size="responsive"
 									/>
-									<span className="text-sm text-gray-600 md:text-base">
-										{totalQuantity} sản phẩm có sẵn
-									</span>
+									{totalQuantity > 0 ? (
+										<span className="text-sm text-gray-600 md:text-base">
+											{totalQuantity} sản phẩm có sẵn
+										</span>
+									) : (
+										<span className="text-sm text-red-500 md:text-base">
+											*Hết hàng
+										</span>
+									)}
 								</div>
 							</div>
 							<span
@@ -292,8 +349,12 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						</div>
 						<div className="flex items-center gap-3 p-1.5 w-full">
 							<Button
-								className="px-5 bg-blue-500 hover:bg-blue-700"
+								className={cn(
+									"px-5 bg-blue-500 hover:bg-blue-700",
+									totalQuantity <= 0 && "opacity-30",
+								)}
 								onClick={() => handleOrderProduct("buy-now")}
+								disabled={totalQuantity <= 0}
 							>
 								{isLoadingButton.isLoadingBynow ? (
 									<ButtonLoading type="white" />
@@ -302,7 +363,11 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 								)}
 							</Button>
 							<Button
-								className="bg-blue-100 hover:bg-blue-50 flex items-center gap-1.5 text-blue-500"
+								disabled={totalQuantity <= 0}
+								className={cn(
+									"bg-blue-100 hover:bg-blue-50 flex items-center gap-1.5 text-blue-500",
+									totalQuantity <= 0 && "opacity-30",
+								)}
 								onClick={() => handleOrderProduct("add-to-cart")}
 							>
 								{isLoadingButton.isLoadingShopping ? (

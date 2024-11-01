@@ -13,18 +13,24 @@ import { getProductBySlug } from "../../../service/product";
 import Ablum from "./Ablum";
 import InfoProduct from "./InfoProduct";
 import ProductDetailsAndReviews from "./ProductDetailsAndReviews";
+import ProductRelated from "./ProductRelated";
+import { useState } from "react";
 
 const DetailProduct = () => {
-	const { slug } = useParams();
+  const { slug } = useParams();
+  const [productRelated,setProductRelated] = useState([])
 	const { data, isLoading } = useQuery<IProductDetail>({
 		queryKey: ["GET_PRODUCT_BY_SLUG", slug],
 		queryFn: async () => {
 			const { data } = await getProductBySlug(
 				encodeURIComponent(slug as string),
-			);
+      );
+      setProductRelated(data?.listProductOther);
 			return data?.data;
 		},
 	});
+	console.log(data);
+
 	return (
 		<div className="">
 			<div className="padding ">
@@ -53,7 +59,7 @@ const DetailProduct = () => {
 							<>
 								<BreadcrumbSeparator />
 								<BreadcrumbItem>
-									<BreadcrumbPage>{data?.name}</BreadcrumbPage>
+									<BreadcrumbPage className="truncate max-w-52">{data?.name}</BreadcrumbPage>
 								</BreadcrumbItem>
 							</>
 						)}
@@ -69,6 +75,9 @@ const DetailProduct = () => {
 				</div>
 				<div className="">
 					<ProductDetailsAndReviews product={data} />
+				</div>
+				<div className="">
+					<ProductRelated product={productRelated} />
 				</div>
 			</div>
 		</div>

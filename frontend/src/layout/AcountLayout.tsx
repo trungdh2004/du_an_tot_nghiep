@@ -47,7 +47,7 @@ const AccountLayout = () => {
 								<motion.button className="flex items-center w-full px-2 border-b border-blue-400 ">
 									<div className="flex items-center flex-1 w-full gap-2 p-2 sm:pb-4">
 										<div className="overflow-hidden border rounded-full size-8 sm:size-12">
-											<img src={optimizeCloudinaryUrl(authUser?.avatarUrl as string,50,50)} className="w-full h-full " />
+											<img src={optimizeCloudinaryUrl(authUser?.avatarUrl as string,50,50) || "/avatar_25.jpg"} className="w-full h-full " />
 										</div>
 										<div className="">
 											<p className="font-semibold">{authUser?.full_name}</p>
@@ -129,7 +129,7 @@ const AccountLayout = () => {
 							</motion.nav>
 						</div>
 					</div>
-					<div className="flex-1 w-full border-l">
+					<div className="flex-1 w-full ">
 						<Outlet />
 					</div>
 				</div>

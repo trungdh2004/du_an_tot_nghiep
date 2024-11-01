@@ -282,7 +282,20 @@ class CartController {
 
   async pagingCartV2(req: RequestModel, res: Response) {
     try {
-      const listCartItem = await CartItemModel.find<IndexCartItem>({})
+      const user = req.user
+      let existingCart = await CartModel.findOne({
+        user: user?.id,
+      });
+
+      if (!existingCart) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Lỗi hệ thống"
+        })
+      }
+
+      const listCartItem = await CartItemModel.find<IndexCartItem>({
+        cart:existingCart?._id
+      })
         .populate([
           {
             path: "product",
@@ -325,10 +338,6 @@ class CartController {
           },
         ])
         .sort({ createdAt: -1 });
-
-        console.log({
-          listCartItem
-        })
 
       const listData = listCartItem?.reduce(
         (acc: IndexResAcc[], item: IndexCartItem) => {
@@ -481,9 +490,9 @@ class CartController {
       });
 
       if (!existingCart) {
-        existingCart = await CartModel.create({
-          user: user.id,
-        });
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Lỗi hệ thống"
+        })
       }
 
       const existingProductCart = await CartItemModel.findOne({
@@ -731,14 +740,14 @@ class CartController {
     try {
       const user = req.user;
 
-      let existingCart = await CartModel.findOne({
+      const existingCart = await CartModel.findOne({
         user: user?.id,
       });
 
       if (!existingCart) {
-        existingCart = await CartModel.create({
-          user: user?.id,
-        });
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Lỗi hệ thống"
+        })
       }
 
       const countProductCart = await CartItemModel.find({
@@ -780,9 +789,9 @@ class CartController {
       });
 
       if (!existingCart) {
-        existingCart = await CartModel.create({
-          user: user?.id,
-        });
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Lỗi hệ thống"
+        })
       }
 
       const listCartItem = await CartItemModel.find({

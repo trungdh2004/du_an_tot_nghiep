@@ -547,14 +547,12 @@ class ShipperController {
         });
       });
 
-      console.log("updateOrder", updateOrder);
-
       const customer = await CustomerModel.findOne({
         user: updateOrder?.user,
       });
 
       if (customer) {
-        CustomerModel.findByIdAndUpdate(customer._id, {
+        await CustomerModel.findByIdAndUpdate(customer._id, {
           $inc: {
             totalOrder: 1,
             totalOrderSuccess: 1,
@@ -563,7 +561,7 @@ class ShipperController {
           },
         });
       } else {
-        CustomerModel.create({
+        await CustomerModel.create({
           user: updateOrder?.user,
           totalOrder: 1,
           totalOrderSuccess: 1,
@@ -697,7 +695,7 @@ class ShipperController {
       if (status === 4) {
         queryStatus = {
           statusList: {
-            $in: [4,5],
+            $in: [4, 5],
           },
         };
       } else {
@@ -739,6 +737,57 @@ class ShipperController {
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
+      });
+    }
+  }
+
+  async changeAccountShipper(req: RequestShipper, res: Response) {
+    try {
+      const {
+        fullName,
+        birthDate,
+        address,
+        idCitizen,
+        avatar,
+        phone,
+        city,
+        district,
+        commune,
+      } = req.body;
+
+      const shipper = req.shipper;
+
+      const existingShipper = await ShipperModel.findById(shipper?.id);
+
+      if (!existingShipper) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có shipper",
+        });
+      }
+
+      const updateShiper = await ShipperModel.findByIdAndUpdate(
+        shipper?.id,
+        {
+          fullName,
+          birthDate,
+          address,
+          idCitizen,
+          avatar,
+          phone,
+          city,
+          district,
+          commune,
+        },
+        { new: true }
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Cập nhập thành công",
+        data: updateShiper,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message:error?.message,
       });
     }
   }

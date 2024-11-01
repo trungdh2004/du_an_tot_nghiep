@@ -16,17 +16,8 @@ export interface IProductOfOrder {
 export interface IItemOrder {
 	_id: string;
 	attribute: string;
-<<<<<<< HEAD
-	color: {
-		name: string;
-		code: string;
-	};
-	product: IProductOfOrder;
-	size: string;
-=======
 	variant: string;
 	product: IProductOfOrder;
->>>>>>> 46d5b4b67765bc1fbdcabc8366defd8421eed4be
 	quantity: number;
 	createdAt: string;
 	updatedAt: string;
@@ -113,7 +104,6 @@ export interface IListStatusOrderDate {
 export interface IOrderMoneyValue {
 	amount: number;
 }
-
 
 export type ProductOrderItem = {
 	quantity: number;

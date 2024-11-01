@@ -24,6 +24,9 @@ import routerSystem from "./sysTem.router";
 import routerPayment from "./payment";
 import routerExcel from "./excel.route";
 import routerCustomer from "./customer.route";
+import routerChat from "./chat.route";
+import routerProductComing from "./product/productComing.route";
+import routerTest from "./test.route";
 // import routerTest from "./test.route";
 
 const router = Router();
@@ -52,7 +55,9 @@ router.use("/system", routerSystem);
 router.use("/payment", routerPayment);
 router.use("/file", routerExcel);
 router.use("/customer", routerCustomer);
+router.use("/chat", routerChat);
+router.use("/productComing", routerProductComing);
 
-// router.use("/test", routerTest);
+router.use("/test", routerTest);
 
 export default router;

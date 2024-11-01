@@ -8,92 +8,152 @@ import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperType } from "swiper/types";
 const Carousel = () => {
-	const [productSlide, setProductSlide] = useState<IProductSlider[]>([]);
-	useEffect(() => {
-		(async () => {
-			const { data } = await getAllProductSlide();
-			setProductSlide(data?.data);
-		})();
-	}, []);
+	const [isEnd, setIsEnd] = useState(false);
+	const [isBeginning, setIsBeginning] = useState(true);
+	// const [productSlide, setProductSlide] = useState<IProductSlider[]>([]);
+	// useEffect(() => {
+	// 	(async () => {
+	// 		const { data } = await getAllProductSlide();
+	// 		setProductSlide(data?.data);
+	// 	})();
+	// }, []);
+	const handleSlideChange = (swiper: SwiperType) => {
+		setIsBeginning(swiper.isBeginning);
+		setIsEnd(swiper.isEnd);
+	};
+	const productSlide = [
+		{
+			label: "Sản phẩm 1",
+			title:
+				"huutrung xin chao bạn toi la gi của nahu hih hih csd fdbfd hehe hihi ncnc sascds bfdbfg Lenovo Erazer XT83 II Tai Nghe Thể Thao Không Dây Bluetooth 5.3 HiFi Chống Nước Có Mic",
+			_id: Math.random() * 100000,
+			thumbnail:
+				"https://res.cloudinary.com/dundmo7q8/image/upload/c_fill,q_auto,f_auto,e_sharpen:2000,dpr_2.0,e_sharpen:100,e_contrast:50,e_saturation:50,e_vibrance:50,w_350,h_370/shopApp/ufjllbqcnodkbzzvgp8w.jpg",
+		},
+		{
+			label: "Sản phẩm 1",
+			title: "Sản phẩm 2",
+			_id: Math.random() * 100000,
+			thumbnail:
+				"https://res.cloudinary.com/dundmo7q8/image/upload/c_fill,q_auto,f_auto,e_sharpen:2000,dpr_2.0,e_sharpen:100,e_contrast:50,e_saturation:50,e_vibrance:50,w_350,h_370/shopApp/ufjllbqcnodkbzzvgp8w.jpg",
+		},
+		{
+			label: "Sản phẩm 1",
+			title: "Sản phẩm 2",
+			_id: Math.random() * 100000,
+			thumbnail:
+				"https://res.cloudinary.com/dundmo7q8/image/upload/c_fill,q_auto,f_auto,e_sharpen:2000,dpr_2.0,e_sharpen:100,e_contrast:50,e_saturation:50,e_vibrance:50,w_350,h_370/shopApp/ufjllbqcnodkbzzvgp8w.jpg",
+		},
+		{
+			label: "Sản phẩm 1",
+			title: "Sản phẩm 2",
+			_id: Math.random() * 100000,
+			thumbnail:
+				"https://res.cloudinary.com/dundmo7q8/image/upload/c_fill,q_auto,f_auto,e_sharpen:2000,dpr_2.0,e_sharpen:100,e_contrast:50,e_saturation:50,e_vibrance:50,w_350,h_370/shopApp/ufjllbqcnodkbzzvgp8w.jpg",
+		},
+		{
+			label: "Sản phẩm 1",
+			title: "Sản phẩm 2",
+			_id: Math.random() * 100000,
+			thumbnail: "/NUC.svg",
+		},
+		{
+			label: "Sản phẩm 1",
+			title: "Sản phẩm 2",
+			_id: Math.random() * 100000,
+			thumbnail: "/NUC.svg",
+		},
+	];
 	const swiperRef = useRef<SwiperType>();
 	return (
-		<div>
-			<div className="padding flex flex-col sm:flex-row items-end sm:items-center justify-between">
+		<div className="py-8 padding">
+			<div className="flex flex-col items-end justify-between sm:flex-row sm:items-center">
 				<h2 className="text-2xl font-semibold sm:text-4xl sm:font-bold">
-					Khám phá nhiều hơn. <span>Những điều tốt đẹp đang chờ đợi bạn</span>
+					Sản phẩm mới mẻ
 				</h2>
 				<div className="flex items-center gap-7 *:flex *:items-center *:justify-center *:size-10 *:max-w-10 *:max-h-10 *:rounded-full *:border *:border-gray-200">
-					<button onClick={() => swiperRef.current?.slidePrev()}>
-						<PiArrowLeftThin size={32} className="text-slate-700" />
+				<button
+						onClick={() => swiperRef.current?.slidePrev()}
+						disabled={isBeginning}
+						className={`${
+							isBeginning ? "opacity-50 cursor-not-allowed" : ""
+						}`}
+					>
+						<PiArrowLeftThin size={26} className="text-slate-700" />
 					</button>
-					<button onClick={() => swiperRef.current?.slideNext()}>
-						<PiArrowRightThin size={32} className="text-slate-700" />
+					<button
+						onClick={() => swiperRef.current?.slideNext()}
+						disabled={isEnd}
+						className={`${isEnd ? "opacity-50 cursor-not-allowed" : ""}`}
+					>
+						<PiArrowRightThin size={26} className="text-slate-700" />
 					</button>
 				</div>
 			</div>
-			<div className="pl-4 md:pl-[50px] mt-6 md:mt-14">
+			<div className="mt-6 md:mt-14">
 				<Swiper
-					className="h-[250px]"
+					className="h-[200px]"
 					// install Swiper modules
-					height={250}
+					height={200}
 					modules={[Navigation]}
 					spaceBetween={0}
-					loop={true}
+					loop={false}
 					slidesPerView={1}
 					onBeforeInit={(swiper) => {
 						swiperRef.current = swiper;
 					}}
+					onSlideChange={(swiper) => handleSlideChange(swiper)}
 					breakpoints={{
 						320: {
 							slidesPerView: 1,
 							spaceBetween: 20,
-							height: 250,
+							height: 200,
 						},
 						// when window width is >= 480px
 						480: {
 							slidesPerView: 1.5,
 							spaceBetween: 30,
-							height: 250,
+							height: 200,
 						},
 						640: {
 							slidesPerView: 2,
 							spaceBetween: 30,
-							height: 250,
+							height: 200,
 						},
 						1024: {
 							slidesPerView: 2.5,
-							spaceBetween: 66,
-							height: 250,
+							spaceBetween: 50,
+							height: 200,
 						},
 					}}
 				>
 					{productSlide?.map((slide) => (
 						<SwiperSlide className="h-full " key={slide?._id}>
-							<div className="h-full flex items-center justify-between bg-[#FFEAEA] rounded-lg p-5">
-								<div className="absolute flex flex-col h-4/5 justify-between">
-									<div className="max-w-xs">
-										<span className="block mb-2 text-sm text-slate-700">
+							<div className="relative flex items-center justify-between h-full p-5 bg-white border rounded-lg box-shadow">
+								<div className="flex-1 flex flex-col justify-between h-full z-[2]">
+									<div className="">
+										<span className="block text-sm text-slate-700">
 											{slide?.label}
 										</span>
-										<h2 className="max-w-[177px] text-xl md:text-2xl text-slate-900 font-semibold text-wrap">
+										<h2 className="mt-1 text-xl font-semibold line-clamp-2 md:text-xl text-slate-900 text-wrap">
 											{slide?.title}
 										</h2>
 									</div>
-									<div className="mt-auto">
-										<button className="relative h-auto inline-flex items-center justify-center rounded-full transition-colors text-sm font-medium py-3 px-4 sm:py-3.5 sm:px-6   bg-white text-slate-700 dark:bg-slate-900 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-6000 dark:focus:ring-offset-0">
-											Mua ngay
+									<div>
+										<button className="px-4 py-1 mt-1 text-red-500 border border-red-500 rounded-full hover:bg-red-500 hover:text-white ">
+											<span className="font-medium leading-4">Mua ngay</span>
 										</button>
 									</div>
 								</div>
-								<div className="flex-1" />
-
-								<div className="max-sm:w-[150px] md:w-[193px] md:h-[209px]">
+								<div className="size-[180px] z-[2]">
 									<img
 										src={slide?.thumbnail}
 										alt=""
 										className="w-full h-full"
 									/>
 								</div>
+
+								<div className="absolute top-0 left-0 z-[1] h-full w-1/2 bg-gradient-to-l to-orange-100 from-white rounded-lg "></div>
 							</div>
 						</SwiperSlide>
 					))}

@@ -10,8 +10,20 @@ class NotificationController {
     try {
       const user = req.user;
       const pageIndex = Number(req.query.page) || 1;
+      const beforeQuery = req.query.before;
       let limit = 10;
       let skip = (pageIndex - 1) * limit || 0;
+
+      let queryBefore = {};
+
+      if (beforeQuery) {
+        queryBefore = {
+          createdAt: {
+            $lte: beforeQuery,
+          },
+        };
+      }
+
       const listNotification = await NotificationModel.find({
         $or: [
           {
@@ -25,6 +37,7 @@ class NotificationController {
           },
         ],
         is_delete: false,
+        ...queryBefore,
       })
         .sort({ createdAt: -1 })
         .skip(skip)
@@ -60,7 +73,11 @@ class NotificationController {
         isRead: false,
         is_delete: false,
       });
+      let before = null;
 
+      if (listNotification?.length > 0) {
+        before = listNotification[0].createdAt;
+      }
       const result = formatDataPaging({
         limit,
         pageIndex,
@@ -71,8 +88,13 @@ class NotificationController {
       return res.status(STATUS.OK).json({
         ...result,
         countNotificationNotRead,
+        before,
       });
-    } catch (error) {}
+    } catch (error:any) {
+        return res.status(STATUS.INTERNAL).json({
+            message:error?.message
+        })
+    }
   }
   async handleWatched(req: RequestModel, res: Response) {
     try {
@@ -188,26 +210,46 @@ class NotificationController {
     }
   }
 
-
-
   async pagingNotificationAdmin(req: RequestModel, res: Response) {
     try {
       const user = req.user;
       const pageIndex = Number(req.query.page) || 1;
+      const beforeQuery = req.query.before;
+
       let limit = 10;
       let skip = (pageIndex - 1) * limit || 0;
-      const listNotification = await NotificationAdminModel.find()
+
+      let queryBefore = {};
+
+      if (beforeQuery) {
+        queryBefore = {
+          createdAt: {
+            $lte: beforeQuery,
+          },
+        };
+      }
+
+      const listNotification = await NotificationAdminModel.find({
+        ...queryBefore
+      })
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit);
 
       const countNotification = await NotificationAdminModel.countDocuments();
 
-      const countNotificationNotRead = await NotificationAdminModel.countDocuments({
-        readOnly:{
-          $nin:[user?.id]
+      const countNotificationNotRead =
+        await NotificationAdminModel.countDocuments({
+          readOnly: {
+            $nin: [user?.id],
+          },
+        });
+
+        let before = null;
+
+        if (listNotification?.length > 0) {
+          before = listNotification[0].createdAt;
         }
-      });
 
       const result = formatDataPaging({
         limit,
@@ -219,8 +261,13 @@ class NotificationController {
       return res.status(STATUS.OK).json({
         ...result,
         countNotificationNotRead,
+        before,
       });
-    } catch (error) {}
+    } catch (error:any) {
+      return res.status(STATUS.INTERNAL).json({
+          message:error?.message
+      })
+  }
   }
 
   async handleWatchedAdmin(req: RequestModel, res: Response) {
@@ -246,21 +293,21 @@ class NotificationController {
         return res
           .status(STATUS.BAD_REQUEST)
           .json({ message: "Không có thông báo nào" });
-      
-      let queryRead = {}
 
-      if(isRead) {
-        queryRead= {
-          $push : {
-            readOnly:user?.id
-          }
-        }
-      }else {
-        queryRead= {
-          $pull : {
-            readOnly:user?.id
-          }
-        }
+      let queryRead = {};
+
+      if (isRead) {
+        queryRead = {
+          $push: {
+            readOnly: user?.id,
+          },
+        };
+      } else {
+        queryRead = {
+          $pull: {
+            readOnly: user?.id,
+          },
+        };
       }
 
       const newNotification = await NotificationAdminModel.findByIdAndUpdate(

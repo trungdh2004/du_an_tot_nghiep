@@ -49,7 +49,7 @@ const OrderInformation = ({ data, getOrderById }: any) => {
 													alt=""
 													className="w-12 h-12"
 												/>
-												<h4 className=" truncate">
+												<h4 className="w-32 truncate">
 													{pro.product.name}
 												</h4>
 											</div>
