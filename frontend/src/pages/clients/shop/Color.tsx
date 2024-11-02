@@ -3,6 +3,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { getAllColor } from "@/service/color";
 import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
+import { IColor } from "@/types/typeProduct";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { useQueryClient } from "@tanstack/react-query";
 import React, {
@@ -101,9 +102,13 @@ const Color = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 				)}
 			>
 				<div className="grid grid-cols-4 gap-1">
-					{colors?.map((color: any) => {
-            return (
-							<TooltipComponent key={color?._id} label={color.name} side="bottom">
+					{colors?.map((color: IColor) => {
+						return (
+							<TooltipComponent
+								key={color?._id}
+								label={color.name}
+								side="bottom"
+							>
 								<div
 									className="flex flex-col items-center gap-3"
 									key={color._id}

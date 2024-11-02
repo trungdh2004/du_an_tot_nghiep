@@ -9,7 +9,6 @@ interface Props {
 	setSearchParamsObject: Dispatch<SetStateAction<SearchObjectTypeProduct>>;
 }
 const SortFilterStar = ({ setSearchParamsObject }: Props) => {
-	const [rating, setRating] = useState<number | null>(null);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [check, setCheck] = useState(false);
 	const query = useQueryClient();

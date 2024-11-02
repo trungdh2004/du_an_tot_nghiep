@@ -64,7 +64,6 @@ const ShopProduct = () => {
 		refetchInterval: 1000 * 60 * 15,
 		retry: 2,
 	});
-
 	return (
 		<div className="padding pt-[40px]">
 			<div className="grid lg:grid-cols-12 gap-9 relative">
@@ -103,22 +102,24 @@ const ShopProduct = () => {
 						<ProductEmpty />
 					)}
 					{/* <Product /> */}
-					<div className="flex justify-center items-center py-4">
-						<Paginations
-							pageCount={productShop?.totalPage}
-							handlePageClick={(event: any) => {
-								setPageIndex(event.selected + 1);
-								setSearchParamsObject((prev) => ({
-									...prev,
-									pageIndex: event.selected + 1,
-								}));
-								searchParams.set("pageIndex", event.selected + 1);
-								setSearchParams(searchParams);
-								query.invalidateQueries({ queryKey: ["productShop"] });
-							}}
-							forcePage={0}
-						/>
-					</div>
+					{productShop?.content?.length > 0 && (
+						<div className="flex justify-center items-center py-4">
+							<Paginations
+								pageCount={productShop?.totalPage}
+								handlePageClick={(event: any) => {
+									setPageIndex(event.selected + 1);
+									setSearchParamsObject((prev) => ({
+										...prev,
+										pageIndex: event.selected + 1,
+									}));
+									searchParams.set("pageIndex", event.selected + 1);
+									setSearchParams(searchParams);
+									query.invalidateQueries({ queryKey: ["productShop"] });
+								}}
+								forcePage={pageIndex - 1}
+							/>
+						</div>
+					)}
 				</div>
 			</div>
 		</div>
