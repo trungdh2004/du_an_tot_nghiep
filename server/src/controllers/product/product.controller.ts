@@ -751,8 +751,8 @@ class ProductController {
 
       if (rating) {
         queryRating = {
-          $lte: {
-            rating: rating,
+          rating: {
+            $lte: rating,
           },
         };
       }

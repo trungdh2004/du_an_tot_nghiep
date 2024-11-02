@@ -1,15 +1,14 @@
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Smile } from "lucide-react";
-import ChatMessage from "./ChatMessage";
-import { useParams } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
-import { createMessage, findConversation, pagingMessage } from "@/service/chat";
-import { IConversation } from "./Conversation";
-import { Button } from "@/components/ui/button";
-import { CiLogout } from "react-icons/ci";
 import EmojiModal from "@/components/common/EmojiModal";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/auth";
+import { createMessage, findConversation, pagingMessage } from "@/service/chat";
+import { Send } from "lucide-react";
+import { ElementRef, useEffect, useRef, useState } from "react";
+import { CiLogout } from "react-icons/ci";
+import { Link, useParams } from "react-router-dom";
+import ChatMessage from "./ChatMessage";
+import { IConversation } from "./Conversation";
 
 export interface IMessage {
 	_id: string;
@@ -50,20 +49,33 @@ const ChatContent = () => {
 	const [loading, setLoading] = useState(false);
 	const [scroll, setScroll] = useState(false);
 	const { socket } = useAuth();
+	const [hidden, setHidden] = useState(false);
+	const [hasRequest, setHasRequest] = useState(true);
+	const [page, setPage] = useState(1);
 
-	const refBox = useRef<HTMLDivElement | null>(null);
+	const refBox = useRef<ElementRef<"div">>(null);
+	const bottomRef = useRef<ElementRef<"div">>(null);
 
 	useEffect(() => {
 		if (socket) {
 			socket?.emit("joinChat", id as string);
-			socket.on("messageSender",(message) => {
-				console.log("message",message);
+			socket.on("messageSender", (message) => {
+				console.log("message", {
+					...message,
+					user: conversation?.user,
+				});
 				setMessage((prev) => ({
 					...prev,
-					content: [...prev.content, message],
+					content: [
+						...prev.content,
+						{
+							...message,
+							user: conversation?.user,
+						},
+					],
 				}));
-				setScroll(true)
-			})
+				setScroll(true);
+			});
 		}
 		(async () => {
 			try {
@@ -72,6 +84,9 @@ const ChatContent = () => {
 				setConversation(conversation);
 
 				const { data } = await pagingMessage(id as string, 1);
+				if (data?.pageIndex >= data?.totalPage) {
+					setHasRequest(false);
+				}
 				setMessage(data);
 			} catch (error) {
 			} finally {
@@ -84,9 +99,9 @@ const ChatContent = () => {
 			if (socket) {
 				socket?.emit("leaveRoom", id as string);
 			}
+			setHasRequest(true);
 		};
 	}, [id]);
-
 
 	const handleNewMessage = async () => {
 		try {
@@ -99,40 +114,112 @@ const ChatContent = () => {
 				socket?.emit("newMessage", data?.data, data?.conversation);
 			}
 			setScroll(true);
-			setMessageNew("")
+			setMessageNew("");
 		} catch (error) {}
 	};
 
 	useEffect(() => {
-		if (scroll) {
-			if (refBox.current) {
-				refBox.current.scrollTop = refBox.current.scrollHeight;
+		const topDiv = refBox?.current;
+
+		const handlerScroll = () => {
+			const scrollTop = topDiv?.scrollTop;
+
+			if (scrollTop === 0) {
+				handleNextPage();
 			}
-			setScroll(false);
+		};
+
+		topDiv?.addEventListener("scroll", handlerScroll);
+
+		return () => {
+			topDiv?.removeEventListener("scroll", handlerScroll);
+		};
+	}, [refBox, hasRequest, page]);
+
+	const handleNextPage = async () => {
+		try {
+			const page = message?.pageIndex + 1;
+			if (!hasRequest) return;
+
+			const { data } = await pagingMessage(id as string, page);
+
+			console.log("data", data);
+			setMessage((prev) => {
+				return {
+					...prev,
+					pageIndex: page,
+					content: [...data?.content, ...prev.content],
+				};
+			});
+			setPage(page);
+			if (data?.totalPage === page) setHasRequest(false);
+		} catch (error) {}
+	};
+
+	useEffect(() => {
+		const bottomDiv = bottomRef?.current;
+		const topDiv = refBox.current;
+		const shouldAutoScroll = () => {
+			// if (!hasInitialized && bottomDiv) {
+			// 	setHasInitialized(true);
+			// 	return true;
+			// }
+
+			if (!topDiv) {
+				return false;
+			}
+
+			const distanceFromBottom =
+				topDiv.scrollHeight - topDiv.scrollTop - topDiv.clientHeight;
+
+			return distanceFromBottom <= 100;
+		};
+
+		if (shouldAutoScroll()) {
+			setTimeout(() => {
+				bottomRef.current?.scrollIntoView({
+					behavior: "smooth",
+				});
+			}, 100);
 		}
-	}, [scroll]);
+	}, [bottomRef, refBox, scroll]);
+
 	return (
 		<div className="h-full flex flex-col">
 			<header className="flex items-center justify-between w-full px-3 border-b h-[60px]">
 				<div className="flex items-center gap-3">
 					<div className="overflow-hidden border rounded-full size-10">
-						<img src="/avatar_25.jpg" alt="" />
+						<img
+							src={conversation?.user?.avatarUrl || "/avatar_25.jpg"}
+							alt=""
+						/>
 					</div>
 					<div>
 						<h2 className="font-semibold">{conversation?.user?.full_name}</h2>
-						<span className="text-sm text-green-500">online</span>
+						{/* <span className="text-sm text-green-500">online</span> */}
 					</div>
 				</div>
 
-				<Button variant={"outline"} className="block md:hidden">
+				<Link to={"/admin/chat"}><Button variant={"outline"} className="block md:hidden">
 					<CiLogout size={20} />
-				</Button>
+				</Button></Link>
 			</header>
 			<div
-				className=" flex-1 block scroll-custom overflow-y-auto space-y-2 p-2"
+				className="flex-1 block scroll-custom overflow-y-auto space-y-2 p-2"
+				id="messageBox"
 				ref={refBox}
 			>
-				{message?.content.map((msg) => <ChatMessage key={msg._id} {...msg} />)}
+				{message.content?.length > 0 &&
+					message.content?.map((item) => (
+						<div key={item._id}>
+							<ChatMessage
+								{...item}
+								avatar={conversation?.user?.avatarUrl || ""}
+							/>
+						</div>
+					))}
+
+				<div ref={bottomRef}></div>
 			</div>
 
 			<div className="p-4 border-t">

@@ -59,7 +59,7 @@ const ColorList = () => {
 
     const [searchObject, setSearchObject] = useState<any>({
         pageIndex: 1,
-        pageSize: 3,
+        pageSize: 5,
         keyword: "",
         fieldSort: "",
         sort: 1,

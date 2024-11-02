@@ -118,7 +118,6 @@ const CategoryAdd = ({
 
 	const onHandleUpdate = async (dataForm: any) => {
 		try {
-			setOpenProcessLoadingEventNone();
 			const { data } = await updateCategory(open, dataForm);
 			handleClose();
 			handlePaging();
@@ -131,7 +130,6 @@ const CategoryAdd = ({
 	};
 	const onHandleAdd = async (dataForm: any) => {
 		try {
-			setOpenProcessLoadingEventNone();
 			const { data } = await addCategory(dataForm);
 			form.reset();
 			handleClose();
@@ -163,6 +161,7 @@ const CategoryAdd = ({
 	}, [open]);
 
 	const onSubmit = async (data: z.infer<typeof formSchema>) => {
+		setOpenProcessLoadingEventNone();
 		let url = data.thumbnail.url;
 		if (data?.thumbnail?.file) {
 			url = await handleUploadFile(data?.thumbnail?.file as File);
