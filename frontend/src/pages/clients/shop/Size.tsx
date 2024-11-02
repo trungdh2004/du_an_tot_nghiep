@@ -31,18 +31,18 @@ const Size = ({ setSearchParamsObject }: Props) => {
 			}
 		})();
 	}, []);
-	useEffect(() => {
-		const paramsObject = Object.fromEntries(searchParams.entries());
-		const sizeCheck =
-			paramsObject?.size
-				?.split(",")
-				.map((c) => c.trim())
-				.filter(Boolean) ?? [];
-		setSearchParamsObject((prev) => ({
-			...prev,
-			size: sizeCheck,
-		}));
-	}, [searchParams, setSearchParamsObject]);
+	// useEffect(() => {
+	// 	const paramsObject = Object.fromEntries(searchParams.entries());
+	// 	const sizeCheck =
+	// 		paramsObject?.size
+	// 			?.split(",")
+	// 			.map((c) => c.trim())
+	// 			.filter(Boolean) ?? [];
+	// 	setSearchParamsObject((prev) => ({
+	// 		...prev,
+	// 		size: sizeCheck,
+	// 	}));
+	// }, [searchParams, setSearchParamsObject]);
 
 	const handleCheckedSize = useCallback(
 		(size: string) => (checked: CheckedState) => {

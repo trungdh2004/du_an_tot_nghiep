@@ -46,6 +46,7 @@ const ShopProduct = () => {
 				min: 0,
 				max: 5000000,
 				tab: 1,
+				rating: null,
 			};
 		});
 	const {
@@ -62,8 +63,7 @@ const ShopProduct = () => {
 		staleTime: 1000 * 60 * 15,
 		refetchInterval: 1000 * 60 * 15,
 		retry: 2,
-  });
-  
+	});
 
 	return (
 		<div className="padding pt-[40px]">
@@ -103,7 +103,7 @@ const ShopProduct = () => {
 						<ProductEmpty />
 					)}
 					{/* <Product /> */}
-					<div className="flex justify-center items-center pb-4">
+					<div className="flex justify-center items-center py-4">
 						<Paginations
 							pageCount={productShop?.totalPage}
 							handlePageClick={(event: any) => {

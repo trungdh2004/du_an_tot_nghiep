@@ -35,18 +35,18 @@ const Color = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 			}
 		})();
 	}, []);
-	useEffect(() => {
-		const paramsObject = Object.fromEntries(searchParams.entries());
-		const colorCheck =
-			paramsObject?.color
-				?.split(",")
-				.map((c) => c.trim())
-				.filter(Boolean) ?? [];
-		setSearchParamsObject((prev) => ({
-			...prev,
-			color: colorCheck,
-		}));
-	}, [searchParams, setSearchParamsObject]);
+	// useEffect(() => {
+	// 	const paramsObject = Object.fromEntries(searchParams.entries());
+	// 	const colorCheck =
+	// 		paramsObject?.color
+	// 			?.split(",")
+	// 			.map((c) => c.trim())
+	// 			.filter(Boolean) ?? [];
+	// 	setSearchParamsObject((prev) => ({
+	// 		...prev,
+	// 		color: colorCheck,
+	// 	}));
+	// }, [searchParams, setSearchParamsObject]);
 
 	const handleCheckedColor = useCallback(
 		(color: string) => (checked: CheckedState) => {
