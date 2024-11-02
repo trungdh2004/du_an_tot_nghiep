@@ -53,17 +53,10 @@ const Conversation = () => {
 	useEffect(() => {
 		if (socket) {
 			socket.on("updateConversation", (dataConver: any) => {
-				const dataFilter = conversation?.content?.filter(
-					(item) => item?._id !== dataConver?._id,
-				);
-				console.log({
-					dataConver,
-					dataFilter,
-					content: conversation?.content,
-					conversation
-				});
-
 				setConversation((prev) => {
+					const dataFilter = prev?.content?.filter(
+						(item) => item?._id !== dataConver?._id,
+					);
 					return {
 						...prev,
 						content: [dataConver, ...dataFilter],

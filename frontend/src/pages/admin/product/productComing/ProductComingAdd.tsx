@@ -42,6 +42,7 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Label } from "recharts";
+import { useProcessBarLoadingEventNone } from "@/store/useSidebarAdmin";
 interface Props {
 	open: boolean | string;
 	close: () => void;
@@ -54,6 +55,8 @@ interface DataComingState {
 }
 
 const ProductComingAdd = ({ open, close, handleCustomer }: Props) => {
+	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
+		useProcessBarLoadingEventNone();
 	const FormSchema = z.object({
 		product: z.object({
 			_id: z.string(),
