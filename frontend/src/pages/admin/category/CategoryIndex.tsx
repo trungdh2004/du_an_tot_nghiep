@@ -2,6 +2,7 @@ import TableComponent from "@/components/common/TableComponent";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
+	activeCategory,
 	hiddencate,
 	hiddenManyCate,
 	paddingCate,
@@ -26,6 +27,7 @@ import { typeResponse } from "@/types/typeReponse";
 import { useDebounceCallback } from "usehooks-ts";
 import { toast } from "sonner";
 import DialogConfirm from "@/components/common/DialogConfirm";
+import { AxiosError } from "axios";
 
 const CategoryIndex = () => {
 	interface IData {
@@ -154,6 +156,19 @@ const CategoryIndex = () => {
 		setRowSelection({});
 		setListRowSelected([]);
 	};
+	const handleUpdateActive = async (id: string, active: boolean) => {
+		try {
+			const { data } = await activeCategory({
+				id,
+				active,
+			});
+			toast.success(data?.message);
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				toast.error(error?.response?.data?.message);
+			}
+		}
+	};
 	const columns: ColumnDef<IData>[] = [
 		{
 			accessorKey: "select",
@@ -192,11 +207,11 @@ const CategoryIndex = () => {
 			accessorKey: "name",
 			id: "name",
 			header: () => {
-				return <div className="md:text-base text-xs">Tên</div>;
+				return <div className="text-xs md:text-base">Tên</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs">{row?.original?.name}</div>
+					<div className="text-xs md:text-base">{row?.original?.name}</div>
 				);
 			},
 		},
@@ -204,7 +219,7 @@ const CategoryIndex = () => {
 			accessorKey: "thumbnail",
 			id: "thumbnail",
 			header: () => {
-				return <div className="md:text-base text-xs">Ảnh</div>;
+				return <div className="text-xs md:text-base">Ảnh</div>;
 			},
 			cell: ({ row }) => {
 				return (
@@ -223,7 +238,7 @@ const CategoryIndex = () => {
 			id: "description",
 
 			header: () => {
-				return <div className="md:text-base text-xs ">Mô tả</div>;
+				return <div className="text-xs md:text-base ">Mô tả</div>;
 			},
 			cell: ({ row }) => {
 				return (
@@ -238,12 +253,12 @@ const CategoryIndex = () => {
 			accessorKey: "createdAt",
 			id: "createdAt",
 			header: () => {
-				return <div className="md:text-base text-xs">Ngày tạo</div>;
+				return <div className="text-xs md:text-base">View Home</div>;
 			},
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.createdAt);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
-				return <div className="md:text-base text-xs">{formattedDate}</div>;
+				return <div className="text-xs md:text-base">{formattedDate}</div>;
 			},
 		},
 		{
@@ -251,15 +266,15 @@ const CategoryIndex = () => {
 			id: "actions",
 			enableHiding: false,
 			header: () => {
-				return <div className="md:text-base text-xs">Hành động</div>;
+				return <div className="text-xs md:text-base">Hành động</div>;
 			},
 			cell: ({ row }) => {
 				return (
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-							<Button variant="ghost" className="h-8 w-8 p-0">
+							<Button variant="ghost" className="w-8 h-8 p-0">
 								<span className="sr-only">Open menu</span>
-								<HiOutlineDotsVertical className="h-4 w-4" />
+								<HiOutlineDotsVertical className="w-4 h-4" />
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
@@ -271,14 +286,14 @@ const CategoryIndex = () => {
 							</DropdownMenuItem>
 							{row?.original?.deleted ? (
 								<DropdownMenuItem
-									className="text-green-400 text-center"
+									className="text-center text-green-400"
 									onClick={() => setopenUnhiddenCategory(row?.original?._id)}
 								>
 									Bỏ ẩn
 								</DropdownMenuItem>
 							) : (
 								<DropdownMenuItem
-									className="text-red-400 text-center"
+									className="text-center text-red-400"
 									onClick={() => setOpenHiddenCategory(row?.original?._id)}
 								>
 									Ẩn
@@ -293,7 +308,7 @@ const CategoryIndex = () => {
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex flex-col gap-3">
-				<h4 className="font-medium md:text-xl text-base">Danh sách danh mục</h4>
+				<h4 className="text-base font-medium md:text-xl">Danh sách danh mục</h4>
 				<div className="flex justify-between">
 					<Input
 						placeholder="Tìm kiếm danh mục"
