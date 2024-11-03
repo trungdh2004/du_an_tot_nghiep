@@ -77,6 +77,10 @@ const VoucherSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       default: null,
     },
+    isHome:{
+      type:Boolean,
+      default: false,
+    },
     listUseProduct: [
       {
         type: mongoose.Types.ObjectId,

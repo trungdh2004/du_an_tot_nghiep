@@ -17,6 +17,10 @@ class ChatController {
       if (!existingConversations) {
         existingConversations = await ConversationModel.create({
           user: user?.id,
+          lastContent: "Xin chào quý khách đến với cửa hàng NUCSHOP",
+          lastSender:"ADMIN",
+          lastMessage:Date.now(),
+          lastRead:["ADMIN"]
         });
 
         await MessageModel.create({
@@ -169,9 +173,9 @@ class ChatController {
       const queryKeyword = {};
 
       const listConversation = await ConversationModel.find({
-        // user: {
-        //   $ne: user?.id,
-        // },
+        user: {
+          $ne: user?.id,
+        },
       })
         .sort({
           lastMessage: -1,

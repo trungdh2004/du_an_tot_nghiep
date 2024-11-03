@@ -24,17 +24,16 @@ const User = () => {
 	const regex = /\b\/?admin\b/;
 
 	const { authUser, setAuthUser, setIsLoggedIn } = useAuth();
-	const { setCarts, updateTotalCart } = useCart();
+	const {clearStateCart  } = useCart();
 	const handleLogout = async () => {
 		try {
-			const data = await logOut();
+			 await logOut();
 			delete instance.defaults.headers.common.Authorization;
 			setAuthUser?.(undefined);
 			setIsLoggedIn?.(false);
 			removeItemLocal("token");
 			signOut(getAuth(app));
-			updateTotalCart(0);
-			setCarts([]);
+			clearStateCart();
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				toast.error(error.response?.data?.message);

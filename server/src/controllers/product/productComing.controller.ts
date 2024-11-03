@@ -60,6 +60,7 @@ class ProductComingController {
             price: 1,
             thumbnail: 1,
             quantity: 1,
+            discount:1
           },
         });
 
@@ -134,7 +135,16 @@ class ProductComingController {
         });
       }
 
-      const existingProduct = await ProductComingModel.findById(id);
+      const existingProduct = await ProductComingModel.findById(id).populate({
+        path:"product",
+        select:{
+          _id:1,
+          name:1,
+          thumbnail:1,
+          price:1,
+          discount:1
+        }
+      });
 
       if (!existingProduct) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -144,6 +154,50 @@ class ProductComingController {
 
       return res.status(STATUS.OK).json({
         product: existingProduct,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async updateComing(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const { productId, date, active = false } = req.body;
+
+      if(!id || !productId ||!date) { 
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Lỗi thiếu dữ liệu",
+        });
+      } 
+
+      const existingProduct = await ProductComingModel.findById(id)
+
+      if (!existingProduct) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có ",
+        });
+      }
+
+      if(active) {
+        await ProductComingModel.updateMany(
+          {},
+          {
+            active: false,
+          }
+        );
+      }
+
+      const newUpdate = await ProductComingModel.findByIdAndUpdate(id,{
+        product:productId,
+        date,
+        active
+      })
+
+      return res.status(STATUS.OK).json({
+        message:"Sửa thành công"
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({

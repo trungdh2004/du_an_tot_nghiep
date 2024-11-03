@@ -3,6 +3,7 @@ export interface ICategory {
   name: string;
   description: string;
   slug:string;
+  active?: boolean;
 }
 export interface IColor {
   _id: string;
