@@ -37,7 +37,7 @@ import useStoreShipper from "@/store/useCurrentShipper";
 import AddressLocation from "@/pages/clients/address/AddressLocation";
 
 const formSchema = z.object({
-	fullName: z.string({ required_error: "Bạn chưa  nhập email" }),
+	fullName: z.string({ required_error: "Bạn chưa  nhập tên" }),
 	phone: z.string().regex(/^(\+84|0)(3|5|7|8|9)\d{8}$/, {
 		message: "Số điện thoại không hợp lệ",
 	}),
@@ -101,7 +101,7 @@ const AccountShipperIndex = () => {
 		url: current?.avatar || "",
 	});
 
-	console.log("shipper", current);
+	// console.log("shipper", current);
 	const handleUploadFile = async (file: File) => {
 		try {
 			// setOpen();
@@ -121,21 +121,28 @@ const AccountShipperIndex = () => {
 		}
 	};
 	const { mutate } = useMutation({
-    mutationFn: async (data: IShipper) => {
-      return await changeAccountShipper(data as IShipper)
-    },
-    onSuccess: ({ data }) => {
-      if (setCurrent) {
-        console.log("data updated", data)
-        setCurrent(data);
-      }
-			toast.success(data?.message);
-    }
+		mutationFn: async (data: IShipper) => {
+			return changeAccountShipper(data as IShipper);
+		},
+		onSuccess: (data: any) => {
+			if (setCurrent) {
+				console.log("data updated", data?.data?.data);
+				setCurrent(data?.data?.data);
+			}
+			toast.success("Cập nhật thông tin thành công");
+		},
+		onError: (error) => {
+			console.error(error);
+			if (error instanceof AxiosError) {
+				toast.error(error.response?.data?.message);
+			}
+		},
 	});
 	const onSubmit = async (value: z.infer<typeof formSchema>) => {
 		try {
-			const { data } = ;
-			console.log("datassssssssss", data);
+			mutate(value as IShipper);
+			// const { data } = ;
+			// console.log("datassssssssss", data);
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				toast.error(error?.response?.data?.message);
@@ -299,7 +306,6 @@ const AccountShipperIndex = () => {
 																	field.onChange(e?.toISOString());
 																}}
 																disabled={(date) =>
-																	date < new Date() ||
 																	date < new Date("1900-01-01")
 																}
 																initialFocus

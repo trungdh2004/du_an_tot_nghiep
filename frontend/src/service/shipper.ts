@@ -3,9 +3,8 @@ import { IOrderShipper, IShipper } from "@/types/shipper.interface";
 
 export const registerShipper = async (obj: IShipper) =>
 	instance.post(`/shipper/registerShipper`, obj);
-export const changeAccountShipper = (obj: IShipper) => {
-	instance.post(`shipper/changeAccountShipper`, obj);
-};
+export const changeAccountShipper = (obj: IShipper) =>
+	instance.post(`/shipper/changeAccountShipper`, obj);
 export const getCurrentShipper = async () =>
 	instance.get(`/shipper/getCurrentShipper`);
 

@@ -54,7 +54,7 @@ interface ICommune {
 }
 
 const formSchema = z.object({
-	fullName: z.string({ required_error: "Bạn chưa  nhập email" }),
+	fullName: z.string({ required_error: "Bạn chưa  nhập tên" }),
 	phone: z.string().regex(/^(\+84|0)(3|5|7|8|9)\d{8}$/, {
 		message: "Số điện thoại không hợp lệ",
 	}),
