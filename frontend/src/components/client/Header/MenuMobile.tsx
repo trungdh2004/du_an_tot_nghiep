@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
 const MenuMobile = () => {
 	const { isLoggedIn, authUser, setAuthUser, setIsLoggedIn } = useAuth();
-	const {clearStateCart } = useCart();
+	const { clearStateCart } = useCart();
 	const matches = useMediaQuery("(min-width: 768px)");
 	const [isOpen, setClose] = useState(false);
 	useEffect(() => {
@@ -26,7 +26,7 @@ const MenuMobile = () => {
 	}, [matches]);
 	const handleLogout = async () => {
 		try {
-			 await logOut();
+			await logOut();
 			delete instance.defaults.headers.common.Authorization;
 			setAuthUser?.(undefined);
 			setIsLoggedIn?.(false);
@@ -114,6 +114,16 @@ const MenuMobile = () => {
 						>
 							<NavLink to={"/auth/login"} className="block">
 								Đăng nhập
+							</NavLink>
+						</li>
+						<li
+							className={cn(
+								" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14] hidden",
+								isLoggedIn && "block",
+							)}
+						>
+							<NavLink to={"/cart"} className="block">
+								Giỏ hàng
 							</NavLink>
 						</li>
 						<li

@@ -1,13 +1,12 @@
-import React from "react";
-import { FaRegHeart, FaStar } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { IoEyeOutline } from "react-icons/io5";
-import { IColor, IProduct } from "@/types/typeProduct";
-import { formatCurrency, formatQuantitySort } from "@/common/func";
-import { optimizeCloudinaryUrl } from "@/common/localFunction";
 import OutOfStock from "@/assets/OutofStock.png";
-import { ISize } from "@/types/variants";
+import { formatCurrency } from "@/common/func";
+import { optimizeCloudinaryUrl } from "@/common/localFunction";
 import { cn } from "@/lib/utils";
+import { IColor, IProduct } from "@/types/typeProduct";
+import { ISize } from "@/types/variants";
+import { FaStar } from "react-icons/fa";
+import { IoEyeOutline } from "react-icons/io5";
+import { Link } from "react-router-dom";
 import { TooltipComponent } from "./TooltipComponent";
 
 const Product = ({ productShop }: any) => {
@@ -65,14 +64,14 @@ const Product = ({ productShop }: any) => {
 									<div className="relative inline-block w-full group aspect-square">
 										<div className="transition duration-500 transform bg-white group-hover:scale-50">
 											<img
-												className="object-cover w-full h-full aspect-square"
+												className="object-cover w-full h-full aspect-square mix-blend-multiply"
 												src={optimizeCloudinaryUrl(product.thumbnail, 350, 370)}
 												alt="Image 1"
 											/>
 										</div>
 										<div className="absolute top-0 left-0 transition duration-500 bg-white opacity-0 group-hover:opacity-100">
 											<img
-												className="object-cover w-full h-full aspect-square"
+												className="object-cover w-full h-full aspect-square mix-blend-multiply"
 												src={optimizeCloudinaryUrl(
 													product?.images[0]?.url || "",
 													350,
@@ -87,7 +86,7 @@ const Product = ({ productShop }: any) => {
 												<img
 													src={optimizeCloudinaryUrl(OutOfStock)}
 													alt=""
-													className="lg:w-[140px] lg:h-[140px] md:w-[110px] md:h-[110px] w-[80px] h-[80px] aspect-square"
+													className="mix-blend-multiply lg:w-[140px] lg:h-[140px] md:w-[110px] md:h-[110px] w-[80px] h-[80px] aspect-square"
 												/>
 											</div>
 										)}
@@ -164,7 +163,7 @@ export function ListColorComponent({ listColor }: { listColor: IColor[] }) {
 				{listColor.splice(0, 4)?.map((color: any) => (
 					<div key={color.id} className="cursor-pointer">
 						<TooltipComponent label={color?.name}>
-							<div className="flex items-center justify-center w-4 h-4 bg-white  rounded-full ">
+							<div className="flex items-center justify-center w-4 h-4 bg-white rounded-full ">
 								<div
 									className="w-3 h-3 rounded-full shadow-[inset_-1px_1px_2px_rgba(0,0,0,0.25)]"
 									style={{ backgroundColor: color.code }}

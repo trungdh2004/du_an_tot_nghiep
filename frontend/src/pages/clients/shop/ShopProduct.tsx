@@ -66,7 +66,7 @@ const ShopProduct = () => {
 	});
 	return (
 		<div className="padding pt-[40px]">
-			<div className="grid lg:grid-cols-12 gap-9 relative">
+			<div className="relative grid lg:grid-cols-12 gap-9">
 				<div className="col-span-2 lg:col-span-2 lg:block hidden h-[88vh] sticky top-[100px]">
 					<ScrollArea className="h-[88vh] rounded-md pb-5 pr-4">
 						<Category setSearchParamsObject={setSearchParamsObject} />
@@ -83,9 +83,9 @@ const ShopProduct = () => {
 					</ScrollArea>
 				</div>
 
-				<div className="lg:col-span-10 md:col-span-12 items-center">
+				<div className="items-center lg:col-span-10 md:col-span-12">
 					<div className="flex justify-between">
-						<div className="lg:block hidden"></div>
+						<div className="hidden lg:block"></div>
 						<SelectSort setSearchParamsObject={setSearchParamsObject} />
 						<div className="lg:hidden">
 							<SearchProductMobile
@@ -103,7 +103,7 @@ const ShopProduct = () => {
 					)}
 					{/* <Product /> */}
 					{productShop?.content?.length > 0 && (
-						<div className="flex justify-center items-center py-4">
+						<div className="flex items-center justify-center py-4">
 							<Paginations
 								pageCount={productShop?.totalPage}
 								handlePageClick={(event: any) => {
