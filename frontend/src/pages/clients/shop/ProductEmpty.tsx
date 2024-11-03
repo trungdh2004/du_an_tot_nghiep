@@ -8,10 +8,10 @@ const ProductEmpty = () => {
 				alt=""
 				className="lg:w-[300px] lg:h-[300px] md:w-[250px] md:h-[250px] w-[200px] h-[200px] object-cover"
 			/>
-			<h3 className="lg:text-base md:text-sm text-sm">
+			<h3 className="text-sm lg:text-base md:text-sm">
 				Không tìm thấy sản phẩm nào theo yêu cầu
 			</h3>
-			<h3 className="lg:text-base md:text-sm text-sm">
+			<h3 className="text-sm lg:text-base md:text-sm">
 				Hãy thử sử dụng các từ khóa chung chung hơn
 			</h3>
 		</div>
