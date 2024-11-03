@@ -21,18 +21,13 @@ const sidebarAccount = [
     },
     {
         name:"Địa chỉ",
-        path:"/account/addressnew",
+        path:"/account/address",
         icon: GrLocation
     },
     {
         name:"Đơn hàng",
         path:"/account/purchase",
         icon: CgMenuBoxed
-    },
-    {
-        name:"Thông báo",
-        path:"/account/notification",
-        icon: IoNotificationsOutline
     },
     {
         name:"Giao dịch",

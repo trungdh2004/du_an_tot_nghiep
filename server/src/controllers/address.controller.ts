@@ -310,7 +310,10 @@ class AddressController {
           district,
           commune,
           address,
-          location,
+          location:{
+            type: 'Point',
+            coordinates:location
+          },
           detailAddress,
         },
         { new: true }
