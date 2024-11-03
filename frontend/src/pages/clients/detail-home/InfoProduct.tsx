@@ -229,11 +229,11 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						<div className="flex items-center capitalize text-sm text-[#767676] [&>p]:px-4  [&>*]:border-r [&>*]:border-[#00000024]">
 							<div className="flex items-end gap-1 pr-4">
 								<span className="font-medium text-blue-500 border-b border-blue-500">
-									3.5
+									{product?.rating}
 								</span>
 								<div className="pb-0.5 flex w-max">
 									<StarRatings
-										rating={3.5}
+										rating={product?.rating}
 										numberOfStars={5}
 										starDimension="14px"
 										starSpacing="0.5px"
