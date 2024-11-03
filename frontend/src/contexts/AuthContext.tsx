@@ -46,7 +46,7 @@ interface AuthProviderProps {
 }
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
-	const { setCarts, setCartsPreview, setTotalCart } = useCart();
+	const { setCarts, setCartsPreview, setTotalCart,clearStateCart } = useCart();
 	const [authUser, setAuthUser] = useState<IUser | undefined>(undefined);
 	const [socket, setSocket] =
 		useState<Socket<ServerToClientEvents, ClientToServerEvents>>();
@@ -80,8 +80,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 					console.log({ socket });
 				}
 			} catch (error) {
-				setTotalCart(0);
-				setCarts([]);
+				clearStateCart();
 				setAuthUser(undefined);
 				setIsLoggedIn(false);
 			} finally {

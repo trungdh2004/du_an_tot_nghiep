@@ -2502,11 +2502,11 @@ class OrderController {
       });
 
       if (customer) {
-        CustomerModel.findByIdAndUpdate(customer._id, {
+        await CustomerModel.findByIdAndUpdate(customer._id, {
           $inc: { totalOrder: 1, totalOrderCancel: 1 },
         });
       } else {
-        CustomerModel.create({
+        await CustomerModel.create({
           user: successOrder?.user,
           totalOrder: 1,
           totalOrderCancel: 1,

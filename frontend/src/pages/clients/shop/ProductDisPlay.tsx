@@ -1,11 +1,11 @@
 import React from "react";
 import { formatCurrency, formatQuantitySort } from "@/common/func";
-import { IColor } from "@/types/typeProduct";
+import { IColor, IProduct } from "@/types/typeProduct";
 const ProductDisPlay = ({ productShop }: any) => {
 	return (
 		<div className="w-full py-9">
 			<div className="grid w-full grid-cols-2 lg:grid-cols-4 md:grid-cols-3 gap-9">
-				{productShop?.content?.map((product: any) => {
+				{productShop?.content?.map((product: IProduct) => {
 					const listColor = product.attributes.reduce(
 						(acc: IColor[], item: any) => {
 							if (!item.color._id) return acc;

@@ -8,15 +8,15 @@ const ChatMessage = ({
 	user,
 	content,
 	sender,
-	read,
+	avatar,
 	createdAt,
-}: IMessage) => (
+}: IMessage & {avatar:string}) => (
 	<div
 		className={`flex ${sender === "ADMIN" ? "justify-end" : "justify-start"} mb-4`}
 	>
 		{sender === "USER" && (
 			<Avatar className="w-8 h-8 mr-2">
-				<AvatarImage src={user?.avatarUrl} />
+				<AvatarImage src={avatar} />
 				<AvatarFallback>{user?.full_name?.[0] || "T"}</AvatarFallback>
 			</Avatar>
 		)}

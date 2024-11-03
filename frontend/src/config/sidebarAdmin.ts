@@ -2,6 +2,7 @@ import { AiOutlineUsergroupAdd } from "react-icons/ai";
 import { CiDeliveryTruck, CiShoppingTag, CiStopwatch } from "react-icons/ci";
 import { FaBox } from "react-icons/fa";
 import { FaTruckFast } from "react-icons/fa6";
+import { GoClockFill } from "react-icons/go";
 import { GrAnalytics, GrBlog } from "react-icons/gr";
 import {
 	HiOutlineCheckCircle,
@@ -102,6 +103,12 @@ const sidebarConfig: any[] = [
 				isVisible: true,
 				label: "Thêm sản phẩm",
 			},
+			{
+				path: "/coming",
+				icon: GoClockFill,
+				isVisible: true,
+				label: "Sản phẩm chờ",
+			},
 		],
 	},
 	{
@@ -187,7 +194,7 @@ const sidebarConfig: any[] = [
 			},
 			{
 				path: "/ordership",
-				icon: FaTruckFast ,
+				icon: FaTruckFast,
 				isVisible: true,
 				label: "Đơn giao hàng ",
 			},
@@ -205,7 +212,7 @@ const sidebarConfig: any[] = [
 			},
 			{
 				path: "/ordercancel",
-				icon: TbBasketCancel ,
+				icon: TbBasketCancel,
 				isVisible: true,
 				label: "Đơn đã hủy",
 			},
