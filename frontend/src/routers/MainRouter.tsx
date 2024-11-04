@@ -20,6 +20,7 @@ import NotFound from "@/pages/NotFound";
 import { Navigate } from "react-router-dom";
 import AddressIndex from "@/pages/clients/address/AddressIndex";
 import TestComponent from "@/pages/clients/Test";
+import ContactIndex from "@/pages/clients/contact/ContactIndex";
 
 const MainRouter = [
 	{
@@ -34,11 +35,13 @@ const MainRouter = [
 			{ path: "table", element: <UserIndex /> },
 			{ path: "cart", element: <CartPage /> },
 			{ path: "shop", element: <ShopProduct /> },
-			{ path: "introduce",element: <IntroducePage />},
+			{ path: "introduce", element: <IntroducePage /> },
 			{
 				path: "search",
 				element: <WrapperSearch />,
 			},
+			{ path: "/contacts", element: <ContactIndex /> },
+
 			{
 				path: "/account",
 				element: <AccountLayout />,
