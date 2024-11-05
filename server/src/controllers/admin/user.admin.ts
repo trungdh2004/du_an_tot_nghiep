@@ -192,7 +192,7 @@ class UserAdmin {
         createdAt:-1
       }).skip(skip).limit(limit);
 
-      const count = await UserModel.countDocuments()
+      const count = await UserModel.countDocuments({is_staff:true})
 
       const result = formatDataPaging({
         limit,
