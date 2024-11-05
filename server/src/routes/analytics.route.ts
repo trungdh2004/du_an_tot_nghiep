@@ -5,7 +5,7 @@ import authentication from "../middlewares/authentication";
 const routerAdmin = Router();
 
 routerAdmin.post("/list-user", UserAdmin.listCurrentUsers);
-routerAdmin.post("/updateRole",authorization, UserAdmin.updateRole);
+routerAdmin.put("/updateRole/:id",authorization, UserAdmin.updateRole);
 routerAdmin.post("/list-staff",authentication, UserAdmin.pagingStaff);
 
 export default routerAdmin;
