@@ -194,9 +194,9 @@ const CategoryAdd = ({
 								name="name"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Name</FormLabel>
+										<FormLabel>Tên danh mục</FormLabel>
 										<FormControl>
-											<Input placeholder="Name" {...field} />
+											<Input placeholder="Tên" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -275,9 +275,9 @@ const CategoryAdd = ({
 								name="description"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Description</FormLabel>
+										<FormLabel>Mô tả</FormLabel>
 										<FormControl>
-											<Input placeholder="Description" {...field} />
+											<Input placeholder="Mô tả" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
