@@ -2,6 +2,7 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { getAllCategory } from "@/service/category-admin";
+import { ICategory } from "@/types/category";
 import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
 import { useQueryClient } from "@tanstack/react-query";
 import React, {
@@ -53,7 +54,7 @@ const Category = ({ setSearchParamsObject }: Props) => {
 			</h3>
 			<ScrollArea className="h-[50vh]">
 				<div className="flex flex-col">
-					{category?.map((cate: any) => {
+					{category?.map((cate: ICategory) => {
 						return (
 							<Label
 								key={cate?._id}
