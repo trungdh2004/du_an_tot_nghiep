@@ -1,3 +1,4 @@
+import Coupon from "@/components/common/Coupon/Coupon";
 import Carousel from "./Carousel";
 import DealProductSection from "./DealProductSection";
 import LatestNewsBlog from "./LatestNewsBlog";
@@ -8,6 +9,8 @@ const HomePage = () => {
 		<div className="">
 			<Sliderv2/>
 			<Carousel />
+      <Coupon/>
+      
 			<ProductByCategory />
 			<DealProductSection/>
 			<LatestNewsBlog />
