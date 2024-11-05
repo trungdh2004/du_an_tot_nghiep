@@ -14,12 +14,26 @@ const Login = () => {
           type="text"
           className="w-80 h-12 border mt-5 rounded-md mb-10 pl-2"
         />
+    <h6 className="pt-8">Password</h6>
+    <input type="password"
+    className="border rounded-md w-full h-12 mb-10 pl-2"
+    />
         <button
           type="submit"
           className="w-80 h-12 bg-[#9900FF] rounded-full text-white hover:bg-[#9900CC] transition-colors"
         >
           Sign In
         </button>
+        <div className="flex ml-[135px] gap-4 mt-6">
+      <button className="flex items-center w-12 h-12 border border-gray-300 rounded-full hover:bg-gray-100 transition-colors">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1024px-Google_%22G%22_logo.svg.png" alt="Google Logo" className="w-6 h-6 ml-3" />
+        <span className="flex-1 text-center"></span>
+      </button>
+      <button className="flex items-center w-12 h-12 border border-gray-300 rounded-full hover:bg-gray-100 transition-colors">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/1024px-Facebook_Logo_%282019%29.png" alt="Facebook Logo" className="w-6 h-6 ml-3" />
+        <span className="flex-1 text-center"></span>
+      </button>
+    </div>
       </div>
     </div>
   );
