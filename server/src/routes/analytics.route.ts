@@ -6,6 +6,6 @@ const routerAdmin = Router();
 
 routerAdmin.post("/list-user", UserAdmin.listCurrentUsers);
 routerAdmin.post("/updateRole",authorization, UserAdmin.updateRole);
-routerAdmin.post("/list-user",authentication, UserAdmin.listCurrentUsers);
+routerAdmin.post("/list-staff",authentication, UserAdmin.pagingStaff);
 
 export default routerAdmin;
