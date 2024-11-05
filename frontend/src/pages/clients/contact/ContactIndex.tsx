@@ -28,17 +28,38 @@ import { SlLocationPin } from "react-icons/sl";
 import { FaLocationDot } from "react-icons/fa6";
 import { MdOutlinePhoneAndroid } from "react-icons/md";
 import { GoMail } from "react-icons/go";
+import axios from "axios";
+import { toast } from "sonner";
 const formSchema = z.object({
-	name: z.string().min(2, {
-		message: "Username must be at least 2 characters.",
-	}),
+	name: z.string({ required_error: "Bạn chưa nhập tên" }),
+	email: z
+		.string({ required_error: "Bạn chưa  nhập email" })
+		.email({ message: "Bạn nhập email không đúng định dạng" }),
+	content: z.string({ required_error: "Bạn chưa nhập nội dung" }),
 });
 const ContactIndex = () => {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {},
 	});
-	const onSubmit = () => {};
+
+	const onSubmit = async (payload: z.infer<typeof formSchema>) => {
+		const formData = new FormData();
+		formData.append("entry.1499165544", payload?.name);
+		formData.append("entry.1584898917", payload?.email);
+		formData.append("entry.1002049118", payload?.content);
+		const response = await fetch(
+			`https://docs.google.com/forms/u/0/d/e/1FAIpQLSej6HJ20CXKB2_sD7wAOI5_k5HC0artC6re2CKaq9Od4sJ4hw/formResponse`,
+			{
+				method: "POST",
+				headers: { "Content-Type": "application/x-www-form-urlencoded" },
+				body: formData,
+			},
+		);
+		console.log("response: ", response);
+		form.reset();
+		toast.success("Liên hệ thành công");
+	};
 	return (
 		<>
 			<section className=" mb-36">
@@ -112,7 +133,7 @@ const ContactIndex = () => {
 										/>
 										<FormField
 											control={form.control}
-											name="name"
+											name="email"
 											render={({ field }) => (
 												<FormItem>
 													<FormControl>
@@ -128,7 +149,7 @@ const ContactIndex = () => {
 										/>
 										<FormField
 											control={form.control}
-											name="name"
+											name="content"
 											render={({ field }) => (
 												<FormItem>
 													<FormControl>
@@ -167,12 +188,13 @@ const ContactIndex = () => {
 									}}
 								></motion.div>
 
-								<div className="hidden md:block pb-4  h-[750px] max-w-[800px]  z-10 ">
+								<div className="hidden md:flex pb-4  h-[600px] items-center  z-10 ">
 									<img
 										// src="https://owen.cdn.vccloud.vn/media/codazon/slideshow/a/r/artboard_1-100.jpg"
-										src="/unflat.png"
+										src="/NUCC.svg"
 										alt=""
-										className="w-[400px] md:rounded-[170px] lg:rounded-[130px] h-full object-cover  mix-blend-multiply"
+										// className="w-[400px] md:rounded-[170px] lg:rounded-[130px] h-full object-cover  mix-blend-multiply"
+										className="w-full md:rounded-[170px] lg:rounded-[130px] h-[230px] object-cover  mix-blend-multiply"
 									/>
 								</div>
 							</div>
