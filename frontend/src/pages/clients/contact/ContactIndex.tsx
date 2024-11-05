@@ -12,8 +12,22 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
+import {
+	Breadcrumb,
+	BreadcrumbItem,
+	BreadcrumbLink,
+	BreadcrumbList,
+	BreadcrumbPage,
+	BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Link } from "react-router-dom";
+import { SlLocationPin } from "react-icons/sl";
+import { FaLocationDot } from "react-icons/fa6";
+import { MdOutlinePhoneAndroid } from "react-icons/md";
+import { GoMail } from "react-icons/go";
 const formSchema = z.object({
 	name: z.string().min(2, {
 		message: "Username must be at least 2 characters.",
@@ -27,14 +41,51 @@ const ContactIndex = () => {
 	const onSubmit = () => {};
 	return (
 		<>
-			<section className="py-10">
+			<section className=" mb-36">
 				<div className="padding">
-					<div className="pb-14">
-						<h3 className="text-[28px] font-medium text-center ">Liên Hệ</h3>
+					<div className="pt-8 pb-14 w-full">
+						<h3 className="text-[28px] font-normal text-center ">Liên Hệ</h3>
+						<div className="w-full flex flex-row  justify-center">
+							<Breadcrumb>
+								<BreadcrumbList>
+									<BreadcrumbItem>
+										<Link to="/">
+											<BreadcrumbLink>Trang chủ</BreadcrumbLink>
+										</Link>
+									</BreadcrumbItem>
+									<BreadcrumbSeparator />
+									<BreadcrumbItem>
+										<Link to="/contacts">
+											<BreadcrumbLink>Liên hệ</BreadcrumbLink>
+										</Link>
+									</BreadcrumbItem>
+								</BreadcrumbList>
+							</Breadcrumb>
+						</div>
 					</div>
-					<div className="grid grid-cols-12 gap-5">
-						<div className="col-span-12 md:col-span-5">
+					<div className="grid grid-cols-12 md:gap-5 lg:gap-10">
+						<div className="col-span-12 lg:col-span-6">
 							<div className="max-w-[500px] w-full mx-auto">
+								<div className="space-y-5 pb-16">
+									<div className="flex gap-3 items-center ">
+										<span className="border-[1px] border-[#c9ae63]/70 p-2 rounded-full">
+											<FaLocationDot color="#c9ae63" />
+										</span>
+										<h3 className="text-[18px]">Địa chỉ adadakhda kadhk</h3>
+									</div>
+									<div className="flex gap-3 items-center ">
+										<span className="border-[1px] border-[#c9ae63]/80 p-2 rounded-full">
+											<MdOutlinePhoneAndroid color="#c9ae63" />
+										</span>
+										<h3 className="text-[18px]">19001007</h3>
+									</div>
+									<div className="flex gap-3 items-center ">
+										<span className="border-[1px] border-[#c9ae63]/80 p-2 rounded-full">
+											<GoMail color="#c9ae63" />
+										</span>
+										<h3 className="text-[18px]">Nucshop@gmail.com</h3>
+									</div>
+								</div>
 								<h3 className="text-xl font-medium pb-4">
 									Liên hệ với chúng tôi
 								</h3>
@@ -91,20 +142,22 @@ const ContactIndex = () => {
 												</FormItem>
 											)}
 										/>
-										<button
-											className="px-4 py-2 border border rounded-lg "
-											type="submit"
-										>
-											Gửi liên hệ
-										</button>
+										<div className="w-full flex justify-center lg:justify-start">
+											<button
+												className="px-4 py-2 border border-[#c9ae63]/80 bg-[#c9ae63] text-white  rounded-lg "
+												type="submit"
+											>
+												Gửi liên hệ
+											</button>
+										</div>
 									</form>
 								</Form>
 							</div>
 						</div>
-						<div className="col-span-12 md:col-span-7">
+						<div className="col-span-12 lg:col-span-6">
 							<div className="relative flex justify-center  ">
 								<motion.div
-									className="absolute bg-gradient-to-br from-[#9cffe97d] to-[#6b6bd56b] rounded-full inset-x-6 inset-y-14 md:inset-y-5  md:inset-x-12"
+									className="absolute bg-gradient-to-br from-[#9cffe97d] to-[#6b6bd56b] rounded-full inset-x-6 inset-y-14 md:inset-y-6 lg:inset-2  md:inset-x-12"
 									initial={{ scale: 1 }}
 									animate={{ scale: 1.05 }}
 									transition={{
@@ -114,11 +167,12 @@ const ContactIndex = () => {
 									}}
 								></motion.div>
 
-								<div className="relative z-10 h-auto max-w-96">
+								<div className="hidden md:block pb-4  h-[750px] max-w-[800px]  z-10 ">
 									<img
-										src="/slider-1.png"
+										// src="https://owen.cdn.vccloud.vn/media/codazon/slideshow/a/r/artboard_1-100.jpg"
+										src="/unflat.png"
 										alt=""
-										className="w-full h-full mix-blend-multiply"
+										className="w-[400px] md:rounded-[170px] lg:rounded-[130px] h-full object-cover  mix-blend-multiply"
 									/>
 								</div>
 							</div>
