@@ -5,6 +5,7 @@ export interface SearchObjectType {
 	fieldSort: string | null;
 	sort: 1 | -1;
 	tab?: number;
+	provider?: string;
 }
 
 export interface SearchObjectTypeSize extends SearchObjectType {

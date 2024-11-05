@@ -21,11 +21,18 @@ import { HiOutlineDotsVertical } from "react-icons/hi";
 import { Badge } from "@/components/ui/badge";
 import DialogConfirm from "@/components/common/DialogConfirm";
 import { toast } from "sonner";
-import { BanManyUser, banUser, pagingUser, unBanManyUser, unBanUser } from "@/service/user-admin";
+import {
+	BanManyUser,
+	banUser,
+	pagingUser,
+	unBanManyUser,
+	unBanUser,
+} from "@/service/user-admin";
 import { Input } from "@/components/ui/input";
 import { IoFilter } from "react-icons/io5";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SearchObjectType } from "@/types/searchObjecTypes";
+import DiaLogDecentralization from "./DiaLogDecentralization";
 interface IData {
 	_id: string;
 	full_name: string;
@@ -39,19 +46,20 @@ interface IData {
 
 const UserIndex = () => {
 	const [rowSelection, setRowSelection] = useState<RowSelectionState>({}); // xử lí selected
-  const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
-  console.log(listRowSeleted);
-  const listIdUser :any = listRowSeleted.map((user) => {
-    return user._id;
-  })
-  console.log(listIdUser);
-  
+	const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
+	const listIdUser: any = listRowSeleted.map((user) => {
+		return user._id;
+	});
 	const [openBanId, setopenBanId] = useState<string | null>(null);
 	const [isPending, startTransition] = useTransition();
-  	const [openUnbanId, setopenUnbanId] = useState<string | null>(null);
-	const [openBanManyId, setopenBanManyId] = useState<string | boolean | null>(null);
-	const [openUnbanManyId, setopenUnbanManyId] = useState<string | boolean | null>(null);
-  
+	const [openUnbanId, setopenUnbanId] = useState<string | null>(null);
+	const [openBanManyId, setopenBanManyId] = useState<string | boolean | null>(
+		null,
+	);
+	const [openUnbanManyId, setopenUnbanManyId] = useState<
+		string | boolean | null
+	>(null);
+	const [openIdUpdated, setopenIdUpdated] = useState<string | boolean>(false);
 	const debounced = useDebounceCallback((inputValue: string) => {
 		setSearchObject((prev) => ({
 			...prev,
@@ -83,7 +91,7 @@ const UserIndex = () => {
 
 	const handlePagingUser = async () => {
 		try {
-			const { data } = await pagingUser(searchObject)
+			const { data } = await pagingUser(searchObject);
 			setData(data.content);
 			setResponse({
 				pageIndex: data.pageIndex,
@@ -117,27 +125,27 @@ const UserIndex = () => {
 		} catch (error) {
 			toast.error("Bỏ Cấm người dùng thất bại");
 		}
-  };
-  
-  const handleBanMany = async (id: string) => {
+	};
+
+	const handleBanMany = async (id: string) => {
 		try {
 			const { data } = await BanManyUser(id);
 			setopenBanManyId(null);
-      handlePagingUser();
-      setListRowSelected([]);
+			handlePagingUser();
+			setListRowSelected([]);
 			setRowSelection({});
 			toast.success("Cấm mục người dùng thành công");
 		} catch (error) {
 			toast.error("Cấm mục người dùng thất bại");
 		}
-  };
-  
-  const handleUnBanMany = async (id: string) => {
+	};
+
+	const handleUnBanMany = async (id: string) => {
 		try {
 			const { data } = await unBanManyUser(id);
-      setopenUnbanManyId(null);
-      setListRowSelected([])
-      setRowSelection({})
+			setopenUnbanManyId(null);
+			setListRowSelected([]);
+			setRowSelection({});
 			handlePagingUser();
 			toast.success("Bỏ cấm mục người dùng thành công");
 		} catch (error) {
@@ -149,9 +157,9 @@ const UserIndex = () => {
 			...prev,
 			pageSize: value,
 			pageIndex: 1,
-    })); 
-  };
-  
+		}));
+	};
+
 	const columns: ColumnDef<IData>[] = [
 		{
 			id: "select",
@@ -239,11 +247,7 @@ const UserIndex = () => {
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.createdAt);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
-				return (
-					<div className="md:text-base text-xs">
-						{formattedDate}
-					</div>
-				);
+				return <div className="md:text-base text-xs">{formattedDate}</div>;
 			},
 		},
 		{
@@ -291,6 +295,11 @@ const UserIndex = () => {
 									Cấm
 								</DropdownMenuItem>
 							)}
+							<DropdownMenuItem
+								onClick={() => setopenIdUpdated(row?.original?._id)}
+							>
+								Phân quyền
+							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
 				);
@@ -302,8 +311,8 @@ const UserIndex = () => {
 		setSearchObject((prev) => ({
 			...prev,
 			pageIndex: value.selected + 1,
-    }));
-    setRowSelection({});
+		}));
+		setRowSelection({});
 		setListRowSelected([]);
 	};
 
@@ -322,9 +331,9 @@ const UserIndex = () => {
 					<div className="flex gap-3 justify-center items-center">
 						{listIdUser.length !== 0 && searchObject.tab == 1 ? (
 							<Button
-                onClick={() => {
-                  setopenBanManyId(true) 
-                }}
+								onClick={() => {
+									setopenBanManyId(true);
+								}}
 								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
 							>
 								Ẩn nhiều
@@ -334,9 +343,9 @@ const UserIndex = () => {
 						)}
 						{listIdUser.length !== 0 && searchObject.tab == 2 && (
 							<Button
-                onClick={() => {
-                  setopenUnbanManyId(true) 
-                }}
+								onClick={() => {
+									setopenUnbanManyId(true);
+								}}
 								className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
 							>
 								Bỏ Ẩn nhiều
@@ -462,7 +471,7 @@ const UserIndex = () => {
 						onClick={() => {
 							setRowSelection({});
 							setListRowSelected([]);
-							setSearchObject((prev) => ({ ...prev, tab: 1,pageIndex:1 }));
+							setSearchObject((prev) => ({ ...prev, tab: 1, pageIndex: 1 }));
 						}}
 					>
 						Người dùng
@@ -472,7 +481,7 @@ const UserIndex = () => {
 						onClick={() => {
 							setRowSelection({});
 							setListRowSelected([]);
-							setSearchObject((prev) => ({ ...prev, tab: 2,pageIndex:1 }));
+							setSearchObject((prev) => ({ ...prev, tab: 2, pageIndex: 1 }));
 						}}
 					>
 						Người dùng bị cấm
@@ -527,6 +536,12 @@ const UserIndex = () => {
 					content="Bỏ cấm mục người dùng"
 					handleSubmit={() => handleUnBanMany(listIdUser)}
 					labelConfirm="Bỏ cấm"
+				/>
+			)}
+			{!!openIdUpdated && (
+				<DiaLogDecentralization
+					open={openIdUpdated}
+					close={() => setopenIdUpdated(false)}
 				/>
 			)}
 		</div>
