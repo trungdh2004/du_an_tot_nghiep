@@ -72,6 +72,7 @@ class UserAdmin {
           provider: 1, // Trường email
           avatarUrl: 1, // Trường email
           is_admin: 1, // Trường email
+          is_staff: 1, // Tr
           blocked_at: 1, // Trường email
           createdAt: 1, // Trường email
         },
@@ -192,7 +193,7 @@ class UserAdmin {
         createdAt:-1
       }).skip(skip).limit(limit);
 
-      const count = await UserModel.countDocuments()
+      const count = await UserModel.countDocuments({is_staff:true})
 
       const result = formatDataPaging({
         limit,
