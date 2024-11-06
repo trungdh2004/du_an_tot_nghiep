@@ -31,7 +31,7 @@ const Actions = () => {
 			totalOptionPage: 0,
 			totalPage: 0,
 		});
-	const [before,setBefore] = useState<null|string>(null)
+	const [before, setBefore] = useState<null | string>(null);
 	const [countNotRead, setCountNotRead] = useState(0);
 
 	useEffect(() => {
@@ -56,7 +56,7 @@ const Actions = () => {
 				try {
 					const { data } = await getPagingNotification(1);
 					setDataNotification(data);
-					setBefore(data?.before)
+					setBefore(data?.before);
 					setCountNotRead(data.countNotificationNotRead);
 				} catch (error) {
 					setCountNotRead(0);
@@ -79,7 +79,7 @@ const Actions = () => {
 			// if (dataNotification.pageIndex < dataNotification.totalPage) {
 			const { data } = await getPagingNotification(
 				dataNotification.pageIndex + 1,
-				before
+				before,
 			);
 
 			setDataNotification((prev) => {

@@ -72,12 +72,10 @@ const Carousel = () => {
 					Sản phẩm mới mẻ
 				</h2>
 				<div className="flex items-center gap-7 *:flex *:items-center *:justify-center *:size-10 *:max-w-10 *:max-h-10 *:rounded-full *:border *:border-gray-200">
-				<button
+					<button
 						onClick={() => swiperRef.current?.slidePrev()}
 						disabled={isBeginning}
-						className={`${
-							isBeginning ? "opacity-50 cursor-not-allowed" : ""
-						}`}
+						className={`${isBeginning ? "opacity-50 cursor-not-allowed" : ""}`}
 					>
 						<PiArrowLeftThin size={26} className="text-slate-700" />
 					</button>

@@ -34,7 +34,7 @@ const MainRouter = [
 			{ path: "table", element: <UserIndex /> },
 			{ path: "cart", element: <CartPage /> },
 			{ path: "shop", element: <ShopProduct /> },
-			{ path: "introduce",element: <IntroducePage />},
+			{ path: "introduce", element: <IntroducePage /> },
 			{
 				path: "search",
 				element: <WrapperSearch />,
