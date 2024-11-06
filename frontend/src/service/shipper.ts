@@ -41,3 +41,4 @@ export const pagingOrderShipperById = (
 	{ pageIndex = 0, status = 1 },
 ) =>
 	instance.post(`/shipper/getDetailShipperAdmin/${id}`, { pageIndex, status });
+
