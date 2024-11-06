@@ -39,7 +39,6 @@ app.use(
     origin: [
       process.env.CLIENT_URL!,
       "http://localhost:4000",
-      "http://localhost:8080",
     ],
     credentials: true,
   })
@@ -49,7 +48,9 @@ app.use(cookieParser());
 dbConnect();
 
 initSocket(server);
-
+app.use("/",(req,res) => {
+  return res.status(200).send("Xin chào mọi người")
+})
 app.use("/api/v1", router);
 
 (async () => {
