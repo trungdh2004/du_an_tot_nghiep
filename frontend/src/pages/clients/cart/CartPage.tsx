@@ -105,35 +105,34 @@ const CartPage = () => {
 		}
 	}, [itemCart]);
 	useEffect(() => {
-		if(discountCode?.applyCode){
-			(async()=>{
+		if (discountCode?.applyCode) {
+			(async () => {
 				try {
 					const listId = getAllSelectedItems() as string[];
-				const { data } = await takeApplyDiscountCode({
-					code: discountCode?.applyCode,
-					listId,
-				});
-				setDiscountCode((prev) => ({
-					...prev,
-					error:'',
-					currentVoucherCode: {
-						voucher: data?.voucher,
-						valueCheck: data?.valueCheck,
-					},
-				}));
+					const { data } = await takeApplyDiscountCode({
+						code: discountCode?.applyCode,
+						listId,
+					});
+					setDiscountCode((prev) => ({
+						...prev,
+						error: "",
+						currentVoucherCode: {
+							voucher: data?.voucher,
+							valueCheck: data?.valueCheck,
+						},
+					}));
 				} catch (error) {
-					if(error instanceof AxiosError){
+					if (error instanceof AxiosError) {
 						setDiscountCode((prev) => ({
 							...prev,
-							error:error?.response?.data?.message,
+							error: error?.response?.data?.message,
 							currentVoucherCode: null,
 						}));
 					}
 				}
-				
-			})()
+			})();
 		}
-		
+
 		const isAllChecked = carts?.every((cart) =>
 			cart.items.every(
 				(item) => !isItemValid(item) || checkedState[item?._id as string],
@@ -471,7 +470,8 @@ const CartPage = () => {
 												<div
 													className={cn(
 														"hidden  justify-between text-nowrap bg-red-500 text-xs md:text-sm text-white px-2.5 py-1 rounded-xl items-center gap-2",
-														discountCode?.currentVoucherCode?.valueCheck?.status && "max-md:flex",
+														discountCode?.currentVoucherCode?.valueCheck
+															?.status && "max-md:flex",
 													)}
 												>
 													Giảm{" "}
@@ -503,15 +503,16 @@ const CartPage = () => {
 												<div
 													className={cn(
 														"hidden max-sm:w-full justify-between text-nowrap bg-red-500 text-xs md:text-sm text-white px-2.5 py-1 rounded-xl items-center gap-2",
-														discountCode?.currentVoucherCode?.valueCheck?.status &&
-															"hidden md:flex",
+														discountCode?.currentVoucherCode?.valueCheck
+															?.status && "hidden md:flex",
 													)}
 												>
 													Giảm{" "}
 													{discountCode?.currentVoucherCode?.voucher
 														?.discountType == 2
 														? formatCurrency(
-																discountCode?.currentVoucherCode?.valueCheck?.amount
+																discountCode?.currentVoucherCode?.valueCheck
+																	?.amount,
 															)
 														: `${discountCode?.currentVoucherCode?.valueCheck?.amount}%`}
 													<button

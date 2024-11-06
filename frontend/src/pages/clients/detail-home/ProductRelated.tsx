@@ -61,13 +61,21 @@ const ProductRelated = ({ product }: Props) => {
 							prevEl: ".btn-prev",
 						}}
 						breakpoints={{
+							0: {
+								slidesPerView: 2,
+								spaceBetween: 20,
+							},
+							480: {
+								slidesPerView: 3,
+								spaceBetween: 25,
+							},
 							768: {
-								slidesPerView: 5,
+								slidesPerView: 4,
 								spaceBetween: 30,
 							},
-							0: {
-								slidesPerView: 2.5,
-								spaceBetween: 50,
+							1024: {
+								slidesPerView: 5,
+								spaceBetween: 40,
 							},
 						}}
 					>
@@ -93,7 +101,7 @@ const ProductRelated = ({ product }: Props) => {
 								},
 								[],
 							);
-							const listSize = product?.attributes?.reduce(
+							const listSize = product.attributes.reduce(
 								(acc: ISize[], item: any) => {
 									if (!item?.size?._id) return acc;
 									let group = acc.find(
@@ -103,8 +111,8 @@ const ProductRelated = ({ product }: Props) => {
 									// Nếu nhóm không tồn tại, tạo nhóm mới
 									if (!group) {
 										group = {
-											_id: (item.color as ISize)._id as string,
-											name: (item.color as ISize).name as string,
+											_id: (item.size as ISize)._id as string,
+											name: (item.size as ISize).name as string,
 										};
 										acc.push(group);
 										return acc;
@@ -205,7 +213,7 @@ const ProductRelated = ({ product }: Props) => {
 												<ListColorComponent listColor={listColor} />
 												<ListSizeComponent listSize={listSize} />
 											</div>
-											<div></div>
+											{product?.is_simple && <div className="h-[11px]"></div>}
 										</div>
 									</Link>
 								</SwiperSlide>
@@ -214,12 +222,12 @@ const ProductRelated = ({ product }: Props) => {
 					</Swiper>
 
 					<button
-						className={`btn-next ${!isBlock && "hidden"} absolute z-20 top-[39%] right-4 text-black w-[50px] h-[50px] border flex justify-center items-center rounded-full p-3 hover:text-white hover:bg-[#585858] duration-300`}
+						className={`btn-next ${!isBlock && "hidden"} absolute z-20 top-[39%] right-4 text-black w-[50px] h-[50px] border flex justify-center items-center rounded-full p-3 hover:text-white hover:bg-[#585858] duration-300 cursor-pointer`}
 					>
 						<GrLinkNext />
 					</button>
 					<button
-						className={`btn-prev ${!isBlock && "hidden"} absolute z-20 top-[39%] left-4 text-black w-[50px] h-[50px] border flex justify-center items-center rounded-full p-3 hover:text-white hover:bg-[#585858] duration-300`}
+						className={`btn-prev ${!isBlock && "hidden"} absolute z-20 top-[39%] left-4 text-black w-[50px] h-[50px] border flex justify-center items-center rounded-full p-3 hover:text-white hover:bg-[#585858] duration-300 cursor-pointer`}
 					>
 						<GrLinkPrevious />
 					</button>

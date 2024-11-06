@@ -95,9 +95,12 @@ const OrderItem = ({ order, isSuccess = false }: IProps) => {
 								</button>
 							)}
 						</div>
-					): (
+					) : (
 						<p className="text-sm ">
-							Đã giao: <span className="font-medium text-blue-500">{format(order.shippedDate, "hh:mm dd-MM-yyyy")}</span>
+							Đã giao:{" "}
+							<span className="font-medium text-blue-500">
+								{format(order.shippedDate, "hh:mm dd-MM-yyyy")}
+							</span>
 						</p>
 					)}
 

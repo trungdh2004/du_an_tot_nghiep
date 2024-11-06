@@ -3,7 +3,7 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuTrigger
+	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { GoPencil } from "react-icons/go";
 import { HiOutlineTrash } from "react-icons/hi";
@@ -27,7 +27,10 @@ const Actions = ({ handleDelete }: Props) => {
 			<DropdownMenuContent className="w-auto min-w-[2rem]" align="end">
 				<DropdownMenuItem>
 					<div className="flex items-center gap-2.5 cursor-pointer">
-						<HiOutlineTrash /> <span className="text-nowrap" onClick={()=>handleDelete()}>Xoá</span>
+						<HiOutlineTrash />{" "}
+						<span className="text-nowrap" onClick={() => handleDelete()}>
+							Xoá
+						</span>
 					</div>
 				</DropdownMenuItem>
 			</DropdownMenuContent>

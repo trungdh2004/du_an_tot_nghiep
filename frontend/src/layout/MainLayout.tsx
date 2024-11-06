@@ -14,7 +14,7 @@ const MainLayout = () => {
 			<OverlayVioletV2 />
 			{/* {location.pathname == "/" ? <HeaderAndSlider /> : <Header />} */}
 			<Header />
-			<main className={cn("mt-[64px]",location.pathname == "/" && "mt-0")}>
+			<main className={cn("mt-[64px]", location.pathname == "/" && "mt-0")}>
 				<Outlet />
 			</main>
 			<Footer />

@@ -31,7 +31,7 @@ const BlogNewPublic = () => {
 						<div className="flex gap-2 py-2 items-center border-b border-gray-100">
 							<div className="size-12 rounded-sm overflow-hidden border">
 								<img
-									src={optimizeCloudinaryUrl(item?.thumbnail_url,48,48)}
+									src={optimizeCloudinaryUrl(item?.thumbnail_url, 48, 48)}
 									alt=""
 									className="w-full h-full object-cover"
 								/>

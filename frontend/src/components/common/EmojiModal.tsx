@@ -26,14 +26,18 @@ const EmojiModal = ({ getEmoji }: Props) => {
 
 	return (
 		<div className="relative modal-emoji">
-			<BsEmojiWink onClick={() => setIsOpen((prev) => !prev)} size={20} className="cursor-pointer"/>
+			<BsEmojiWink
+				onClick={() => setIsOpen((prev) => !prev)}
+				size={20}
+				className="cursor-pointer"
+			/>
 			{isOpen && (
 				<div className="absolute z-10 bottom-0">
 					<Picker
 						data={data}
 						onEmojiSelect={(value: any) => {
-							getEmoji?.(value)
-							setIsOpen(false)
+							getEmoji?.(value);
+							setIsOpen(false);
 						}}
 					/>
 				</div>

@@ -101,7 +101,9 @@ const AddressIndex = () => {
 			<div className="padding">
 				<div className="flex flex-col gap-2  w-full pt-5">
 					<div className="flex justify-between items-center pb-4">
-						<h2 className="text-black font-semibold text-lg">Địa chỉ của bạn</h2>
+						<h2 className="text-black font-semibold text-lg">
+							Địa chỉ của bạn
+						</h2>
 						<div className="">
 							<Button
 								onClick={() => handleCreate()}
@@ -113,8 +115,8 @@ const AddressIndex = () => {
 					</div>
 					<div className="w-full grid grid-cols-12 gap-8">
 						{data.content.length === 0 ? (
-							<div className="w-full min-h-[100px] rounded-xl border flex flex-col justify-center items-center">
-								<FaLocationDot size={20} className="mb-2" />
+							<div className="w-full min-h-[100px] col-span-12 flex justify-center items-center gap-2">
+								<FaLocationDot size={25} className="mb-2" />
 								Không có địa chỉ nào
 							</div>
 						) : (
@@ -160,16 +162,18 @@ const AddressIndex = () => {
 							})
 						)}
 					</div>
-					<div className="flex justify-center my-6">
-						<Paginations
-							forcePage={pageIndex - 1}
-							pageCount={data.totalPage}
-							handlePageClick={(event: any) => {
-								console.log(event.selected);
-								setPageIndex(event.selected + 1);
-							}}
-						/>
-					</div>
+					{data.content.length > 0 && (
+						<div className="flex justify-center my-6">
+							<Paginations
+								forcePage={pageIndex - 1}
+								pageCount={data.totalPage}
+								handlePageClick={(event: any) => {
+									console.log(event.selected);
+									setPageIndex(event.selected + 1);
+								}}
+							/>
+						</div>
+					)}
 
 					{!!open && <NewAddress open={!!open} handleClose={handleClose} />}
 					{!!openDeleteById && (

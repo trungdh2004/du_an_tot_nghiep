@@ -13,17 +13,18 @@ const Test = () => {
 				label="test.1-100"
 				getOptionLabel={(option) => {
 					return (
-            <div className="flex
-            ">
-              <img src={option.thumbnail} alt="" className="w-8 h-8" />
-              <span className="ml-2">{option.name}</span>
+						<div
+							className="flex
+            "
+						>
+							<img src={option.thumbnail} alt="" className="w-8 h-8" />
+							<span className="ml-2">{option.name}</span>
 						</div>
 					);
 				}}
 				getOptionValue={(option) => {
 					return option._id;
 				}}
-				
 			/>
 		</div>
 	);

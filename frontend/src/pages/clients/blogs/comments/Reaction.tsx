@@ -29,7 +29,7 @@ const Reaction = ({
 	comment,
 	setComment,
 }: IProps) => {
-	const { authUser, isLoggedIn } = useAuth();	
+	const { authUser, isLoggedIn } = useAuth();
 	const checkLike = comment?.reactions.includes(authUser?._id);
 
 	const handleDeleteComment = async (props: Comment) => {
@@ -103,7 +103,7 @@ const Reaction = ({
 					</div>
 				)}
 			</div>
-			{(isLoggedIn && comment?.user?._id == authUser?._id) && (
+			{isLoggedIn && comment?.user?._id == authUser?._id && (
 				<Actions handleDelete={() => handleDeleteComment(comment)} />
 			)}
 		</div>

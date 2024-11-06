@@ -200,9 +200,11 @@ const ChatContent = () => {
 					</div>
 				</div>
 
-				<Link to={"/admin/chat"}><Button variant={"outline"} className="block md:hidden">
-					<CiLogout size={20} />
-				</Button></Link>
+				<Link to={"/admin/chat"}>
+					<Button variant={"outline"} className="block md:hidden">
+						<CiLogout size={20} />
+					</Button>
+				</Link>
 			</header>
 			<div
 				className="flex-1 block scroll-custom overflow-y-auto space-y-2 p-2"

@@ -7,20 +7,20 @@ import PaymentIndex from "@/pages/clients/account/PaymentIndex";
 import OrderManagements from "@/pages/clients/account/Purchase";
 import PurchaseOrder from "@/pages/clients/account/PurchaseOrder";
 import Address from "@/pages/clients/address/Address";
+import AddressIndex from "@/pages/clients/address/AddressIndex";
 import BlogDetail from "@/pages/clients/blogs/BlogDetail";
 import BlogPage from "@/pages/clients/blogs/BLogPage";
 import CartPage from "@/pages/clients/cart/CartPage";
+import ContactIndex from "@/pages/clients/contact/ContactIndex";
 import DetailProduct from "@/pages/clients/detail-home/page";
 import HomePage from "@/pages/clients/home/page";
 import IntroducePage from "@/pages/clients/introduce/IntroducePage";
 import OrderProcessing from "@/pages/clients/order/OrderProcessing";
 import WrapperSearch from "@/pages/clients/search/WrapperSearch";
 import ShopProduct from "@/pages/clients/shop/ShopProduct";
+import TestComponent from "@/pages/clients/Test";
 import NotFound from "@/pages/NotFound";
 import { Navigate } from "react-router-dom";
-import AddressIndex from "@/pages/clients/address/AddressIndex";
-import TestComponent from "@/pages/clients/Test";
-import ContactIndex from "@/pages/clients/contact/ContactIndex";
 
 const MainRouter = [
 	{
@@ -36,11 +36,13 @@ const MainRouter = [
 			{ path: "cart", element: <CartPage /> },
 			{ path: "shop", element: <ShopProduct /> },
 			{ path: "introduce", element: <IntroducePage /> },
+			{ path: "contacts", element: <ContactIndex /> },
+			{ path: "introduce", element: <IntroducePage /> },
 			{
 				path: "search",
 				element: <WrapperSearch />,
 			},
-			{ path: "/contacts", element: <ContactIndex /> },
+			{ path: "introduce", element: <IntroducePage /> },
 
 			{
 				path: "/account",

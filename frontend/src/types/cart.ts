@@ -11,13 +11,13 @@ export interface ICartItem {
 	quantity?: number;
 	quantitySold?: number;
 	attributeProduct: IAttribute[];
-	is_simple:boolean;
+	is_simple: boolean;
 	totalQuantity: number;
 }
 export interface ICart {
 	attributes: IAttribute[];
 	items: ICartItem[];
-	is_simple:boolean;
+	is_simple: boolean;
 	product: IProduct;
 	createdAt: string;
 	listColor: [

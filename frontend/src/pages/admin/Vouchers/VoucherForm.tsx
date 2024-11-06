@@ -139,8 +139,8 @@ const VoucherForm = () => {
 						endDate: new Date(data.data.endDate).toISOString(),
 						type: data.data?.type.toString(),
 					};
-					console.log({deafaultForm});
-					
+					console.log({ deafaultForm });
+
 					form.reset(deafaultForm);
 				} catch (error) {
 					if (error instanceof AxiosError) {
@@ -155,17 +155,16 @@ const VoucherForm = () => {
 		payload: z.infer<typeof voucherSchema>,
 	) => {
 		try {
-			const { status,type,listUseProduct, ...voucherData } = payload;
+			const { status, type, listUseProduct, ...voucherData } = payload;
 			const formattedData = {
 				...voucherData,
 				discountType: voucherData.discountType === "fixed" ? 1 : 2,
 				type,
-				listUseProduct:type === "1" ? [] : listUseProduct
+				listUseProduct: type === "1" ? [] : listUseProduct,
 			};
 			const { data } = await createVoucher(formattedData as any);
 			toast.success(data?.message);
 			navigate("/admin/product/voucher");
-
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				toast.error(error?.response?.data?.message);
@@ -176,13 +175,13 @@ const VoucherForm = () => {
 		payload: z.infer<typeof voucherSchema>,
 	) => {
 		try {
-			const { status,type,listUseProduct, ...voucherData } = payload;
+			const { status, type, listUseProduct, ...voucherData } = payload;
 			const formattedData = {
 				...voucherData,
 				_id: id,
 				discountType: voucherData.discountType === "fixed" ? 1 : 2,
 				type,
-				listUseProduct:type === "1" ? [] : listUseProduct
+				listUseProduct: type === "1" ? [] : listUseProduct,
 			};
 			const { data } = await updateVoucherById(formattedData as any);
 			toast.success(data?.message);

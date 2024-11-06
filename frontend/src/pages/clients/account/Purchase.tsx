@@ -244,7 +244,6 @@ const OrderManagements = () => {
 																<div className="w-full">
 																	{itemOrderList?.is_evaluate === true ? (
 																		<div className="">
-																			
 																			<span className="text-blue-500 text-sm">
 																				Đã đánh giá
 																			</span>

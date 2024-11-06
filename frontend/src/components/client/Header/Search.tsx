@@ -31,8 +31,8 @@ const Search = () => {
 				const { data } = await searchPopupService({ keyword });
 				const fakeData = {
 					listBlog: data?.listBlog || [],
-					listProduct:data?.listProduct || [],
-				}
+					listProduct: data?.listProduct || [],
+				};
 				setAutocomplete(data);
 			} catch (error) {
 				if (error instanceof AxiosError) {
@@ -57,7 +57,7 @@ const Search = () => {
 		setIsOpen(false);
 		setAutocomplete([]);
 	};
-	
+
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger asChild>
@@ -110,7 +110,7 @@ const Search = () => {
 					>
 						<p className="text-base font-medium text-black/85">Sản phẩm</p>
 						<Link
-						onClick={handleChangePath}
+							onClick={handleChangePath}
 							to={`/search?topic=product&q=${encodeURIComponent(textKeyWord)}`}
 							className="hover:text-blue-500 text-sm"
 						>
@@ -134,7 +134,9 @@ const Search = () => {
 											/>
 										</div>
 										<div className="flex-grow">
-											<p className="flex-grow text-sm truncate max-w-36 md:max-w-sm">{product?.name}</p>
+											<p className="flex-grow text-sm truncate max-w-36 md:max-w-sm">
+												{product?.name}
+											</p>
 											<p className="text-xs text-red-500">
 												{formatCurrency(product?.price)}
 											</p>
@@ -151,7 +153,7 @@ const Search = () => {
 					>
 						<p className="text-base font-medium text-black/85">Bài viết</p>
 						<Link
-						onClick={handleChangePath}
+							onClick={handleChangePath}
 							to={`/search?topic=blog&q=${encodeURIComponent(textKeyWord)}`}
 							className="hover:text-blue-500 text-sm"
 						>
@@ -175,7 +177,9 @@ const Search = () => {
 											/>
 										</div>
 										<div className="">
-											<p className="flex-grow text-sm truncate max-w-36 md:max-w-sm">{blog?.meta_title}</p>
+											<p className="flex-grow text-sm truncate max-w-36 md:max-w-sm">
+												{blog?.meta_title}
+											</p>
 											<p className="text-xs text-gray-400">
 												{calculateTimeDistance(blog?.published_at)}
 											</p>

@@ -30,7 +30,6 @@ const UserShipperDetail = () => {
 				const { data } = await getDetailShipperById(id as string);
 				delete data.message;
 				setInfoDetailShipper(data);
-				
 			} catch (error) {
 				if (error instanceof AxiosError) {
 					toast.error(error?.response?.data?.message);
@@ -89,7 +88,12 @@ const UserShipperDetail = () => {
 											110,
 										)}
 										alt=""
-										className={cn("object-cover w-32 h-32 mb-4 border-4  rounded-full", infoDetailShipper?.shipper?.block_at ? "border-[#cf4040]" : "border-green-500")}
+										className={cn(
+											"object-cover w-32 h-32 mb-4 border-4  rounded-full",
+											infoDetailShipper?.shipper?.block_at
+												? "border-[#cf4040]"
+												: "border-green-500",
+										)}
 									/>
 								</div>
 								{infoDetailShipper?.shipper?.is_block ? (
@@ -109,7 +113,6 @@ const UserShipperDetail = () => {
 										<span className="text-xs">Khóa tài khoản</span>
 									</button>
 								)}
-								
 							</div>
 							<div className="grid grid-cols-2 gap-7">
 								<InfoField

@@ -48,7 +48,7 @@ const CartItem = ({
 	attributeAlreadyExists,
 	onCheckedChange,
 }: CartItemProps) => {
-	const [quantity, setQuantity] = useState(item?.quantity); 
+	const [quantity, setQuantity] = useState(item?.quantity);
 	const [isOpen, setIsOpen] = useState(false);
 	const { carts, setItemCart, setCarts, setTotalCart } = useCart();
 	const [errors, setErrors] = useState({
@@ -57,7 +57,7 @@ const CartItem = ({
 	});
 	const { updateAttributeItemCart } = useUpdateAttributeItemCart();
 	const handleChangeQuantity = useDebounce(async (value: number) => {
-		setQuantity(value); 
+		setQuantity(value);
 		try {
 			await updateCartItem(item?._id as string, { quantity: value });
 			const { data } = await getCountMyShoppingCart();
@@ -86,7 +86,7 @@ const CartItem = ({
 			setIsOpen,
 			setErrors,
 		});
-	};	
+	};
 	return (
 		<div key={item._id} className="flex items-center item-group">
 			<div
@@ -191,12 +191,17 @@ const CartItem = ({
 							</span>
 						</div>
 						<div className="ml-auto">
-							{(item?.attribute?._id && item?.attribute?.quantity) || item?.is_simple ? (
+							{(item?.attribute?._id && item?.attribute?.quantity) ||
+							item?.is_simple ? (
 								<InputQuantity
 									size="mobile"
 									className="w-20"
 									defaultValue={quantity}
-									maxTotal={item?.attribute ? item?.attribute?.quantity : item?.totalQuantity }
+									maxTotal={
+										item?.attribute
+											? item?.attribute?.quantity
+											: item?.totalQuantity
+									}
 									getValue={handleChangeQuantity}
 								/>
 							) : (
@@ -226,11 +231,14 @@ const CartItem = ({
 				</span>
 			</div>
 			<div className="hidden lg:flex w-[15.4265%] text-center items-center justify-center">
-				{(item?.attribute?._id && item?.attribute?.quantity) || item?.is_simple ? (
+				{(item?.attribute?._id && item?.attribute?.quantity) ||
+				item?.is_simple ? (
 					<InputQuantity
 						size="small"
 						defaultValue={quantity}
-						maxTotal={item?.attribute ? item?.attribute?.quantity : item?.totalQuantity }
+						maxTotal={
+							item?.attribute ? item?.attribute?.quantity : item?.totalQuantity
+						}
 						getValue={handleChangeQuantity}
 					/>
 				) : (

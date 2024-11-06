@@ -49,8 +49,7 @@ export function calculateTimeDistance(pastDate: any, isEnd?: boolean) {
 }
 
 export function formatDateMessage(pastDate: any) {
-
-	if(!pastDate) return ''
+	if (!pastDate) return "";
 
 	const now = new Date();
 	const oldDate = new Date(pastDate);
@@ -60,10 +59,8 @@ export function formatDateMessage(pastDate: any) {
 		oldDate.getMonth() === now.getMonth() &&
 		oldDate.getFullYear() === now.getFullYear()
 	) {
-
-		return `${oldDate?.getHours()}:${oldDate?.getMinutes()}`
+		return `${oldDate?.getHours()}:${oldDate?.getMinutes()}`;
 	}
 
-
-	return `${oldDate?.getHours()}:${oldDate?.getMinutes()} ${oldDate?.getDay()}/${oldDate.getMonth()}/${oldDate.getFullYear()}`
+	return `${oldDate?.getHours()}:${oldDate?.getMinutes()} ${oldDate?.getDay()}/${oldDate.getMonth()}/${oldDate.getFullYear()}`;
 }
