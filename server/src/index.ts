@@ -48,9 +48,7 @@ app.use(cookieParser());
 dbConnect();
 
 initSocket(server);
-app.use("/",(req,res) => {
-  return res.status(200).send("Xin chào mọi người")
-})
+
 app.use("/api/v1", router);
 
 (async () => {
@@ -65,7 +63,9 @@ app.use("/api/v1", router);
     }
   } catch (error) {}
 })();
-
+app.get("/hello",(req,res) => {
+  return res.status(200).send("XIn chào")
+})
 app.use("*", (req, res) => {
   res.status(STATUS.BAD_REQUEST).json({
     message: "Đường dẫn không đúng",
