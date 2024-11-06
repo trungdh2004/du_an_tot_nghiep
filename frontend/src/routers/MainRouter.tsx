@@ -40,6 +40,10 @@ const MainRouter = [
 				path: "search",
 				element: <WrapperSearch />,
 			},
+			{
+				path: "contacts",
+				element: <ContactIndex />,
+			},
 			{ path: "introduce", element: <IntroducePage /> },
 
 			{
