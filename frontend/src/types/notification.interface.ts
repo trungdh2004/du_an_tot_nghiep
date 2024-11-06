@@ -13,7 +13,6 @@ export interface INotification {
 	__v: 0;
 }
 
-
 export interface ISearchObjectNotifications {
 	pageIndex: number;
 	totalAllOptions: number;
@@ -23,18 +22,18 @@ export interface ISearchObjectNotifications {
 }
 
 export interface INotificationAdmin {
-	_id:string
+	_id: string;
 	message: string; // Nội dung của thông báo
-	type:string// Loại thông báo
+	type: string; // Loại thông báo
 	createdAt?: Date; // Ngày tạo (tự động)
 	updatedAt?: Date; // Ngày cập nhật (tự động)
-	direct:string;
-	directId:string;
-	is_delete:boolean
-	readOnly:string[]
-  }
+	direct: string;
+	directId: string;
+	is_delete: boolean;
+	readOnly: string[];
+}
 
-  export interface ISearchObjectNotificationsAdmin {
+export interface ISearchObjectNotificationsAdmin {
 	pageIndex: number;
 	totalAllOptions: number;
 	totalOptionPage: number;

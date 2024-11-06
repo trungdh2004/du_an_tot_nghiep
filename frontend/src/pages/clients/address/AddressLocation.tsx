@@ -17,11 +17,11 @@ interface ICity {
 
 interface IDistrict {
 	idDistrict: string;
-	name:string
+	name: string;
 }
-interface ICommune  {
+interface ICommune {
 	idCommune: string;
-	name:string
+	name: string;
 }
 
 interface IProps {

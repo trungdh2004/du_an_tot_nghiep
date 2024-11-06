@@ -18,20 +18,23 @@ export const pagingTags = async (searchObject: SearchObjectType) => {
 	return data;
 };
 
-export const updateTag = async (open: string | boolean, dataForm: TypeObjectCategory) => {
+export const updateTag = async (
+	open: string | boolean,
+	dataForm: TypeObjectCategory,
+) => {
 	const data = instance.put(`/tags/update/${open}`, dataForm);
 	return data;
-}
+};
 
 export const addTag = async (dataForm: TypeObjectCategory) => {
 	const data = await instance.post(`/tags/add`, dataForm);
 	return data;
-}
+};
 
 export const getTag = async (open: string | boolean) => {
 	const data = await instance.get(`/tags/tag/${open}`);
 	return data;
-}
+};
 
 export const hiddenListTag = async (listId: any) => {
 	const data = await instance.put(`tags/deleteMany`, {

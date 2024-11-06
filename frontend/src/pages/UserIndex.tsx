@@ -34,7 +34,7 @@ const UserIndex = () => {
 		pageIndex: 1,
 		pageSize: 5,
 	});
-	const [] = useTransition()
+	const [] = useTransition();
 	const [data, setData] = useState<IData[]>([]);
 
 	useEffect(() => {

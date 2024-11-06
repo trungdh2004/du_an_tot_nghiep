@@ -48,11 +48,11 @@ const AccountIndex = () => {
 	const queryClient = useQueryClient();
 	const { authUser, setAuthUser } = useAuth();
 	const [previewUrl, setPreviewUrl] = useState(() => {
-    return {
-      isLoading: false,
-      url:authUser?.avatarUrl || "",
-    }
-  });
+		return {
+			isLoading: false,
+			url: authUser?.avatarUrl || "",
+		};
+	});
 
 	const form = useForm({
 		resolver: zodResolver(formSchema),
@@ -61,20 +61,20 @@ const AccountIndex = () => {
 			phone: authUser?.phone || "",
 			birthDay: authUser?.birthDay || "",
 			email: authUser?.email || "",
-      avatarUrl:authUser?.avatarUrl || ""
+			avatarUrl: authUser?.avatarUrl || "",
 		},
 	});
 	const { mutate } = useMutation({
 		mutationFn: async (data: any) => {
 			return await instance.put(`/auth/changeUser/${authUser?._id}`, data);
 		},
-		onSuccess: ({data}) => {
-      console.log({data});
-      if(setAuthUser) {
-        console.log("cập nhập");
-        
-        setAuthUser(data.user as IUser)
-      }
+		onSuccess: ({ data }) => {
+			console.log({ data });
+			if (setAuthUser) {
+				console.log("cập nhập");
+
+				setAuthUser(data.user as IUser);
+			}
 			toast.success("Cập nhật thông tin thành công!");
 		},
 		onError: (error) => {
@@ -272,7 +272,7 @@ const AccountIndex = () => {
 														type="file"
 														className="hidden"
 														id="avatarInput"
-                            accept=".jpg,.png,.webp,.jpeg"
+														accept=".jpg,.png,.webp,.jpeg"
 														onChange={(event) =>
 															field.onChange(async () => {
 																// console.log("url", URL.createObjectURL(

@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const InputComponent = () => {
-  return (
-    <div>InputComponent</div>
-  )
-}
+	return <div>InputComponent</div>;
+};
 
-export default InputComponent
+export default InputComponent;

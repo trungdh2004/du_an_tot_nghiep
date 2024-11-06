@@ -27,7 +27,7 @@ const ShipperTranSport = () => {
 	const { code } = useParams();
 	const [isOpen, setIsOpen] = useState(false);
 	const matches = useMediaQuery("(min-width: 1024px)");
-	const [openConfirm,setOpenConfirm] = useState(false);
+	const [openConfirm, setOpenConfirm] = useState(false);
 
 	const router = useNavigate();
 	const { data, isLoading, isError } = useQuery({
@@ -162,7 +162,7 @@ const ShipperTranSport = () => {
 			router("/shipper");
 		} catch (error) {
 			console.log(error);
-			toast.error("Lỗi không thể hủy đơn hàng")
+			toast.error("Lỗi không thể hủy đơn hàng");
 		}
 	};
 	return (
@@ -313,9 +313,13 @@ const ShipperTranSport = () => {
 				>
 					Giao hàng thành công
 				</Button>
-				<Button variant={"danger"} className="w-full" onClick={() => {
-					setOpenConfirm(true)
-				}}>
+				<Button
+					variant={"danger"}
+					className="w-full"
+					onClick={() => {
+						setOpenConfirm(true);
+					}}
+				>
 					Giao hàng thất bại
 				</Button>
 
@@ -336,7 +340,7 @@ const ShipperTranSport = () => {
 				}}
 			></div>
 
-			<DialogConfirm 
+			<DialogConfirm
 				open={openConfirm}
 				handleClose={() => {
 					setOpenConfirm(false);

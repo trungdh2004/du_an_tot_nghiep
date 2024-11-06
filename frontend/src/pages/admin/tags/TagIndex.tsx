@@ -219,11 +219,7 @@ const TagIndex = () => {
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.createdAt);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
-				return (
-					<div className="md:text-base text-xs">
-						{formattedDate}
-					</div>
-				);
+				return <div className="md:text-base text-xs">{formattedDate}</div>;
 			},
 		},
 		{
@@ -308,13 +304,17 @@ const TagIndex = () => {
 				<TabsList className="grid w-full grid-cols-2">
 					<TabsTrigger
 						value="1"
-						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 1,pageIndex:1 }))}
+						onClick={() =>
+							setSearchObject((prev) => ({ ...prev, tab: 1, pageIndex: 1 }))
+						}
 					>
 						Nhãn
 					</TabsTrigger>
 					<TabsTrigger
 						value="2"
-						onClick={() => setSearchObject((prev) => ({ ...prev, tab: 2 ,pageIndex:1}))}
+						onClick={() =>
+							setSearchObject((prev) => ({ ...prev, tab: 2, pageIndex: 1 }))
+						}
 					>
 						Nhãn ẩn
 					</TabsTrigger>

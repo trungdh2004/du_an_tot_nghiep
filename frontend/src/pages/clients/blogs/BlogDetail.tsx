@@ -17,7 +17,7 @@ import { FaHeart } from "react-icons/fa";
 const BlogDetail = () => {
 	const { id } = useParams();
 	const { authUser, isLoggedIn } = useAuth();
-	const  QueryClient = useQueryClient();
+	const QueryClient = useQueryClient();
 	const handleCurrentRoute = useCurrentRouteAndNavigation();
 	const { data: blog } = useQuery({
 		queryKey: ["blogDetail", id],
@@ -47,7 +47,7 @@ const BlogDetail = () => {
 			try {
 				const isLike = blog?.data?.reactions?.includes(authUser?._id);
 				await actionUpdateReactions({ id: id as string, isLike: !isLike });
-				QueryClient.invalidateQueries({queryKey:['blogDetail']})
+				QueryClient.invalidateQueries({ queryKey: ["blogDetail"] });
 			} catch (error) {
 				if (error instanceof AxiosError) {
 					toast.error(error?.response?.data?.message);

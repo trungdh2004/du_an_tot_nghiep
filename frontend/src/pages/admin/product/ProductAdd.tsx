@@ -998,7 +998,9 @@ const ProductAddPage = () => {
 				<div className="hidden p-4 lg:block lg:col-span-3 ">
 					<div className="w-full border rounded relative">
 						{form.watch("is_hot") && (
-							<div className="absolute py-[2px] font-semibold text-white rounded-r-md pr-2 pl-1 left-0 top-2 bg-red-500">HOT</div>
+							<div className="absolute py-[2px] font-semibold text-white rounded-r-md pr-2 pl-1 left-0 top-2 bg-red-500">
+								HOT
+							</div>
 						)}
 						<img
 							src={

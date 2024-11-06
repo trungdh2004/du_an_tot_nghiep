@@ -1,21 +1,19 @@
 import { useEffect, useState } from "react";
 
+function useDebounceV2(value: string, delay: number = 500) {
+	const [debounceValue, setDebounceValue] = useState("");
 
-function useDebounceV2(value:string,delay:number = 500) {
-    const [debounceValue,setDebounceValue] = useState("");
+	useEffect(() => {
+		let debounce = setTimeout(() => {
+			setDebounceValue(value);
+		}, delay);
 
-    useEffect(() => {
-        let debounce = setTimeout(() => {
-            setDebounceValue(value)
-        },delay) 
+		return () => {
+			clearTimeout(debounce);
+		};
+	}, [value, delay]);
 
-        return () => {
-            clearTimeout(debounce)
-        }
-    },[value,delay])
-
-
-    return debounceValue
+	return debounceValue;
 }
 
-export default useDebounceV2
+export default useDebounceV2;

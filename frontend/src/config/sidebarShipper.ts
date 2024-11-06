@@ -8,14 +8,14 @@ import { RiAccountPinCircleLine } from "react-icons/ri";
 const sidebarShipper: any[] = [
 	{
 		path: "/shipper",
-		icon: FiHome ,
+		icon: FiHome,
 		isVisible: true,
 		isAdmin: false,
 		label: "Trang chủ",
 	},
 	{
 		path: "/shipper/orderNew",
-		icon: HiOutlineInboxArrowDown  ,
+		icon: HiOutlineInboxArrowDown,
 		isVisible: true,
 		isAdmin: false,
 		label: "Đơn hàng",
@@ -29,19 +29,18 @@ const sidebarShipper: any[] = [
 	},
 	{
 		path: "/shipper/dashboard",
-		icon: FcComboChart ,
+		icon: FcComboChart,
 		isVisible: true,
 		isAdmin: false,
 		label: "Thống kê",
 	},
 	{
 		path: "/shipper/account",
-		icon: RiAccountPinCircleLine ,
+		icon: RiAccountPinCircleLine,
 		isVisible: true,
 		isAdmin: false,
 		label: "Tài khoản",
 	},
 ];
-
 
 export default sidebarShipper;
