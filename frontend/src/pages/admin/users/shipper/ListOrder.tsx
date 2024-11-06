@@ -52,7 +52,7 @@ const ListOrder = ({ id }: Props) => {
 				totalOptionPage: data.totalOptionPage,
 			});
 		} catch (error) {
-			if(error instanceof AxiosError){
+			if (error instanceof AxiosError) {
 				toast.error(error?.response?.data?.message);
 			}
 		}
@@ -84,7 +84,9 @@ const ListOrder = ({ id }: Props) => {
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="text-xs md:text-base">{row?.original?.address.username}</div>
+					<div className="text-xs md:text-base">
+						{row?.original?.address.username}
+					</div>
 				);
 			},
 		},
@@ -95,7 +97,9 @@ const ListOrder = ({ id }: Props) => {
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="text-xs md:text-base">{row?.original?.address.phone}</div>
+					<div className="text-xs md:text-base">
+						{row?.original?.address.phone}
+					</div>
 				);
 			},
 		},
@@ -106,7 +110,9 @@ const ListOrder = ({ id }: Props) => {
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="text-xs md:text-base">{row?.original?.address.address}</div>
+					<div className="text-xs md:text-base">
+						{row?.original?.address.address}
+					</div>
 				);
 			},
 		},
@@ -117,7 +123,9 @@ const ListOrder = ({ id }: Props) => {
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="text-xs md:text-base">{row?.original?.address.detailAddress}</div>
+					<div className="text-xs md:text-base">
+						{row?.original?.address.detailAddress}
+					</div>
 				);
 			},
 		},
@@ -128,7 +136,9 @@ const ListOrder = ({ id }: Props) => {
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="text-xs text-red-500 md:text-base">{formatCurrency(row?.original?.totalMoney)}</div>
+					<div className="text-xs text-red-500 md:text-base">
+						{formatCurrency(row?.original?.totalMoney)}
+					</div>
 				);
 			},
 		},
@@ -156,7 +166,6 @@ const ListOrder = ({ id }: Props) => {
 				);
 			},
 		},
-		
 	];
 
 	const handleChangePage = (value: any) => {

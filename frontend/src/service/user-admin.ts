@@ -31,3 +31,12 @@ export const BanManyUser = async (listId: any) => {
 	});
 	return data;
 };
+
+export const Decentralization = (id: string, role: number) =>
+	instance.put(`admin/updateRole/${id}`, { role });
+
+export const pagingStaff = (obj: {
+	pageIndex: number;
+	pageSize: number;
+	keyword: string | null;
+}) => instance.post(`admin/list-staff`, obj);

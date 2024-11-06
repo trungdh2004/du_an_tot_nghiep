@@ -19,6 +19,7 @@ import {
 	INotification,
 	ISearchObjectNotifications,
 } from "@/types/notification.interface";
+import ButtonComponent from "@/components/common/ButtonCPN";
 
 const Actions = () => {
 	const { isLoggedIn, authUser, socket } = useAuth();
@@ -187,10 +188,8 @@ const Actions = () => {
 					<User />
 				</div>
 			) : (
-				<Link to={"/auth/login"} className="hidden md:block">
-					<Button className="h-8 px-3 text-xs rounded " size={"sm"}>
-						Đăng nhập
-					</Button>
+				<Link to={`/auth/login`}>
+					<ButtonComponent title="Đăng nhập" className="rounded-full text-xs py-2 px-3"/>
 				</Link>
 			)}
 		</div>

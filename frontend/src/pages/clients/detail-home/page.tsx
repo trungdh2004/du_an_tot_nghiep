@@ -17,15 +17,15 @@ import ProductRelated from "./ProductRelated";
 import { useState } from "react";
 
 const DetailProduct = () => {
-  const { slug } = useParams();
-  const [productRelated,setProductRelated] = useState([])
+	const { slug } = useParams();
+	const [productRelated, setProductRelated] = useState([]);
 	const { data, isLoading } = useQuery<IProductDetail>({
 		queryKey: ["GET_PRODUCT_BY_SLUG", slug],
 		queryFn: async () => {
 			const { data } = await getProductBySlug(
 				encodeURIComponent(slug as string),
-      );
-      setProductRelated(data?.listProductOther);
+			);
+			setProductRelated(data?.listProductOther);
 			return data?.data;
 		},
 	});
@@ -59,7 +59,9 @@ const DetailProduct = () => {
 							<>
 								<BreadcrumbSeparator />
 								<BreadcrumbItem>
-									<BreadcrumbPage className="truncate max-w-52">{data?.name}</BreadcrumbPage>
+									<BreadcrumbPage className="truncate max-w-52">
+										{data?.name}
+									</BreadcrumbPage>
 								</BreadcrumbItem>
 							</>
 						)}

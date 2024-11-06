@@ -136,7 +136,13 @@ const NewBlog = () => {
 	return (
 		<div className="">
 			<div className="mb-3 flex justify-end">
-				<Link to="/admin/blogs"><Button className=""> <IoMdArrowRoundBack size={20} className="pr-1" />Quay lại</Button></Link>
+				<Link to="/admin/blogs">
+					<Button className="">
+						{" "}
+						<IoMdArrowRoundBack size={20} className="pr-1" />
+						Quay lại
+					</Button>
+				</Link>
 			</div>
 			<Form {...form}>
 				<form
@@ -162,10 +168,10 @@ const NewBlog = () => {
 															document.title = title;
 															form.clearErrors("title"),
 																(title == "" || title == null) &&
-																form.setError("title", {
-																	type: "custom",
-																	message: "Tiêu đề nội dung là bắt buộc",
-																});
+																	form.setError("title", {
+																		type: "custom",
+																		message: "Tiêu đề nội dung là bắt buộc",
+																	});
 
 															form.setValue("title", title),
 																debouncedChangeHandler();
@@ -336,7 +342,7 @@ const NewBlog = () => {
 																			field.onChange(values);
 																		}}
 																		getOptionLabel={(option) => option.name}
-																		getOptionValue={option => option._id}
+																		getOptionValue={(option) => option._id}
 																	/>
 																</div>
 																<FormMessage />

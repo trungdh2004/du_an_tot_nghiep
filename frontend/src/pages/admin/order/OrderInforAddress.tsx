@@ -17,7 +17,7 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 			const data = await confirmOrder(id);
 			getOrderById();
 			return data;
-		} catch (error:any) {
+		} catch (error: any) {
 			toast.error(error?.response?.data?.message);
 			console.log(error);
 		}

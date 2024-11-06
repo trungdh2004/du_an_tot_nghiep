@@ -224,6 +224,10 @@ const ChatAction = () => {
 				>
 					<FiMessageSquare size={20} className="text-white" />
 				</div>
+
+				<div className="absolute size-5 left-0 -top-1 bg-red-500 text-white box-shadow rounded-full flex items-center justify-center ">
+					0
+				</div>
 			</div>
 		</div>
 	);

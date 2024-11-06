@@ -55,11 +55,11 @@ const OrderSuccessIndex = () => {
 				pageIndex: data.pageIndex,
 				totalPage: data.totalPage,
 			});
-			toast.success("Đã cập nhập dữ liệu mới")
-		} catch (error:any) {
-			toast.error(error.message)
+			toast.success("Đã cập nhập dữ liệu mới");
+		} catch (error: any) {
+			toast.error(error.message);
 		}
-	}
+	};
 
 	const hasMore =
 		resultOrder.content.length === 0
@@ -95,7 +95,7 @@ const OrderSuccessIndex = () => {
 			>
 				<div className="grid grid-cols-1 md:grid-cols-2 w-full gap-4 px-2 md:px-4">
 					{resultOrder?.content?.map((order: any) => (
-						<OrderItem key={order._id} order={order} isSuccess/>
+						<OrderItem key={order._id} order={order} isSuccess />
 					))}
 
 					{resultOrder?.content?.length === 0 && (

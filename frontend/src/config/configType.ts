@@ -1,3 +1,3 @@
 export const TYPE_NOTIFICATION = {
-    ORDER:"APP//ORDER"
-}
+	ORDER: "APP//ORDER",
+};

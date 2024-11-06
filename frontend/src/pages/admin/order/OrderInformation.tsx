@@ -49,18 +49,12 @@ const OrderInformation = ({ data, getOrderById }: any) => {
 													alt=""
 													className="w-12 h-12"
 												/>
-												<h4 className="w-32 truncate">
-													{pro.product.name}
-												</h4>
+												<h4 className="w-32 truncate">{pro.product.name}</h4>
 											</div>
 										</TableCell>
-										<TableCell >
-											{pro.variant}
-										</TableCell>
-										<TableCell >
-											{pro.quantity}
-										</TableCell>
-										<TableCell >{formatCurrency(pro.price)}</TableCell>
+										<TableCell>{pro.variant}</TableCell>
+										<TableCell>{pro.quantity}</TableCell>
+										<TableCell>{formatCurrency(pro.price)}</TableCell>
 										<TableCell className="text-right">
 											{formatCurrency(pro.totalMoney)}
 										</TableCell>

@@ -15,7 +15,7 @@ import CartPreview from "./CartPreview";
 const Cart = () => {
 	const { totalCart, cartsPreviews } = useCart();
 	const { isLoggedIn } = useAuth();
-	const navigateIsLogin = useCurrentRouteAndNavigation();	
+	const navigateIsLogin = useCurrentRouteAndNavigation();
 	return (
 		<Link
 			to={"/cart"}

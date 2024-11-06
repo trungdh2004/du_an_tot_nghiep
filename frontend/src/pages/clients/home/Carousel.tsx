@@ -67,6 +67,7 @@ const Carousel = () => {
 	const swiperRef = useRef<SwiperType>();
 	return (
 		<div className="py-8 padding">
+			
 			<div className="flex flex-col items-end justify-between sm:flex-row sm:items-center">
 				<h2 className="text-2xl font-semibold sm:text-4xl sm:font-bold">
 					Sản phẩm mới mẻ

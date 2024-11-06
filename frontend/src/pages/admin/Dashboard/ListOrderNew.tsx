@@ -8,7 +8,7 @@ import {
 	TableCell,
 	TableHead,
 	TableHeader,
-	TableRow
+	TableRow,
 } from "@/components/ui/table";
 import { getNewOrder } from "@/service/dashboard.service";
 import { useQuery } from "@tanstack/react-query";
@@ -100,7 +100,10 @@ const ListOrderNew = () => {
 									<TableCell className="text-center">
 										<TooltipComponent label="Xem chi tiết">
 											<Link to={`/admin/order/${row._id}`}>
-												<MdOutlineRemoveRedEye size={20} className="text-blue-500"/>
+												<MdOutlineRemoveRedEye
+													size={20}
+													className="text-blue-500"
+												/>
 											</Link>
 										</TooltipComponent>
 									</TableCell>
@@ -109,7 +112,11 @@ const ListOrderNew = () => {
 										<TooltipComponent label={row?.user?.full_name}>
 											<Avatar>
 												<AvatarImage
-													src={row?.user?.avatar ? optimizeCloudinaryUrl(row?.user?.avatar,40,40) : "/avatar_25.jpg"}
+													src={
+														row?.user?.avatar
+															? optimizeCloudinaryUrl(row?.user?.avatar, 40, 40)
+															: "/avatar_25.jpg"
+													}
 												/>
 												<AvatarFallback>CN</AvatarFallback>
 											</Avatar>
@@ -155,7 +162,11 @@ const ListOrderNew = () => {
 								</TableRow>
 							))}
 						{!data ||
-							(data.length === 0 && <TableCell colSpan={9} className="text-center">Không có giá trị</TableCell>)}
+							(data.length === 0 && (
+								<TableCell colSpan={9} className="text-center">
+									Không có giá trị
+								</TableCell>
+							))}
 					</TableBody>
 				</Table>
 			</div>

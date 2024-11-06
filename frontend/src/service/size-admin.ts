@@ -16,7 +16,7 @@ export const updateSize = async (id: string | boolean, dataForm: SizeTypes) => {
 
 export const getSizeId = async (id: string | boolean) => {
 	return await instance.get(`/size/size/${id}`);
-}
+};
 
 export const hiddenSize = async (id: string | boolean) => {
 	return await instance.delete(`size/deleteSize/${id}`);
@@ -40,4 +40,3 @@ export const unhiddenListSize = async (listId: any) => {
 		listId,
 	});
 };
-

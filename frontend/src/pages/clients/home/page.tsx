@@ -6,10 +6,10 @@ import Sliderv2 from "./Sliderv2";
 const HomePage = () => {
 	return (
 		<div className="">
-			<Sliderv2/>
+			<Sliderv2 />
 			<Carousel />
 			<ProductByCategory />
-			<DealProductSection/>
+			<DealProductSection />
 			<LatestNewsBlog />
 		</div>
 	);

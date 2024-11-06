@@ -35,6 +35,7 @@ import ChatInit from "@/pages/admin/Chat/ChatInit";
 import ChatContent from "@/pages/admin/Chat/components/ChatContent";
 import CustomerList from "@/pages/admin/users/customer/CustomerList";
 import ProductComing from "@/pages/admin/product/productComing/ProductComing";
+import StaffIndex from "@/pages/admin/users/staff/StaffIndex";
 
 const AdminRouter = [
 	{
@@ -73,7 +74,11 @@ const AdminRouter = [
 			{
 				path: "users/client",
 				element: <CustomerList />,
-			},
+      },
+      {
+        path: "users/staff",
+        element: <StaffIndex />,
+      },
 			// Quản lý sản phẩm
 			{
 				path: "product/update/:id",
