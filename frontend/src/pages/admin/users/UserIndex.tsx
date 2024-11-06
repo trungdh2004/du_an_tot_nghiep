@@ -40,6 +40,7 @@ interface IData {
 	provider: string | null;
 	avatarUrl: string;
 	is_admin: boolean;
+	is_staff: boolean;
 	blocked_at: boolean;
 	createdAt: string;
 }
@@ -67,7 +68,7 @@ const UserIndex = () => {
 			keyword: inputValue,
 		}));
 	}, 300);
-
+	const [isStaff, setisStaff] = useState<null | boolean>(null);
 	const [response, setResponse] = useState({
 		pageIndex: 1,
 		pageSize: 5,
@@ -251,6 +252,23 @@ const UserIndex = () => {
 			},
 		},
 		{
+			accessorKey: "quyen",
+			header: () => {
+				return <div className="md:text-base text-xs">Quyền</div>;
+			},
+			cell: ({ row }) => {
+				let quyen;
+				if (row.original.is_admin) {
+					quyen = "Admin";
+				} else if (row.original.is_staff) {
+					quyen = "Nhân viên";
+				} else {
+					quyen = "Khách";
+				}
+				return <div className="md:text-base text-xs">{quyen}</div>;
+			},
+		},
+		{
 			id: "status",
 			header: () => {
 				return <div className="md:text-base text-xs">Trạng thái</div>;
@@ -271,37 +289,46 @@ const UserIndex = () => {
 			enableHiding: false,
 			cell: ({ row }) => {
 				return (
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button variant="ghost" className="h-8 w-8 p-0">
-								<span className="sr-only">Open menu</span>
-								<HiOutlineDotsVertical className="h-4 w-4" />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuItem>Xem chi tiết</DropdownMenuItem>
-							{row?.original?.blocked_at ? (
-								<DropdownMenuItem
-									className="text-green-400"
-									onClick={() => setopenUnbanId(row?.original?._id)}
-								>
-									Mở
-								</DropdownMenuItem>
-							) : (
-								<DropdownMenuItem
-									className="text-red-400"
-									onClick={() => setopenBanId(row?.original?._id)}
-								>
-									Cấm
-								</DropdownMenuItem>
-							)}
-							<DropdownMenuItem
-								onClick={() => setopenIdUpdated(row?.original?._id)}
-							>
-								Phân quyền
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
+					<div>
+						{!row?.original?.is_admin && (
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<Button variant="ghost" className="h-8 w-8 p-0">
+										<span className="sr-only">Open menu</span>
+										<HiOutlineDotsVertical className="h-4 w-4" />
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent align="end">
+									{!row?.original?.is_admin && (
+										<DropdownMenuItem
+											onClick={() => {
+												setopenIdUpdated(row?.original?._id);
+												setisStaff(row?.original?.is_staff);
+											}}
+											className="cursor-pointer"
+										>
+											Phân quyền
+										</DropdownMenuItem>
+									)}
+									{row?.original?.blocked_at ? (
+										<DropdownMenuItem
+											className="text-green-400 cursor-pointer"
+											onClick={() => setopenUnbanId(row?.original?._id)}
+										>
+											Mở
+										</DropdownMenuItem>
+									) : (
+										<DropdownMenuItem
+											className="text-red-400 cursor-pointer"
+											onClick={() => setopenBanId(row?.original?._id)}
+										>
+											Cấm
+										</DropdownMenuItem>
+									)}
+								</DropdownMenuContent>
+							</DropdownMenu>
+						)}
+					</div>
 				);
 			},
 		},
@@ -542,6 +569,8 @@ const UserIndex = () => {
 				<DiaLogDecentralization
 					open={openIdUpdated}
 					close={() => setopenIdUpdated(false)}
+					isStaff={isStaff}
+					handlePagingUser={handlePagingUser}
 				/>
 			)}
 		</div>

@@ -72,6 +72,7 @@ class UserAdmin {
           provider: 1, // Trường email
           avatarUrl: 1, // Trường email
           is_admin: 1, // Trường email
+          is_staff: 1, // Tr
           blocked_at: 1, // Trường email
           createdAt: 1, // Trường email
         },
