@@ -22,7 +22,7 @@ import { AxiosError } from "axios";
 import OverlayViolet from "@/components/OverlayViolet";
 
 const Register = () => {
-  const navigate = useNavigate();
+	const navigate = useNavigate();
 	const formSchema = z
 		.object({
 			userName: z.string({ required_error: "Bạn chưa nhập tên đăng nhập" }),
@@ -55,7 +55,7 @@ const Register = () => {
 		try {
 			const { data } = await createAccount(payload);
 			toast.success(data?.message);
-      navigate('/auth/login');
+			navigate("/auth/login");
 		} catch (error: any) {
 			toast.error(error.response!.data!.message);
 		}

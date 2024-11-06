@@ -2,11 +2,23 @@ import { cn } from "@/lib/utils";
 import { Outlet } from "react-router-dom";
 import { useMediaQuery } from "usehooks-ts";
 import Conversation from "./components/Conversation";
-
+import { useEffect, useState } from "react";
 
 const LayoutChat = () => {
+	const [checkNavigate, setCheckNavigate] = useState(
+		window.location.pathname === "/admin/chat",
+	);
 
-	const checkNavigate = window.location.pathname === "/admin/chat";
+	useEffect(() => {
+		console.log("window.location.pathname", window.location.pathname);
+		if (window.location.pathname === "/admin/chat") {
+			console.log("zo r");
+
+			setCheckNavigate(true);
+		} else {
+			setCheckNavigate(false);
+		}
+	}, [window.location]);
 
 	return (
 		<>

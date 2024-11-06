@@ -18,10 +18,12 @@ export const createMessage = async (
 ) =>
 	instance.post(`/chat/createMessage/${conversationId}`, {
 		content,
-		sender
+		sender,
 	});
 
-export const pagingConversation = (pageIndex:number) => instance.post("/chat/pagingConversation",{
-	pageIndex
-})
-export const findConversation = (id:string) => instance.get("/chat/findConversation/"+id)
+export const pagingConversation = (pageIndex: number) =>
+	instance.post("/chat/pagingConversation", {
+		pageIndex,
+	});
+export const findConversation = (id: string) =>
+	instance.get("/chat/findConversation/" + id);

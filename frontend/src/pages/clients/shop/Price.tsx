@@ -70,10 +70,14 @@ const Price = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 				/>
 			</div>
 			<div className="flex justify-between">
-				<p className="lg:text-sm text-xs">{debouncedValues[0].toLocaleString()}đ</p>
-				<p className="lg:text-sm text-xs">{debouncedValues[1].toLocaleString()}đ</p>
-      </div>
-      <hr />
+				<p className="lg:text-sm text-xs">
+					{debouncedValues[0].toLocaleString()}đ
+				</p>
+				<p className="lg:text-sm text-xs">
+					{debouncedValues[1].toLocaleString()}đ
+				</p>
+			</div>
+			<hr />
 		</div>
 	);
 };

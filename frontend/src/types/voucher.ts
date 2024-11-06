@@ -1,4 +1,3 @@
-
 export interface IVoucher {
 	code: string;
 	createdAt: string;
@@ -6,7 +5,7 @@ export interface IVoucher {
 	discountType: number;
 	discountValue: number;
 	endDate: string;
-	maxAmount:number;
+	maxAmount: number;
 	minimumOrderValue: number;
 	modifiedBy: string;
 	modifiedDate: string;
@@ -17,6 +16,6 @@ export interface IVoucher {
 	usageCount: number;
 	usageLimit: number;
 	user: string;
-	type:string;
+	type: string;
 	_id: string;
 }

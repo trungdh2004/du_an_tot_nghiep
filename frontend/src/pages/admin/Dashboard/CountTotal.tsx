@@ -4,18 +4,16 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
 const CountTotal = () => {
-	const {data} = useQuery({
-		queryKey:["countTotal"],
-		queryFn:async() => {
+	const { data } = useQuery({
+		queryKey: ["countTotal"],
+		queryFn: async () => {
 			try {
-				const {data} = await getCountTotal()
+				const { data } = await getCountTotal();
 
-				return data
-			} catch (error) {
-				
-			}
-		}
-	})
+				return data;
+			} catch (error) {}
+		},
+	});
 
 	return (
 		<>
@@ -29,7 +27,9 @@ const CountTotal = () => {
 				</div>
 				<div className="">
 					<p className="text-[#042174] md:text-base text-sm">Tổng đơn hàng</p>
-					<h3 className="font-bold text-2xl text-blue-700 text-end">{formatQuantity(data?.totalOrderNew)}</h3>
+					<h3 className="font-bold text-2xl text-blue-700 text-end">
+						{formatQuantity(data?.totalOrderNew)}
+					</h3>
 				</div>
 				<div
 					style={{
@@ -51,7 +51,9 @@ const CountTotal = () => {
 					<p className="text-[#186d37] md:text-base text-sm text-end">
 						Đơn hàng đã giao
 					</p>
-					<h3 className="font-bold text-2xl text-green-600 text-end">{formatQuantity(data?.totalOrderSuccess)}</h3>
+					<h3 className="font-bold text-2xl text-green-600 text-end">
+						{formatQuantity(data?.totalOrderSuccess)}
+					</h3>
 				</div>
 				<div
 					style={{
@@ -72,7 +74,9 @@ const CountTotal = () => {
 					<p className="text-[#27097A] md:text-base text-sm text-end">
 						Người dùng
 					</p>
-					<h3 className="font-bold text-2xl text-[#5119B7] text-end">{formatQuantity(data?.totalUser)}</h3>
+					<h3 className="font-bold text-2xl text-[#5119B7] text-end">
+						{formatQuantity(data?.totalUser)}
+					</h3>
 				</div>
 				<div
 					style={{
@@ -91,7 +95,9 @@ const CountTotal = () => {
 				</div>
 				<div className="">
 					<p className="text-[#7A0916]"> Sản phẩm</p>
-					<h3 className="font-bold text-2xl text-[#7A0916] text-end">{formatQuantity(data?.totalProduct)}</h3>
+					<h3 className="font-bold text-2xl text-[#7A0916] text-end">
+						{formatQuantity(data?.totalProduct)}
+					</h3>
 				</div>
 				<div
 					style={{

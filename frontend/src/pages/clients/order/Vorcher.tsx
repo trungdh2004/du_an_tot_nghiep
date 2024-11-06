@@ -77,11 +77,15 @@ const Vorcher = ({
 					<div className="col-span-3">
 						<div className="flex pl-4 gap-3 items-center">
 							<img src={voucher1} alt="" className="w-8 h-8" />
-							<h3 className="lg:text-lg md:text-base text-sm hidden md:block">Voucher</h3>
+							<h3 className="lg:text-lg md:text-base text-sm hidden md:block">
+								Voucher
+							</h3>
 						</div>
 					</div>
 					<div className="flex text-center pr-4 gap-2 items-center">
-						<h5 className="lg:text-base text-sm w-[50%] hidden md:block">Mã voucher</h5>
+						<h5 className="lg:text-base text-sm w-[50%] hidden md:block">
+							Mã voucher
+						</h5>
 						<form
 							action=""
 							onSubmit={handleSubmit(onSubmit)}
@@ -127,7 +131,8 @@ const Vorcher = ({
 											HXD :
 											{voucher?.endDate
 												? format(new Date(voucher?.endDate), "yyyy-MM-dd")
-												: "Sai time"}  - {voucher?.type === "1" ? "Tất cả" : "Một số sản phẩm"}
+												: "Sai time"}{" "}
+											- {voucher?.type === "1" ? "Tất cả" : "Một số sản phẩm"}
 										</p>
 									</div>
 								</div>

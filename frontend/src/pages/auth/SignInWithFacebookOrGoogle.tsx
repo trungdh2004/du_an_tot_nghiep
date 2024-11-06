@@ -35,7 +35,7 @@ const SignInWithFacebookOrGoogle = () => {
 	const auth = getAuth(app);
 	const { setAuthUser, setIsLoggedIn } = useAuth();
 	const routerHistory = useRouterHistory();
-	const {setCarts,setTotalCart} = useCart()
+	const { setCarts, setTotalCart } = useCart();
 	const handleLoginGoogle = async () => {
 		const provider = new GoogleAuthProvider();
 		provider.addScope("https://www.googleapis.com/auth/userinfo.email");
@@ -53,7 +53,7 @@ const SignInWithFacebookOrGoogle = () => {
 					provider: user?.providerId,
 				};
 				socialUser(payload)
-					.then(async({ data }) => {
+					.then(async ({ data }) => {
 						console.log(data);
 						setAuthUser?.(data?.user);
 						setIsLoggedIn?.(true);

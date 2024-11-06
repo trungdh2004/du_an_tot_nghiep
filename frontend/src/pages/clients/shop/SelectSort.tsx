@@ -20,7 +20,7 @@ const SelectSort = ({ setSearchParamsObject }: Props) => {
 	const query = useQueryClient();
 	const navigate = useNavigate();
 	const handleReset = () => {
-		const defaultParams:SearchObjectTypeProduct = {
+		const defaultParams: SearchObjectTypeProduct = {
 			pageIndex: 1,
 			pageSize: 12,
 			keyword: "",
@@ -48,12 +48,20 @@ const SelectSort = ({ setSearchParamsObject }: Props) => {
 			case "1":
 				searchParams.set("sort", "1");
 				setSearchParams(searchParams);
-				setSearchParamsObject((prev) => ({ ...prev, sort: 1,fieldSort:"discount" }));
+				setSearchParamsObject((prev) => ({
+					...prev,
+					sort: 1,
+					fieldSort: "discount",
+				}));
 				break;
 			case "-1":
 				searchParams.set("sort", "-1");
 				setSearchParams(searchParams);
-				setSearchParamsObject((prev) => ({ ...prev, sort: -1,fieldSort:"discount" }));
+				setSearchParamsObject((prev) => ({
+					...prev,
+					sort: -1,
+					fieldSort: "discount",
+				}));
 				break;
 			default:
 				break;
@@ -65,7 +73,7 @@ const SelectSort = ({ setSearchParamsObject }: Props) => {
 				<SelectTrigger className="lg:w-[180px] w-full rounded-full">
 					<SelectValue placeholder="Sắp xếp theo" />
 				</SelectTrigger>
-				<SelectContent updatePositionStrategy={'always'}>
+				<SelectContent updatePositionStrategy={"always"}>
 					<SelectGroup>
 						<SelectItem
 							value="reset"

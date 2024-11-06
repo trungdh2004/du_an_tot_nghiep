@@ -5,17 +5,17 @@ import { useEffect, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
 const ChatIndex = () => {
-	const matches = useMediaQuery("(max-width: 768px)"); 
-	const [selectedChat, setSelectedChat] = useState<string>('');
-	const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false); 
+	const matches = useMediaQuery("(max-width: 768px)");
+	const [selectedChat, setSelectedChat] = useState<string>("");
+	const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 	useEffect(() => {
-		handleDialogOpenChange(Boolean(selectedChat))
-	}, [ selectedChat]);
+		handleDialogOpenChange(Boolean(selectedChat));
+	}, [selectedChat]);
 
 	const handleDialogOpenChange = (open: boolean) => {
 		setIsDialogOpen(open);
 		if (!open) {
-			setSelectedChat(''); 
+			setSelectedChat("");
 		}
 	};
 	return (
@@ -24,7 +24,7 @@ const ChatIndex = () => {
 				<div className="h-full col-span-3 bg-white border rounded-md md:col-span-1 box-shadow">
 					<Conversation setSelectedChat={setSelectedChat} />
 				</div>
-				{!matches && ( 
+				{!matches && (
 					<div className="hidden h-full col-span-2 bg-white border rounded-md box-shadow md:block">
 						<div className="h-full ">
 							<ChatContent />
@@ -32,13 +32,13 @@ const ChatIndex = () => {
 					</div>
 				)}
 			</div>
-			{matches && ( 
+			{matches && (
 				<Dialog open={isDialogOpen} onOpenChange={handleDialogOpenChange}>
-					<DialogTitle/>
-					<DialogContent  className="w-screen h-screen max-w-full p-0 md:hidden">
-					<div className="w-screen h-screen max-w-full p-0 ">
-						<ChatContent />
-					</div>
+					<DialogTitle />
+					<DialogContent className="w-screen h-screen max-w-full p-0 md:hidden">
+						<div className="w-screen h-screen max-w-full p-0 ">
+							<ChatContent />
+						</div>
 					</DialogContent>
 				</Dialog>
 			)}

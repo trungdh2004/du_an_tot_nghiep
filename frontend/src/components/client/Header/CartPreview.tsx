@@ -15,7 +15,7 @@ const CartPreview = ({ totalCart, carts }: Props) => {
 			</div>
 			<div className="h-auto space-y-3 overflow-x-hidden overflow-y-auto max-h-96">
 				{carts?.map((cart) => {
-					return  (
+					return (
 						<div key={cart?._id} className="flex items-start justify-between">
 							<div className="flex items-start gap-1">
 								<div className="w-10 h-10 min-w-10 min-h-10 max-w-10 max-h-10">
@@ -33,14 +33,21 @@ const CartPreview = ({ totalCart, carts }: Props) => {
 									<p className="text-sm truncate max-w-40">
 										{cart?.product?.name}
 									</p>
-									<span className={cn("text-xs text-gray-400 hidden",cart?.attribute && 'hidden')}>
+									<span
+										className={cn(
+											"text-xs text-gray-400 hidden",
+											cart?.attribute && "hidden",
+										)}
+									>
 										Màu {cart?.attribute?.color?.name}, kích thước{" "}
 										{cart?.attribute?.size?.name}.
 									</span>
 								</div>
 							</div>
 							<p className="text-sm text-red-500">
-								{formatCurrency(cart?.attribute?.discount || cart?.product?.price)}
+								{formatCurrency(
+									cart?.attribute?.discount || cart?.product?.price,
+								)}
 							</p>
 						</div>
 					);

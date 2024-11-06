@@ -127,7 +127,7 @@ const ProductDetail = (props: Props) => {
 								<h3 className="lg:text-[15px] text-[13px] font-bold ">
 									Số lượng
 								</h3>
-								<div className="flex items-center" >
+								<div className="flex items-center">
 									<div className="flex lg:w-[140px] lg:h-[40px] w-[80px] h-[25px] border-2 items-center justify-between lg:px-2 px-1 lg:py-[24px] py-[14px] rounded-full bg-slate-100/70">
 										<button className="border-2 rounded-full lg:p-2 p-[2px]">
 											<MdOutlineAdd />

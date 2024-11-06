@@ -99,14 +99,13 @@ const AddAddressOrder = ({ open, closeOpen }: Props) => {
 	const { mutate } = useMutation({
 		mutationFn: async (dataNew: any) => addAddress(dataNew),
 		onSuccess: () => {
-      form.reset();
-      
+			form.reset();
+
 			queryClient.invalidateQueries({
 				queryKey: ["address"],
 			});
-      toast.success("Bạn thêm địa chỉ thành công");
-      closeOpen(false);
-			
+			toast.success("Bạn thêm địa chỉ thành công");
+			closeOpen(false);
 		},
 		onError: () => {
 			toast.error("Bạn thêm địa chỉ thất bại");

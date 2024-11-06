@@ -7,7 +7,7 @@ interface Props {
 	handlePageClick: ({ selected }: { selected: number }) => void;
 	size?: "sm" | "md";
 	forcePage: number;
-	marginPagesDisplayed?:number
+	marginPagesDisplayed?: number;
 }
 
 function Paginations({
@@ -15,7 +15,7 @@ function Paginations({
 	handlePageClick,
 	size = "md",
 	forcePage = 0,
-	marginPagesDisplayed = 2
+	marginPagesDisplayed = 2,
 }: Props) {
 	return (
 		<>

@@ -119,11 +119,11 @@ const AdminRouter = [
 			{
 				path: "product/add",
 				element: <ProductAddPage />,
-      },
-      {
-        path: "product/coming",
-        element: <ProductComing />,
-      },
+			},
+			{
+				path: "product/coming",
+				element: <ProductComing />,
+			},
 			// Quản lý biến thể
 			{
 				path: "variant/size",

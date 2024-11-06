@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 function Cart() {
 
@@ -15,16 +15,22 @@ function Cart() {
   };
 
 
-  const decreaseQuantity = (id: number) => {
-    setCartItems(cartItems.map(item => 
-      item.id === id && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
-    ));
-  };
+	const decreaseQuantity = (id: number) => {
+		setCartItems(
+			cartItems.map((item) =>
+				item.id === id && item.quantity > 1
+					? { ...item, quantity: item.quantity - 1 }
+					: item,
+			),
+		);
+	};
 
-
-  const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const tax = subtotal * 0.075; 
-  const total = subtotal + tax;
+	const subtotal = cartItems.reduce(
+		(acc, item) => acc + item.price * item.quantity,
+		0,
+	);
+	const tax = subtotal * 0.075;
+	const total = subtotal + tax;
 
   return (
     <div className="m-auto w-full max-w-[1120px] p-3">
@@ -40,9 +46,9 @@ function Cart() {
         </div>
       </div>
 
-
-      <h2 className="text-center font-bold text-[32px] lg:text-[48px] pt-8">Shopping Cart</h2>
-      
+			<h2 className="text-center font-bold text-[32px] lg:text-[48px] pt-8">
+				Shopping Cart
+			</h2>
 
       <div className="flex flex-col gap-8 py-8">
         {cartItems.map((item) => (
@@ -75,26 +81,26 @@ function Cart() {
       </div>
 
 
-      <div className="bg-[#9900FF] h-auto lg:h-[200px] rounded-[30px] mt-10 p-8 text-white">
-        <h3 className="text-[24px] font-semibold">Order Summary</h3>
-        <div className="flex justify-between pt-4">
-          <span>Subtotal:</span>
-          <span>${subtotal.toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between pt-2">
-          <span>Tax:</span>
-          <span>${tax.toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between font-bold pt-2 text-[20px]">
-          <span>Total:</span>
-          <span>${total.toFixed(2)}</span>
-        </div>
-        <button className="bg-white text-[#9900FF] mt-6 w-full py-2 rounded-lg font-bold hover:bg-gray-200 transition-colors">
-          Proceed to Checkout
-        </button>
-      </div>
-    </div>
-  );
+			<div className="bg-[#9900FF] h-auto lg:h-[200px] rounded-[30px] mt-10 p-8 text-white">
+				<h3 className="text-[24px] font-semibold">Order Summary</h3>
+				<div className="flex justify-between pt-4">
+					<span>Subtotal:</span>
+					<span>${subtotal.toFixed(2)}</span>
+				</div>
+				<div className="flex justify-between pt-2">
+					<span>Tax:</span>
+					<span>${tax.toFixed(2)}</span>
+				</div>
+				<div className="flex justify-between font-bold pt-2 text-[20px]">
+					<span>Total:</span>
+					<span>${total.toFixed(2)}</span>
+				</div>
+				<button className="bg-white text-[#9900FF] mt-6 w-full py-2 rounded-lg font-bold hover:bg-gray-200 transition-colors">
+					Proceed to Checkout
+				</button>
+			</div>
+		</div>
+	);
 }
 
 export default Cart;

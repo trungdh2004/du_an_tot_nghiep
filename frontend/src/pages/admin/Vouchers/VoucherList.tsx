@@ -183,11 +183,7 @@ const VoucherList = () => {
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.startDate);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
-				return (
-					<div className="text-xs md:text-base">
-						{formattedDate}
-					</div>
-				);
+				return <div className="text-xs md:text-base">{formattedDate}</div>;
 			},
 		},
 		{
@@ -196,11 +192,7 @@ const VoucherList = () => {
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.endDate);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
-				return (
-					<div className="text-xs md:text-base">
-						{formattedDate}
-					</div>
-				);
+				return <div className="text-xs md:text-base">{formattedDate}</div>;
 			},
 		},
 		{
