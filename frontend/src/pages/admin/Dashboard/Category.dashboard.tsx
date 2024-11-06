@@ -6,13 +6,11 @@ import {
 	Tooltip,
 	TooltipProps,
 	XAxis,
-	YAxis
+	YAxis,
 } from "recharts";
 
 import { formatQuantity } from "@/common/localFunction";
-import {
-	ChartConfig
-} from "@/components/ui/chart";
+import { ChartConfig } from "@/components/ui/chart";
 import { getCountCategory } from "@/service/dashboard.service";
 import { useQuery } from "@tanstack/react-query";
 

@@ -88,7 +88,13 @@ const Comments = ({ product }: Props) => {
 
 			<div className="mt-10 space-y-5">
 				{comment?.map((comment: any) => {
-					return <CommentItem comment={comment} setComment={setComment} key={comment?._id}/>;
+					return (
+						<CommentItem
+							comment={comment}
+							setComment={setComment}
+							key={comment?._id}
+						/>
+					);
 				})}
 				{(check?.totalPage as number) > 0 &&
 					(check?.pageIndex as number) !== (check?.totalPage as number) && (

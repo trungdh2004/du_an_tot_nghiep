@@ -19,7 +19,7 @@ interface IProps {
 	location: number[];
 }
 
-const MarketItem = ({ order, location}: IProps) => {
+const MarketItem = ({ order, location }: IProps) => {
 	const queryClient = useQueryClient();
 	const { mutate } = useMutation({
 		mutationKey: ["mutation"],
@@ -46,10 +46,12 @@ const MarketItem = ({ order, location}: IProps) => {
 					<div>
 						{/* <GoDotFill size={20} className="text-red-500" /> */}
 						<div className="relative flex items-center justify-center">
-							<div className={cn(
-								"relative size-10 rounded-full flex justify-center items-center bg-blue-500 z-10",
-								order.status === 3 && "bg-green-500",
-							)}>
+							<div
+								className={cn(
+									"relative size-10 rounded-full flex justify-center items-center bg-blue-500 z-10",
+									order.status === 3 && "bg-green-500",
+								)}
+							>
 								<FaBox size={20} color="white" />
 							</div>
 							<div

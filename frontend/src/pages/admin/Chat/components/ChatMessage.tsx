@@ -4,13 +4,12 @@ import { TooltipComponent } from "@/components/common/TooltipComponent";
 import { formatDateMessage } from "@/common/func";
 
 const ChatMessage = ({
-	
 	user,
 	content,
 	sender,
 	avatar,
 	createdAt,
-}: IMessage & {avatar:string}) => (
+}: IMessage & { avatar: string }) => (
 	<div
 		className={`flex ${sender === "ADMIN" ? "justify-end" : "justify-start"} mb-4`}
 	>

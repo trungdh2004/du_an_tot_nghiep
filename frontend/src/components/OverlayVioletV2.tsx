@@ -8,7 +8,7 @@ const OverlayVioletV2 = () => {
 				aria-hidden="true"
 			>
 				<div
-                    className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#80f2ff] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] 
+					className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#80f2ff] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] 
                     sm:w-[72.1875rem]"
 					style={{
 						clipPath:
@@ -16,7 +16,7 @@ const OverlayVioletV2 = () => {
 					}}
 				/>
 				<div
-                    className="relative bottom-5 left-[calc(80%+11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#80f7ff] to-[#9089fc] opacity-30 sm:left-[calc(50%+30rem)] 
+					className="relative bottom-5 left-[calc(80%+11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#80f7ff] to-[#9089fc] opacity-30 sm:left-[calc(50%+30rem)] 
                     sm:w-[72.1875rem]"
 					style={{
 						clipPath:

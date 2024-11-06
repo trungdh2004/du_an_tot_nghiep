@@ -1,12 +1,7 @@
 import { TooltipComponent } from "@/components/common/TooltipComponent";
 import MapComponent from "@/components/map/Map";
 import { Button } from "@/components/ui/button";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { getLocation, updateLocation } from "@/service/location";
 import { useProcessBarLoadingEventNone } from "@/store/useSidebarAdmin";

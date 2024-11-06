@@ -138,7 +138,7 @@ const AddressInformation = () => {
 			</div>
 			<div className="flex justify-center">
 				<Paginations
-					forcePage={pageIndex-1}
+					forcePage={pageIndex - 1}
 					pageCount={data.totalPage}
 					handlePageClick={(event: any) => {
 						console.log(event.selected);

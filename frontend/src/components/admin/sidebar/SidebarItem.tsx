@@ -8,10 +8,10 @@ interface Props {
 	label: string;
 	path: string;
 	isAction: boolean;
-	isParent?:boolean
+	isParent?: boolean;
 }
 
-const SidebarItem = ({ Icon, label, path, isAction , isParent }: Props) => {
+const SidebarItem = ({ Icon, label, path, isAction, isParent }: Props) => {
 	const { setClose } = useOpenSidebar();
 
 	return (
@@ -20,7 +20,7 @@ const SidebarItem = ({ Icon, label, path, isAction , isParent }: Props) => {
 				className={cn(
 					"h-10 px-4 group py-3 gap-2 flex items-center hover:bg-[rgba(24,119,242,0.08)] rounded-md cursor-pointer mt-2",
 					isAction && "bg-[rgba(24,119,242,0.08)]",
-					isParent && "font-semibold"
+					isParent && "font-semibold",
 				)}
 			>
 				{!!Icon && (

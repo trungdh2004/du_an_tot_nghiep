@@ -253,7 +253,7 @@ const CategoryIndex = () => {
 			accessorKey: "createdAt",
 			id: "createdAt",
 			header: () => {
-				return <div className="text-xs md:text-base">View Home</div>;
+				return <div className="text-xs md:text-base">Ngày tạo</div>;
 			},
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.createdAt);

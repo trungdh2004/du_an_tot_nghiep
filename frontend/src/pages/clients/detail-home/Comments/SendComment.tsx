@@ -33,13 +33,12 @@ const SendComment = ({ sizeAvatar = 40 }: Props) => {
 	};
 
 	const handleFocusOrChange = () => {
-    const content = elements.current.content;
-    console.log('n' ,content);
-    
+		const content = elements.current.content;
+		console.log("n", content);
 
-		console.log("content",content?.textContent);
-		console.log("content inner",content?.innerHTML);
-		
+		console.log("content", content?.textContent);
+		console.log("content inner", content?.innerHTML);
+
 		const contentNotEmpty = content && content.innerHTML.trim().length > 0;
 		updateState(true, contentNotEmpty as boolean);
 	};
@@ -63,7 +62,7 @@ const SendComment = ({ sizeAvatar = 40 }: Props) => {
 	const sendComment = () => {
 		const content = elements.current.content;
 		if (content) {
-      content.innerHTML = `${content.innerHTML}&nbsp;&nbsp;`;
+			content.innerHTML = `${content.innerHTML}&nbsp;&nbsp;`;
 			handleFocusOrChange();
 		}
 	};
@@ -105,7 +104,7 @@ const SendComment = ({ sizeAvatar = 40 }: Props) => {
 						spellCheck="false"
 						tabIndex={0}
 					/>
-					
+
 					<div
 						className={cn(
 							"w-full items-center justify-between gap-3 hidden",
@@ -143,7 +142,10 @@ const SendComment = ({ sizeAvatar = 40 }: Props) => {
 				</div>
 			</div>
 
-			<div dangerouslySetInnerHTML={{ __html: md.render(stateValue) }} className="w-full break-all"/>
+			<div
+				dangerouslySetInnerHTML={{ __html: md.render(stateValue) }}
+				className="w-full break-all"
+			/>
 		</div>
 	);
 };

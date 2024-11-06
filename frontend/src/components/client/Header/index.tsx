@@ -35,7 +35,7 @@ const Header = () => {
 					<MenuMobile />
 				</div>
 				<div className="absolute max-sm:-translate-x-1/2 top-1/2 left-1/2 max-sm:-translate-y-1/2 sm:static sm:flex sm:items-center">
-					<img src="/NUC.svg" alt="" className="size-[50px]"/>
+					<img src="/NUC.svg" alt="" className="size-[50px]" />
 				</div>
 				<Menu />
 				<Actions />
@@ -43,7 +43,5 @@ const Header = () => {
 		</div>
 	);
 };
-
-
 
 export default Header;
