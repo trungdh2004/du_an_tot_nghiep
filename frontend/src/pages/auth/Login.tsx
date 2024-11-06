@@ -25,8 +25,8 @@ import {
 import { Input } from "../../components/ui/input";
 import SignInWithFacebookOrGoogle from "./SignInWithFacebookOrGoogle";
 const Login = () => {
-	const [searchParams,SetURLSearchParams] = useSearchParams();
-	const router = useNavigate()
+	const [searchParams, SetURLSearchParams] = useSearchParams();
+	const router = useNavigate();
 	const { setCarts, setTotalCart } = useCart();
 	const { setAuthUser, setIsLoggedIn } = useAuth();
 	const formSchema = z.object({
@@ -46,28 +46,30 @@ const Login = () => {
 			password: "",
 		},
 	});
-
-	
 	const onSubmit = async (payload: z.infer<typeof formSchema>) => {
 		try {
 			const { data } = await loginAccount(payload);
-			setAuthUser?.(data?.user);
+			const { user, accessToken, message } = data;
+
+			// Cập nhật trạng thái đăng nhập và token Authorization
+			setAuthUser?.(user);
 			setIsLoggedIn?.(true);
-			instance.defaults.headers.common.Authorization = `Bearer ${data?.accessToken}`;
-			const [carts, totalCountCart] = await Promise.all([
+			instance.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+			const [cartsResponse, totalCountResponse] = await Promise.all([
 				pagingCartV2(),
 				getCountMyShoppingCart(),
 			]);
-			setCarts(carts?.data?.listData);
-			setTotalCart(totalCountCart?.data?.count);
-			toast.success(data?.message);
-			const historyUrl = searchParams.get('url')
 
-			if(historyUrl) {
+			setCarts(cartsResponse?.data?.listData || []);
+			setTotalCart(totalCountResponse?.data?.count || 0);
+			toast.success(message);
+			const historyUrl = searchParams.get("url");
+
+			if (historyUrl) {
 				const url = decodeURIComponent(historyUrl);
 				window.location.href = url;
-			}else {
-				router("/")
+			} else {
+				router("/");
 			}
 		} catch (error) {
 			setAuthUser?.(undefined);

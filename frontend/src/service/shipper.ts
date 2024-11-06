@@ -3,7 +3,8 @@ import { IOrderShipper, IShipper } from "@/types/shipper.interface";
 
 export const registerShipper = async (obj: IShipper) =>
 	instance.post(`/shipper/registerShipper`, obj);
-
+export const changeAccountShipper = (obj: IShipper) =>
+	instance.post(`/shipper/changeAccountShipper`, obj);
 export const getCurrentShipper = async () =>
 	instance.get(`/shipper/getCurrentShipper`);
 
@@ -31,5 +32,12 @@ export const updateActionShippers = ({
 }: {
 	listId: string[];
 	type?: number;
-	isBlock?:boolean
-}) => instance.put(`/shipper/actionListShipper`, { listId, type,isBlock });
+	isBlock?: boolean;
+}) => instance.put(`/shipper/actionListShipper`, { listId, type, isBlock });
+export const getDetailShipperById = (id: string) =>
+	instance.get(`/shipper/getDetailShipper/${id}`);
+export const pagingOrderShipperById = (
+	id: string,
+	{ pageIndex = 0, status = 1 },
+) =>
+	instance.post(`/shipper/getDetailShipperAdmin/${id}`, { pageIndex, status });

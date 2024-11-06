@@ -111,6 +111,7 @@ export interface Item {
   is_simple: boolean;
   productId: string;
   slug: string;
+  totalQuantity?: number;
 }
 
 export interface ItemAttribute {

@@ -282,7 +282,20 @@ class CartController {
 
   async pagingCartV2(req: RequestModel, res: Response) {
     try {
-      const listCartItem = await CartItemModel.find<IndexCartItem>({})
+      const user = req.user
+      let existingCart = await CartModel.findOne({
+        user: user?.id,
+      });
+
+      if (!existingCart) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Lỗi hệ thống"
+        })
+      }
+
+      const listCartItem = await CartItemModel.find<IndexCartItem>({
+        cart:existingCart?._id
+      })
         .populate([
           {
             path: "product",
@@ -340,13 +353,14 @@ class CartController {
               name: item.product.name,
               discount: item.is_simple
                 ? item.product.discount
-                : item.attribute.discount,
-              price: item.is_simple ? item.product.price : item.attribute.price,
+                : item.attribute?.discount || 0,
+              price: item.is_simple ? item.product.price : item.attribute?.price  || 0,
               attribute: item.attribute,
               is_simple: item.is_simple,
               createdAt: item.createdAt,
               productId: item.product._id,
               slug: item.product.slug,
+              totalQuantity:item.is_simple ? item.product.quantity : item.attribute?.quantity
             };
             findCart.items.push(data);
             return acc;
@@ -422,15 +436,16 @@ class CartController {
                 name: item.product.name,
                 discount: item.is_simple
                   ? item.product.discount
-                  : item.attribute.discount,
+                  : item.attribute?.discount || 0,
                 price: item.is_simple
                   ? item.product.price
-                  : item.attribute.price,
+                  : item.attribute?.price || 0,
                 attribute: item.attribute,
                 is_simple: item.is_simple,
                 createdAt: item.createdAt,
                 productId: item.product._id,
                 slug: item.product.slug,
+                totalQuantity:item.is_simple ? item.product.quantity : item.attribute?.quantity
               },
               
             ],
@@ -475,9 +490,9 @@ class CartController {
       });
 
       if (!existingCart) {
-        existingCart = await CartModel.create({
-          user: user.id,
-        });
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Lỗi hệ thống"
+        })
       }
 
       const existingProductCart = await CartItemModel.findOne({
@@ -584,8 +599,6 @@ class CartController {
       }
 
       let quantityDefauld = quantity || existingCartItem?.quantity;
-
-      console.log("existingCartItem", existingCartItem);
 
       if (quantity) {
         if (!(existingCartItem?.product as any)?.is_simple && !(existingCartItem?.attribute as IAttribute)?._id ) {
@@ -727,14 +740,14 @@ class CartController {
     try {
       const user = req.user;
 
-      let existingCart = await CartModel.findOne({
+      const existingCart = await CartModel.findOne({
         user: user?.id,
       });
 
       if (!existingCart) {
-        existingCart = await CartModel.create({
-          user: user?.id,
-        });
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Lỗi hệ thống"
+        })
       }
 
       const countProductCart = await CartItemModel.find({
@@ -776,9 +789,9 @@ class CartController {
       });
 
       if (!existingCart) {
-        existingCart = await CartModel.create({
-          user: user?.id,
-        });
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Lỗi hệ thống"
+        })
       }
 
       const listCartItem = await CartItemModel.find({

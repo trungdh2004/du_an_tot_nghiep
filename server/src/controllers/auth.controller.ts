@@ -16,6 +16,7 @@ import sendToMail from "../mail/mailConfig";
 import OtpModel from "../models/Otp.schema";
 import { IUser, RequestModel } from "../interface/models";
 import { TYPEBLOCKED } from "../utils/confirm";
+import CartModel from "../models/cart/Cart.schema";
 
 interface PayloadToken {
   id: any;
@@ -57,8 +58,6 @@ class AuthController {
         email: email,
         provider: "credential",
       });
-
-      console.log({ existingEmail });
 
       if (!existingEmail) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -159,6 +158,10 @@ class AuthController {
         full_name: userName,
       });
 
+      await CartModel.create({
+        user:newUser?._id
+      })
+
       return res.status(STATUS.OK).json({
         message: "Đăng kí tài khoản thành công",
       });
@@ -228,6 +231,10 @@ class AuthController {
         provider,
         avatarUrl: picture,
       });
+
+      await CartModel.create({
+        user:newUser?._id
+      })
       const accessToken = await this.generateAccessToken({
         id: newUser._id,
         email: newUser.email,
@@ -732,7 +739,7 @@ class AuthController {
         full_name,
         avatarUrl,
         phone,
-      });
+      },{new:true});
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập thành công",

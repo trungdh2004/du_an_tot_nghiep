@@ -155,7 +155,7 @@ const ListOrderNew = () => {
 								</TableRow>
 							))}
 						{!data ||
-							(data.length === 0 && <TableCell>Không có giá trị</TableCell>)}
+							(data.length === 0 && <TableCell colSpan={9} className="text-center">Không có giá trị</TableCell>)}
 					</TableBody>
 				</Table>
 			</div>

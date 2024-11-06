@@ -1,17 +1,13 @@
 import { Request, Response } from "express";
-import STATUS from "../../utils/status";
-import ProductModel from "../../models/products/Product.schema";
-import CategoryModel from "../../models/products/Category.schema";
-import { productValidations } from "../../validation/product.validation";
-import { IAttribute, IColor, ISize } from "../../interface/product";
-import AttributeModel from "../../models/products/Attribute.schema";
-import { RequestModel } from "../../interface/models";
-import { generateSlugs } from "../../middlewares/generateSlug";
-import { Types } from "mongoose";
 import { formatDataPaging } from "../../common/pagingData";
+import { RequestModel } from "../../interface/models";
+import { IAttribute, IColor, ISize } from "../../interface/product";
+import { generateSlugs } from "../../middlewares/generateSlug";
 import CartItemModel from "../../models/cart/CartItem.schema";
-
-const ObjectId = require("mongoose").Types.ObjectId;
+import AttributeModel from "../../models/products/Attribute.schema";
+import ProductModel from "../../models/products/Product.schema";
+import STATUS from "../../utils/status";
+import { productValidations } from "../../validation/product.validation";
 
 interface RowIColor {
   colorId: string;
@@ -223,7 +219,24 @@ class ProductController {
         },
       })
         .skip(random)
-        .limit(4);
+        .limit(6)
+        .populate([
+          {
+            path: "attributes",
+            populate: [
+              {
+                path: "color",
+                model: "Color",
+              },
+              {
+                path: "size",
+                model: "Size",
+              },
+            ],
+          },
+          "category",
+        ])
+        .exec();
 
       return res.status(STATUS.OK).json({
         data: {
@@ -386,7 +399,7 @@ class ProductController {
           thumbnail,
           category,
           quantitySold,
-          quantity: quantityAttribute,
+          quantity: is_simple ? quantity : quantityAttribute,
           images,
           attributes: dataAttributes,
           slug: slugProduct,
@@ -628,8 +641,6 @@ class ProductController {
         rating,
       } = req.body;
 
-      console.log({ sort });
-
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
       let queryKeyword = keyword
@@ -740,12 +751,11 @@ class ProductController {
 
       if (rating) {
         queryRating = {
-          $lte: {
-            rating: rating,
+          rating: {
+            $lte: rating,
           },
         };
       }
-      console.log({ querySort });
 
       const listProduct = await ProductModel.find({
         ...queryKeyword,
@@ -838,6 +848,36 @@ class ProductController {
         count: countProduct,
       });
       return res.status(STATUS.OK).json(result);
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async listProductHot(req: Request, res: Response) {
+    try {
+      const limit = 10;
+
+      const listProduct = await ProductModel.find({
+        is_hot: true,
+      })
+        .populate({
+          path: "category",
+          select: {
+            _id: 1,
+            name: 1,
+          },
+        })
+        .sort({
+          createdAt: -1,
+        })
+        .skip(0)
+        .limit(limit);
+
+      return res.status(STATUS.OK).json({
+        listProduct,
+      });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,

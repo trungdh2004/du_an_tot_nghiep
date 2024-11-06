@@ -1,11 +1,11 @@
 import React from "react";
 import { formatCurrency, formatQuantitySort } from "@/common/func";
-import { IColor } from "@/types/typeProduct";
+import { IColor, IProduct } from "@/types/typeProduct";
 const ProductDisPlay = ({ productShop }: any) => {
 	return (
 		<div className="w-full py-9">
-			<div className="grid w-full lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-9">
-				{productShop?.content?.map((product: any) => {
+			<div className="grid w-full grid-cols-2 lg:grid-cols-4 md:grid-cols-3 gap-9">
+				{productShop?.content?.map((product: IProduct) => {
 					const listColor = product.attributes.reduce(
 						(acc: IColor[], item: any) => {
 							if (!item.color._id) return acc;
@@ -31,28 +31,28 @@ const ProductDisPlay = ({ productShop }: any) => {
 					return (
 						<div
 							key={product?._id}
-							className="max-w-full min-w-full box-shadow rounded-lg overflow-hidden  bg-white"
+							className="max-w-full min-w-full overflow-hidden bg-white rounded-lg box-shadow"
 						>
 							<div className="">
 								<div className="w-full">
 									<img
 										src={product?.thumbnail}
 										alt=""
-										className="w-full h-full object-cover"
+										className="object-cover w-full h-full"
 									/>
 								</div>
 								<div className="p-3">
-									<p className="lg:text-base text-sm">{product?.name}</p>
+									<p className="text-sm lg:text-base">{product?.name}</p>
 									<div className="flex items-center justify-start -space-x-1 *:size-3 *:inline-block  *:rounded-full my-1.5">
 										{listColor?.map((color: any) => (
 											<span
 												style={{ background: `${color?.code}` }}
-												className="box-shadow border border-black/40"
+												className="border box-shadow border-black/40"
 											/>
 										))}
 									</div>
 									<div className="flex items-center justify-between">
-										<span className="lg:text-sm md:text-sm text-xs font-medium text-red-500">
+										<span className="text-xs font-medium text-red-500 lg:text-sm md:text-sm">
 											{formatCurrency(product?.price || 0)}
 										</span>
 										<span className="lg:text-sm md:text-sm text-[10px]">

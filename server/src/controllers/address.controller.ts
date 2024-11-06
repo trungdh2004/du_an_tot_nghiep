@@ -310,7 +310,10 @@ class AddressController {
           district,
           commune,
           address,
-          location,
+          location:{
+            type: 'Point',
+            coordinates:location
+          },
           detailAddress,
         },
         { new: true }
@@ -342,10 +345,6 @@ class AddressController {
           
       //   }
       // })
-      console.log("long:",typeof +process.env.LONGSHOP!);
-      console.log("let:",typeof +process.env.LATSHOP!);
-      
-
       const nearbyLocations = await AddressModel.aggregate([
         {
           $geoNear: {

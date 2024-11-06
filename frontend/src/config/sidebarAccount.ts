@@ -30,11 +30,6 @@ const sidebarAccount = [
         icon: CgMenuBoxed
     },
     {
-        name:"Thông báo",
-        path:"/account/notification",
-        icon: IoNotificationsOutline
-    },
-    {
         name:"Giao dịch",
         path:"/account/payment",
         icon: RiSecurePaymentFill

@@ -1,8 +1,9 @@
 export interface ICategory {
-  _id?: string;
+  _id: string;
   name: string;
-  code: string;
-  slug: string;
+  description: string;
+  slug:string;
+  active?: boolean;
 }
 export interface IColor {
   _id: string;
@@ -43,9 +44,17 @@ export interface IProduct {
 
 export interface IAttribute {
   _id?: string;
-  products: string;
   color: string | IColor;
   size: string | ISize;
+  price: number;
+  quantity: number;
+  discount: number;
+}
+
+export interface IAttributeV2 {
+  _id?: string;
+  color: IColor;
+  size: ISize;
   price: number;
   quantity: number;
   discount: number;

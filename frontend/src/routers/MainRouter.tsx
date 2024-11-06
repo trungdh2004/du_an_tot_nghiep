@@ -2,6 +2,7 @@ import AccountLayout from "@/layout/AcountLayout";
 import MainLayout from "@/layout/MainLayout";
 import UserIndex from "@/pages/admin/users/UserIndex";
 import AccountIndex from "@/pages/clients/account/AccountIndex";
+import ChangePassword from "@/pages/clients/account/ChangePassword";
 import PaymentIndex from "@/pages/clients/account/PaymentIndex";
 import OrderManagements from "@/pages/clients/account/Purchase";
 import PurchaseOrder from "@/pages/clients/account/PurchaseOrder";
@@ -12,11 +13,15 @@ import CartPage from "@/pages/clients/cart/CartPage";
 import Contact from "@/pages/clients/contact/contact";
 import DetailProduct from "@/pages/clients/detail-home/page";
 import HomePage from "@/pages/clients/home/page";
+import IntroducePage from "@/pages/clients/introduce/IntroducePage";
 import OrderProcessing from "@/pages/clients/order/OrderProcessing";
 import WrapperSearch from "@/pages/clients/search/WrapperSearch";
 import ShopProduct from "@/pages/clients/shop/ShopProduct";
 import NotFound from "@/pages/NotFound";
 import { Navigate } from "react-router-dom";
+import AddressIndex from "@/pages/clients/address/AddressIndex";
+import TestComponent from "@/pages/clients/Test";
+
 const MainRouter = [
 	{
 		path: "/",
@@ -31,7 +36,7 @@ const MainRouter = [
 			{ path: "cart", element: <CartPage /> },
 			{ path: "shop", element: <ShopProduct /> },
 			{ path: "contacts", element: <Contact />},
-			
+			{ path: "introduce",element: <IntroducePage />},
 			{
 				path: "search",
 				element: <WrapperSearch />,
@@ -60,12 +65,17 @@ const MainRouter = [
 						path: "payment",
 						element: <PaymentIndex />,
 					},
+					{ path: "address", element: <AddressIndex /> },
+					{
+						path: "password",
+						element: <ChangePassword />,
+					},
 				],
 			},
 		],
 	},
-	// { path: "orderProcessing", element: <OrderProcessing /> },
-	{ path: "*", element: <NotFound /> },
 	{ path: "/orderprocessing", element: <OrderProcessing /> },
+	{ path: "/testComponent", element: <TestComponent /> },
+	{ path: "*", element: <NotFound /> },
 ];
 export default MainRouter;

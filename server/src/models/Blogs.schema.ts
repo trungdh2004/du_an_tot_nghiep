@@ -24,15 +24,15 @@ const BlogsSchema = new mongoose.Schema(
     },
     meta_title: {
       type: String,
-      default:""
+      default: "",
     },
     meta_description: {
       type: String,
-      default:""
+      default: "",
     },
     content: {
       type: String,
-      default:""
+      default: "",
     },
     views_count: {
       type: Number,
@@ -65,6 +65,7 @@ const BlogsSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
+    reactions: [{ type: mongoose.Types.ObjectId }],
     selected_tags: [
       {
         type: mongoose.Types.ObjectId,
@@ -76,7 +77,6 @@ const BlogsSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
 
 const BlogsModel = mongoose.model<IBlogs>("Blogs", BlogsSchema);
 

@@ -1,4 +1,5 @@
 import { Server } from "socket.io";
+import { socketChat } from "./socketChat.service";
 
 let io: Server; // Biến để lưu trữ đối tượng io
 const listUser = new Map();
@@ -33,13 +34,17 @@ export const initSocket = (server: any) => {
         listUser.set(userId, [socket.id]);
       }
     }
+    socketChat(socket,io)
+
+   
 
     socket.emit("returnSocket", socket.id);
-
     socket.on("disconnect",(dataUser) => {
       removeSocketFromUser(userId as string,socket.id);
       removeSocketFromAdmin(userId as string,socket.id);
     })
+
+
   });
 
 

@@ -24,17 +24,16 @@ const User = () => {
 	const regex = /\b\/?admin\b/;
 
 	const { authUser, setAuthUser, setIsLoggedIn } = useAuth();
-	const { setCarts, updateTotalCart } = useCart();
+	const {clearStateCart  } = useCart();
 	const handleLogout = async () => {
 		try {
-			const data = await logOut();
+			 await logOut();
 			delete instance.defaults.headers.common.Authorization;
 			setAuthUser?.(undefined);
 			setIsLoggedIn?.(false);
 			removeItemLocal("token");
 			signOut(getAuth(app));
-			updateTotalCart(0);
-			setCarts([]);
+			clearStateCart();
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				toast.error(error.response?.data?.message);
@@ -78,76 +77,83 @@ const User = () => {
 				<DropdownMenuSeparator
 					className={cn(!authUser?.is_admin && "hidden")}
 				/>
-				<DropdownMenuItem
-					className={cn(
-						" hidden",
-						authUser?.is_admin || authUser?.is_staff ? "block" : "hidden",
-					)}
+				<Link
+					to={regex.test(location.pathname) ? "/" : "/admin"}
+					className="cursor-pointer"
 				>
-					<Link
-						to={regex.test(location.pathname) ? "/" : "/admin"}
-						className="block w-full h-full"
+					<DropdownMenuItem
+						className={cn(
+							" hidden cursor-pointer",
+							authUser?.is_admin || authUser?.is_staff ? "block" : "hidden",
+						)}
 					>
-						{regex.test(location.pathname)
-							? "Trở về trang khách hàng"
-							: "Vào trang quản trị"}
-					</Link>
-				</DropdownMenuItem>
-
+						<p>
+							{regex.test(location.pathname)
+								? "Trở về trang khách hàng"
+								: "Vào trang quản trị"}
+						</p>
+					</DropdownMenuItem>
+				</Link>
 				<DropdownMenuSeparator
-					className={cn(regex.test(location.pathname) ? "hidden" : "block")}
+					className={cn("cursor-pointer",regex.test(location.pathname) ? "hidden" : "block")}
 				/>
-				<DropdownMenuItem
-					className={cn(regex.test(location.pathname) ? "hidden" : "block")}
+				<Link
+					to={"/account/profile"}
+					className="cursor-pointer "
 				>
-					<Link to={"/account/profile"} className="block w-full h-full">
+					<DropdownMenuItem
+						className={cn("cursor-pointer",regex.test(location.pathname) ? "hidden" : "block")}
+					>
 						Tài khoản của tôi
-					</Link>
-				</DropdownMenuItem>
-				<DropdownMenuItem
-					className={cn(regex.test(location.pathname) ? "hidden" : "block")}
-				>
-					<Link to={"/"} className="block w-full h-full">
+					</DropdownMenuItem>
+				</Link>
+				<Link to={"/account/address"} className="cursor-pointer">
+					<DropdownMenuItem
+						className={cn("cursor-pointer",regex.test(location.pathname) ? "hidden" : "block")}
+					>
 						Địa chỉ
-					</Link>
-				</DropdownMenuItem>
-				<DropdownMenuSeparator
-					className={cn(regex.test(location.pathname) ? "hidden" : "block")}
-				/>
-				<DropdownMenuItem
-					className={cn(
-						!regex.test(location.pathname) &&
-							!authUser?.is_shipper &&
-							!authUser?.is_admin
-							? "block"
-							: "hidden",
-					)}
+					</DropdownMenuItem>
+				</Link>
+				<Link
+					to="/account/purchase"
+					className="cursor-pointer"
 				>
-					<Link to={"/shipper/auth"} className="block w-full h-full">
-						Đăng ký giao hàng
-					</Link>
-				</DropdownMenuItem>
-				<DropdownMenuItem
-					className={cn(
-						!regex.test(location.pathname) &&
-							authUser?.is_shipper &&
-							!authUser?.is_admin
-							? "block"
-							: "hidden",
-					)}
-				>
-					<Link to={"/shipper"} className="block w-full h-full">
-						Giao hàng
-					</Link>
-				</DropdownMenuItem>
-				<DropdownMenuItem
-					className={cn(regex.test(location.pathname) ? "hidden" : "block")}
-				>
-					<Link to="/account/purchase" className="block w-full h-full">
+					<DropdownMenuItem
+						className={cn("cursor-pointer",regex.test(location.pathname) ? "hidden" : "block")}
+					>
 						Đơn hàng
-					</Link>
-				</DropdownMenuItem>
+					</DropdownMenuItem>
+				</Link>
 				<DropdownMenuSeparator />
+				<Link
+					to={"/shipper/auth"}
+					className="cursor-pointer"
+				>
+					<DropdownMenuItem
+						className={cn("cursor-pointer",
+							!regex.test(location.pathname) &&
+								!authUser?.is_shipper &&
+								!authUser?.is_admin
+								? "block"
+								: "hidden",
+						)}
+					>
+						Đăng ký giao hàng
+					</DropdownMenuItem>
+				</Link>
+				<Link to={"/shipper"} className="cursor-pointer">
+					<DropdownMenuItem
+						className={cn(
+							"cursor-pointer",!regex.test(location.pathname) &&
+								authUser?.is_shipper &&
+								!authUser?.is_admin
+								? "block"
+								: "hidden",
+						)}
+					>
+						Giao hàng
+					</DropdownMenuItem>
+				</Link>
 				<DropdownMenuItem
 					onClick={handleLogout}
 					className="font-semibold text-red-500"

@@ -4,7 +4,11 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { Marker } from "react-map-gl";
-import { convertMeter, convertTimeSection, formatQuantity } from "@/common/localFunction";
+import {
+	convertMeter,
+	convertTimeSection,
+	formatQuantity,
+} from "@/common/localFunction";
 
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { AiFillHome } from "react-icons/ai";
@@ -16,35 +20,53 @@ import { getOrderMapByCode, updateStatusShippedOrder } from "@/service/shipper";
 import { distance } from "framer-motion";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
+import { cancelOrder } from "@/service/order";
+import DialogConfirm from "@/components/common/DialogConfirm";
 
 const ShipperTranSport = () => {
 	const { code } = useParams();
-    const [isOpen,setIsOpen] = useState(false)
+	const [isOpen, setIsOpen] = useState(false);
 	const matches = useMediaQuery("(min-width: 1024px)");
+	const [openConfirm,setOpenConfirm] = useState(false);
 
-	const router = useNavigate()
-	const { data ,isLoading , isError } = useQuery({
+	const router = useNavigate();
+	const { data, isLoading, isError } = useQuery({
 		queryKey: ["listOrder", code],
 		queryFn: async () => {
 			try {
-				const { data } = await getOrderMapByCode(decodeURIComponent(code as string));
+				const { data } = await getOrderMapByCode(
+					decodeURIComponent(code as string),
+				);
 				return data;
 			} catch (error) {
-				router("/shipper")
+				router("/shipper");
 			}
 		},
 	});
 
-	const [locationCurrent, setLocationCurrent] = useState({
-		longitude: 105.62583879555804,
-		latitude: 21.046006645820455,
-		zoom: 15.5,
-        isLoading:false
+	const [locationCurrent, setLocationCurrent] = useState(() => {
+		let current = {
+			longitude: 105.62583879555804,
+			latitude: 21.046006645820455,
+			zoom: 15.5,
+			isLoading: false,
+		};
+
+		navigator.geolocation.getCurrentPosition((data) => {
+			current = {
+				longitude: data.coords.longitude,
+				latitude: data.coords.latitude,
+				zoom: 15.5,
+				isLoading: true,
+			};
+		});
+
+		return current;
 	});
-    const [directions, setDirections] = useState({
-		distance:0,
-		coords:[],
-		duration:0
+	const [directions, setDirections] = useState({
+		distance: 0,
+		coords: [],
+		duration: 0,
 	});
 	useEffect(() => {
 		if (matches) {
@@ -58,44 +80,40 @@ const ShipperTranSport = () => {
 				longitude: data.coords.longitude,
 				latitude: data.coords.latitude,
 				zoom: 15.5,
-                isLoading:true
+				isLoading: true,
 			});
 		});
 	}, []);
 
-    const getRoute = async (start:number[],end:number[]) => {
-        try {
+	const getRoute = async (start: number[], end: number[]) => {
+		try {
 			const res = await fetch(
-				`https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=pk.eyJ1IjoiZG9odXV0cnVuZyIsImEiOiJjbHVwa20zaDMyZ2ppMmtuem93aDN1eXl3In0.O33vYvx7VEUo7mrZGRbqgA`
-			  );
-			  const data = await res.json();
-			  const coords = data.routes[0].geometry.coordinates;
-			  const distance = data.routes[0]?.distance
-			  const duration = data.routes[0]?.duration
-			  setDirections({
-				  distance:distance,
-				  duration:duration,
-				  coords:coords
-			  });
+				`https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=pk.eyJ1IjoiZG9odXV0cnVuZyIsImEiOiJjbHVwa20zaDMyZ2ppMmtuem93aDN1eXl3In0.O33vYvx7VEUo7mrZGRbqgA`,
+			);
+			const data = await res.json();
+			const coords = data.routes[0].geometry.coordinates;
+			const distance = data.routes[0]?.distance;
+			const duration = data.routes[0]?.duration;
+			setDirections({
+				distance: distance,
+				duration: duration,
+				coords: coords,
+			});
+		} catch (error) {}
+	};
 
-		} catch (error) {
-			
+	useEffect(() => {
+		if (locationCurrent.isLoading && data) {
+			(async () => {
+				try {
+					await getRoute(
+						[locationCurrent.longitude, locationCurrent.latitude],
+						[...data?.data?.address?.location?.coordinates],
+					);
+				} catch (error) {}
+			})();
 		}
-      };
-
-    useEffect(() => {
-        if(locationCurrent.isLoading && data) {
-            (
-                async () => {
-                    try {
-                        await getRoute([locationCurrent.longitude, locationCurrent.latitude],[...data?.data?.address?.location?.coordinates])
-                    } catch (error) {
-                        
-                    }
-                }
-            )()
-        }
-    },[locationCurrent.isLoading,data])
+	}, [locationCurrent.isLoading, data]);
 
 	const location = data?.data?.address?.location?.coordinates;
 
@@ -122,20 +140,31 @@ const ShipperTranSport = () => {
 		},
 	];
 
-
-	if(isError) {
-		return <Navigate to={"/shipper"}/>
+	if (isError) {
+		return <Navigate to={"/shipper"} />;
 	}
 
-	const handleSuccessOrder =async () => {
+	const handleSuccessOrder = async () => {
 		try {
-			const {data:dataOrder} = await updateStatusShippedOrder(data?.data?._id)
-			router("/shipper")
-			toast.success("Giao hàng thành công")
+			const { data: dataOrder } = await updateStatusShippedOrder(
+				data?.data?._id,
+			);
+			router("/shipper");
+			toast.success("Giao hàng thành công");
 		} catch (error) {
-			toast.error("Lỗi ")
+			toast.error("Lỗi ");
 		}
-	}
+	};
+
+	const handleCancelOrder = async () => {
+		try {
+			await cancelOrder(data?.data?._id, null, 3);
+			router("/shipper");
+		} catch (error) {
+			console.log(error);
+			toast.error("Lỗi không thể hủy đơn hàng")
+		}
+	};
 	return (
 		<div className="w-full h-full flex relative overflow-hidden">
 			<Link to={"/shipper"}>
@@ -150,7 +179,7 @@ const ShipperTranSport = () => {
 					longitude={locationCurrent.longitude}
 					latitude={locationCurrent.latitude}
 				>
-                    <SourcePage coord={directions?.coords} />
+					<SourcePage coord={directions?.coords} />
 
 					<Marker
 						longitude={locationCurrent.longitude}
@@ -170,21 +199,36 @@ const ShipperTranSport = () => {
 					)}
 				</MapComponent>
 			</div>
-			<div className={cn("absolute -right-[280px] w-[280px] lg:static flex lg:w-1/5 h-screen bg-blue-200 p-2 sm:p-4 space-y-2  flex-col duration-1000 ease-in-out z-50 border-l border-blue-500",isOpen && "right-0")}>
+			<div
+				className={cn(
+					"absolute -right-[280px] w-[280px] lg:static flex lg:w-1/5 h-screen bg-blue-200 p-2 sm:p-4 space-y-2  flex-col duration-1000 ease-in-out z-50 border-l border-blue-500",
+					isOpen && "right-0",
+				)}
+			>
 				{/* user */}
 				<div className="w-full p-2 bg-white rounded-md flex">
 					<div className="flex-1">
 						<p className="text-sm leading-5 ">
-							Tên: <span className="font-medium">{data?.data?.address?.username}</span>
+							Tên:{" "}
+							<span className="font-medium">
+								{data?.data?.address?.username}
+							</span>
 						</p>
 						<p className="text-sm leading-5">
-							SĐT: <span className="font-medium">{data?.data?.address?.phone}</span>
+							SĐT:{" "}
+							<span className="font-medium">{data?.data?.address?.phone}</span>
 						</p>
 						<p className="text-sm leading-5">
-							Quãng đường: <span className="font-medium">{convertMeter(directions.distance)} km</span>
+							Quãng đường:{" "}
+							<span className="font-medium">
+								{convertMeter(directions.distance)} km
+							</span>
 						</p>
 						<p className="text-sm leading-5">
-							Thời gian ước tính: <span className="font-medium">{convertTimeSection(directions.duration)}</span>
+							Thời gian ước tính:{" "}
+							<span className="font-medium">
+								{convertTimeSection(directions.duration)}
+							</span>
 						</p>
 					</div>
 				</div>
@@ -234,7 +278,7 @@ const ShipperTranSport = () => {
 						Tổng số sản phẩm: {data?.data?.orderItems.length} sp
 					</div>
 					<ScrollArea className="w-full flex-1 ">
-						{data?.data?.orderItems.map((itemOrder:any) => (
+						{data?.data?.orderItems.map((itemOrder: any) => (
 							<div className="flex py-1">
 								<div className="size-12 mr-1">
 									<img
@@ -248,7 +292,7 @@ const ShipperTranSport = () => {
 										{itemOrder?.product?.name}
 									</p>
 									<p className="line-clamp-1 text-xs">
-										Loại: {`${itemOrder?.color?.name}/${itemOrder?.size}`}
+										Loại: {`${itemOrder?.variant}`}
 									</p>
 									<p className="line-clamp-1 text-xs flex justify-between">
 										<span>Số lượng: {itemOrder?.quantity}</span>
@@ -262,19 +306,47 @@ const ShipperTranSport = () => {
 					</ScrollArea>
 				</div>
 
-				<Button variant={"success"} className="w-full" onClick={handleSuccessOrder}>
+				<Button
+					variant={"success"}
+					className="w-full"
+					onClick={handleSuccessOrder}
+				>
 					Giao hàng thành công
 				</Button>
+				<Button variant={"danger"} className="w-full" onClick={() => {
+					setOpenConfirm(true)
+				}}>
+					Giao hàng thất bại
+				</Button>
 
-				<div className="absolute h-10 w-6 top-1/2 -translate-y-1/2 bg-blue-200 -left-5 cursor-pointer rounded-s-full border-l border-blue-500" onClick={() => {
-					setIsOpen(prev => !prev)
-				}}></div>
+				<div
+					className="absolute h-10 w-6 top-1/2 -translate-y-1/2 bg-blue-200 -left-5 cursor-pointer rounded-s-full border-l border-blue-500"
+					onClick={() => {
+						setIsOpen((prev) => !prev);
+					}}
+				></div>
 			</div>
-			<div className={cn("absolute w-full h-full z-20 bg-gray-500/30 hidden duration-1000 ease-in-out ",isOpen && "block lg:hidden")}
+			<div
+				className={cn(
+					"absolute w-full h-full z-20 bg-gray-500/30 hidden duration-1000 ease-in-out ",
+					isOpen && "block lg:hidden",
+				)}
 				onClick={() => {
-					setIsOpen(false)
+					setIsOpen(false);
 				}}
 			></div>
+
+			<DialogConfirm 
+				open={openConfirm}
+				handleClose={() => {
+					setOpenConfirm(false);
+				}}
+				title="Xác nhận hủy đơn hàng"
+				content="Bạn có chắc chắn muốn hủy đơn hàng do giao hàng thất bại ?"
+				status="danger"
+				handleSubmit={handleCancelOrder}
+				labelConfirm="Xác nhận"
+			/>
 		</div>
 	);
 };
