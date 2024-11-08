@@ -23,7 +23,7 @@ const ChatMessage = ({
 			className={`max-w-[70%] ${sender === "ADMIN" ? "bg-purple-500 text-white" : "bg-gray-100"} cursor-pointer rounded-2xl px-4 py-2`}
 		>
 			<TooltipComponent label={formatDateMessage(createdAt)} side="left">
-				<p>{content}</p>
+				<p className="w-full break-words">{content}</p>
 			</TooltipComponent>
 		</div>
 	</div>

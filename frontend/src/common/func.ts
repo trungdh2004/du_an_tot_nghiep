@@ -62,5 +62,5 @@ export function formatDateMessage(pastDate: any) {
 		return `${oldDate?.getHours()}:${oldDate?.getMinutes()}`;
 	}
 
-	return `${oldDate?.getHours()}:${oldDate?.getMinutes()} ${oldDate?.getDay()}/${oldDate.getMonth()}/${oldDate.getFullYear()}`;
+	return `${oldDate?.getHours()}:${oldDate?.getMinutes()} ${oldDate?.getDate()}/${oldDate.getMonth()}/${oldDate.getFullYear()}`;
 }
