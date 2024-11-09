@@ -24,10 +24,12 @@ import {
 	activeVoucherById,
 	deActiveVoucherById,
 	getPaginatedVouchers,
+	updateViewHomeVoucherById,
 	updateVoucherById,
 } from "@/service/voucher";
 import { formatCurrency } from "@/common/func";
 import { Link } from "react-router-dom";
+import { AxiosError } from "axios";
 
 interface IVoucher {
 	code: string;
@@ -109,7 +111,16 @@ const VoucherList = () => {
 			toast.error("Kích hoạt voucher thất bại");
 		}
 	};
-
+  const handleUpdateIsViewHome = async (id: string,isHome:boolean) => {
+    try {
+      const {data} =  await updateViewHomeVoucherById(id,isHome);
+      toast.success(data?.message);
+    } catch (error) {
+      if(error instanceof AxiosError){
+        toast.error(error.response?.data.message);
+      }
+    }
+  };
 	const handleDeactivateVoucher = async (id: string) => {
 		try {
 			setOpenDeactivateVoucher("");
@@ -177,6 +188,7 @@ const VoucherList = () => {
 				<div className="text-xs md:text-base">{row.original.code}</div>
 			),
 		},
+		
 		{
 			accessorKey: "startDate",
 			header: () => <div className="text-xs md:text-base">Ngày bắt đầu</div>,
@@ -241,6 +253,17 @@ const VoucherList = () => {
 			header: () => <div className="text-xs md:text-base">Lượt sử dụng</div>,
 			cell: ({ row }) => (
 				<div className="text-xs md:text-base ">{row.original.usageCount}</div>
+			),
+		},
+    {
+			accessorKey: "viewHome",
+			header: () => <div className="text-xs md:text-base">ViewHome</div>,
+			cell: ({ row }) => (
+				<label className="relative inline-flex items-center cursor-pointer">
+					<input id="switch-2" type="checkbox" className="sr-only peer" onChange={(e)=>handleUpdateIsViewHome(row?.original?._id,e?.target?.checked)} />
+					<label htmlFor="switch-2" className="hidden" />
+					<div className="peer h-4 w-11 rounded-full border bg-slate-200 after:absolute after:-top-1 after:left-0 after:h-6 after:w-6 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-300 peer-checked:after:translate-x-full peer-focus:ring-green-300" />
+				</label>
 			),
 		},
 		{
@@ -362,5 +385,6 @@ const VoucherList = () => {
 		</div>
 	);
 };
+
 
 export default VoucherList;
