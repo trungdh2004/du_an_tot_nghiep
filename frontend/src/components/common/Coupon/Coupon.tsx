@@ -1,4 +1,11 @@
+import { ModalCodition } from './ModalCodition';
 import  styles from './style.module.css'
+type Props = {
+  title: string,
+  desc: string,
+  expiry:string,
+
+}
 const Coupon = () => {
   return (
     <div  className={styles.voucherItem}>
@@ -10,7 +17,7 @@ const Coupon = () => {
           </div>
           <div className={styles.voucherItemDate}>
             <span className={styles.date}>HSD: 2024-11-30</span>
-            <div className={styles.voucherItemCondition}>Điều kiện</div>
+            <div className={styles.voucherItemCondition}><ModalCodition/></div>
           </div>
         </div>
         <div className={styles.voucherItemAction}>
