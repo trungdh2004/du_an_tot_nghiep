@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { array, z } from "zod";
+import { z } from "zod";
 
+import FroalaEditor from "@/components/common/Froala";
+import SelectComponent from "@/components/common/SelectComponent";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
 	Form,
 	FormControl,
@@ -13,33 +16,30 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-	AiOutlineCloudUpload,
-	AiOutlineLoading3Quarters,
-	AiFillCloseCircle,
-} from "react-icons/ai";
+import instance from "@/config/instance";
 import { cn } from "@/lib/utils";
+import { getAllCategory } from "@/service/category-admin";
+import { addProduct } from "@/service/product";
+import { getAllSize } from "@/service/size-admin";
 import { uploadFileService, uploadMultipleFileService } from "@/service/upload";
 import {
 	useProcessBarLoading,
 	useProcessBarLoadingEventNone,
 } from "@/store/useSidebarAdmin";
-import ImageUploading, { ImageListType } from "react-images-uploading";
-import { CiCirclePlus } from "react-icons/ci";
-import { getAllCategory } from "@/service/category-admin";
-import { getAllSize } from "@/service/size-admin";
-import instance from "@/config/instance";
-import { IColor, IItemListColor, IProduct } from "@/types/typeProduct";
-import { MdDeleteForever } from "react-icons/md";
-import FroalaEditor from "@/components/common/Froala";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { addProduct } from "@/service/product";
-import { useNavigate } from "react-router-dom";
-import SelectComponent from "@/components/common/SelectComponent";
-import { ISize } from "@/types/variants";
 import { ICategory } from "@/types/category";
-import { Checkbox } from "@/components/ui/checkbox";
+import { IColor, IProduct } from "@/types/typeProduct";
+import { ISize } from "@/types/variants";
+import { useMutation } from "@tanstack/react-query";
+import {
+	AiFillCloseCircle,
+	AiOutlineCloudUpload,
+	AiOutlineLoading3Quarters,
+} from "react-icons/ai";
+import { CiCirclePlus } from "react-icons/ci";
+import { MdDeleteForever } from "react-icons/md";
+import ImageUploading, { ImageListType } from "react-images-uploading";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const formSchema = z
 	.object({
