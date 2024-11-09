@@ -92,7 +92,7 @@ const ListColor: React.FC<Props> = ({
 							className="text-black"
 							size={sizeInput || "responsive"}
 						>
-							{color.colorName}
+							{/* {color.colorName} */}
 						</LabelChecked>
 					))}
 				</div>
