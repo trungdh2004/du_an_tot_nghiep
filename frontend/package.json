@@ -74,6 +74,7 @@
 		"react-number-format": "^5.4.2",
 		"react-paginate": "^8.2.0",
 		"react-quill": "^2.0.0",
+		"react-rnd": "^10.4.13",
 		"react-router-dom": "^6.23.1",
 		"react-select": "^5.8.0",
 		"react-slider": "^2.0.6",
