@@ -184,7 +184,7 @@ const ChatAction = () => {
 
 	return (
 		<div>
-			<div className="fixed bottom-4 right-4 size-12 rounded-full bg-blue-500 z-[100] cursor-pointer">
+			<div className="fixed bottom-4 right-4 size-12 rounded-full bg-blue-500 z-10 cursor-pointer">
 				<div
 					className={cn(
 						"absolute w-80 h-[400px] border rounded-md bg-blue-500 box-shadow bottom-14 right-0 z-10 border-blue-500 p-2 hidden",

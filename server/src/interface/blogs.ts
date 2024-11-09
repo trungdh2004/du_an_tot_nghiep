@@ -18,6 +18,7 @@ export interface IBlogs {
   thumbnail_url: string;
   isNotification: boolean;
   is_delete: boolean;
+  isPublish:boolean
 }
 
 export interface ITags {
