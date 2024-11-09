@@ -72,6 +72,7 @@ type CommonProps<T> = {
 	label?: string;
 	placeholder?: string;
 	isClearable?: boolean;
+	disabled?:boolean
 };
 
 const SelectComponent = <T,>({
@@ -84,6 +85,7 @@ const SelectComponent = <T,>({
 	options,
 	placeholder,
 	isClearable = false,
+	disabled
 }: CommonProps<T>) => {
 	return (
 		<div>
@@ -100,6 +102,7 @@ const SelectComponent = <T,>({
 				styles={customStyles}
 				placeholder={placeholder}
 				// classNames={customStyles}
+				isDisabled={disabled}
 			/>
 		</div>
 	);

@@ -106,7 +106,7 @@ const ChatContent = () => {
 			const { data } = await createMessage(messageNew, "ADMIN", id as string);
 			setMessage((prev) => ({
 				...prev,
-				content: [...prev.content, data.data],
+				content: [data.data,...prev.content],
 			}));
 			if (socket) {
 				socket?.emit("newMessage", data?.data, data?.conversation);
