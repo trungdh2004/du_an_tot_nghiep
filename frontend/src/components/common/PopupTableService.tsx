@@ -147,7 +147,7 @@ const PopupTableService = ({
 										</tr>
 									);
 								})}
-							
+
 							{data?.content?.length === 0 && (
 								<tr>
 									<th colSpan={4}>Không có dữ liệu</th>
@@ -177,9 +177,13 @@ const PopupTableService = ({
 					<Button variant={"outline"} size={"sm"} onClick={handleCloseModel}>
 						Hủy
 					</Button>
-					<Button variant={"danger"} size={"sm"} onClick={() => {
-						setListSelect([])
-					}}>
+					<Button
+						variant={"danger"}
+						size={"sm"}
+						onClick={() => {
+							setListSelect([]);
+						}}
+					>
 						Bỏ tất cả
 					</Button>
 					<Button

@@ -278,8 +278,7 @@ const ProductComing = () => {
 					close={() => {
 						setOpen(false);
 					}}
-          handleCustomer={handleCustomer}
-          
+					handleCustomer={handleCustomer}
 				/>
 			)}
 		</div>

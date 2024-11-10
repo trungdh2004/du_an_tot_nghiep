@@ -223,7 +223,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						<p className="text-xs uppercase">
 							Danh mục: <span>{product?.category?.name}</span>
 						</p>
-						<h2 className="w-full text-xl uppercase text-wrap">
+						<h2 className="w-full text-xl uppercase text-wrap font-medium">
 							{product?.name}
 						</h2>
 						<div className="flex items-center capitalize text-sm text-[#767676] [&>p]:px-4  [&>*]:border-r [&>*]:border-[#00000024]">

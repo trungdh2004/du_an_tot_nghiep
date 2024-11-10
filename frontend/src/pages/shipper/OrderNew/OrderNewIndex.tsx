@@ -56,11 +56,11 @@ const OrderNewIndex = () => {
 				pageIndex: data.pageIndex,
 				totalPage: data.totalPage,
 			});
-			toast.success("Đã cập nhập dữ liệu mới")
-		} catch (error:any) {
-			toast.error(error.message)
+			toast.success("Đã cập nhập dữ liệu mới");
+		} catch (error: any) {
+			toast.error(error.message);
 		}
-	}
+	};
 
 	const hasMore =
 		resultOrder.content.length === 0
@@ -75,7 +75,10 @@ const OrderNewIndex = () => {
 				</h2>
 				<div className="flex items-center gap-2">
 					<TooltipComponent label="Lấy dữ liệu mới">
-						<button className="p-1 rounded-sm bg-orange-400 text-white" onClick={handleReset}>
+						<button
+							className="p-1 rounded-sm bg-orange-400 text-white"
+							onClick={handleReset}
+						>
 							<IoReload size={20} />
 						</button>
 					</TooltipComponent>

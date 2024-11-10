@@ -151,7 +151,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 		try {
 			const { data } = await reactionsComment(commentId, false);
 			console.log(data);
-			
+
 			setComment((prev) => {
 				return prev?.map((comment) => {
 					if (data.commentType === TYPE_COMMENT.PRODUCT) {

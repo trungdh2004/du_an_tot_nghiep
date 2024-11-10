@@ -23,4 +23,5 @@ export interface IVoucher {
     type:"1" | "2",
     listUseProduct:string[],
     maxAmount:number,
+    isHome:boolean
 }

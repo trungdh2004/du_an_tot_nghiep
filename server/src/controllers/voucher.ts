@@ -380,7 +380,7 @@ class VoucherController {
       return res.status(STATUS.OK).json({
         message: "Lấy voucher thành công",
         valueCheck,
-        voucher:existingVoucher
+        voucher: existingVoucher,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
@@ -709,6 +709,60 @@ class VoucherController {
       return res.status(STATUS.OK).json({
         message: "Xóa thành công",
       });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async updatePublicHome(req: RequestModel, res: Response) {
+    try {
+      const { id } = req.params;
+
+      const { isHome } = req.body;
+
+      if (!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Chưa nhập id",
+        });
+      }
+
+      const existingVoucher = await VoucherModel.findById(id);
+
+      if (!existingVoucher) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có voucher",
+        });
+      }
+
+      const update = await VoucherModel.findByIdAndUpdate(id, {
+        isHome: !!isHome,
+      });
+
+      return res.status(STATUS.OK).json({
+        message: "Cập nhập thành công",
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async listVoucherHome(req: Request, res: Response) {
+    try {
+      const limit = Number(req.query.limit) || 3;
+
+      const listVoucher = await VoucherModel.find({
+        isHome: true,
+      }).limit(limit);
+
+      return res.status(STATUS.OK).json({
+        message: "Danh sách voucher",
+        data: listVoucher,
+      });
+
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,

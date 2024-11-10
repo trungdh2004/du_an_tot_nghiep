@@ -3,7 +3,15 @@
 import { formatQuantity } from "@/common/localFunction";
 import { getCountProduct } from "@/service/dashboard.service";
 import { useQuery } from "@tanstack/react-query";
-import { Bar, BarChart, ResponsiveContainer, Tooltip, TooltipProps, XAxis, YAxis } from "recharts";
+import {
+	Bar,
+	BarChart,
+	ResponsiveContainer,
+	Tooltip,
+	TooltipProps,
+	XAxis,
+	YAxis,
+} from "recharts";
 
 interface CustomTooltipProps extends TooltipProps<number, string> {}
 
@@ -15,12 +23,11 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
 	console.log({ active, payload, label });
 
 	if (active && payload && payload.length) {
-
-		const url = payload[0]?.payload?.productImage
+		const url = payload[0]?.payload?.productImage;
 		return (
 			<div className="p-2 rounded-sm bg-white box-shadow min-w-[120px]">
 				<p className="font-medium mb-1 text-sm text-center flex justify-center">
-					<img src={url} className="size-5 rounded-sm border"/>
+					<img src={url} className="size-5 rounded-sm border" />
 				</p>
 				<table className="w-full text-xs">
 					<tr>
@@ -42,10 +49,11 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
 							<div className="">Doanh thu</div>
 						</td>
 						<td className="text-end" colSpan={2}>
-							<div className="">{formatQuantity(payload[1]?.value as number,"đ")}</div>
+							<div className="">
+								{formatQuantity(payload[1]?.value as number, "đ")}
+							</div>
 						</td>
 					</tr>
-					
 				</table>
 			</div>
 		);
@@ -75,7 +83,7 @@ export default function ProductDashboard() {
 				<ResponsiveContainer width={"100%"} height="100%">
 					<BarChart accessibilityLayer data={data}>
 						{/* <CartesianGrid vertical={false} /> */}
-						<Tooltip content={<CustomTooltip />}/>
+						<Tooltip content={<CustomTooltip />} />
 						<XAxis
 							dataKey="_id"
 							tickLine={false}
@@ -104,7 +112,7 @@ export default function ProductDashboard() {
 								angle: -90,
 								position: "insideLeft",
 							}}
-							tick={{fontSize:"12px"}}
+							tick={{ fontSize: "12px" }}
 						/>
 						<YAxis
 							dataKey="totalMoney"
@@ -115,7 +123,7 @@ export default function ProductDashboard() {
 								angle: 90,
 								position: "insideRight",
 							}}
-							tick={{fontSize:"12px"}}
+							tick={{ fontSize: "12px" }}
 						/>
 						<Bar
 							dataKey="totalQuantity"

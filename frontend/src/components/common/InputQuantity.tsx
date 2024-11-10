@@ -45,8 +45,8 @@ const InputQuantity: React.FC<InputQuantityProps> = ({
 		},
 		[value, updateValue],
 	);
-useEffect(() => {
-	setValue(defaultValue);
+	useEffect(() => {
+		setValue(defaultValue);
 	}, [defaultValue]);
 	// useEffect(() => {
 	// 	updateValue(defaultValue);

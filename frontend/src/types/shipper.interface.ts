@@ -20,7 +20,7 @@ export interface IShipper {
 	};
 	district: {
 		name: string;
-		idDistrict: String;
+		idDistrict: string;
 	};
 	commune: {
 		name: string;
@@ -154,3 +154,4 @@ export interface IShipperListOrder {
 	updatedAt: string;
 	__v: number;
 }
+

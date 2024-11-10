@@ -70,7 +70,11 @@ const DealProductSection: React.FC = () => {
 							<h6 className="text-lg font-medium text-gray-500">
 								Kết thúc vào
 							</h6>
-							<Countdown date={new Date(dealProduct?.date as string).toLocaleDateString() }/>
+							<Countdown
+								date={new Date(
+									dealProduct?.date as string,
+								).toLocaleDateString()}
+							/>
 						</div>
 					</div>
 					<div className="relative flex justify-center lg:w-1/2 ">
@@ -86,11 +90,11 @@ const DealProductSection: React.FC = () => {
 						></motion.div>
 
 						<div className="relative z-10 h-auto max-w-96">
-						  <img
-  							src={dealProduct?.product?.thumbnail}
-  							alt={dealProduct?.product?.name}
-  							className="w-full h-full mix-blend-multiply"
-  						/>
+							<img
+								src={dealProduct?.product?.thumbnail}
+								alt={dealProduct?.product?.name}
+								className="w-full h-full mix-blend-multiply"
+							/>
 						</div>
 					</div>
 				</div>

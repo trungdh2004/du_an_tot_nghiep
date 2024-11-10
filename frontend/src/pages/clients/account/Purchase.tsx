@@ -10,6 +10,18 @@ import { Link } from "react-router-dom";
 import CancelConfirm from "./CancelConfirm";
 import Evaluate from "./Evaluate";
 import LoadingTable from "./LoadingTable";
+import { Button } from "@/components/ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const OrderManagements = () => {
 	const queryClient = useQueryClient();
@@ -232,7 +244,6 @@ const OrderManagements = () => {
 																<div className="w-full">
 																	{itemOrderList?.is_evaluate === true ? (
 																		<div className="">
-																			
 																			<span className="text-blue-500 text-sm">
 																				Đã đánh giá
 																			</span>
