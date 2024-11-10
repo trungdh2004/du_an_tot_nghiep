@@ -140,6 +140,10 @@ const OrderSchema = new mongoose.Schema(
       type:mongoose.Types.ObjectId,
       default:null,
     },
+    paymentAmount:{
+      type:Number,
+      default:0
+    },
     note: {
       // lời dặn của người dùng
       type: String,
