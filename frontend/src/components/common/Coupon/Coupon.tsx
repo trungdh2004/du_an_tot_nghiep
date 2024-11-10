@@ -56,7 +56,7 @@ const Coupon = ({ voucher, className }: Props) => {
                 <span className="ml-1">Đã Lưu</span>
               </motion.div>
             ) : (
-              <span>Lưu Mã</span>
+              <button className="px-3 py-2 text-white bg-blue-400 rounded-md">Lưu Mã</button>
             )}
           </motion.div>
         </div>

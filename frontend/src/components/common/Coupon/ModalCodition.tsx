@@ -44,13 +44,13 @@ export function ModalCodition(voucher:IVoucher) {
 						<Barcode value={voucher?.code} format="CODE128" height={30} />
 					</div>
 					<div className="mt-5 text-sm">
-						<p>- Hạn sử dụng: {new Date(voucher?.endDate)?.toLocaleDateString()}.</p>
-						<p>- Địa điểm áp dụng: Web NucShop</p>
-						<p>- Áp dụng cho {voucher?.listUseProduct?.length > 0 ? 'một số' : 'toàn bộ' } sản phẩm</p>
+						<p>Hạn sử dụng: {new Date(voucher?.endDate)?.toLocaleDateString()}.</p>
+						<p>Địa điểm áp dụng: Web NucShop</p>
+						<p>Áp dụng cho {voucher?.listUseProduct?.length > 0 ? 'một số' : 'toàn bộ' } sản phẩm</p>
 						<p>
-							- Áp dụng giảm {formatCurrency(voucher?.maxAmount || 0)} cho hóa đơn có giá trị thanh toán cuối cùng từ {formatCurrency(voucher?.minimumOrderValue || 0)}.
+							Áp dụng giảm {formatCurrency(voucher?.maxAmount || 0)} cho hóa đơn có giá trị thanh toán cuối cùng từ {formatCurrency(voucher?.minimumOrderValue || 0)}.
 						</p>
-						<p>- Áp dụng 01 mã ưu đãi/ 01 hoá đơn thanh toán.</p>
+						<p>Áp dụng 01 mã ưu đãi/ 01 hoá đơn thanh toán.</p>
 					</div>
 				</div>
 				<DialogFooter>

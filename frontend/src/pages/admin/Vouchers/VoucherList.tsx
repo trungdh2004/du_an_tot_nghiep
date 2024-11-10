@@ -47,6 +47,7 @@ interface IVoucher {
 	updatedAt: string;
 	usageCount: number;
 	usageLimit: number;
+  isHome?: boolean;
 	user: string;
 	_id: string;
 }
@@ -260,7 +261,7 @@ const VoucherList = () => {
 			header: () => <div className="text-xs md:text-base">ViewHome</div>,
 			cell: ({ row }) => (
 				<label className="relative inline-flex items-center cursor-pointer">
-					<input id="switch-2" type="checkbox" className="sr-only peer" onChange={(e)=>handleUpdateIsViewHome(row?.original?._id,e?.target?.checked)} />
+					<input id="switch-2" type="checkbox" defaultChecked={row?.original?.isHome} className="sr-only peer" onChange={(e)=>handleUpdateIsViewHome(row?.original?._id,e?.target?.checked)} />
 					<label htmlFor="switch-2" className="hidden" />
 					<div className="peer h-4 w-11 rounded-full border bg-slate-200 after:absolute after:-top-1 after:left-0 after:h-6 after:w-6 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-300 peer-checked:after:translate-x-full peer-focus:ring-green-300" />
 				</label>

@@ -77,8 +77,9 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 					origin: currentAttribute?.price as number,
 					discount: currentAttribute?.discount as number,
 				});
+        console.log(">>>>Chọn cả 2",currentAttribute?.quantity);
 				setIsErrorAttribute(false);
-				setAttributeId(currentAttribute?._id || "");
+				setAttributeId(currentAttribute?._id || "");        
 				setTotalQuantity(currentAttribute?.quantity as number);
 			} else if (chooseSizeId) {
 				const quantity = product?.listSize?.find(
@@ -223,7 +224,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						<p className="text-xs uppercase">
 							Danh mục: <span>{product?.category?.name}</span>
 						</p>
-						<h2 className="w-full text-xl uppercase text-wrap font-medium">
+						<h2 className="w-full text-xl font-medium uppercase text-wrap">
 							{product?.name}
 						</h2>
 						<div className="flex items-center capitalize text-sm text-[#767676] [&>p]:px-4  [&>*]:border-r [&>*]:border-[#00000024]">
