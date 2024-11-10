@@ -1,16 +1,14 @@
-import Coupon from "@/components/common/Coupon/Coupon";
 import Carousel from "./Carousel";
 import DealProductSection from "./DealProductSection";
 import LatestNewsBlog from "./LatestNewsBlog";
+import ListCoupon from "./ListCoupon";
 import ProductByCategory from "./ProductByCategory";
 import Sliderv2 from "./Sliderv2";
-import ListCoupon from "./ListCoupon";
 const HomePage = () => {
 	return (
 		<div className="">
 			<Sliderv2 />
 			<Carousel />
-      <Coupon  className="w-full"/>
       <ListCoupon/>
 			<ProductByCategory />
 			<DealProductSection />
