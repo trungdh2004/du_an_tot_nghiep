@@ -135,15 +135,6 @@ const NewBlog = () => {
 	}
 	return (
 		<div className="">
-			<div className="mb-3 flex justify-end">
-				<Link to="/admin/blogs">
-					<Button className="">
-						{" "}
-						<IoMdArrowRoundBack size={20} className="pr-1" />
-						Quay lại
-					</Button>
-				</Link>
-			</div>
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
@@ -262,6 +253,7 @@ const NewBlog = () => {
 														<PopoverTrigger asChild>
 															<FormControl>
 																<Button
+																	disabled
 																	variant={"outline"}
 																	className={cn(
 																		"w-full flex justify-between items-center pl-3 text-left font-normal",
@@ -306,6 +298,7 @@ const NewBlog = () => {
 										<Button
 											type="submit"
 											className="py-0.5 px-5 bg-blue-500 hover:bg-blue-500/80"
+											disabled
 										>
 											Đăng tải
 										</Button>
@@ -343,6 +336,7 @@ const NewBlog = () => {
 																		}}
 																		getOptionLabel={(option) => option.name}
 																		getOptionValue={(option) => option._id}
+																		disabled={true}
 																	/>
 																</div>
 																<FormMessage />
@@ -414,6 +408,7 @@ const NewBlog = () => {
 																		type="file"
 																		name=""
 																		id="file-upload"
+																		disabled
 																		onChange={(event) =>
 																			field.onChange(async () => {
 																				setPreviewUrl(
