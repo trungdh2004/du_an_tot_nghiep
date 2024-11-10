@@ -10,7 +10,7 @@ const HomePage = () => {
 		<div className="">
 			<Sliderv2 />
 			<Carousel />
-      <Coupon/>
+      <Coupon  className="w-full"/>
       <ListCoupon/>
 			<ProductByCategory />
 			<DealProductSection />

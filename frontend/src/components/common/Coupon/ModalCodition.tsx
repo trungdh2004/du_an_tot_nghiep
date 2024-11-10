@@ -1,45 +1,76 @@
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 import Barcode from "react-barcode";
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { formatCurrency } from "@/common/func";
-export function ModalCodition() {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="border-none hover:bg-none">Điều kiện</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Chi tiết mã ưu đãi</DialogTitle>
-        </DialogHeader>
-        <div className="">
-          <div className="flex flex-col items-center p-3 border border-gray-200 rounded-md">
-            <h3 className="text-base font-bold text-center">Voucher {formatCurrency(50000000)}</h3>
-          <Barcode value="038552121" format="CODE128"/>,
-          </div>
-          <p>- Hạn sử dụng: 08 - 12/11/2024.</p>
-- Địa điểm áp dụng: Web, App Canifa
-- Áp dụng cho toàn bộ sản phẩm
-- Áp dụng giảm 50k cho hóa đơn có giá trị thanh toán cuối cùng từ 599k.
-- Không áp dụng đồng thời cùng các voucher %, voucher giảm toàn đơn và các thẻ mệnh giá có điều kiện khác.
-- Áp dụng đồng thời cùng chương trình giảm giá thẻ VIP, sinh nhật VIP và các CTKM. Tính ưu đãi chiết khấu, các CTKM trước, sau đó xét đến điều kiện giảm 50k cho hóa đơn từ 599k.
-- Áp dụng kèm cấp thẻ VIP, thẻ tích điểm và tích điểm cho các hạng thẻ dựa theo giá trị hóa đơn thanh toán cuối cùng.
-- Áp dụng 01 mã ưu đãi/ 01 hoá đơn thanh toán.
-        </div>
-        <DialogFooter>
-          <Button type="submit">Lưu mã</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  )
+import { IoIosCheckmarkCircleOutline } from "react-icons/io";
+import { IVoucher } from "@/types/voucher";
+
+export function ModalCodition(voucher:IVoucher) {
+	const [isCopied, setIsCopied] = useState(false);
+
+	const handleCopy = () => {
+		navigator.clipboard.writeText(voucher?.code).then(() => {
+			setIsCopied(true);
+			setTimeout(() => setIsCopied(false), 2500);
+		});
+	};
+
+	return (
+		<Dialog>
+			<DialogTrigger asChild>
+				<button className="border-none hover:bg-none bg-none">Điều kiện</button>
+			</DialogTrigger>
+			<DialogContent className="sm:max-w-[425px]">
+				<DialogHeader>
+					<DialogTitle className="text-xl font-bold text-[#333f48]">
+						Chi tiết mã ưu đãi
+					</DialogTitle>
+				</DialogHeader>
+				<div className="text-[#333f48]">
+					<div className="flex flex-col items-center p-2 border border-gray-200 rounded-md">
+						<h3 className="text-base font-bold text-center">
+							Voucher {formatCurrency(50000000)}
+						</h3>
+						<Barcode value={voucher?.code} format="CODE128" height={30} />
+					</div>
+					<div className="mt-5 text-sm">
+						<p>- Hạn sử dụng: {new Date(voucher?.endDate)?.toLocaleDateString()}.</p>
+						<p>- Địa điểm áp dụng: Web NucShop</p>
+						<p>- Áp dụng cho {voucher?.listUseProduct?.length > 0 ? 'một số' : 'toàn bộ' } sản phẩm</p>
+						<p>
+							- Áp dụng giảm {formatCurrency(voucher?.maxAmount || 0)} cho hóa đơn có giá trị thanh toán cuối cùng từ {formatCurrency(voucher?.minimumOrderValue || 0)}.
+						</p>
+						<p>- Áp dụng 01 mã ưu đãi/ 01 hoá đơn thanh toán.</p>
+					</div>
+				</div>
+				<DialogFooter>
+					<Button onClick={handleCopy} type="button" className="relative w-full bg-blue-500 hover:bg-blue-600">
+						{isCopied ? (
+							<motion.div
+								initial={{ scale: 0 }}
+								animate={{ scale: 1 }}
+								exit={{ scale: 0 }}
+								transition={{ duration: 0.3 }}
+								className="absolute inset-0 flex items-center justify-center text-white bg-green-500 rounded-md"
+							>
+								<div className="flex items-center gap-1"><IoIosCheckmarkCircleOutline color="#fff" size={18}/> <p>Đã sao chép</p></div>
+							</motion.div>
+						) : (
+							<span>Lưu mã</span>
+						)}
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	);
 }
