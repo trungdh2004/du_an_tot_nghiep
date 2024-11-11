@@ -544,11 +544,7 @@ class AuthController {
         });
       }
 
-      console.log("existingEmail", existingEmail);
-
       const hashPassword = await bcrypt.hash(password, 10);
-
-      console.log("password", password);
 
       const updateNew = await UserModel.findByIdAndUpdate(
         existingEmail._id,
