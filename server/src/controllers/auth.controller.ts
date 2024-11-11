@@ -159,8 +159,8 @@ class AuthController {
       });
 
       await CartModel.create({
-        user:newUser?._id
-      })
+        user: newUser?._id,
+      });
 
       return res.status(STATUS.OK).json({
         message: "Đăng kí tài khoản thành công",
@@ -233,8 +233,8 @@ class AuthController {
       });
 
       await CartModel.create({
-        user:newUser?._id
-      })
+        user: newUser?._id,
+      });
       const accessToken = await this.generateAccessToken({
         id: newUser._id,
         email: newUser.email,
@@ -385,6 +385,12 @@ class AuthController {
         });
       }
 
+      if (existing.provider === "google.com") {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Tài khoản đăng nhập bằng google ?",
+        });
+      }
+
       const randomOtp = Math.floor(100000 + Math.random() * 900000);
 
       const data = {
@@ -453,6 +459,12 @@ class AuthController {
       if (!existingEmail) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Email chưa được đăng kí",
+        });
+      }
+
+      if (existingEmail.provider === "google.com") {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Tài khoản đăng nhập bằng google ?",
         });
       }
 
@@ -534,15 +546,15 @@ class AuthController {
 
       const hashPassword = await bcrypt.hash(password, 10);
 
-      await UserModel.findOneAndUpdate(
-        {
-          email: existingEmail,
-          _id: existingEmail._id,
-        },
+      const updateNew = await UserModel.findByIdAndUpdate(
+        existingEmail._id,
         {
           password: hashPassword,
-        }
+        },
+        { new: true }
       );
+
+      console.log("updateNew", updateNew);
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập mật khẩu thành công",
@@ -734,12 +746,16 @@ class AuthController {
         });
       }
 
-      const updateUser = await UserModel.findByIdAndUpdate(user?.id, {
-        birthDay,
-        full_name,
-        avatarUrl,
-        phone,
-      },{new:true});
+      const updateUser = await UserModel.findByIdAndUpdate(
+        user?.id,
+        {
+          birthDay,
+          full_name,
+          avatarUrl,
+          phone,
+        },
+        { new: true }
+      );
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập thành công",

@@ -101,7 +101,7 @@ const SelectComponent = <T,>({
 				classNamePrefix="react-select"
 				styles={customStyles}
 				placeholder={placeholder}
-				// classNames={customStyles}
+				className={"scroll-custom"}
 				isDisabled={disabled}
 			/>
 		</div>

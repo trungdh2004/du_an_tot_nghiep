@@ -146,7 +146,7 @@ const Register = () => {
 										name="forgotPassword"
 										render={({ field }) => (
 											<FormItem className="space-y-0">
-												<FormLabel className="text-xs">
+												<FormLabel className="">
 													Xác nhận mật khẩu
 												</FormLabel>
 												<div className="relative">
