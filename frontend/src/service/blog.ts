@@ -50,3 +50,6 @@ export const actionUpdateReactions = ({
 	const uri = `/blogs/reactions/${id}`;
 	return instance.put(uri, { isLike });
 };
+
+export const cancelPublish = (id: string, data: any) =>
+	instance.put(`/blogs/cancel-publish/${id}`, data);

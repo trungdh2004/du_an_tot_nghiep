@@ -1,4 +1,4 @@
-import { FaTruckRampBox } from "react-icons/fa6";
+import { FaArrowLeftLong, FaTruckRampBox } from "react-icons/fa6";
 import { FcComboChart } from "react-icons/fc";
 import { FiHome } from "react-icons/fi";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
@@ -28,18 +28,18 @@ const sidebarShipper: any[] = [
 		label: "Đơn hàng đã giao",
 	},
 	{
-		path: "/shipper/dashboard",
-		icon: FcComboChart,
-		isVisible: true,
-		isAdmin: false,
-		label: "Thống kê",
-	},
-	{
 		path: "/shipper/account",
 		icon: RiAccountPinCircleLine,
 		isVisible: true,
 		isAdmin: false,
 		label: "Tài khoản",
+	},
+	{
+		path: "/",
+		icon: FaArrowLeftLong,
+		isVisible: true,
+		isAdmin: false,
+		label: "Quay lại trang chủ",
 	},
 ];
 
