@@ -100,6 +100,19 @@ header .sub-menu::after {
 	}
 }
 
+.react-select__menu-list::-webkit-scrollbar {
+	width: 4px; /* Độ rộng của thanh cuộn */
+}
+
+.react-select__menu-list::-webkit-scrollbar-track {
+	background-color: transparent;
+}
+
+.react-select__menu-list::-webkit-scrollbar-thumb {
+	background-color: rgba(137, 137, 137, 0.266);
+	border-radius: 8px;
+}
+
 /* CSS React Select */
 /* .react-select-container {
 	height: 40px;

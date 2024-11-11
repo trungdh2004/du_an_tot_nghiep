@@ -40,7 +40,6 @@ import { MdDeleteForever } from "react-icons/md";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import InputNumberFormat from "@/components/common/InputNumberFormat";
 
 const formSchema = z
 	.object({
@@ -414,24 +413,16 @@ const ProductAddPage = () => {
 											<FormItem>
 												<FormLabel>Giá sản phẩm</FormLabel>
 												<FormControl>
-													<InputNumberFormat
-														value={field.value}
-														isAllowed={(value) => {
-															const valueCheck = value.floatValue || 0;
-															if (form.watch("price") === "percentage") {
-																const check = valueCheck > 100;
-																if (check) return false;
-															}
-															return true;
+													<Input
+														placeholder="Giá sản phẩm"
+														{...field}
+														onChange={(event) => {
+															const numericValue = event.target.value.replace(
+																/[^0-9]/g,
+																"",
+															);
+															return field.onChange(numericValue);
 														}}
-														onChange={(value) => {
-															const valueCheck = value.floatValue || 0;
-															if (form.watch("price") === "fixed") {
-																form.setValue("price", valueCheck);
-															}
-															field.onChange(valueCheck);
-														}}
-														suffix={form.watch("price") === "fixed" ? "đ" : "%"}
 													/>
 												</FormControl>
 

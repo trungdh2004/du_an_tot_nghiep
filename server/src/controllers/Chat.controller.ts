@@ -4,6 +4,7 @@ import ConversationModel from "../models/Conversation.schema";
 import MessageModel from "../models/Message.schema";
 import STATUS from "../utils/status";
 import { formatDataPaging } from "../common/pagingData";
+import { aw } from "@upstash/redis/zmscore-d1ec861c";
 
 class ChatController {
   async findOrCreateConversations(req: RequestModel, res: Response) {
@@ -18,9 +19,9 @@ class ChatController {
         existingConversations = await ConversationModel.create({
           user: user?.id,
           lastContent: "Xin chào quý khách đến với cửa hàng NUCSHOP",
-          lastSender:"ADMIN",
-          lastMessage:Date.now(),
-          lastRead:["ADMIN"]
+          lastSender: "ADMIN",
+          lastMessage: Date.now(),
+          lastRead: ["ADMIN"],
         });
 
         await MessageModel.create({
@@ -37,7 +38,7 @@ class ChatController {
   async pagingMessageConversation(req: RequestModel, res: Response) {
     try {
       const { id } = req.params;
-      const { pageIndex } = req.body;
+      const { pageIndex, sender } = req.body;
       const beforeQuery = req.query.before;
       let limit = 20;
       let skip = (pageIndex - 1) * limit || 0;
@@ -77,11 +78,22 @@ class ChatController {
             avatarUrl: 1,
             email: 1,
           },
-        }).skip(skip).limit(limit);
+        })
+        .skip(skip)
+        .limit(limit);
 
       const countMessage = await MessageModel.countDocuments({
         conversation: existingConversation?._id,
       });
+
+      let countNotRead = 0;
+
+      if (sender === "USER") {
+        countNotRead = await MessageModel.countDocuments({
+          conversation: existingConversation?._id,
+          read: { $not: { $elemMatch: { $eq: "USER" } } },
+        });
+      }
 
       let before = null;
 
@@ -91,13 +103,14 @@ class ChatController {
       const result = formatDataPaging({
         limit,
         pageIndex,
-        data: dataMessage.reverse(),
+        data: dataMessage,
         count: countMessage,
       });
 
       return res.status(STATUS.OK).json({
         ...result,
         before,
+        countNotRead
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
@@ -218,14 +231,16 @@ class ChatController {
         });
       }
 
-      const existingConversations = await ConversationModel.findById(id).populate({
-        path:"user",
-        select:{
-          _id:1,
-          full_name:1,
-          avatarUrl:1,
-          email:1,
-        }
+      const existingConversations = await ConversationModel.findById(
+        id
+      ).populate({
+        path: "user",
+        select: {
+          _id: 1,
+          full_name: 1,
+          avatarUrl: 1,
+          email: 1,
+        },
       });
 
       if (!existingConversations) {
@@ -236,6 +251,73 @@ class ChatController {
 
       return res.status(STATUS.OK).json(existingConversations);
     } catch (error) {}
+  }
+
+  async readMessageById(req: RequestModel, res: Response) {
+    try {
+      const {id} = req.params;
+      const {sender} = req.body;
+
+      if(!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Bạn chưa truyền id"
+        })
+      }
+
+      const existingMessage = await MessageModel.findById(id);
+
+      if(!existingMessage) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Không có tin nhắm đó"
+        })
+      }
+
+      const updateRead = await MessageModel.findByIdAndUpdate(id,{
+        $addToSet: { read: sender }
+      },{new:true})
+
+
+      return res.status(STATUS.OK).json({
+        message:"Cập nhập thành công"
+      })
+    } catch (error) {
+      
+    }
+  }
+
+
+  async readMessageMany(req: RequestModel, res: Response) {
+    try {
+      const {sender} = req.body;
+      const {id} = req.params
+
+      if(!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Bạn chưa truyền id"
+        })
+      }
+
+      const existingMessage = await ConversationModel.findById(id);
+
+      if(!existingMessage) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Không có phòng chat đó"
+        })
+      }
+
+      const updateRead = await MessageModel.updateMany({
+
+      },{
+        $addToSet: { read: sender }
+      },{new:true})
+
+
+      return res.status(STATUS.OK).json({
+        message:"Cập nhập thành công"
+      })
+    } catch (error) {
+      
+    }
   }
 }
 

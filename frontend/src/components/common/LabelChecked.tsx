@@ -61,7 +61,7 @@ const LabelChecked: React.FC<LabelCheckedProps> = memo(
 			"relative overflow-hidden flex items-center justify-start border border-solid border-[#ccc] cursor-pointer rounded bg-white",
 			"hover:text-blue-500 hover:border-blue-500",
 			"has-[:checked]:text-blue-500 has-[:checked]:border-blue-500",
-			"w-full  md:max-w-28 lg:w-28",
+			"lg:w-full min-w-16 md:max-w-28 lg:w-24",
 			sizeClasses[size],
 			disabled && "pointer-events-none opacity-70 bg-black/5",
 			className,
@@ -104,7 +104,7 @@ const LabelChecked: React.FC<LabelCheckedProps> = memo(
 							className={colorSpanClasses}
 						/>
 					)}
-					<span className={textClasses}>{children}</span>
+					{children && <span className={textClasses}>{children}</span>}
 				</div>
 				<span className="selection-box-tick hidden absolute bottom-0 right-0 peer-checked:block">
 					<IoIosCheckmark

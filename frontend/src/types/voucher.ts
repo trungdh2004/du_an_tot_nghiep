@@ -15,6 +15,7 @@ export interface IVoucher {
 	updatedAt: string;
 	usageCount: number;
 	usageLimit: number;
+  listUseProduct:string[];
 	user: string;
 	type: string;
 	_id: string;
