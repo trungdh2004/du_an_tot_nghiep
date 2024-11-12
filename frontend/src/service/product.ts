@@ -30,6 +30,9 @@ export const deleteMany = (value: { listId: string[] }) =>
 export const getProductBySlug = (slug: string) =>
 	instance.get(`${url}/findBySlug/${slug}`);
 
+export const listProductHot = () =>
+	instance.get(`product/listProductHot`);
+
 export const pagingProductOfVoucher = ({
 	pageIndex,
 	keyword,
@@ -71,3 +74,8 @@ export const getProductComingById = (id: string) =>
 
 export const updateProductComing = (id: string, object: any) =>
 	instance.put(`productComing/update/${id}`, object);
+export const findProductActive = () =>
+	instance.get(`productComing/findByActive`);
+
+
+

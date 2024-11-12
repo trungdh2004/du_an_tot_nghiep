@@ -60,7 +60,7 @@ class ProductComingController {
             price: 1,
             thumbnail: 1,
             quantity: 1,
-            discount:1
+            discount: 1,
           },
         });
 
@@ -136,14 +136,14 @@ class ProductComingController {
       }
 
       const existingProduct = await ProductComingModel.findById(id).populate({
-        path:"product",
-        select:{
-          _id:1,
-          name:1,
-          thumbnail:1,
-          price:1,
-          discount:1
-        }
+        path: "product",
+        select: {
+          _id: 1,
+          name: 1,
+          thumbnail: 1,
+          price: 1,
+          discount: 1,
+        },
       });
 
       if (!existingProduct) {
@@ -167,13 +167,13 @@ class ProductComingController {
       const { id } = req.params;
       const { productId, date, active = false } = req.body;
 
-      if(!id || !productId ||!date) { 
+      if (!id || !productId || !date) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Lỗi thiếu dữ liệu",
         });
-      } 
+      }
 
-      const existingProduct = await ProductComingModel.findById(id)
+      const existingProduct = await ProductComingModel.findById(id);
 
       if (!existingProduct) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -181,7 +181,7 @@ class ProductComingController {
         });
       }
 
-      if(active) {
+      if (active) {
         await ProductComingModel.updateMany(
           {},
           {
@@ -190,14 +190,14 @@ class ProductComingController {
         );
       }
 
-      const newUpdate = await ProductComingModel.findByIdAndUpdate(id,{
-        product:productId,
+      const newUpdate = await ProductComingModel.findByIdAndUpdate(id, {
+        product: productId,
         date,
-        active
-      })
+        active,
+      });
 
       return res.status(STATUS.OK).json({
-        message:"Sửa thành công"
+        message: "Sửa thành công",
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
@@ -210,6 +210,16 @@ class ProductComingController {
     try {
       const existingProduct = await ProductComingModel.findOne({
         active: true,
+      }).populate({
+        path: "product",
+        select: {
+          _id: 1,
+          name: 1,
+          price: 1,
+          thumbnail: 1,
+          quantity: 1,
+          discount: 1,
+        },
       });
 
       if (!existingProduct) {
@@ -218,9 +228,7 @@ class ProductComingController {
         });
       }
 
-      return res.status(STATUS.OK).json({
-        product: existingProduct,
-      });
+      return res.status(STATUS.OK).json(existingProduct);
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,

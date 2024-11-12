@@ -55,6 +55,8 @@ const BlogList = () => {
 		totalElement: 0,
 		totalOptionPage: 0,
 	});
+	console.log(blogs);
+
 	const [searchObject, setSearchObject] = useState<SearchObjectBlog>({
 		pageIndex: 1,
 		pageSize: 9,
@@ -302,18 +304,22 @@ const BlogList = () => {
 						</>
 					))
 				) : (
-					<div className="col-span-12 min-h-[360px] flex justify-center items-center">
+            <div className="col-span-12 min-h-[360px] flex justify-center items-center">
+              <img src="/blog.png" alt="" className="w-15 h-16" />
 						<h3 className="text-lg">Không có bài viết!</h3>
 					</div>
 				)}
 			</div>
-			<div className="flex justify-center mt-5">
-				<Paginations
-					forcePage={searchObject.pageIndex - 1}
-					pageCount={response.pageCount}
-					handlePageClick={handleChangePag}
-				/>
-			</div>
+			{blogs.length > 0 && (
+				<div className="flex justify-center mt-5">
+					<Paginations
+						forcePage={searchObject.pageIndex - 1}
+						pageCount={response.pageCount}
+						handlePageClick={handleChangePag}
+					/>
+				</div>
+			)}
+
 			{!!openDeleteBlog && (
 				<DialogConfirm
 					open={!!openDeleteBlog}

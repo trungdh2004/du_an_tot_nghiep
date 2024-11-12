@@ -204,13 +204,7 @@ const BlogDetail = () => {
 					</div>
 				</div>
 			</div>
-			<div className="">
-				<Dialog>
-					<DialogContent className="sm:max-w-[425px]">
-						dâdadadadadada
-					</DialogContent>
-				</Dialog>
-			</div>
+			
 		</div>
 	);
 };

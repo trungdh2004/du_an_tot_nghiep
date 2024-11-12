@@ -29,6 +29,7 @@ const InputQuantity: React.FC<InputQuantityProps> = ({
 			setValue(clampedValue);
 			getValue?.(clampedValue);
 		},
+
 		[maxTotal, getValue],
 	);
 
@@ -48,9 +49,10 @@ const InputQuantity: React.FC<InputQuantityProps> = ({
 	useEffect(() => {
 		setValue(defaultValue);
 	}, [defaultValue]);
-	// useEffect(() => {
-	// 	updateValue(defaultValue);
-	// }, [defaultValue, updateValue]);
+	useEffect(() => {
+    const minValue = value <= 0 ? 1 : value
+		setValue(Math.min(minValue, maxTotal));
+	}, [maxTotal]);
 
 	const sizeClasses = {
 		small: "h-8 text-sm",

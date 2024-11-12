@@ -1712,6 +1712,7 @@ class OrderController {
           },
           amountToPay: 0,
           paymentStatus: true,
+          paymentAmount:+verify.vnp_Amount
         },
         { new: true }
       );
