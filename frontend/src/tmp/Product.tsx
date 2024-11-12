@@ -34,30 +34,29 @@ function ProductPage() {
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="flex flex-col md:flex-row items-center bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="container mx-auto p-4 sm:p-6 lg:p-8">
+      <div className="flex flex-col md:flex-row md:space-x-6 bg-white shadow-lg rounded-lg overflow-hidden">
 
-        <div className="w-full md:w-1/2">
-          <img src={product.image} alt={product.name} className="w-full h-auto object-cover" />
+        <div className="w-full md:w-1/2 flex justify-center">
+          <img src={product.image} alt={product.name} className="w-full h-auto object-cover md:max-h-96" />
         </div>
 
-
-        <div className="w-full md:w-1/2 p-6">
-          <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
-          <p className="text-gray-700 mb-4">{product.description}</p>
-          <span className="block text-2xl font-bold mb-4">${product.price.toFixed(2)}</span>
-
+  
+        <div className="w-full md:w-1/2 p-4 sm:p-6">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-3">{product.name}</h1>
+          <p className="text-gray-700 mb-3">{product.description}</p>
+          <span className="block text-xl sm:text-2xl font-bold mb-4">${product.price.toFixed(2)}</span>
 
           <div className="mb-4">
             <h2 className="text-lg font-semibold">Select Size:</h2>
-            <div className="flex gap-2 mt-2">
+            <div className="flex flex-wrap gap-2 mt-2">
               {product.variants[0].options.map((size) => (
                 <button
                   key={size}
                   onClick={() => handleSizeChange(size)}
                   className={`px-3 py-1 rounded-lg border ${
                     selectedSize === size ? 'bg-blue-500 text-white' : 'bg-gray-200'
-                  } hover:bg-gray-300`}
+                  } hover:bg-gray-300 transition-all`}
                 >
                   {size}
                 </button>
@@ -67,14 +66,14 @@ function ProductPage() {
 
           <div className="mb-4">
             <h2 className="text-lg font-semibold">Select Color:</h2>
-            <div className="flex gap-2 mt-2">
+            <div className="flex flex-wrap gap-2 mt-2">
               {product.variants[1].options.map((color) => (
                 <button
                   key={color}
                   onClick={() => handleColorChange(color)}
                   className={`px-3 py-1 rounded-lg border ${
                     selectedColor === color ? 'bg-blue-500 text-white' : 'bg-gray-200'
-                  } hover:bg-gray-300`}
+                  } hover:bg-gray-300 transition-all`}
                 >
                   {color}
                 </button>
@@ -103,7 +102,7 @@ function ProductPage() {
           </div>
 
 
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors">
+          <button className="w-full sm:w-auto bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors">
             Add to Cart
           </button>
         </div>
@@ -113,4 +112,3 @@ function ProductPage() {
 }
 
 export default ProductPage;
-
