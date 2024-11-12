@@ -67,14 +67,14 @@ const Comments = ({ product }: Props) => {
 		setOpen(false);
 	};
 	return (
-		<div>
+		<div className="bg-white p-2 md:p-4 box-shadow rounded-md">
 			<div className="flex items-center gap-2 mb-3">
 				<h3 className="text-xl font-bold text-slate-600">
 					{" "}
 					{comment?.length} bình luận
 				</h3>
-				c
-				<FilterComment />
+				{/* c */}
+				{/* <FilterComment /> */}
 			</div>
 			<CommentEditor
 				onSubmit={onSubmitComment}

@@ -8,13 +8,13 @@ import { Link } from "react-router-dom";
 const FooterV2 = () => {
 	return (
 		<div
-			className="padding mx-auto bg-[#ffffff] *:text-black"
+			className="padding mx-auto bg-black *:text-white relative"
 			style={{ boxShadow: "0 15px 30px 5px rgba(0, 0, 0, 0.3)" }}
 		>
 			<div className="pt-10 grid md:grid-cols-2 lg:grid-cols-4 *:border-b-[1px] *:border-b-white *:mb-5 *:md:border-none">
 				<div className="*:flex *:items-center *:gap-x-3 *:pb-6">
 					<Link to="/" className="text-4xl font-bold ">
-						<LogoNucSVG width={50} color="#000" />
+						<LogoNucSVG width={50} color="#fff" />
 					</Link>
 					<Link to={`/`} className="">
 						<MdOutlinePhoneInTalk className="text-2xl" />
@@ -99,10 +99,10 @@ const FooterV2 = () => {
 
 			<hr className="hidden md:block" />
 			<div className="flex justify-between items-center">
-				<p className="font-semibold text-center text-black md:py-5">
+				<p className="font-semibold text-center text-white md:py-5">
 					© 2024 NUCSHOP
 				</p>
-				<div className="flex items-center lg:flex-row md:flex-row flex-col ">
+				<div className="flex items-center lg:flex-row md:flex-row flex-col gap-4">
 					<img src="/dmca.png" alt="" />
 					<img src="/bocongthuong.png" alt="" />
 				</div>

@@ -18,8 +18,8 @@ const MainLayout = () => {
 			<main className={cn(" ", location.pathname == "/" && "mt-0")}>
 				<Outlet />
 			</main>
-			<Footer />
-			{/* <FooterV2 /> */}
+			{/* <Footer /> */}
+			<FooterV2 />
 
 			<ChatAction />
 			<ScrollRestoration />
