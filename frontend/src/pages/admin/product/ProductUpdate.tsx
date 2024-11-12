@@ -53,9 +53,9 @@ import {
 const formSchema = z
 	.object({
 		name: z.string().nonempty({ message: "Nhập tên sản phẩm" }),
-		price: z.string().min(1, "Phải lớn hơn 0"),
+		price: z.number().min(1, "Phải lớn hơn 0"),
 		description: z.string().nonempty("Nhập mô tả sản phẩm"),
-		discount: z.string().min(1, "Phải lớn hơn 0"),
+		discount: z.number().min(1, "Phải lớn hơn 0"),
 		is_hot: z.boolean(),
 		is_simple: z.boolean(),
 		quantity: z.number(),
@@ -250,8 +250,8 @@ const ProductUpdate = () => {
 		defaultValues: {
 			name: "",
 			category: null,
-			price: "",
-			discount: "",
+			price: 0,
+			discount: 0,
 			featured: false,
 			description: "",
 			thumbnail: "",

@@ -1,7 +1,10 @@
 export interface ICategory {
 	_id: string;
 	name: string;
-	description?: string;
-	slug?: string;
-	deleted?: boolean;
+	thumbnail: string;
+	description: string;
+	deleted: boolean;
+	createdAt: string;
+	updatedAt: string;
+	slug: string;
 }

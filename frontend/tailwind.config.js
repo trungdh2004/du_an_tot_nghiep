@@ -90,9 +90,11 @@ module.exports = {
 			},
 			backgroundColor: {
 				"gray-current": "rgba(145,158,171,0.12)",
-				"main": "rgba(249, 250, 251, 0.8)",
+				main: "rgba(249, 250, 251, 0.8)",
 			},
-			
+			flex: {
+				2: "2 2 0%",
+			},
 		},
 	},
 	plugins: [require("tailwindcss-animate")],

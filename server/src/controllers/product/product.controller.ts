@@ -862,13 +862,28 @@ class ProductController {
       const listProduct = await ProductModel.find({
         is_hot: true,
       })
-        .populate({
-          path: "category",
-          select: {
-            _id: 1,
-            name: 1,
+        .populate([
+          {
+            path: "category",
+            select: {
+              _id: 1,
+              name: 1,
+            },
           },
-        })
+          {
+            path: "attributes",
+            populate: [
+              {
+                path: "color",
+                model: "Color",
+              },
+              {
+                path: "size",
+                model: "Size",
+              },
+            ],
+          },
+        ])
         .sort({
           createdAt: -1,
         })

@@ -9,6 +9,10 @@
 	@apply px-[10px] sm:px-[30px] md:px-[40px] xl:px-[50px] 2xl:px-[60px];
 }
 
+.text-header {
+	@apply w-full text-base md:text-xl lg:text-2xl font-bold 
+}
+
 .hover-text {
 	@apply text-white;
 }

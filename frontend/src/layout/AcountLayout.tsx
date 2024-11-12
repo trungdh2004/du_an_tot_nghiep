@@ -35,6 +35,8 @@ const AccountLayout = () => {
 	const location = window.location.pathname;
 	return (
 		<>
+			<div className="bg-magic"></div>
+
 			<div className="padding max-md:px-0 min-h-[calc(100vh-60px)] ">
 				<div className="relative flex flex-col w-full gap-2 px-0 py-2 lg:flex-row lg:gap-8 lg:py-12">
 					<div className="block w-full lg:w-[250px]">
