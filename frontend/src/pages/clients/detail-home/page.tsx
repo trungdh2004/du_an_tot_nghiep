@@ -67,7 +67,7 @@ const DetailProduct = () => {
 						)}
 					</BreadcrumbList>
 				</Breadcrumb>
-				<div className="flex items-start bg-white max-md:flex-col md:gap-4 lg:gap-8">
+				<div className="flex items-start bg-white max-md:flex-col md:gap-4 lg:gap-8 box-shadow">
 					<div className="w-2/5 max-md:w-full">
 						<Ablum images={data?.images} isLoading={isLoading} />
 					</div>
