@@ -10,6 +10,8 @@ import { FaRegCircleXmark } from "react-icons/fa6";
 import { IVoucher } from "@/types/voucher";
 import { takeApplyDiscountCode } from "@/service/voucher";
 import { IOrderMoneyValue } from "@/types/order";
+import { IoClose } from "react-icons/io5";
+import { cn } from "@/lib/utils";
 
 interface Props {
 	data: any;
@@ -28,7 +30,7 @@ const Vorcher = ({
 	);
 	const [show, setShow] = useState(false);
 	const { register, handleSubmit, reset } = useForm();
-	const onSubmit = async (data: any) => {
+  const onSubmit = async (data: any) => {
 		try {
 			const check = await takeApplyDiscountCode({
 				code: data.voucherCode,
@@ -89,18 +91,35 @@ const Vorcher = ({
 						<form
 							action=""
 							onSubmit={handleSubmit(onSubmit)}
-							className="flex gap-3"
+							className="flex items-center w-full gap-2 md:w-min md:justify-end max-sm:flex-col"
 						>
-							<Input
-								placeholder="Mã giảm giá"
-								className="border border-blue-200 ld:text-base text-sm"
-								type="text"
-								{...register("voucherCode")}
-							/>
-							<Button>Áp dụng</Button>
+							<div className="relative w-full md:w-52 ">
+								<input
+									placeholder="Nhập mã giảm giá"
+									type="text"
+									className="w-full outline-none border border-gray-200 bg-gray-100 h-8 md:h-10 p-1.5"
+									{...register("voucherCode")}
+								/>
+								<div className="absolute top-1/2 -translate-y-1/2 right-1.5 size-5 bg-black/30 rounded-full flex items-center justify-center cursor-pointer">
+									<IoClose
+										className="text-white"
+										onClick={() => {
+											reset();
+										}}
+									/>
+								</div>
+							</div>
+							<Button
+								className={cn(
+									"h-8 md:h-10 w-full md:w-40 bg-red-500 hover:bg-red-600 text-white px-5",
+								)}
+							>
+								Áp dụng
+							</Button>
 						</form>
 					</div>
 				</div>
+
 				{show &&
 					(voucher === null ? (
 						<div className="flex justify-center bg-white py-3">
