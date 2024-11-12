@@ -5,7 +5,7 @@ import { LuBadgeCheck } from "react-icons/lu";
 
 const Banner = () => {
 	return (
-		<div className="w-full min-h-20  mt-16 border-b">
+		<div className="w-full min-h-20  border-b">
 			<div className="w-full h-12 bg-red-500 overflow-hidden flex items-center relative">
 				<div className="run-text text-1 text-white text-sm md:text-base font-semibold uppercase flex items-center gap-2">
 					<LuBadgeCheck size={20} className="text-white" />{" "}

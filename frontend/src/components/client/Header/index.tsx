@@ -23,10 +23,10 @@ const Header = () => {
 	return (
 		<div
 			className={cn(
-				" w-full top-0 z-50  padding backdrop-blur-md fixed",
-				location.pathname === "/"
-					? "bg-transparent fixed"
-					: "backdrop-blur-md fixed",
+				" w-full  z-50  padding backdrop-blur-md  bg-transparent sticky top-0",
+				
+				// 	? "bg-transparent fixed"
+				// 	: "backdrop-blur-md fixed",
 				// isScroll && "backdrop-blur-md",
 			)}
 		>
