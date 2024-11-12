@@ -12,14 +12,14 @@ const MainLayout = () => {
 	return (
 		<div>
 			{/* <div className="bg-magic"></div> */}
-			<OverlayVioletV2 />
+			{/* <OverlayVioletV2 /> */}
 			{/* {location.pathname == "/" ? <HeaderAndSlider /> : <Header />} */}
 			<Header />
-			<main className={cn("mt-[64px]", location.pathname == "/" && "mt-0")}>
+			<main className={cn("mt-[64px] bg-[#fafafa]", location.pathname == "/" && "mt-0")}>
 				<Outlet />
 			</main>
-			{/* <Footer /> */}
-			<FooterV2 />
+			<Footer />
+			{/* <FooterV2 /> */}
 
 			<ChatAction />
 			<ScrollRestoration />

@@ -280,7 +280,7 @@ header .sub-menu::after {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background: aliceblue;
+	background: #fff;
 }
 .bg-magic::before {
 	content: "";
@@ -313,4 +313,35 @@ header .sub-menu::after {
 		109% 68%,
 		center,
 		center;
+}
+
+.run-text {
+	position: absolute;
+	overflow: hidden;
+	white-space: nowrap;
+	box-sizing: border-box;
+	animation: chaychu 18s linear infinite;
+	width: 100%;
+	transform: translateX(100%);
+	/* width: calc(100%/3); */
+	/* width: 100%; */
+}
+
+.run-text.text-1 {
+	animation-delay: 0;
+}
+.run-text.text-2 {
+	animation-delay: 6s;
+}
+.run-text.text-3 {
+	animation-delay: 12s;
+}
+
+@keyframes chaychu {
+	0% {
+		transform: translateX(100%);
+	}
+	100% {
+		transform: translateX(-200%);
+	}
 }
