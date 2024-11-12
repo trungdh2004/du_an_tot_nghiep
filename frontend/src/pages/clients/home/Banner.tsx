@@ -30,8 +30,8 @@ const Banner = () => {
 						<img src="./runShipper.webp" alt="" />
 					</div>
 					<div>
-						<h4 className="font-semibold ">Miễn phí vận chuyển đơn từ 499K</h4>
-						<span className="text-sm">Nhận hàng trong 2-5 ngày</span>
+						<h4 className="text-sm lg:text-base font-semibold ">Miễn phí vận chuyển đơn từ 499K</h4>
+						<span className="text-xs md:text-sm">Nhận hàng trong 2-5 ngày</span>
 					</div>
 				</div>
 				<div className="w-full flex items-center gap-2">

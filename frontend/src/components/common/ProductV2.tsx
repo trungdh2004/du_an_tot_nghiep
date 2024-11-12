@@ -29,11 +29,6 @@ const ProductV2 = ({ product }: Props) => {
 		}
 		return acc;
 	}, []) : [];
-	console.log("listColor",{
-		listColor,
-		simple:product?.is_simple,
-		product
-	});
 	
 	const listSize =!product?.is_simple ? product?.attributes?.reduce((acc: ISize[], item: any) => {
 		if (!item?.size?._id) return acc;
@@ -70,7 +65,7 @@ const ProductV2 = ({ product }: Props) => {
 							<img
 								className="object-cover w-full h-full aspect-square"
 								src={optimizeCloudinaryUrl(
-									product?.images[0]?.url || "",
+									product?.images?.[0]?.url || "",
 									350,
 									370,
 								)}
@@ -134,7 +129,10 @@ const ProductV2 = ({ product }: Props) => {
 						)}
 					>
 						<ListColorComponent listColor={listColor} />
+						<div className="hidden md:block">
+
 						<ListSizeComponent listSize={listSize} />
+						</div>
 					</div>
 					<div className={cn("h-5 w-full hidden text-xs gap-1",product?.is_simple && "flex")}>
 						<div className="flex items-center justify-center px-1.5 border text-gray-500 rounded border-gray-500 ">Đơn giản</div>

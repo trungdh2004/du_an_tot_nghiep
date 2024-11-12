@@ -4,8 +4,9 @@ import { formatCurrency } from "@/common/func";
 import Countdown from "./CoutDown";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
-import { pagingProductComing } from "@/service/product";
+import { findProductActive, pagingProductComing } from "@/service/product";
 import { IProduct } from "@/types/typeProduct";
+import { useQuery } from "@tanstack/react-query";
 type DealProductType = {
 	active: boolean;
 	createdAt: string;
@@ -16,48 +17,49 @@ type DealProductType = {
 	_id: string;
 };
 const DealProductSection: React.FC = () => {
-	const [dealProduct, setDealProduct] = useState<DealProductType>();
-	useEffect(() => {
-		(async () => {
+	const { data: dealProduct } = useQuery({
+		queryKey: ["activeProductHome"],
+		queryFn: async () => {
 			try {
-				const { data } = await pagingProductComing({
-					pageIndex: 1,
-					pageSize: 1,
-				});
-				setDealProduct(data?.content?.[0]);
+				const { data } = await findProductActive();
+				// setDealProduct(data);
+				return data;
 			} catch (error) {
 				if (error instanceof AxiosError) {
 					toast.error(error?.response?.data?.message);
 				}
 			}
-		})();
-	}, []);
-	console.log(dealProduct);
+		},
+	});
+
+	console.log({dealProduct});
+	
 
 	return (
-		<section className="py-12 ">
-			<div className="padding">
-				<div className="flex flex-col items-center gap-10 lg:flex-row">
+		<section className="py-6 md:py-12 relative mt-14">
+			{/* <div className="bg-magic"></div> */}
+			<div className="absolute inset-0 z-[0] ">
+				<div className="absolute inset-0 bg-white z-[-2]"></div>
+				<div className="absolute inset-0 opacity-[0.08] bg-magic-img z-[-1]"></div>
+			</div>
+			<div className="padding z-[1]">
+				<div className="flex flex-col items-center gap-5 md:gap-10 lg:flex-row">
 					{/* Nội dung sản phẩm */}
-					<div className="flex flex-col gap-6 lg:w-1/2">
-						<span className="text-sm font-medium tracking-wide text-gray-500 uppercase">
+					<div className=" relative flex flex-col gap-6 lg:w-1/2">
+						<span className="text-xs  md:text-sm font-medium tracking-wide text-gray-500 uppercase">
 							Sản phẩm nổi bật
 						</span>
 
-						<h2 className="text-[#2c3f58] text-4xl font-medium leading-tight">
+						<h2 className="text-[#2c3f58] text-[18px] sm:text-xl md:text-2xl lg:text-4xl font-medium leading-tight">
 							{dealProduct?.product?.name}
 						</h2>
 
-						{/* <p className="pr-0 text-gray-600 lg:pr-20">
-            {dealProduct?.}
-            </p> */}
-
-						<div className="flex flex-wrap items-center gap-8 mt-2">
+						<div className="flex max-sm:flex-col max-sm:items-start flex-wrap items-center gap-4 md:gap-8 mt-2">
 							<div className="flex items-center">
-								<span className="text-[#2c3f58] text-4xl font-medium">
+								<span className="text-[#2c3f58] text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium">
 									{formatCurrency(dealProduct?.product?.discount || 0)}
 								</span>
-								<span className="ml-4 text-xl text-gray-400 line-through">
+								<span className="ml-4 text-base sm:text-xl text-gray-400 line-through">
 									{formatCurrency(dealProduct?.product?.price || 0)}
 								</span>
 							</div>
@@ -70,16 +72,12 @@ const DealProductSection: React.FC = () => {
 							<h6 className="text-lg font-medium text-gray-500">
 								Kết thúc vào
 							</h6>
-							<Countdown
-								date={new Date(
-									dealProduct?.date as string,
-								).toLocaleDateString()}
-							/>
+							<Countdown date={new Date(dealProduct?.date)} />
 						</div>
 					</div>
-					<div className="relative flex justify-center lg:w-1/2 ">
+					<div className="relative flex justify-center w-full lg:w-1/2 ">
 						<motion.div
-							className="absolute bg-gradient-to-br from-[#9cffe97d] to-[#6b6bd56b] rounded-full inset-x-6 inset-y-14 md:inset-y-5  md:inset-x-12"
+							className="absolute bg-gradient-to-br from-[#9cffe97d] to-[#6b6bd56b] inset-x-6 inset-y-14 md:inset-y-5  md:inset-x-12 "
 							initial={{ scale: 1 }}
 							animate={{ scale: 1.05 }}
 							transition={{
@@ -87,9 +85,12 @@ const DealProductSection: React.FC = () => {
 								repeat: Infinity,
 								repeatType: "reverse",
 							}}
+							style={{
+								borderRadius: "34% 66% 67% 33% / 45% 41% 59% 55%",
+							}}
 						></motion.div>
 
-						<div className="relative z-10 h-auto max-w-96">
+						<div className="relative z-10 max-md:w-1/2 h-auto max-w-96">
 							<img
 								src={dealProduct?.product?.thumbnail}
 								alt={dealProduct?.product?.name}
