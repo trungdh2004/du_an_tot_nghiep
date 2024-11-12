@@ -5,25 +5,25 @@ import { LuBadgeCheck } from "react-icons/lu";
 
 const Banner = () => {
 	return (
-		<div className="w-full min-h-20  border-b">
-			<div className="w-full h-12 bg-red-500 overflow-hidden flex items-center relative">
-				<div className="run-text text-1 text-white text-sm md:text-base font-semibold uppercase flex items-center gap-2">
-					<LuBadgeCheck size={20} className="text-white" />{" "}
+		<div className="w-full min-h-20  ">
+			<div className="w-full h-10 md:h-12 bg-[#333f48] overflow-hidden flex items-center relative">
+				<div className="run-text text-1 text-yellow-500 text-sm md:text-base font-semibold uppercase flex items-center gap-2">
+					<LuBadgeCheck size={20} className="text-yellow-500" />{" "}
 					<span>Hàng chính hàng 100%</span>
 				</div>
-				<div className="run-text text-2 text-white text-sm md:text-base font-semibold uppercase flex items-center gap-2">
-					<MdOutlineLocalShipping size={20} className="text-white" />{" "}
+				<div className="run-text text-2 text-yellow-500 text-sm md:text-base font-semibold uppercase flex items-center gap-2">
+					<MdOutlineLocalShipping size={20} className="text-yellow-500" />{" "}
 					<span>Giao hàng nhanh gọn</span>
 				</div>
-				<div className="run-text text-3 text-white text-sm md:text-base font-semibold uppercase flex items-center gap-2">
-					<MdPayments size={20} className="text-white" />
+				<div className="run-text text-3 text-yellow-500 text-sm md:text-base font-semibold uppercase flex items-center gap-2">
+					<MdPayments size={20} className="text-yellow-500" />
 					<span>Thanh toán khi nhận hàng (COD)</span>
 				</div>
 			</div>
 			<div className="w-full ">
-				<img src="/banner.webp" alt="" className="object-contain" />
+				<img src="/banner.webp" alt="" className="object-cover min-h-[240px] sm:min-h-[300px] object-right" />
 			</div>
-			<div className="lg:h-[120px] w-full grid grid-cols-4 gap-4 padding">
+			<div className="lg:h-[120px] w-full  grid-cols-4 gap-4 padding hidden md:grid border-b">
 				<div className="w-full flex items-center gap-2">
 					<div className="size-10 ">
 						{" "}
