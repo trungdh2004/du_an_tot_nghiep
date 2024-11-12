@@ -1,3 +1,4 @@
+import Banner from "./Banner";
 import Carousel from "./Carousel";
 import DealProductSection from "./DealProductSection";
 import LatestNewsBlog from "./LatestNewsBlog";
@@ -7,7 +8,8 @@ import Sliderv2 from "./Sliderv2";
 const HomePage = () => {
 	return (
 		<div className="">
-			<Sliderv2 />
+			{/* <Sliderv2 /> */}
+			<Banner />
 			<Carousel />
       <ListCoupon/>
 			<ProductByCategory />

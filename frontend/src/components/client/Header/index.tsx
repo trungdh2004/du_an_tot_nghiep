@@ -23,11 +23,11 @@ const Header = () => {
 	return (
 		<div
 			className={cn(
-				" w-full top-0 z-50  padding",
+				" w-full top-0 z-50  padding backdrop-blur-md fixed",
 				location.pathname === "/"
 					? "bg-transparent fixed"
 					: "backdrop-blur-md fixed",
-				isScroll && "backdrop-blur-md",
+				// isScroll && "backdrop-blur-md",
 			)}
 		>
 			<div className="flex items-center justify-between h-16 max-w-full">
