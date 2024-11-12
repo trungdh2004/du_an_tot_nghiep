@@ -77,7 +77,6 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 					origin: currentAttribute?.price as number,
 					discount: currentAttribute?.discount as number,
 				});
-        console.log(">>>>Chọn cả 2",currentAttribute?.quantity);
 				setIsErrorAttribute(false);
 				setAttributeId(currentAttribute?._id || "");        
 				setTotalQuantity(currentAttribute?.quantity as number);
@@ -182,9 +181,8 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						isLoadingShopping: false,
 					});
 					setCarts(dataCarts?.listData);
-					document.querySelector(".ablum-detail-product");
 					const itemElement = document.querySelector(
-						".ablum-detail-product",
+						".album-detail-product",
 					) as HTMLDivElement;
 					startAnimation(itemElement, product?.thumbnail as string);
 					updateTotalCart(purchaseQuantity);
