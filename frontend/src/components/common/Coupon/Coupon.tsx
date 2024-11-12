@@ -23,8 +23,8 @@ const Coupon = ({ voucher, className }: Props) => {
 
   return (
     <div
-      style={{ boxShadow: "rgba(0, 0, 0, 0.10) 0px 3px 10px" }}
-      className={cn("w-1/3 min-w-[33.33333333%] m-2 rounded-md", className)}
+      style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 3px 10px" }}
+      className={cn("w-1/3 min-w-[33.33333333%] m-2 rounded-md ", className)}
     >
       <div className={styles.voucherItemInfo}>
         <div className={styles.voucherItemDetail}>

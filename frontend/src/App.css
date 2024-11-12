@@ -100,6 +100,19 @@ header .sub-menu::after {
 	}
 }
 
+.react-select__menu-list::-webkit-scrollbar {
+	width: 4px; /* Độ rộng của thanh cuộn */
+}
+
+.react-select__menu-list::-webkit-scrollbar-track {
+	background-color: transparent;
+}
+
+.react-select__menu-list::-webkit-scrollbar-thumb {
+	background-color: rgba(137, 137, 137, 0.266);
+	border-radius: 8px;
+}
+
 /* CSS React Select */
 /* .react-select-container {
 	height: 40px;
@@ -256,7 +269,7 @@ header .sub-menu::after {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: -1;
+	z-index: 0;
 }
 
 .bg-magic::after {
@@ -267,7 +280,7 @@ header .sub-menu::after {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background: aliceblue;
+	background: #fff;
 }
 .bg-magic::before {
 	content: "";
@@ -300,4 +313,60 @@ header .sub-menu::after {
 		109% 68%,
 		center,
 		center;
+}
+
+.bg-magic-img {
+	background-image: radial-gradient(#ffffff40, #fff0 40%),
+		radial-gradient(
+			hsl(44, 100%, 66%) 30%,
+			hsl(338, 68%, 65%),
+			hsla(338, 68%, 65%, 0.4) 41%,
+			transparent 52%
+		),
+		radial-gradient(hsl(272, 100%, 60%) 37%, transparent 46%),
+		linear-gradient(155deg, transparent 65%, hsl(142, 70%, 49%) 95%),
+		linear-gradient(45deg, #0065e0, #0f8bff);
+	background-size:
+		200% 200%,
+		285% 500%,
+		285% 500%,
+		cover,
+		cover;
+	background-position:
+		bottom left,
+		109% 68%,
+		109% 68%,
+		center,
+		center;
+}
+
+.run-text {
+	position: absolute;
+	overflow: hidden;
+	white-space: nowrap;
+	box-sizing: border-box;
+	animation: chaychu 18s linear infinite;
+	width: 100%;
+	transform: translateX(100%);
+	/* width: calc(100%/3); */
+	/* width: 100%; */
+}
+
+.run-text.text-1 {
+	animation-delay: 0;
+}
+.run-text.text-2 {
+	animation-delay: 6s;
+}
+.run-text.text-3 {
+	animation-delay: 12s;
+}
+
+@keyframes chaychu {
+	0% {
+		transform: translateX(100%);
+	}
+	100% {
+		transform: translateX(-200%);
+	}
 }

@@ -24,7 +24,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import useDebounce from "@/hooks/shared";
 import { cn } from "@/lib/utils";
-import { publishBlogs, showBlogsEdit, updateBlogs } from "@/service/blog";
+import { cancelPublish, publishBlogs, showBlogsEdit, updateBlogs } from "@/service/blog";
 import { getAllTags } from "@/service/tags-admin";
 import { uploadFileService } from "@/service/upload";
 import {
@@ -159,24 +159,23 @@ const EditBlog = () => {
 				// 	throw new Error("Cập nhập bài viết thất bại");
 				// }
 
-				
-				// if (blogs?.isPublish) {
-				// 	const reponse = await cancelPublishBlogs(id as string, payload);
-				// 	if (reponse.status === 200) {
-				// 	  toast.success("Hủy xuất bản thành công");
-				// 	  navigate("/admin/blogs");
-				// 	} else {
-				// 	  throw new Error("Hủy xuất bản thất bại");
-				// 	}
-				//   } else {
-				// 	const reponse = await publishBlogs(id as string, payload);
-				// 	if (reponse.status === 200) {
-				// 	  toast.success("Đăng tải bài viết thành công");
-				// 	  navigate("/admin/blogs");
-				// 	} else {
-				// 	  throw new Error("Đăng tải bài viết thất bại");
-				// 	}
-				//   }
+				if (blogs?.isPublish) {
+					const reponse = await cancelPublish(id as string, payload);
+					if (reponse.status === 200) {
+						toast.success("Hủy xuất bản thành công");
+						navigate("/admin/blogs");
+					} else {
+						throw new Error("Hủy xuất bản thất bại");
+					}
+				} else {
+					const reponse = await publishBlogs(id as string, payload);
+					if (reponse.status === 200) {
+						toast.success("Đăng tải bài viết thành công");
+						navigate("/admin/blogs");
+					} else {
+						throw new Error("Đăng tải bài viết thất bại");
+					}
+				}
 			}
 		} catch (error) {
 			if (error instanceof AxiosError) {

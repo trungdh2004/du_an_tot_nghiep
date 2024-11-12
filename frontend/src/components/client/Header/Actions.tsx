@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 
 import { useAuth } from "@/hooks/auth";
 import { LucideShoppingCart } from "lucide-react";
@@ -19,7 +18,7 @@ import {
 	INotification,
 	ISearchObjectNotifications,
 } from "@/types/notification.interface";
-import ButtonComponent from "@/components/common/ButtonCPN";
+import { Button } from "@/components/ui/button";
 
 const Actions = () => {
 	const { isLoggedIn, authUser, socket } = useAuth();
@@ -189,7 +188,7 @@ const Actions = () => {
 				</div>
 			) : (
 				<Link to={`/auth/login`}>
-					<ButtonComponent title="Đăng nhập" className="rounded-full text-xs py-2 px-3"/>
+					<Button className="text-sm lg:block md:block hidden">Đăng nhập</Button>
 				</Link>
 			)}
 		</div>

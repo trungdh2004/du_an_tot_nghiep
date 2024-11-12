@@ -96,6 +96,7 @@ const OrderInformation = ({ data, getOrderById }: any) => {
 								</p>
 							</div>
 							<hr />
+							
 							<div className="flex justify-between">
 								<p className="font-medium text-sm text-black">Voucher</p>
 								<p className="font-normal text-sm text-black pr-3">
@@ -103,9 +104,16 @@ const OrderInformation = ({ data, getOrderById }: any) => {
 								</p>
 							</div>
 							<hr />
+							<div className="flex justify-between">
+								<p className="font-medium text-sm text-black">Đã thanh toán</p>
+								<p className="font-normal text-sm text-black pr-3">
+									- {formatCurrency(data.paymentAmount)}
+								</p>
+							</div>
+							<hr />
 							<div className="flex justify-between bg-main">
 								<p className="font-medium text-sm text-black">
-									Tổng thanh toán
+									Thanh toán khi nhận hàng
 								</p>
 								<p className="font-medium text-sm text-red-500 pr-3">
 									{formatCurrency(data.amountToPay)}

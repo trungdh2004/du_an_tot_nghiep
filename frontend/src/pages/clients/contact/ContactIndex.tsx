@@ -41,28 +41,8 @@ const ContactIndex = () => {
 	const onSubmit = () => {};
 	return (
 		<>
-			<section className=" mb-36">
+			<section className=" mb-36 pt-20">
 				<div className="padding">
-					<div className="pt-8 pb-14 w-full">
-						<h3 className="text-[28px] font-normal text-center ">Liên Hệ</h3>
-						<div className="w-full flex flex-row  justify-center">
-							<Breadcrumb>
-								<BreadcrumbList>
-									<BreadcrumbItem>
-										<Link to="/">
-											<BreadcrumbLink>Trang chủ</BreadcrumbLink>
-										</Link>
-									</BreadcrumbItem>
-									<BreadcrumbSeparator />
-									<BreadcrumbItem>
-										<Link to="/contacts">
-											<BreadcrumbLink>Liên hệ</BreadcrumbLink>
-										</Link>
-									</BreadcrumbItem>
-								</BreadcrumbList>
-							</Breadcrumb>
-						</div>
-					</div>
 					<div className="grid grid-cols-12 md:gap-5 lg:gap-10">
 						<div className="col-span-12 lg:col-span-6">
 							<div className="max-w-[500px] w-full mx-auto">
@@ -71,7 +51,7 @@ const ContactIndex = () => {
 										<span className="border-[1px] border-[#c9ae63]/70 p-2 rounded-full">
 											<FaLocationDot color="#c9ae63" />
 										</span>
-										<h3 className="text-[18px]">Địa chỉ adadakhda kadhk</h3>
+										<h3 className="text-[18px]">Địa chỉ: Dị Nậu - Thạch Thất - Hà Nội</h3>
 									</div>
 									<div className="flex gap-3 items-center ">
 										<span className="border-[1px] border-[#c9ae63]/80 p-2 rounded-full">
