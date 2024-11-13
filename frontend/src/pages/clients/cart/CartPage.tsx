@@ -294,7 +294,7 @@ const CartPage = () => {
 						? item._id !== id
 						: !id.includes(item._id as string),
 				),
-			}));
+			})).filter((item) =>(item?.items?.length > 0));      
 			setCarts(newCarts);
 			setTotalCart(newTotal);
 		} catch (error) {
