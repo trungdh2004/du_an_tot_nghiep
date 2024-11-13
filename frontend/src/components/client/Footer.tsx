@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { LogoNucSVG } from "@/assets/svg";
 const Footer = () => {
 	return (
-		<div className="padding mx-auto bg-[#131118] *:text-white">
+		<div className="padding mx-auto bg-[#131118] *:text-white relative">
 			<div className="pt-10 grid md:grid-cols-2 lg:grid-cols-4 *:border-b-[1px] *:border-b-white *:mb-5 *:md:border-none">
 				<div className="*:flex *:items-center *:gap-x-3 *:pb-6">
 					<Link to="/" className="text-4xl font-bold hover-text ">

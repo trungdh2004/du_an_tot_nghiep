@@ -23,14 +23,14 @@ const Banner = () => {
 			<div className="w-full ">
 				<img src="/banner.webp" alt="" className="object-cover min-h-[240px] sm:min-h-[300px] object-right" />
 			</div>
-			<div className="lg:h-[120px] w-full  grid-cols-4 gap-4 padding hidden md:grid border-b">
+			<div className=" lg:h-[120px] w-full  grid-cols-4 gap-4 padding hidden lg:grid border-b">
 				<div className="w-full flex items-center gap-2">
 					<div className="size-10 ">
 						{" "}
 						<img src="./runShipper.webp" alt="" />
 					</div>
 					<div>
-						<h4 className="text-sm lg:text-base font-semibold ">Miễn phí vận chuyển đơn từ 499K</h4>
+						<h4 className="text-base font-semibold ">Miễn phí vận chuyển đơn từ 499K</h4>
 						<span className="text-xs md:text-sm">Nhận hàng trong 2-5 ngày</span>
 					</div>
 				</div>
