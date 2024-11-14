@@ -758,12 +758,12 @@ class VoucherController {
 
       const listVoucher = await VoucherModel.find({
         isHome: true,
-        status: 2,
+        status: 1,
         startDate: {
-          $gt: newDate,
+          $lte: newDate,
         },
         endDate: {
-          $lte: newDate,
+          $gte: newDate,
         },
       }).limit(limit);
 
@@ -787,12 +787,12 @@ class VoucherController {
       const newDate = new Date();
 
       const listVoucher = await VoucherModel.find({
-        status: 2,
+        status: 1,
         startDate: {
-          $gt: newDate,
+          $lte: newDate,
         },
         endDate: {
-          $lte: newDate,
+          $gte: newDate,
         },
       })
         .skip(skip)
@@ -802,12 +802,12 @@ class VoucherController {
         });
 
       const count = await VoucherModel.countDocuments({
-        status: 2,
+        status: 1,
         startDate: {
-          $gt: newDate,
+          $lte: newDate,
         },
         endDate: {
-          $lte: newDate,
+          $gte: newDate,
         },
       });
 
