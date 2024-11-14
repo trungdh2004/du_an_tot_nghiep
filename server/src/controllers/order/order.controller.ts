@@ -304,7 +304,13 @@ class OrderController {
 
       const newOrder = await OrderModel.create({
         user: user?.id,
-        address: addressId,
+        address: {
+          username:address.username,
+          phone:address.phone,
+          address:address.address,
+          detailAddress:address.detailAddress,
+          location:address.location
+        },
         totalMoney: totalMoneyNew + shippingCost,
         amountToPay: totalMoneyNew + shippingCost,
         voucherAmount: amountReduced,
@@ -570,7 +576,13 @@ class OrderController {
 
       const newOrder = await OrderModel.create({
         user: user?.id,
-        address: addressId,
+        address: {
+          username:address.username,
+          phone:address.phone,
+          address:address.address,
+          detailAddress:address.detailAddress,
+          location:address.location
+        },
         totalMoney: voucherMain ? voucherMain.remainingMoney : totalMoney2,
         amountToPay: voucherMain
           ? voucherMain.remainingMoney + shippingCost
@@ -599,11 +611,11 @@ class OrderController {
           message: "Tạo đơn hàng thất bại",
         });
       }
-      // await CartItemModel.deleteMany({
-      //   _id: {
-      //     $in: listId,
-      //   },
-      // });
+      await CartItemModel.deleteMany({
+        _id: {
+          $in: listId,
+        },
+      });
       socketNotificationAdmin(
         `<p>Đơn hàng: <span style="color:blue;font-weight:500;">${newOrder.code}</span> vừa được đặt, vui lòng kiểm tra thông tin</p>`,
         TYPE_NOTIFICATION_ADMIN.ORDER,
@@ -1476,7 +1488,13 @@ class OrderController {
 
       const newOrder = await OrderModel.create({
         user: user?.id,
-        address: address,
+        address: {
+          username:address.username,
+          phone:address.phone,
+          address:address.address,
+          detailAddress:address.detailAddress,
+          location:address.location
+        },
         totalMoney: voucherMain ? voucherMain.remainingMoney : totalMoney2,
         amountToPay: voucherMain
           ? voucherMain.remainingMoney + shippingCost
@@ -1752,11 +1770,11 @@ class OrderController {
       if (state) {
         const data = JSON.parse(state as string);
 
-        // await CartItemModel.deleteMany({
-        //   _id: {
-        //     $in: data.listId,
-        //   },
-        // });
+        await CartItemModel.deleteMany({
+          _id: {
+            $in: data.listId,
+          },
+        });
       }
 
       return res.status(STATUS.OK).json({
@@ -1904,7 +1922,7 @@ class OrderController {
         ...queryPaymentStatus,
         ...shipperQuery,
       })
-        .populate(["address", "user", "payment", "shipper"])
+        .populate(["user", "payment", "shipper"])
         .sort({
           orderDate: sort,
         })
@@ -1950,7 +1968,6 @@ class OrderController {
 
       const existingOrder = await OrderModel.findById(id).populate([
         "user",
-        "address",
         "shipper",
         "payment",
         {
@@ -1997,7 +2014,7 @@ class OrderController {
               date: existingOrder?.shippedDate,
               message: "Đơn hàng giao thành công",
               sub: `Người nhận: ${
-                (existingOrder?.address as IAddress).username
+                existingOrder?.address?.username
               }`,
             };
           } else if (item === 3) {
@@ -2535,7 +2552,6 @@ class OrderController {
         });
 
       const existingOrder = await OrderModel.findById(id).populate([
-        "address",
         "shipper",
         "payment",
         {
@@ -2586,7 +2602,7 @@ class OrderController {
               date: existingOrder?.shippedDate,
               message: "Đơn hàng giao thành công",
               sub: `Người nhận: ${
-                (existingOrder?.address as IAddress).username
+                existingOrder?.address.username
               }`,
             };
           } else if (item === 3) {

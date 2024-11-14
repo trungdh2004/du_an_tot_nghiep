@@ -155,12 +155,12 @@ const Product = ({ productShop }: any) => {
 export default Product;
 
 export function ListColorComponent({ listColor }: { listColor: IColor[] }) {
-	const count = listColor.length > 4 ? listColor.length - 4 : 0;
+	const count = listColor?.length > 4 ? listColor?.length - 4 : 0;
 
 	return (
 		<div className="flex items-center">
 			<div className="flex items-center justify-start -space-x-[6px]  *:inline-block  *:rounded-full">
-				{listColor.splice(0, 4)?.map((color: any) => (
+				{listColor?.splice(0, 4)?.map((color: any) => (
 					<div key={color.id} className="cursor-pointer">
 						<TooltipComponent label={color?.name}>
 							<div className="flex items-center justify-center w-4 h-4 bg-white rounded-full ">
@@ -178,7 +178,7 @@ export function ListColorComponent({ listColor }: { listColor: IColor[] }) {
 	);
 }
 export function ListSizeComponent({ listSize }: { listSize: ISize[] }) {
-	const count = listSize.length > 3 ? listSize.length - 3 : 0;
+	const count = listSize?.length > 3 ? listSize?.length - 3 : 0;
 	return (
 		<div className="flex items-center">
 			<div className="flex items-center justify-start gap-x-1">

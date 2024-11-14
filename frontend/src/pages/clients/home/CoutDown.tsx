@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 type Props = {
-	date: string;
+	date: Date;
 };
 const Countdown = ({ date }: Props) => {
 	const calculateTimeLeft = () => {
@@ -26,7 +26,6 @@ const Countdown = ({ date }: Props) => {
 
 		return timeLeft;
 	};
-
 	const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
 	useEffect(() => {
@@ -35,7 +34,7 @@ const Countdown = ({ date }: Props) => {
 		}, 1000);
 
 		return () => clearInterval(timer);
-	}, []);
+	}, [date]);
 
 	const TimeUnit = ({ value, label }: { value: string; label: string }) => (
 		<div className="flex flex-col items-center">

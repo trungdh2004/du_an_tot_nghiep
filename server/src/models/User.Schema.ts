@@ -30,7 +30,7 @@ const UserSchema = new mongoose.Schema(
     },
     avatarUrl: {
       type: String,
-      default: "",
+      default: "https://res.cloudinary.com/dundmo7q8/image/upload/v1731318978/shopApp/gfxxbr0uaqcdsherufbd.jpg",
     },
     phone: {
       type: String,

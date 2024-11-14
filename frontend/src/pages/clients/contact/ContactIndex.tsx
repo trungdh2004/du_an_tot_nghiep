@@ -52,7 +52,7 @@ const ContactIndex = () => {
 	};
 	return (
 		<>
-			<section className=" mb-36">
+			<section className=" mb-36 pt-20">
 				<div className="padding">
 					<div className="mt-[130px]">
 						<div className="grid grid-cols-12 md:gap-5 lg:gap-10 ">
@@ -79,6 +79,7 @@ const ContactIndex = () => {
 											</span>
 											<h3 className="text-[18px]">Nucshop@gmail.com</h3>
 										</div>
+
 									</div>
 									<h3 className="text-xl font-medium pb-4">
 										Liên hệ với chúng tôi

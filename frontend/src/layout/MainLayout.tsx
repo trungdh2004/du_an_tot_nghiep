@@ -10,12 +10,12 @@ import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 const MainLayout = () => {
 	const location = useLocation();
 	return (
-		<div>
+		<div className="bg-[#fafafa]">
 			{/* <div className="bg-magic"></div> */}
-			<OverlayVioletV2 />
+			{/* <OverlayVioletV2 /> */}
 			{/* {location.pathname == "/" ? <HeaderAndSlider /> : <Header />} */}
 			<Header />
-			<main className={cn("mt-[64px]", location.pathname == "/" && "mt-0")}>
+			<main className={cn(" ", location.pathname == "/" && "mt-0")}>
 				<Outlet />
 			</main>
 			{/* <Footer /> */}
