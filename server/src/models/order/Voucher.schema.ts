@@ -24,11 +24,11 @@ const VoucherSchema = new mongoose.Schema(
       trim: true,
     },
     startDate: {
-      type: String,
+      type: Date,
       required: true,
     },
     endDate: {
-      type: String,
+      type: Date,
       required: true,
     },
     // dang % hay là sô tiền
