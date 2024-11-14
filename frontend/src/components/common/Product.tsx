@@ -73,7 +73,7 @@ const Product = ({ productShop }: any) => {
 											<img
 												className="object-cover w-full h-full aspect-square mix-blend-multiply"
 												src={optimizeCloudinaryUrl(
-													product?.images[0]?.url || "",
+													product?.images?.[0]?.url || "",
 													350,
 													370,
 												)}

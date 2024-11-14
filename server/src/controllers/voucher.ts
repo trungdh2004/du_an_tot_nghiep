@@ -754,15 +754,71 @@ class VoucherController {
     try {
       const limit = Number(req.query.limit) || 3;
 
+      const newDate = new Date();
+
       const listVoucher = await VoucherModel.find({
         isHome: true,
+        status: 1,
+        startDate: {
+          $lte: newDate,
+        },
+        endDate: {
+          $gte: newDate,
+        },
       }).limit(limit);
 
       return res.status(STATUS.OK).json({
         message: "Danh sách voucher",
         data: listVoucher,
       });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
 
+  async pagingVoucherClient(req: Request, res: Response) {
+    try {
+      const { pageIndex, pageSize } = req.body;
+      const limit = pageSize || 8;
+      const skip = (pageIndex - 1) * limit || 0;
+
+      const newDate = new Date();
+
+      const listVoucher = await VoucherModel.find({
+        status: 1,
+        startDate: {
+          $lte: newDate,
+        },
+        endDate: {
+          $gte: newDate,
+        },
+      })
+        .skip(skip)
+        .limit(limit)
+        .sort({
+          createdAt: -1,
+        });
+
+      const count = await VoucherModel.countDocuments({
+        status: 1,
+        startDate: {
+          $lte: newDate,
+        },
+        endDate: {
+          $gte: newDate,
+        },
+      });
+
+      const result = formatDataPaging({
+        limit,
+        pageIndex: pageIndex,
+        data: listVoucher,
+        count,
+      });
+
+      return res.status(STATUS.OK).json(result);
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
