@@ -19,6 +19,7 @@ import OrderProcessing from "@/pages/clients/order/OrderProcessing";
 import WrapperSearch from "@/pages/clients/search/WrapperSearch";
 import ShopProduct from "@/pages/clients/shop/ShopProduct";
 import TestComponent from "@/pages/clients/Test";
+import VoucherIndex from "@/pages/clients/vouchers/VoucherIndex";
 import NotFound from "@/pages/NotFound";
 import { Navigate } from "react-router-dom";
 
@@ -40,6 +41,7 @@ const MainRouter = [
 				path: "search",
 				element: <WrapperSearch />,
 			},
+			{ path: "vouchers", element: <VoucherIndex /> },
 			{
 				path: "contacts",
 				element: <ContactIndex />,
