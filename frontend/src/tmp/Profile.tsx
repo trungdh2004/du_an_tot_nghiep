@@ -1,94 +1,111 @@
 import React, { useState } from 'react';
 
-function UserProfile() {
-  const [user, setUser] = useState({
+function ProfilePage() {
+  const [isEditing, setIsEditing] = useState(false);
+  const [userInfo, setUserInfo] = useState({
     name: 'Nguyen Van A',
     email: 'nguyenvana@example.com',
     phone: '0123456789',
-    address: '123 Đường ABC, Thành phố XYZ',
+    bio: 'Lập trình viên yêu thích công nghệ và khám phá thế giới.'
   });
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({ ...user });
-
-  const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  const handleEditClick = () => {
+    setIsEditing(true);
   };
 
-  const handleSave = () => {
-    setUser({ ...formData });
+  const handleSaveClick = () => {
     setIsEditing(false);
   };
 
+  const handleChange = (e: { target: { name: any; value: any; }; }) => {
+    const { name, value } = e.target;
+    setUserInfo({ ...userInfo, [name]: value });
+  };
+
   return (
-    <div className="container mx-auto p-6 max-w-lg bg-white shadow-md rounded-lg">
-      <h1 className="text-2xl font-bold mb-4">Hồ sơ cá nhân</h1>
-      {isEditing ? (
-        <div className="space-y-4">
+    <div className="container mx-auto p-6 max-w-4xl">
+      <div className="bg-white shadow-lg rounded-lg p-6">
+        <h1 className="text-3xl font-bold mb-4">Hồ Sơ Cá Nhân</h1>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Họ và tên:</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            />
+            <label className="block text-gray-600 mb-1">Tên:</label>
+            {isEditing ? (
+              <input
+                type="text"
+                name="name"
+                value={userInfo.name}
+                onChange={handleChange}
+                className="w-full border rounded px-3 py-2"
+              />
+            ) : (
+              <p className="text-lg">{userInfo.name}</p>
+            )}
           </div>
+
           <div>
-            <label className="block text-sm font-medium text-gray-700">Email:</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            />
+            <label className="block text-gray-600 mb-1">Email:</label>
+            {isEditing ? (
+              <input
+                type="email"
+                name="email"
+                value={userInfo.email}
+                onChange={handleChange}
+                className="w-full border rounded px-3 py-2"
+              />
+            ) : (
+              <p className="text-lg">{userInfo.email}</p>
+            )}
           </div>
+
           <div>
-            <label className="block text-sm font-medium text-gray-700">Số điện thoại:</label>
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            />
+            <label className="block text-gray-600 mb-1">Số điện thoại:</label>
+            {isEditing ? (
+              <input
+                type="text"
+                name="phone"
+                value={userInfo.phone}
+                onChange={handleChange}
+                className="w-full border rounded px-3 py-2"
+              />
+            ) : (
+              <p className="text-lg">{userInfo.phone}</p>
+            )}
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Địa chỉ:</label>
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleInputChange}
-              className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            />
+
+          <div className="col-span-1 md:col-span-2">
+            <label className="block text-gray-600 mb-1">Giới thiệu:</label>
+            {isEditing ? (
+              <textarea
+                name="bio"
+                value={userInfo.bio}
+                onChange={handleChange}
+                className="w-full border rounded px-3 py-2"
+              />
+            ) : (
+              <p className="text-lg">{userInfo.bio}</p>
+            )}
           </div>
-          <button
-            onClick={handleSave}
-            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 mt-4"
-          >
-            Lưu
-          </button>
         </div>
-      ) : (
-        <div className="space-y-4">
-          <p><strong>Họ và tên:</strong> {user.name}</p>
-          <p><strong>Email:</strong> {user.email}</p>
-          <p><strong>Số điện thoại:</strong> {user.phone}</p>
-          <p><strong>Địa chỉ:</strong> {user.address}</p>
+
+        {isEditing ? (
           <button
-            onClick={() => setIsEditing(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 mt-4"
+            onClick={handleSaveClick}
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
           >
-            Chỉnh sửa
+            Lưu Thay Đổi
           </button>
-        </div>
-      )}
+        ) : (
+          <button
+            onClick={handleEditClick}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+          >
+            Chỉnh Sửa
+          </button>
+        )}
+      </div>
     </div>
   );
 }
 
-export default UserProfile;
+export default ProfilePage;
