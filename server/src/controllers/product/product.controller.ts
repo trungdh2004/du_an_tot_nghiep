@@ -784,6 +784,7 @@ class ProductController {
           },
           "category",
         ])
+        .select("-description -category")
         .exec();
 
       const countProduct = await ProductModel.countDocuments({
