@@ -209,11 +209,16 @@ class VoucherController {
         });
       }
 
+      const newStartDate = new Date(startDate)
+      const newEndDate = new Date(endDate)
+      newStartDate.setHours(0, 0, 0, 0)
+      newEndDate.setHours(0, 0, 0, 0)
+
       const newVoucher = await VoucherModel.create({
         name,
         description,
-        startDate,
-        endDate,
+        startDate:newStartDate,
+        endDate:newEndDate,
         discountType,
         discountValue,
         usageLimit,
@@ -481,6 +486,11 @@ class VoucherController {
         });
       }
 
+      const newStartDate = new Date(startDate)
+      const newEndDate = new Date(endDate)
+      newStartDate.setHours(0, 0, 0, 0)
+      newEndDate.setHours(0, 0, 0, 0)
+
       const existingVoucher = await VoucherModel.findById(id);
 
       if (!existingVoucher) {
@@ -505,8 +515,8 @@ class VoucherController {
       const newVoucher = await VoucherModel.findByIdAndUpdate(id, {
         name,
         description,
-        startDate,
-        endDate,
+        startDate:newStartDate,
+        endDate:newEndDate,
         discountType,
         discountValue,
         usageLimit,
@@ -785,6 +795,9 @@ class VoucherController {
       const skip = (pageIndex - 1) * limit || 0;
 
       const newDate = new Date();
+
+      console.log("newDate",newDate);
+      
 
       const listVoucher = await VoucherModel.find({
         status: 1,
