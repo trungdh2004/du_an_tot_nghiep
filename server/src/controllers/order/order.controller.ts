@@ -36,6 +36,7 @@ import { TYPE_NOTIFICATION_ADMIN } from "../../config/typeNotification";
 import { formatCurrency } from "../../config/func";
 import LocationModel from "../../models/Location.schema";
 import CustomerModel from "../../models/Customer.schema";
+import sendToMail from "../../mail/mailConfig";
 
 const long = +process.env.LONGSHOP! || 105.62573250208116;
 const lat = +process.env.LATSHOP! || 21.045193948892585;
@@ -477,6 +478,27 @@ class OrderController {
         };
       });
 
+      const listDataMail = listCartItem.map((item) => {
+        const variant = item?.is_simple
+          ? "Sản phẩm đơn giản"
+          : `${item?.attribute?.size?.name || "Size"} - ${
+              item?.attribute?.color?.name || "Màu"
+            }`;
+        const price = item.is_simple
+          ? item.product.discount
+          : item.attribute.discount;
+        return {
+          product: {
+            name:item.product.name,
+            thumbnail: item.product.thumbnail
+          },
+          variant: variant,
+          price: formatCurrency(price),
+          quantity: item.quantity,
+          totalMoney: formatCurrency(+item.quantity * +price),
+        };
+      });
+
       // voucher
 
       const listProduct = listCartItem.map((item) => {
@@ -621,6 +643,21 @@ class OrderController {
         TYPE_NOTIFICATION_ADMIN.ORDER,
         newOrder._id
       );
+
+      const dataSendMail = {
+        orderItems:listDataMail,
+        code:newOrder.code,
+        createdAt:new Date(newOrder.createdAt).toLocaleString(),
+        address:newOrder.address,
+        amountToPay:formatCurrency(newOrder.amountToPay),
+        totalMoney:formatCurrency(newOrder.totalMoney),
+        shippingCost:formatCurrency(shippingCost),
+        voucher:formatCurrency(0),
+        note:newOrder.note,
+        payment:formatCurrency(0)
+      }
+
+      sendToMail(user?.email as string,"Thông báo đặt hàng thành công tại NUCSHOP",dataSendMail,process.env.EMAIL!,"/order.ejs")
 
       return res.status(STATUS.OK).json({
         message: "Tạo đơn hàng thành công",
@@ -1691,7 +1728,16 @@ class OrderController {
         }
       }
 
-      const existingOrder = await OrderModel.findById(vnp_TxnRef);
+      const existingOrder = await OrderModel.findById(vnp_TxnRef).populate({
+        path:"orderItems",
+        populate:{
+          path:"product",
+          select:{
+            name:1,
+            thumbnail:1
+          }
+        }
+      });
 
       if (!existingOrder) {
         if (state) {
@@ -1708,6 +1754,7 @@ class OrderController {
           });
         }
       }
+
 
       const payment = await PaymentModel.create({
         user: user?.id,
@@ -1766,6 +1813,21 @@ class OrderController {
         TYPE_NOTIFICATION_ADMIN.PAYMENT,
         `${payment?._id}`
       );
+
+      const dataSendMail = {
+        orderItems:existingOrder?.orderItems,
+        code:existingOrder.code,
+        createdAt:new Date(existingOrder.createdAt).toLocaleString(),
+        address:existingOrder.address,
+        amountToPay:formatCurrency(existingOrder.amountToPay),
+        totalMoney:formatCurrency(existingOrder.totalMoney),
+        shippingCost:formatCurrency(existingOrder.shippingCost),
+        voucher:formatCurrency(0),
+        note:existingOrder.note,
+        payment:formatCurrency(0)
+      }
+
+      sendToMail(user?.email as string,"Thông báo đặt hàng thành công tại NUCSHOP",dataSendMail,process.env.EMAIL!,"/order.ejs")
 
       if (state) {
         const data = JSON.parse(state as string);
