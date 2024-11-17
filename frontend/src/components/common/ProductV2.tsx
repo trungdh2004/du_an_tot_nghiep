@@ -32,7 +32,7 @@ const ProductV2 = ({ product }: Props) => {
 	
 	const listSize =!product?.is_simple ? product?.attributes?.reduce((acc: ISize[], item: any) => {
 		if (!item?.size?._id) return acc;
-		let group = acc.find((g) => g._id === (item.color as ISize)?._id);
+		let group = acc.find((g) => g._id === (item.size as ISize)?._id);
 
 		// Nếu nhóm không tồn tại, tạo nhóm mới
 		if (!group) {
