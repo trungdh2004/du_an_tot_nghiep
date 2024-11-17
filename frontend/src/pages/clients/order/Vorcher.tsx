@@ -12,6 +12,7 @@ import { takeApplyDiscountCode } from "@/service/voucher";
 import { IOrderMoneyValue } from "@/types/order";
 import { IoClose } from "react-icons/io5";
 import { cn } from "@/lib/utils";
+import Coupon from "@/components/common/Coupon/Coupon";
 
 interface Props {
 	data: any;
@@ -25,12 +26,10 @@ const Vorcher = ({
 	setMoneyVoucher,
 	stateOrder,
 }: Props) => {
-	const [voucher, setVoucher] = useState<IVoucher | null | undefined>(
-		data?.voucher,
-	);
+	const [voucher, setVoucher] = useState<IVoucher | null>(data?.voucher);
 	const [show, setShow] = useState(false);
 	const { register, handleSubmit, reset } = useForm();
-  const onSubmit = async (data: any) => {
+	const onSubmit = async (data: any) => {
 		try {
 			const check = await takeApplyDiscountCode({
 				code: data.voucherCode,
@@ -91,7 +90,7 @@ const Vorcher = ({
 						<form
 							action=""
 							onSubmit={handleSubmit(onSubmit)}
-							className="flex items-center w-full gap-2 md:w-min md:justify-end max-sm:flex-col"
+							className="flex items-center w-full gap-2 md:w-min md:justify-end"
 						>
 							<div className="relative w-full md:w-52 ">
 								<input
@@ -126,53 +125,7 @@ const Vorcher = ({
 							<h3 className="text-red-400">Bạn chưa có voucher nào</h3>
 						</div>
 					) : (
-						<div className="p-2">
-							<div className="flex p-1 items-center border rounded-md justify-between pr-2 max-w-[400px]">
-								<div className="flex items-center gap-3 flex-1">
-									<div className="bg-orange-500 p-2 rounded-sm">
-										<img
-											src={`/NUC_white.svg`}
-											alt=""
-											className="rounded-full w-16 h-16"
-										/>
-									</div>
-									<div className="flex flex-col gap-1">
-										<p className="text-sm font-medium text-gray-700">
-											Giảm {voucher?.discountValue}
-											{voucher?.discountType === 1
-												? "đ"
-												: `%, giảm tối đa ${voucher?.maxAmount}đ`}
-										</p>
-										<p className="text-sm text-gray-600">
-											Đơn tối thiểu : {voucher?.minimumOrderValue}đ
-										</p>
-										<p className="text-xs font-light text-gray-500">
-											HXD :
-											{voucher?.endDate
-												? format(new Date(voucher?.endDate), "yyyy-MM-dd")
-												: "Sai time"}{" "}
-											- {voucher?.type === "1" ? "Tất cả" : "Một số sản phẩm"}
-										</p>
-									</div>
-								</div>
-								<div
-									onClick={() => {
-										setVoucher(null);
-										setShow(false);
-										setOrderCheckout((prev: any) => {
-											return { ...prev, voucher: null };
-										});
-										setMoneyVoucher(null);
-										reset();
-									}}
-								>
-									<FaRegCircleXmark
-										size={20}
-										className="text-red-400 cursor-pointer hover:text-red-600"
-									/>
-								</div>
-							</div>
-						</div>
+						<Coupon voucher={voucher} />
 					))}
 			</div>
 		</div>

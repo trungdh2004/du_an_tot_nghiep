@@ -37,7 +37,7 @@ const SelectSort = ({ setSearchParamsObject }: Props) => {
 		setSearchParamsObject(defaultParams);
 		navigate("/shop", { replace: true });
 		setSelectValue("");
-		query.invalidateQueries({ queryKey: ["productShop", defaultParams] });
+		
 	};
 	const handleOnChangeSelect = (value: string) => {
 		setSelectValue(value);
