@@ -45,7 +45,6 @@ const Category = ({ setSearchParamsObject }: Props) => {
 			...prev,
 			category: paramsObject.category,
 		}));
-		query.invalidateQueries({ queryKey: ["productShop"] });
 	};
 	return (
 		<div className="flex flex-col w-full gap-3 rounded-lg">
