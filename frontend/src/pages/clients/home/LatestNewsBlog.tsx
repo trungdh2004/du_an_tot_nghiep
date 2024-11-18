@@ -27,8 +27,8 @@ const LatestNewsBlog = () => {
 
 	return (
 		<div className="my-20 padding">
-			<div className="flex justify-between items-center w-full">
-				<div className="text-header flex-1">Thông tin mới tại NUCSHOP</div>
+			<div className="flex items-center justify-between w-full">
+				<div className="flex-1 text-header">Thông tin mới tại NUCSHOP</div>
 			</div>
 			<div className="grid grid-cols-12 min-h-[360px] gap-6 xl:gap-8 my-5">
 				{newBlogs?.length ? (
@@ -41,10 +41,10 @@ const LatestNewsBlog = () => {
 								<div className="h-[350px] grid grid-rows-2 border rounded-xl overflow-hidden relative">
 									{/* card-head */}
 
-									<div className=" bg-gray-200 border-b border-gray-300">
+									<div className="bg-gray-200 border-b border-gray-300 ">
 										<img
 											src={item.thumbnail_url || "/no-image.png"}
-											className="w-full h-full object-cover"
+											className="object-cover w-full h-full"
 											alt=""
 										/>
 									</div>
@@ -63,7 +63,7 @@ const LatestNewsBlog = () => {
 												{/* <p className="text-xs text-[#212B36] opacity-50 ">{format(item.published_at || item.createdAt || "", "dd-MM-yyyy")}</p> */}
 											</div>
 										</div>
-										<div className="flex justify-between items-center ">
+										<div className="flex items-center justify-between ">
 											<Link
 												to={`/blogDetail/${item._id}`}
 												className="line-clamp-1 text-[#212B36] text-[18px] font-semibold hover:underline transition-all duration-300"
@@ -71,7 +71,7 @@ const LatestNewsBlog = () => {
 												{item.title || "Bài viết chưa có tiêu đề"}
 											</Link>
 										</div>
-										<p className="text-xs pt-1 text-gray-400 line-clamp-2">
+										<p className="pt-1 text-xs text-gray-400 line-clamp-2">
 											{item.meta_description}
 										</p>
 										<div className="flex space-x-4 min-[900px]:space-x-1 xl:space-x-4 absolute bottom-4 right-4">
@@ -97,17 +97,17 @@ const LatestNewsBlog = () => {
 						</>
 					))
 				) : (
-					<div className="w-full h-full mt-0 col-span-12 mt-10 flex justify-center items-center">
+					<div className="flex items-center justify-center w-full h-full col-span-12 mt-0 mt-10">
 						<h3 className=" text-lg text-[#1A1E26]">Chưa có bài viết nào.</h3>
 					</div>
 				)}
 			</div>
 
-			<div className="text-center  ">
+			<div className="text-center ">
 				<Link to={"/blogs"} className="inline-flex items-center justify-center gap-2 group">
 					<span className="font-medium text-gray-500">Xem thêm</span>
 
-					<span className="group-hover:translate-x-4 duration-200">
+					<span className="duration-200 group-hover:translate-x-4">
 						<FaAnglesRight size={16} className="text-gray-300" />
 					</span>
 				</Link>
