@@ -12,8 +12,10 @@ const SortFilterStar = ({ setSearchParamsObject }: Props) => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [check, setCheck] = useState(false);
 	const query = useQueryClient();
+	const [rating, setRating] = useState<number>(0);
 
 	const handleRatingChange = (rating: string) => {
+		setRating(parseInt(rating));
 		searchParams.set("rating", rating);
 		setSearchParams(searchParams);
 		const paramsObject: any = Object.fromEntries(searchParams.entries());
@@ -21,15 +23,14 @@ const SortFilterStar = ({ setSearchParamsObject }: Props) => {
 			...prev,
 			rating: parseInt(paramsObject.rating),
 		}));
-		query.invalidateQueries({ queryKey: ["productShop"] });
 	};
 	return (
-		<div className="w-full flex flex-col gap-3 lg:py-2 pb-8">
+		<div className="w-full flex flex-col lg:py-2 pb-8">
 			<div
 				className="flex justify-between items-center cursor-pointer"
 				onClick={!check ? () => setCheck(true) : () => setCheck(false)}
 			>
-				<h3 className="text-uppercase py-1 font-semibold leading-7 tracking-wide lg:text-base md:text-sm sm:text-xs">
+				<h3 className="text-uppercase py-2 font-semibold leading-7 tracking-wide lg:text-base md:text-sm sm:text-xs">
 					Đánh giá
 				</h3>
 				{!check ? (
@@ -51,7 +52,10 @@ const SortFilterStar = ({ setSearchParamsObject }: Props) => {
 				)}
 			>
 				<div
-					className="flex cursor-pointer gap-1"
+					className={cn(
+						"flex cursor-pointer gap-1 rounded-full p-2 pr-6",
+						rating === 5 && "bg-gray-100 ",
+					)}
 					onClick={() => handleRatingChange("5")}
 				>
 					<FaStar className="text-yellow-400" size={15} />
@@ -61,7 +65,10 @@ const SortFilterStar = ({ setSearchParamsObject }: Props) => {
 					<FaStar className="text-yellow-400" size={15} />
 				</div>
 				<div
-					className="flex cursor-pointer gap-1"
+					className={cn(
+						"flex cursor-pointer gap-1 rounded-full p-2 pr-6",
+						rating === 4 && "bg-gray-100 ",
+					)}
 					onClick={() => handleRatingChange("4")}
 				>
 					<FaStar className="text-yellow-400" size={15} />
@@ -71,7 +78,10 @@ const SortFilterStar = ({ setSearchParamsObject }: Props) => {
 					<FaRegStar className="text-yellow-400" size={15} />
 				</div>
 				<div
-					className="flex cursor-pointer gap-1"
+					className={cn(
+						"flex cursor-pointer gap-1 rounded-full p-2 pr-6",
+						rating === 3 && "bg-gray-100 ",
+					)}
 					onClick={() => handleRatingChange("3")}
 				>
 					<FaStar className="text-yellow-400" size={15} />
@@ -81,7 +91,10 @@ const SortFilterStar = ({ setSearchParamsObject }: Props) => {
 					<FaRegStar className="text-yellow-400" size={15} />
 				</div>
 				<div
-					className="flex cursor-pointer gap-1"
+					className={cn(
+						"flex cursor-pointer gap-1 rounded-full p-2 pr-6",
+						rating === 2 && "bg-gray-100 ",
+					)}
 					onClick={() => handleRatingChange("2")}
 				>
 					<FaStar className="text-yellow-400" size={15} />
@@ -91,7 +104,10 @@ const SortFilterStar = ({ setSearchParamsObject }: Props) => {
 					<FaRegStar className="text-yellow-400" size={15} />
 				</div>
 				<div
-					className="flex cursor-pointer gap-1"
+					className={cn(
+						"flex cursor-pointer gap-1 rounded-full p-2 pr-6",
+						rating === 1 && "bg-gray-100",
+					)}
 					onClick={() => handleRatingChange("1")}
 				>
 					<FaStar className="text-yellow-400" size={15} />
