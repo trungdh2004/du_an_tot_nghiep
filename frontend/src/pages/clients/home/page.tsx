@@ -35,7 +35,7 @@ const HomePage = () => {
 			<DealProductSection />
 
 			<LatestNewsBlog />
-      <BlogNews/>
+      {/* <BlogNews/> */}
 		</div>
 	);
 };
