@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import "swiper/css";
 import "swiper/css/pagination";
-import { Autoplay } from "swiper/modules";
+import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 const ListCoupon = () => {
@@ -28,12 +28,12 @@ const ListCoupon = () => {
 	}, []);
 
 	return (
-		<div className="w-full padding pt-10">
-			<div className="flex justify-between items-center w-full mb-6">
-				<div className="text-header flex-1">Ưu đãi lớn</div>
+		<div className="w-full pt-10 padding">
+			<div className="flex items-center justify-between w-full mb-6">
+				<div className="flex-1 text-header">Ưu đãi lớn</div>
 				<Link
 					to={"/shop"}
-					className="text-gray-400 hover:text-gray-700 cursor-pointer flex items-center gap-1"
+					className="flex items-center gap-1 text-gray-400 cursor-pointer hover:text-gray-700"
 				>
 					<span className="text-sm">Xem thêm </span>
 					<FaAnglesRight size={14} />
@@ -41,18 +41,22 @@ const ListCoupon = () => {
 			</div>
 			<Swiper
 				className="h-full"
-				modules={[Autoplay]}
+				modules={[Autoplay, Pagination]}
 				autoplay={{
 					delay: 4000,
 					disableOnInteraction: false,
 				}}
 				spaceBetween={20} // Khoảng cách giữa các voucher
 				breakpoints={{
-					320: { slidesPerView: 1 }, // Di động: hiển thị 1 voucher
-					768: { slidesPerView: 2 }, // Máy tính bảng: hiển thị 2 voucher
-					1024: { slidesPerView: 3.5 }, // Laptop trở lên: hiển thị 3 voucher
+					320: { 
+						slidesPerView: 1, 
+						pagination: { clickable: true } // Thêm pagination khi ở kích thước mobile
+					},
+					768: { slidesPerView: 2 },
+					1024: { slidesPerView: 3.5 },
 				}}
 				grabCursor={true} // Cho phép kéo bằng tay
+				pagination={{ clickable: true }} // Kích hoạt pagination
 			>
 				{vouchers?.map((voucher) => (
 					<SwiperSlide key={voucher?._id}>

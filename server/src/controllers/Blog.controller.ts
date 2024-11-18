@@ -619,6 +619,73 @@ class BlogController {
       });
     } catch (error) {}
   }
+
+  async pagingBlogClient(req: RequestModel, res: Response) {
+    try {
+      const {
+        keyword,
+        pageSize,
+        pageIndex,
+        tags,
+      } = req.body;
+
+      let limit = pageSize || 10;
+      let skip = (pageIndex - 1) * limit || 0;
+      let querySort = {};
+      let queryTab = {};
+      let queryTags = {};
+
+      if (tags) {
+        const select = await TagsModel.findOne({
+          slug: tags,
+        });
+
+        queryTags = {
+          selected_tags: {
+            $in: select?._id,
+          },
+        };
+      }
+
+      const newDate = new Date();
+
+
+      const listBlogs = await BlogsModel.find({
+        ...queryTab,
+        ...queryTags,
+        published_at:{
+          $lte: newDate,
+        }
+      })
+        .sort(querySort)
+        .skip(skip)
+        .limit(limit)
+        .populate([
+          {
+            path: "user_id",
+            select: "_id full_name email avatarUrl",
+          },
+          "selected_tags",
+        ])
+        .exec();
+
+      const countBlogs = await BlogsModel.countDocuments({
+        ...queryTab,
+        ...queryTags,
+      });
+
+      const data = formatDataPaging({
+        limit,
+        pageIndex,
+        data: listBlogs,
+        count: countBlogs,
+      });
+
+      return res.status(STATUS.OK).json(data);
+    } catch (error) {
+      return res.status(STATUS.INTERNAL).json({ error: error });
+    }
+  }
 }
 
 export default new BlogController();

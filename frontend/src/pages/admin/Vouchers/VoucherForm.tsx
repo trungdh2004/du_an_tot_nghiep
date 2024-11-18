@@ -476,9 +476,14 @@ const VoucherForm = () => {
 												onSelect={(e) => {
 													field.onChange(e?.toISOString());
 												}}
-												disabled={(date) =>
-													date < new Date() || date < new Date("1900-01-01")
-												}
+												disabled={(date) => {
+													const newDate = new Date()
+													newDate.setDate(newDate.getDate() - 1)
+
+													return (
+														date < newDate || date < new Date("1900-01-01")
+													);
+												}}
 												initialFocus
 											/>
 										</PopoverContent>

@@ -17,7 +17,7 @@ type Props = {
 };
 
 const Comments = ({ product }: Props) => {
-	const { isLoggedIn } = useAuth();
+	const { authUser, isLoggedIn } = useAuth();
 	const [content, setContent] = useState("");
 	const [open, setOpen] = useState(false);
 	const [pageIndex, setPageIndex] = useState(1);
@@ -78,7 +78,7 @@ const Comments = ({ product }: Props) => {
 			</div>
 			<CommentEditor
 				onSubmit={onSubmitComment}
-				avatar="/avatar_25.jpg"
+				avatar={(authUser?.avatarUrl as string) || "/avatar_25.jpg"}
 				handleChange={handleChange}
 				handleClose={handleClose}
 				content={content}

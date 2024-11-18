@@ -1,27 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigation } from "swiper/modules";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 
 // Import Swiper styles
+import ProductV2 from "@/components/common/ProductV2";
+import { IProduct } from "@/types/typeProduct";
+import { GrLinkNext, GrLinkPrevious } from "react-icons/gr";
 import "swiper/css";
 import "swiper/css/navigation";
-import { Link } from "react-router-dom";
-import { IoIosHeartEmpty } from "react-icons/io";
-import { GrLinkNext, GrLinkPrevious } from "react-icons/gr";
-import { FaStar } from "react-icons/fa";
-import { formatCurrency } from "@/common/func";
-import { IColor, IProduct } from "@/types/typeProduct";
-import { optimizeCloudinaryUrl } from "@/common/localFunction";
-import { IoEyeOutline } from "react-icons/io5";
-import {
-	ListColorComponent,
-	ListSizeComponent,
-} from "@/components/common/Product";
-import OutOfStock from "@/assets/OutofStock.png";
-import { ISize } from "@/types/variants";
-import { cn } from "@/lib/utils";
-import ProductV2 from "@/components/common/ProductV2";
 interface Props {
 	product: IProduct[];
 }

@@ -36,6 +36,7 @@ import { TYPE_NOTIFICATION_ADMIN } from "../../config/typeNotification";
 import { formatCurrency } from "../../config/func";
 import LocationModel from "../../models/Location.schema";
 import CustomerModel from "../../models/Customer.schema";
+import sendToMail from "../../mail/mailConfig";
 
 const long = +process.env.LONGSHOP! || 105.62573250208116;
 const lat = +process.env.LATSHOP! || 21.045193948892585;
@@ -305,11 +306,11 @@ class OrderController {
       const newOrder = await OrderModel.create({
         user: user?.id,
         address: {
-          username:address.username,
-          phone:address.phone,
-          address:address.address,
-          detailAddress:address.detailAddress,
-          location:address.location
+          username: address.username,
+          phone: address.phone,
+          address: address.address,
+          detailAddress: address.detailAddress,
+          location: address.location,
         },
         totalMoney: totalMoneyNew + shippingCost,
         amountToPay: totalMoneyNew + shippingCost,
@@ -477,6 +478,27 @@ class OrderController {
         };
       });
 
+      const listDataMail = listCartItem.map((item) => {
+        const variant = item?.is_simple
+          ? "Sản phẩm đơn giản"
+          : `${item?.attribute?.size?.name || "Size"} - ${
+              item?.attribute?.color?.name || "Màu"
+            }`;
+        const price = item.is_simple
+          ? item.product.discount
+          : item.attribute.discount;
+        return {
+          product: {
+            name: item.product.name,
+            thumbnail: item.product.thumbnail,
+          },
+          variant: variant,
+          price: formatCurrency(price),
+          quantity: item.quantity,
+          totalMoney: formatCurrency(+item.quantity * +price),
+        };
+      });
+
       // voucher
 
       const listProduct = listCartItem.map((item) => {
@@ -577,11 +599,11 @@ class OrderController {
       const newOrder = await OrderModel.create({
         user: user?.id,
         address: {
-          username:address.username,
-          phone:address.phone,
-          address:address.address,
-          detailAddress:address.detailAddress,
-          location:address.location
+          username: address.username,
+          phone: address.phone,
+          address: address.address,
+          detailAddress: address.detailAddress,
+          location: address.location,
         },
         totalMoney: voucherMain ? voucherMain.remainingMoney : totalMoney2,
         amountToPay: voucherMain
@@ -620,6 +642,27 @@ class OrderController {
         `<p>Đơn hàng: <span style="color:blue;font-weight:500;">${newOrder.code}</span> vừa được đặt, vui lòng kiểm tra thông tin</p>`,
         TYPE_NOTIFICATION_ADMIN.ORDER,
         newOrder._id
+      );
+
+      const dataSendMail = {
+        orderItems: listDataMail,
+        code: newOrder.code,
+        createdAt: new Date(newOrder.createdAt).toLocaleString(),
+        address: newOrder.address,
+        amountToPay: formatCurrency(newOrder.amountToPay),
+        totalMoney: formatCurrency(newOrder.totalMoney),
+        shippingCost: formatCurrency(shippingCost),
+        note: newOrder.note,
+        voucher: formatCurrency(newOrder.voucherAmount),
+        payment: formatCurrency(newOrder.paymentAmount),
+      };
+
+      sendToMail(
+        user?.email as string,
+        "Thông báo đặt hàng thành công tại NUCSHOP",
+        dataSendMail,
+        process.env.EMAIL!,
+        "/order.ejs"
       );
 
       return res.status(STATUS.OK).json({
@@ -1489,11 +1532,11 @@ class OrderController {
       const newOrder = await OrderModel.create({
         user: user?.id,
         address: {
-          username:address.username,
-          phone:address.phone,
-          address:address.address,
-          detailAddress:address.detailAddress,
-          location:address.location
+          username: address.username,
+          phone: address.phone,
+          address: address.address,
+          detailAddress: address.detailAddress,
+          location: address.location,
         },
         totalMoney: voucherMain ? voucherMain.remainingMoney : totalMoney2,
         amountToPay: voucherMain
@@ -1691,7 +1734,16 @@ class OrderController {
         }
       }
 
-      const existingOrder = await OrderModel.findById(vnp_TxnRef);
+      const existingOrder = await OrderModel.findById(vnp_TxnRef).populate({
+        path: "orderItems",
+        populate: {
+          path: "product",
+          select: {
+            name: 1,
+            thumbnail: 1,
+          },
+        },
+      });
 
       if (!existingOrder) {
         if (state) {
@@ -1730,7 +1782,7 @@ class OrderController {
           },
           amountToPay: 0,
           paymentStatus: true,
-          paymentAmount:+verify.vnp_Amount
+          paymentAmount: +verify.vnp_Amount,
         },
         { new: true }
       );
@@ -1765,6 +1817,32 @@ class OrderController {
         )}</span>, vui lòng kiểm tra thông tin</p>`,
         TYPE_NOTIFICATION_ADMIN.PAYMENT,
         `${payment?._id}`
+      );
+
+      const totalMoney = existingOrder?.orderItems?.reduce(
+        (sum, item) => sum + (item as IOrderItem).totalMoney,
+        0
+      );
+
+      const dataSendMail = {
+        orderItems: existingOrder?.orderItems,
+        code: existingOrder.code,
+        createdAt: new Date(existingOrder.createdAt).toLocaleString(),
+        address: existingOrder.address,
+        amountToPay: formatCurrency(0),
+        totalMoney: formatCurrency(totalMoney),
+        shippingCost: formatCurrency(existingOrder.shippingCost),
+        note: existingOrder.note,
+        voucher: formatCurrency(existingOrder.voucherAmount),
+        payment: formatCurrency(+verify.vnp_Amount),
+      };
+
+      sendToMail(
+        user?.email as string,
+        "Thông báo đặt hàng thành công tại NUCSHOP",
+        dataSendMail,
+        process.env.EMAIL!,
+        "/order.ejs"
       );
 
       if (state) {
@@ -2013,9 +2091,7 @@ class OrderController {
               status: 4,
               date: existingOrder?.shippedDate,
               message: "Đơn hàng giao thành công",
-              sub: `Người nhận: ${
-                existingOrder?.address?.username
-              }`,
+              sub: `Người nhận: ${existingOrder?.address?.username}`,
             };
           } else if (item === 3) {
             return {
@@ -2601,9 +2677,7 @@ class OrderController {
               status: 4,
               date: existingOrder?.shippedDate,
               message: "Đơn hàng giao thành công",
-              sub: `Người nhận: ${
-                existingOrder?.address.username
-              }`,
+              sub: `Người nhận: ${existingOrder?.address.username}`,
             };
           } else if (item === 3) {
             return {
