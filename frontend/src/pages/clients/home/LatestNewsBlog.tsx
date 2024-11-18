@@ -46,12 +46,14 @@ const LatestNewsBlog = () => {
 						<Swiper
 							modules={[Navigation]}
 							loop={true}
+              spaceBetween={16}
 							breakpoints={{
 
 								320: {
 									slidesPerView: 1,
 								},
 								768: {
+                  
 									slidesPerView: 2,
 								},
 
