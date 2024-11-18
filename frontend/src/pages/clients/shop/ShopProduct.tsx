@@ -114,7 +114,7 @@ const ShopProduct = () => {
 									}));
 									searchParams.set("pageIndex", event.selected + 1);
 									setSearchParams(searchParams);
-									query.invalidateQueries({ queryKey: ["productShop"] });
+				
 								}}
 								forcePage={pageIndex - 1}
 							/>

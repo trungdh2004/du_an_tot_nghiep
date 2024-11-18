@@ -70,7 +70,7 @@ const Color = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 				...prev,
 				color: colorCheck,
 			}));
-			query.invalidateQueries({ queryKey: ["productShop"] });
+		
 		},
 		[searchParams, setSearchParams, setSearchParamsObject, query],
 	);
