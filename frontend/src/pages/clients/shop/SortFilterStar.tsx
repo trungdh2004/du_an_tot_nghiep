@@ -54,7 +54,7 @@ const SortFilterStar = ({ setSearchParamsObject }: Props) => {
 				<div
 					className={cn(
 						"flex cursor-pointer gap-1 rounded-full p-2 pr-6",
-						rating === 5 && "bg-gray-200 ",
+						rating === 5 && "bg-gray-100 ",
 					)}
 					onClick={() => handleRatingChange("5")}
 				>
@@ -67,7 +67,7 @@ const SortFilterStar = ({ setSearchParamsObject }: Props) => {
 				<div
 					className={cn(
 						"flex cursor-pointer gap-1 rounded-full p-2 pr-6",
-						rating === 4 && "bg-gray-200 ",
+						rating === 4 && "bg-gray-100 ",
 					)}
 					onClick={() => handleRatingChange("4")}
 				>
@@ -80,7 +80,7 @@ const SortFilterStar = ({ setSearchParamsObject }: Props) => {
 				<div
 					className={cn(
 						"flex cursor-pointer gap-1 rounded-full p-2 pr-6",
-						rating === 3 && "bg-gray-200 ",
+						rating === 3 && "bg-gray-100 ",
 					)}
 					onClick={() => handleRatingChange("3")}
 				>
@@ -93,7 +93,7 @@ const SortFilterStar = ({ setSearchParamsObject }: Props) => {
 				<div
 					className={cn(
 						"flex cursor-pointer gap-1 rounded-full p-2 pr-6",
-						rating === 2 && "bg-gray-200 ",
+						rating === 2 && "bg-gray-100 ",
 					)}
 					onClick={() => handleRatingChange("2")}
 				>
@@ -106,7 +106,7 @@ const SortFilterStar = ({ setSearchParamsObject }: Props) => {
 				<div
 					className={cn(
 						"flex cursor-pointer gap-1 rounded-full p-2 pr-6",
-						rating === 1 && "bg-gray-200",
+						rating === 1 && "bg-gray-100",
 					)}
 					onClick={() => handleRatingChange("1")}
 				>
