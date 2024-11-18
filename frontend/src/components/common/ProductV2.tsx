@@ -9,42 +9,47 @@ import { IoEyeOutline } from "react-icons/io5";
 import { formatCurrency } from "@/common/func";
 import { ListColorComponent, ListSizeComponent } from "./Product";
 import { cn } from "@/lib/utils";
+import StarRatings from "react-star-ratings";
 interface Props {
 	product: IProduct;
 }
 const ProductV2 = ({ product }: Props) => {
-	const listColor =!product?.is_simple ? product?.attributes?.reduce((acc: IColor[], item: any) => {
-		if (!item?.color?._id) return acc;
-		let group = acc.find((g) => g._id === (item.color as IColor)?._id);
+	const listColor = !product?.is_simple
+		? product?.attributes?.reduce((acc: IColor[], item: any) => {
+				if (!item?.color?._id) return acc;
+				let group = acc.find((g) => g._id === (item.color as IColor)?._id);
 
-		// Nếu nhóm không tồn tại, tạo nhóm mới
-		if (!group) {
-			group = {
-				_id: (item.color as IColor)._id as string,
-				name: (item.color as IColor).name as string,
-				code: (item.color as IColor).code as string,
-			};
-			acc.push(group);
-			return acc;
-		}
-		return acc;
-	}, []) : [];
-	
-	const listSize =!product?.is_simple ? product?.attributes?.reduce((acc: ISize[], item: any) => {
-		if (!item?.size?._id) return acc;
-		let group = acc.find((g) => g._id === (item.size as ISize)?._id);
+				// Nếu nhóm không tồn tại, tạo nhóm mới
+				if (!group) {
+					group = {
+						_id: (item.color as IColor)._id as string,
+						name: (item.color as IColor).name as string,
+						code: (item.color as IColor).code as string,
+					};
+					acc.push(group);
+					return acc;
+				}
+				return acc;
+			}, [])
+		: [];
 
-		// Nếu nhóm không tồn tại, tạo nhóm mới
-		if (!group) {
-			group = {
-				_id: (item.size as ISize)._id as string,
-				name: (item.size as ISize).name as string,
-			};
-			acc.push(group);
-			return acc;
-		}
-		return acc;
-	}, []): [];
+	const listSize = !product?.is_simple
+		? product?.attributes?.reduce((acc: ISize[], item: any) => {
+				if (!item?.size?._id) return acc;
+				let group = acc.find((g) => g._id === (item.size as ISize)?._id);
+
+				// Nếu nhóm không tồn tại, tạo nhóm mới
+				if (!group) {
+					group = {
+						_id: (item.size as ISize)._id as string,
+						name: (item.size as ISize).name as string,
+					};
+					acc.push(group);
+					return acc;
+				}
+				return acc;
+			}, [])
+		: [];
 	return (
 		<Link
 			key={product?._id}
@@ -97,13 +102,13 @@ const ProductV2 = ({ product }: Props) => {
 				</div>
 				<div className="flex flex-col gap-1 p-2 sm:gap-2">
 					<div className="flex items-center justify-between">
-						<div className="flex items-center gap-1 ">
-							<FaStar className="text-yellow-400" size={10} />
-							<FaStar className="text-yellow-400" size={10} />
-							<FaStar className="text-yellow-400" size={10} />
-							<FaStar className="text-yellow-400" size={10} />
-							<FaStar className="text-yellow-400" size={10} />
-						</div>
+						<StarRatings
+							rating={product?.rating}
+							numberOfStars={5}
+							starDimension="14px"
+							starSpacing="0.5px"
+							starRatedColor="#facc15 "
+						/>
 						<div>
 							<p className="text-xs lg:text-sm">
 								Đã bán {product.quantitySold}
@@ -130,12 +135,18 @@ const ProductV2 = ({ product }: Props) => {
 					>
 						<ListColorComponent listColor={listColor} />
 						<div className="hidden md:block">
-
-						<ListSizeComponent listSize={listSize} />
+							<ListSizeComponent listSize={listSize} />
 						</div>
 					</div>
-					<div className={cn("h-5 w-full hidden text-xs gap-1",product?.is_simple && "flex")}>
-						<div className="flex items-center justify-center px-1.5 border text-gray-500 rounded border-gray-500 ">Đơn giản</div>
+					<div
+						className={cn(
+							"h-5 w-full hidden text-xs gap-1",
+							product?.is_simple && "flex",
+						)}
+					>
+						<div className="flex items-center justify-center px-1.5 border text-gray-500 rounded border-gray-500 ">
+							Đơn giản
+						</div>
 					</div>
 				</div>
 			</div>
