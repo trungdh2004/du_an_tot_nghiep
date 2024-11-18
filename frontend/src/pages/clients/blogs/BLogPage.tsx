@@ -1,13 +1,13 @@
 import Paginations from "@/components/common/Pagination";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { getBlogPaging } from "@/service/blog";
+import { pagingBlogs } from "@/service/blog";
 import { getAllTags } from "@/service/tags-admin";
 import { SearchObjectBlog } from "@/types/searchObjecTypes";
 import {
-	keepPreviousData,
-	useQuery,
-	useQueryClient,
+  keepPreviousData,
+  useQuery,
+  useQueryClient,
 } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { FaCommentDots, FaEye, FaRegHeart } from "react-icons/fa";
@@ -58,7 +58,7 @@ const BlogPage = () => {
 		queryKey: ["blogs", searchObject],
 		queryFn: async () => {
 			try {
-				const { data } = await getBlogPaging(searchObject);
+				const { data } = await pagingBlogs(searchObject);
 				return data;
 			} catch (error) {
 				console.log(error);
@@ -111,11 +111,11 @@ const BlogPage = () => {
                 <div className='absolute w-screen h-screen z-[1000] bg-red-400/20'></div>
             )} */}
 			<div className="padding pt-12 pb-10 text-[#1A1E26]">
-				<div className="mb-3 flex items-center gap-3">
+				<div className="flex items-center gap-3 mb-3">
 					<h3 className="text-xl font-semibold">Danh sách bài viết </h3>
 				</div>
 				<ScrollArea className=" max-w-[100%] whitespace-nowrap">
-					<div className="space-x-3 pb-4">
+					<div className="pb-4 space-x-3">
 						{tags &&
 							tags.map((tag: any, index: number) => {
 								// console.log(tag)
@@ -149,10 +149,10 @@ const BlogPage = () => {
 									<div className="h-[350px] grid grid-rows-2 border rounded-xl overflow-hidden relative">
 										{/* card-head */}
 
-										<div className=" bg-gray-200 border-b border-gray-300">
+										<div className="bg-gray-200 border-b border-gray-300 ">
 											<img
 												src={item.thumbnail_url || "/no-image.png"}
-												className="w-full h-full object-cover"
+												className="object-cover w-full h-full"
 												alt=""
 											/>
 										</div>
@@ -171,7 +171,7 @@ const BlogPage = () => {
 													{/* <p className="text-xs text-[#212B36] opacity-50 ">{format(item.published_at || item.createdAt || "", "dd-MM-yyyy")}</p> */}
 												</div>
 											</div>
-											<div className="flex justify-between items-center ">
+											<div className="flex items-center justify-between ">
 												<Link
 													to={`/blogDetail/${item._id}`}
 													className="line-clamp-1 text-[#212B36] text-[18px] font-semibold hover:underline transition-all duration-300"
@@ -179,7 +179,7 @@ const BlogPage = () => {
 													{item.title || "Bài viết chưa có tiêu đề"}
 												</Link>
 											</div>
-											<p className="text-xs pt-1 text-gray-400 line-clamp-2">
+											<p className="pt-1 text-xs text-gray-400 line-clamp-2">
 												{item.meta_description}
 											</p>
 											<div className="flex space-x-4 min-[900px]:space-x-1 xl:space-x-4 absolute bottom-4 right-4">
@@ -205,7 +205,7 @@ const BlogPage = () => {
 							</>
 						))
 					) : (
-						<div className="w-full h-full mt-0 col-span-12 mt-10 flex justify-center items-center">
+						<div className="flex items-center justify-center w-full h-full col-span-12 mt-0 mt-10">
 							<h3 className=" text-lg text-[#1A1E26]">Chưa có bài viết nào.</h3>
 						</div>
 					)}
