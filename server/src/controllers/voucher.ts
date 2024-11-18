@@ -666,14 +666,14 @@ class VoucherController {
         ...queryUsageLimit,
         ...queryStartDate,
       });
-
       const result = formatDataPaging({
         limit,
         pageIndex,
         data: listVoucher,
         count: countVoucher,
       });
-
+      
+      console.log(">>>>>> List Voucher",result);
       return res.status(STATUS.OK).json(result);
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
@@ -776,7 +776,8 @@ class VoucherController {
           $gte: newDate,
         },
       }).limit(limit);
-
+      console.log(">>>>>> List Voucher",listVoucher);
+      
       return res.status(STATUS.OK).json({
         message: "Danh sách voucher",
         data: listVoucher,

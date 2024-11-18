@@ -8,6 +8,7 @@ import ListProductHot from "./ListProductHot";
 import ProductByCategory from "./ProductByCategory";
 import ProductsList from "./ProductsList";
 import Sliderv2 from "./Sliderv2";
+import BlogNews from "./BlogNews";
 const HomePage = () => {
 
 	useEffect(() => {
@@ -26,7 +27,7 @@ const HomePage = () => {
 			</div>
 			<ProductByCategory />
 
-			<div className="w-full padding mt-10">
+			<div className="w-full mt-10 padding">
 				<img src="./bannerHome2.webp" alt="" className="object-cover min-h-[100px]"/>
 			</div>
 
@@ -34,6 +35,7 @@ const HomePage = () => {
 			<DealProductSection />
 
 			<LatestNewsBlog />
+      {/* <BlogNews/> */}
 		</div>
 	);
 };

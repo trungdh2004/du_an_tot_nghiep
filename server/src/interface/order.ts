@@ -21,6 +21,7 @@ export interface IOrder extends Document {
     status:number
     statusList:number[]
     voucher?:any;
+    voucherAmount:number
     totalMoney:number;
     amountToPay:number;
     orderDate:string;
@@ -35,6 +36,7 @@ export interface IOrder extends Document {
     estimatedDeliveryDate:string;
     paymentMethod:number;
     paymentStatus:boolean;
+    paymentAmount:number;
     note?:string;
     shipper:string;
     createdAt:string;

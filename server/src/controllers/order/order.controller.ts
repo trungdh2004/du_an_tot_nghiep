@@ -306,11 +306,11 @@ class OrderController {
       const newOrder = await OrderModel.create({
         user: user?.id,
         address: {
-          username:address.username,
-          phone:address.phone,
-          address:address.address,
-          detailAddress:address.detailAddress,
-          location:address.location
+          username: address.username,
+          phone: address.phone,
+          address: address.address,
+          detailAddress: address.detailAddress,
+          location: address.location,
         },
         totalMoney: totalMoneyNew + shippingCost,
         amountToPay: totalMoneyNew + shippingCost,
@@ -489,8 +489,8 @@ class OrderController {
           : item.attribute.discount;
         return {
           product: {
-            name:item.product.name,
-            thumbnail: item.product.thumbnail
+            name: item.product.name,
+            thumbnail: item.product.thumbnail,
           },
           variant: variant,
           price: formatCurrency(price),
@@ -599,11 +599,11 @@ class OrderController {
       const newOrder = await OrderModel.create({
         user: user?.id,
         address: {
-          username:address.username,
-          phone:address.phone,
-          address:address.address,
-          detailAddress:address.detailAddress,
-          location:address.location
+          username: address.username,
+          phone: address.phone,
+          address: address.address,
+          detailAddress: address.detailAddress,
+          location: address.location,
         },
         totalMoney: voucherMain ? voucherMain.remainingMoney : totalMoney2,
         amountToPay: voucherMain
@@ -645,19 +645,25 @@ class OrderController {
       );
 
       const dataSendMail = {
-        orderItems:listDataMail,
-        code:newOrder.code,
-        createdAt:new Date(newOrder.createdAt).toLocaleString(),
-        address:newOrder.address,
-        amountToPay:formatCurrency(newOrder.amountToPay),
-        totalMoney:formatCurrency(newOrder.totalMoney),
-        shippingCost:formatCurrency(shippingCost),
-        voucher:formatCurrency(0),
-        note:newOrder.note,
-        payment:formatCurrency(0)
-      }
+        orderItems: listDataMail,
+        code: newOrder.code,
+        createdAt: new Date(newOrder.createdAt).toLocaleString(),
+        address: newOrder.address,
+        amountToPay: formatCurrency(newOrder.amountToPay),
+        totalMoney: formatCurrency(newOrder.totalMoney),
+        shippingCost: formatCurrency(shippingCost),
+        note: newOrder.note,
+        voucher: formatCurrency(newOrder.voucherAmount),
+        payment: formatCurrency(newOrder.paymentAmount),
+      };
 
-      sendToMail(user?.email as string,"Thông báo đặt hàng thành công tại NUCSHOP",dataSendMail,process.env.EMAIL!,"/order.ejs")
+      sendToMail(
+        user?.email as string,
+        "Thông báo đặt hàng thành công tại NUCSHOP",
+        dataSendMail,
+        process.env.EMAIL!,
+        "/order.ejs"
+      );
 
       return res.status(STATUS.OK).json({
         message: "Tạo đơn hàng thành công",
@@ -1526,11 +1532,11 @@ class OrderController {
       const newOrder = await OrderModel.create({
         user: user?.id,
         address: {
-          username:address.username,
-          phone:address.phone,
-          address:address.address,
-          detailAddress:address.detailAddress,
-          location:address.location
+          username: address.username,
+          phone: address.phone,
+          address: address.address,
+          detailAddress: address.detailAddress,
+          location: address.location,
         },
         totalMoney: voucherMain ? voucherMain.remainingMoney : totalMoney2,
         amountToPay: voucherMain
@@ -1729,14 +1735,14 @@ class OrderController {
       }
 
       const existingOrder = await OrderModel.findById(vnp_TxnRef).populate({
-        path:"orderItems",
-        populate:{
-          path:"product",
-          select:{
-            name:1,
-            thumbnail:1
-          }
-        }
+        path: "orderItems",
+        populate: {
+          path: "product",
+          select: {
+            name: 1,
+            thumbnail: 1,
+          },
+        },
       });
 
       if (!existingOrder) {
@@ -1754,7 +1760,6 @@ class OrderController {
           });
         }
       }
-
 
       const payment = await PaymentModel.create({
         user: user?.id,
@@ -1777,7 +1782,7 @@ class OrderController {
           },
           amountToPay: 0,
           paymentStatus: true,
-          paymentAmount:+verify.vnp_Amount
+          paymentAmount: +verify.vnp_Amount,
         },
         { new: true }
       );
@@ -1814,20 +1819,31 @@ class OrderController {
         `${payment?._id}`
       );
 
-      const dataSendMail = {
-        orderItems:existingOrder?.orderItems,
-        code:existingOrder.code,
-        createdAt:new Date(existingOrder.createdAt).toLocaleString(),
-        address:existingOrder.address,
-        amountToPay:formatCurrency(existingOrder.amountToPay),
-        totalMoney:formatCurrency(existingOrder.totalMoney),
-        shippingCost:formatCurrency(existingOrder.shippingCost),
-        voucher:formatCurrency(0),
-        note:existingOrder.note,
-        payment:formatCurrency(0)
-      }
+      const totalMoney = existingOrder?.orderItems?.reduce(
+        (sum, item) => sum + (item as IOrderItem).totalMoney,
+        0
+      );
 
-      sendToMail(user?.email as string,"Thông báo đặt hàng thành công tại NUCSHOP",dataSendMail,process.env.EMAIL!,"/order.ejs")
+      const dataSendMail = {
+        orderItems: existingOrder?.orderItems,
+        code: existingOrder.code,
+        createdAt: new Date(existingOrder.createdAt).toLocaleString(),
+        address: existingOrder.address,
+        amountToPay: formatCurrency(0),
+        totalMoney: formatCurrency(totalMoney),
+        shippingCost: formatCurrency(existingOrder.shippingCost),
+        note: existingOrder.note,
+        voucher: formatCurrency(existingOrder.voucherAmount),
+        payment: formatCurrency(+verify.vnp_Amount),
+      };
+
+      sendToMail(
+        user?.email as string,
+        "Thông báo đặt hàng thành công tại NUCSHOP",
+        dataSendMail,
+        process.env.EMAIL!,
+        "/order.ejs"
+      );
 
       if (state) {
         const data = JSON.parse(state as string);
@@ -2075,9 +2091,7 @@ class OrderController {
               status: 4,
               date: existingOrder?.shippedDate,
               message: "Đơn hàng giao thành công",
-              sub: `Người nhận: ${
-                existingOrder?.address?.username
-              }`,
+              sub: `Người nhận: ${existingOrder?.address?.username}`,
             };
           } else if (item === 3) {
             return {
@@ -2663,9 +2677,7 @@ class OrderController {
               status: 4,
               date: existingOrder?.shippedDate,
               message: "Đơn hàng giao thành công",
-              sub: `Người nhận: ${
-                existingOrder?.address.username
-              }`,
+              sub: `Người nhận: ${existingOrder?.address.username}`,
             };
           } else if (item === 3) {
             return {

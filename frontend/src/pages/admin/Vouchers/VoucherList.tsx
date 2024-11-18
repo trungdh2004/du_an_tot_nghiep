@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
-import { parseISO, format } from "date-fns";
+import { parseISO, format, isValid } from "date-fns";
 import { useDebounceCallback } from "usehooks-ts";
 import { toast } from "sonner";
 import DialogConfirm from "@/components/common/DialogConfirm";
@@ -195,7 +195,7 @@ const VoucherList = () => {
 			header: () => <div className="text-xs md:text-base">Ngày bắt đầu</div>,
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.startDate);
-				const formattedDate = format(parsedDate, "dd/MM/yyyy");
+				const formattedDate = isValid(parsedDate) ? format(parsedDate, "dd/MM/yyyy") : "Ngày không hợp lệ";
 				return <div className="text-xs md:text-base">{formattedDate}</div>;
 			},
 		},
@@ -203,8 +203,8 @@ const VoucherList = () => {
 			accessorKey: "endDate",
 			header: () => <div className="text-xs md:text-base">Ngày kết thúc</div>,
 			cell: ({ row }) => {
-				const parsedDate = parseISO(row.original.endDate);
-				const formattedDate = format(parsedDate, "dd/MM/yyyy");
+				const parsedDate = parseISO(row?.original?.endDate);
+				const formattedDate = isValid(parsedDate) ? format(parsedDate, "dd/MM/yyyy") : "Ngày không hợp lệ";
 				return <div className="text-xs md:text-base">{formattedDate}</div>;
 			},
 		},
