@@ -1,5 +1,5 @@
 import SidebarShipper from "@/components/shipper/sidebar/SidebarShipper";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, ScrollRestoration } from "react-router-dom";
 import { TooltipComponent } from "@/components/common/TooltipComponent";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { FaCartPlus, FaShoppingCart, FaRegChartBar } from "react-icons/fa";
@@ -51,6 +51,9 @@ const ShipperLayout = () => {
 					</TooltipComponent>
 				</div>
 			</div>
+
+			<ScrollRestoration />
+
 		</div>
 	);
 };
