@@ -22,7 +22,7 @@ const AddressOrder = ({ data, handleChangeAddress }: any) => {
 		placeholderData: keepPreviousData,
 	});
 	return (
-		<div className="py-2 lg:py-4 ">
+		<div className="">
 			{isPending && (
 				<div className="flex flex-col space-y-3">
 					<Skeleton className="h-[125px] w-full rounded-xl" />
@@ -40,7 +40,7 @@ const AddressOrder = ({ data, handleChangeAddress }: any) => {
 						Địa chỉ nhận hàng
 					</p>
 				</div>
-				<div className="flex flex-col items-start justify-between gap-3 pl-4 lg:flex-row md:flex-row lg:items-center md:items-center">
+				<div className="flex flex-col items-start justify-between gap-3 pl-4">
 					{data?.address === null ? (
 						<div className="flex gap-3">
 							<p>Bạn chưa chọn địa chỉ nào</p>
@@ -53,11 +53,11 @@ const AddressOrder = ({ data, handleChangeAddress }: any) => {
 							</button>
 						</div>
 					) : (
-						<div className="flex flex-col gap-3 lg:flex-row md:flex-row">
-							<span className="text-sm font-semibold tracking-normal lg:text-base">
+						<div className="flex flex-col gap-3">
+							<span className="text-sm font-semibold tracking-normal">
 								{data?.address?.username} {data?.address?.phone}
 							</span>
-							<p className="text-sm tracking-normal lg:text-base">
+							<p className="text-sm tracking-normal">
 								{data?.address?.detailAddress} , {data?.address?.address}
 							</p>
 							{data?.address?.is_main && (

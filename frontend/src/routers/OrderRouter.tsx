@@ -3,6 +3,7 @@ import OrderPage from "@/pages/clients/order/OrderPage";
 import OrderSuccess from "@/pages/clients/order/OrderSuccess";
 import PrivateRouter from "./PrivateRouter";
 import ProtectedRouter from "./ProtectedRouter";
+import OrderPageV2 from "@/pages/clients/order/orderV2/OrderPageV2";
 
 const OrderRouter = [
 	{
@@ -20,6 +21,10 @@ const OrderRouter = [
 			{
 				path: "success",
 				element: <OrderSuccess />,
+			},
+			{
+				path: "v2",
+				element: <OrderPageV2 />,
 			},
 		],
 	},

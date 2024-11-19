@@ -78,15 +78,9 @@ const Vorcher = ({
 					<div className="col-span-3">
 						<div className="flex pl-4 gap-3 items-center">
 							<img src={voucher1} alt="" className="w-8 h-8" />
-							<h3 className="lg:text-lg md:text-base text-sm hidden md:block">
-								Voucher
-							</h3>
 						</div>
 					</div>
 					<div className="flex text-center pr-4 gap-2 items-center">
-						<h5 className="lg:text-base text-sm w-[50%] hidden md:block">
-							Mã voucher
-						</h5>
 						<form
 							action=""
 							onSubmit={handleSubmit(onSubmit)}
@@ -121,11 +115,14 @@ const Vorcher = ({
 
 				{show &&
 					(voucher === null ? (
-						<div className="flex justify-center bg-white py-3">
+						<div className="flex justify-center py-3">
 							<h3 className="text-red-400">Bạn chưa có voucher nào</h3>
 						</div>
 					) : (
-						<Coupon voucher={voucher} />
+						<Coupon
+							voucher={voucher}
+							className="w-full max-w-full px-6 h-2/3"
+						/>
 					))}
 			</div>
 		</div>

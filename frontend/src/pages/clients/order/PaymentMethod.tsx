@@ -35,7 +35,7 @@ const PaymentMethod = ({
 	console.log(orderCheckout);
 
 	return (
-		<div className="py-2 pb-14">
+		<div className="py-2 pb-6">
 			<div className="lg:flex flex-col gap-3 bg-white lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow">
 				<div className="p-4">
 					<h3 className="text-lg text-[#595959] font-semibold pb-6">
@@ -95,7 +95,7 @@ const PaymentMethod = ({
 					</div>
 				</div>
 				<hr />
-				<div className="self-end py-4 lg:pr-4 md:pr-4 px-4">
+				<div className="py-4 lg:pr-4 md:pr-4 px-4">
 					<div className="flex flex-col gap-3">
 						<div className="flex items-center gap-2">
 							<MdOutlineEventNote size={20} />
