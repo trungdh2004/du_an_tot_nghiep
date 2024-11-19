@@ -18,11 +18,11 @@ import {
 } from "@/components/ui/form";
 
 import instance from "@/config/instance";
+import { useProcessBarLoadingEventNone } from "@/store/useSidebarAdmin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { useProcessBarLoadingEventNone } from "@/store/useSidebarAdmin";
 interface FormDialog {
 	open: boolean | string;
 	title?: "Thêm màu" | "Cập nhật";
@@ -57,7 +57,7 @@ const ColorForm = ({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: "",
-			code: "",
+			code: "#000000",
 		},
 	});
 	useEffect(() => {

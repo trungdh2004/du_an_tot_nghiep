@@ -209,11 +209,16 @@ class VoucherController {
         });
       }
 
+      const newStartDate = new Date(startDate)
+      const newEndDate = new Date(endDate)
+      newStartDate.setHours(0, 0, 0, 0)
+      newEndDate.setHours(0, 0, 0, 0)
+
       const newVoucher = await VoucherModel.create({
         name,
         description,
-        startDate,
-        endDate,
+        startDate:newStartDate,
+        endDate:newEndDate,
         discountType,
         discountValue,
         usageLimit,
@@ -380,7 +385,7 @@ class VoucherController {
       return res.status(STATUS.OK).json({
         message: "Lấy voucher thành công",
         valueCheck,
-        voucher:existingVoucher
+        voucher: existingVoucher,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
@@ -481,6 +486,11 @@ class VoucherController {
         });
       }
 
+      const newStartDate = new Date(startDate)
+      const newEndDate = new Date(endDate)
+      newStartDate.setHours(0, 0, 0, 0)
+      newEndDate.setHours(0, 0, 0, 0)
+
       const existingVoucher = await VoucherModel.findById(id);
 
       if (!existingVoucher) {
@@ -505,8 +515,8 @@ class VoucherController {
       const newVoucher = await VoucherModel.findByIdAndUpdate(id, {
         name,
         description,
-        startDate,
-        endDate,
+        startDate:newStartDate,
+        endDate:newEndDate,
         discountType,
         discountValue,
         usageLimit,
@@ -656,14 +666,14 @@ class VoucherController {
         ...queryUsageLimit,
         ...queryStartDate,
       });
-
       const result = formatDataPaging({
         limit,
         pageIndex,
         data: listVoucher,
         count: countVoucher,
       });
-
+      
+      console.log(">>>>>> List Voucher",result);
       return res.status(STATUS.OK).json(result);
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
@@ -709,6 +719,120 @@ class VoucherController {
       return res.status(STATUS.OK).json({
         message: "Xóa thành công",
       });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async updatePublicHome(req: RequestModel, res: Response) {
+    try {
+      const { id } = req.params;
+
+      const { isHome } = req.body;
+
+      if (!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Chưa nhập id",
+        });
+      }
+
+      const existingVoucher = await VoucherModel.findById(id);
+
+      if (!existingVoucher) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có voucher",
+        });
+      }
+
+      const update = await VoucherModel.findByIdAndUpdate(id, {
+        isHome: !!isHome,
+      });
+
+      return res.status(STATUS.OK).json({
+        message: "Cập nhập thành công",
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async listVoucherHome(req: Request, res: Response) {
+    try {
+      const limit = Number(req.query.limit) || 3;
+
+      const newDate = new Date();
+
+      const listVoucher = await VoucherModel.find({
+        isHome: true,
+        status: 1,
+        startDate: {
+          $lte: newDate,
+        },
+        endDate: {
+          $gte: newDate,
+        },
+      }).limit(limit);
+      console.log(">>>>>> List Voucher",listVoucher);
+      
+      return res.status(STATUS.OK).json({
+        message: "Danh sách voucher",
+        data: listVoucher,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async pagingVoucherClient(req: Request, res: Response) {
+    try {
+      const { pageIndex, pageSize } = req.body;
+      const limit = pageSize || 8;
+      const skip = (pageIndex - 1) * limit || 0;
+
+      const newDate = new Date();
+
+      console.log("newDate",newDate);
+      
+
+      const listVoucher = await VoucherModel.find({
+        status: 1,
+        startDate: {
+          $lte: newDate,
+        },
+        endDate: {
+          $gte: newDate,
+        },
+      })
+        .skip(skip)
+        .limit(limit)
+        .sort({
+          createdAt: -1,
+        });
+
+      const count = await VoucherModel.countDocuments({
+        status: 1,
+        startDate: {
+          $lte: newDate,
+        },
+        endDate: {
+          $gte: newDate,
+        },
+      });
+
+      const result = formatDataPaging({
+        limit,
+        pageIndex: pageIndex,
+        data: listVoucher,
+        count,
+      });
+
+      return res.status(STATUS.OK).json(result);
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,

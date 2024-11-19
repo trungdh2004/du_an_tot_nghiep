@@ -13,23 +13,22 @@ import { useAuth } from "@/hooks/auth";
 import { toast } from "sonner";
 
 const ShipperIndex = () => {
-	const {current} = useStoreShipper()
-	const [data,setData] = useState<any[]>([])
-	const {socket} = useAuth()
-	
+	const { current } = useStoreShipper();
+	const [data, setData] = useState<any[]>([]);
+	const { socket } = useAuth();
+
 	const { mutate } = useMutation<IOrderShipper[]>({
-		
 		mutationFn: async () => {
 			try {
 				const { data } = await getListOrderMap();
 				setData(data);
-				return data
+				return data;
 			} catch (error) {
 				return [];
 			}
 		},
 	});
-	
+
 	const [locationCurrent, setLocationCurrent] = useState({
 		longitude: 105.62583879555804,
 		latitude: 21.046006645820455,
@@ -44,18 +43,17 @@ const ShipperIndex = () => {
 				zoom: 15.5,
 			});
 		});
-		mutate()
+		mutate();
 
-		if(socket) {
-			socket.on("newOrderShipper",(order:any) => {
-				setData(prev => {
-					return [...prev,order]
-				})
-				toast.success("Bạn vừa có đơn hàng mới")
-			})
+		if (socket) {
+			socket.on("newOrderShipper", (order: any) => {
+				setData((prev) => {
+					return [...prev, order];
+				});
+				toast.success("Bạn vừa có đơn hàng mới");
+			});
 		}
 	}, []);
-
 
 	return (
 		<div className="w-full h-full relative">
@@ -84,9 +82,7 @@ const ShipperIndex = () => {
 				{data &&
 					data?.map((item: IOrderShipper) => {
 						const location = item?.address?.location?.coordinates;
-						return (
-							<MarketItem order={item} location={location} />
-						);
+						return <MarketItem order={item} location={location} />;
 					})}
 			</MapComponent>
 		</div>

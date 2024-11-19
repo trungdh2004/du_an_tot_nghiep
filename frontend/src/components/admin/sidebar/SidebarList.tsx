@@ -9,18 +9,16 @@ import { useLocation } from "react-router-dom";
 import SidebarItem from "./SidebarItem";
 import { useAuth } from "@/hooks/auth";
 
-
 const SidebarList = () => {
 	const location = useLocation();
 	const { authUser } = useAuth();
-	
 
 	return (
 		<div>
 			{sidebarConfig?.map((item, index) => {
-				if(item.isAdmin) {
-					if(!authUser?.is_admin) {
-						return null
+				if (item.isAdmin) {
+					if (!authUser?.is_admin) {
+						return null;
 					}
 				}
 

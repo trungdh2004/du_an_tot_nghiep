@@ -17,7 +17,7 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 			const data = await confirmOrder(id);
 			getOrderById();
 			return data;
-		} catch (error:any) {
+		} catch (error: any) {
 			toast.error(error?.response?.data?.message);
 			console.log(error);
 		}
@@ -65,9 +65,9 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 					</div>
 
 					<div className="flex justify-between">
-						<p className="font-medium text-sm text-black">Tổng tiền</p>
+						<p className="font-medium text-sm text-black">Tổng tiền đơn hàng</p>
 						<p className="font-medium text-sm text-red-500">
-							{formatCurrency(data.amountToPay)}
+							{formatCurrency(data.totalMoney + data?.shippingCost)}
 						</p>
 					</div>
 				</div>

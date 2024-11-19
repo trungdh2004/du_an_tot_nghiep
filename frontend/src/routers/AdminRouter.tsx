@@ -29,6 +29,13 @@ import VoucherList from "@/pages/admin/Vouchers/VoucherList";
 import PrivateRouter from "./PrivateRouter";
 import UserShipper from "@/pages/admin/users/shipper/UserShipper";
 import UserShipperDetail from "@/pages/admin/users/shipper/ShipperDetail";
+import ChatIndex from "../pages/admin/Chat/ChatIndex";
+import LayoutChat from "@/pages/admin/Chat/LayoutChat";
+import ChatInit from "@/pages/admin/Chat/ChatInit";
+import ChatContent from "@/pages/admin/Chat/components/ChatContent";
+import CustomerList from "@/pages/admin/users/customer/CustomerList";
+import ProductComing from "@/pages/admin/product/productComing/ProductComing";
+import StaffIndex from "@/pages/admin/users/staff/StaffIndex";
 
 const AdminRouter = [
 	{
@@ -64,6 +71,14 @@ const AdminRouter = [
 				path: "users/shipper/:id/detail",
 				element: <UserShipperDetail />,
 			},
+			{
+				path: "users/client",
+				element: <CustomerList />,
+      },
+      {
+        path: "users/staff",
+        element: <StaffIndex />,
+      },
 			// Quản lý sản phẩm
 			{
 				path: "product/update/:id",
@@ -104,6 +119,10 @@ const AdminRouter = [
 			{
 				path: "product/add",
 				element: <ProductAddPage />,
+			},
+			{
+				path: "product/coming",
+				element: <ProductComing />,
 			},
 			// Quản lý biến thể
 			{
@@ -182,6 +201,26 @@ const AdminRouter = [
 			{
 				path: "location",
 				element: <LocationIndex />,
+			},
+
+			// chat
+			{
+				path: "chat",
+				element: <LayoutChat></LayoutChat>,
+				children: [
+					{
+						path: "",
+						element: <ChatInit />,
+					},
+					{
+						path: ":id",
+						element: <ChatContent />,
+					},
+				],
+			},
+			{
+				path: "chatAdmin",
+				element: <ChatIndex />,
 			},
 		],
 	},

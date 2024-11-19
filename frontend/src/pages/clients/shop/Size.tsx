@@ -2,6 +2,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { getAllSize } from "@/service/size-admin";
 import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
+import { ISize } from "@/types/variants";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { useQueryClient } from "@tanstack/react-query";
 import React, {
@@ -31,18 +32,18 @@ const Size = ({ setSearchParamsObject }: Props) => {
 			}
 		})();
 	}, []);
-	useEffect(() => {
-		const paramsObject = Object.fromEntries(searchParams.entries());
-		const sizeCheck =
-			paramsObject?.size
-				?.split(",")
-				.map((c) => c.trim())
-				.filter(Boolean) ?? [];
-		setSearchParamsObject((prev) => ({
-			...prev,
-			size: sizeCheck,
-		}));
-	}, [searchParams, setSearchParamsObject]);
+	// useEffect(() => {
+	// 	const paramsObject = Object.fromEntries(searchParams.entries());
+	// 	const sizeCheck =
+	// 		paramsObject?.size
+	// 			?.split(",")
+	// 			.map((c) => c.trim())
+	// 			.filter(Boolean) ?? [];
+	// 	setSearchParamsObject((prev) => ({
+	// 		...prev,
+	// 		size: sizeCheck,
+	// 	}));
+	// }, [searchParams, setSearchParamsObject]);
 
 	const handleCheckedSize = useCallback(
 		(size: string) => (checked: CheckedState) => {
@@ -97,7 +98,7 @@ const Size = ({ setSearchParamsObject }: Props) => {
 				)}
 			>
 				<div className="grid grid-cols-4 gap-1">
-					{size?.map((size: any) => {
+					{size?.map((size: ISize) => {
 						return (
 							<div className="flex flex-col items-center gap-3" key={size._id}>
 								<Checkbox
@@ -106,10 +107,12 @@ const Size = ({ setSearchParamsObject }: Props) => {
 									)}
 									value={size._id}
 									checked={
-										searchParams.get("size")?.split(",").includes(size._id) ||
-										false
+										searchParams
+											.get("size")
+											?.split(",")
+											.includes(size._id as string) || false
 									}
-									onCheckedChange={handleCheckedSize(size._id)}
+									onCheckedChange={handleCheckedSize(size._id as string)}
 								/>
 								<span className="font-medium lg:text-sm text-xs">
 									{size.name}
@@ -118,8 +121,8 @@ const Size = ({ setSearchParamsObject }: Props) => {
 						);
 					})}
 				</div>
-      </div>
-      <hr />
+			</div>
+			<hr />
 		</div>
 	);
 };

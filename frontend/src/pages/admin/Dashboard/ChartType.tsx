@@ -6,7 +6,6 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export function ComponentChartType() {
-
 	const { data, isLoading } = useQuery({
 		queryKey: ["chartUser"],
 		queryFn: async () => {

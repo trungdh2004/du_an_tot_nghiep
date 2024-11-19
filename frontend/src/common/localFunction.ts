@@ -1,12 +1,10 @@
-
-export const formatQuantity = (value:number,end?:string) =>{
-    if(!value) {
-        return `0 ${end ? end : ""}`
-    }
-    const formatValue = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-    return `${formatValue} ${end ? end : ""}`
-}
-
+export const formatQuantity = (value: number, end?: string) => {
+	if (!value) {
+		return `0 ${end ? end : ""}`;
+	}
+	const formatValue = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+	return `${formatValue} ${end ? end : ""}`;
+};
 
 export function optimizeCloudinaryUrl(
 	url: string,
@@ -28,9 +26,9 @@ export function optimizeCloudinaryUrl(
 		"e_vibrance:50", // Tăng sự sống động của màu sắc
 		// "e_hdr:100", // Áp dụng hiệu ứng HDR
 	];
-	
-	if(!/cloudinary/.test(url)){
-		return url
+
+	if (!/cloudinary/.test(url)) {
+		return url;
 	}
 	if (width) transformations.push(`w_${width}`);
 	if (height) transformations.push(`h_${height}`);
@@ -42,27 +40,27 @@ export function optimizeCloudinaryUrl(
 	return url.replace(regex, `/upload/${transformationString}/`);
 }
 
+export function convertMeter(meter: number) {
+	if (!meter) return 0;
 
-export function convertMeter(meter:number) {
-	if(!meter) return 0
+	const value = +meter / 1000 || 0;
 
-	const value = (+meter / 1000) || 0;
-
-	return value.toFixed(2)
+	return value.toFixed(2);
 }
 
-export function convertTimeSection(time:number) {
-	if(!time) return 0
+export function convertTimeSection(time: number) {
+	if (!time) return 0;
 
-	if(time < 60) {
-		return `${time.toFixed(0)} giây`
-	}if(60 <= time && time < 3600) {
+	if (time < 60) {
+		return `${time.toFixed(0)} giây`;
+	}
+	if (60 <= time && time < 3600) {
 		const value = time / 60;
-		return `${value.toFixed(0)} phút`
-	}if( 3600 <= time && time < 86400) {
+		return `${value.toFixed(0)} phút`;
+	}
+	if (3600 <= time && time < 86400) {
 		const hour = time / 3600;
 		const minute = (time % 3600) / 60;
-		return `${hour.toFixed(0)} giờ ${minute.toFixed(0)} phút`
+		return `${hour.toFixed(0)} giờ ${minute.toFixed(0)} phút`;
 	}
-
 }

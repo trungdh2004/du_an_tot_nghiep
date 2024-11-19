@@ -34,7 +34,10 @@ const Actions = ({ handleDelete }: Props) => {
 				</DropdownMenuItem>
 				<DropdownMenuItem>
 					<div className="flex items-center gap-2.5 cursor-pointer">
-						<HiOutlineTrash /> <span className="text-nowrap" onClick={()=>handleDelete()}>Xoá</span>
+						<HiOutlineTrash />{" "}
+						<span className="text-nowrap" onClick={() => handleDelete()}>
+							Xoá
+						</span>
 					</div>
 				</DropdownMenuItem>
 			</DropdownMenuContent>

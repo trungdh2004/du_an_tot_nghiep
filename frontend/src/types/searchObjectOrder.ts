@@ -9,4 +9,3 @@ export interface SearchObjectOrder {
 	paymentStatus?: boolean | null;
 	is_shipper?: boolean | null;
 }
-

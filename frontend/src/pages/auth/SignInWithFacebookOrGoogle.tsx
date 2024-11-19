@@ -14,6 +14,8 @@ import {
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
 import instance from "@/config/instance";
+import { getCountMyShoppingCart, pagingCartV2 } from "@/service/cart";
+import useCart from "@/store/cart.store";
 
 interface AdditionalUserInfo {
 	isNewUser: boolean;
@@ -33,6 +35,7 @@ const SignInWithFacebookOrGoogle = () => {
 	const auth = getAuth(app);
 	const { setAuthUser, setIsLoggedIn } = useAuth();
 	const routerHistory = useRouterHistory();
+	const { setCarts, setTotalCart } = useCart();
 	const handleLoginGoogle = async () => {
 		const provider = new GoogleAuthProvider();
 		provider.addScope("https://www.googleapis.com/auth/userinfo.email");
@@ -50,10 +53,18 @@ const SignInWithFacebookOrGoogle = () => {
 					provider: user?.providerId,
 				};
 				socialUser(payload)
-					.then(({ data }) => {
+					.then(async ({ data }) => {
 						console.log(data);
 						setAuthUser?.(data?.user);
 						setIsLoggedIn?.(true);
+						instance.defaults.headers.common.Authorization = `Bearer ${data?.accessToken}`;
+						const [cartsResponse, totalCountResponse] = await Promise.all([
+							pagingCartV2(),
+							getCountMyShoppingCart(),
+						]);
+
+						setCarts(cartsResponse?.data?.listData || []);
+						setTotalCart(totalCountResponse?.data?.count || 0);
 						setItemLocal("token", data?.accessToken);
 						toast.success(data?.message);
 						routerHistory();
@@ -80,7 +91,7 @@ const SignInWithFacebookOrGoogle = () => {
 		<div className="space-y-5">
 			<div className="grid grid-cols-6 gap-x-4 *:border *:border-gray-200 *:rounded-lg  ">
 				<div
-					className="col-span-6 flex items-center gap-3 justify-center p-2 max-h-10 cursor-pointer hover:bg-gray-100"
+					className="flex items-center justify-center col-span-6 gap-3 p-2 cursor-pointer max-h-10 hover:bg-gray-100"
 					onClick={handleLoginGoogle}
 				>
 					<FcGoogle size={24} />
@@ -89,8 +100,8 @@ const SignInWithFacebookOrGoogle = () => {
 			</div>
 			{/* line */}
 			<div className="grid grid-cols-6 gap-x-4 *:border-b *:border-gray-200 *:rounded-lg ">
-				<div className="col-span-3 flex items-center justify-center "></div>
-				<div className="col-span-3 flex items-center justify-center "></div>
+				<div className="flex items-center justify-center col-span-3 "></div>
+				<div className="flex items-center justify-center col-span-3 "></div>
 			</div>
 		</div>
 	);

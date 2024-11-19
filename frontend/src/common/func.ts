@@ -17,7 +17,7 @@ export function formatQuantitySort(num: number | string) {
 	}
 }
 
-export function calculateTimeDistance(pastDate: any) {
+export function calculateTimeDistance(pastDate: any, isEnd?: boolean) {
 	const now = new Date().getTime();
 	const oldDate = new Date(pastDate).getTime();
 	const diff = now - oldDate; // Khoảng cách tính bằng mili giây
@@ -29,11 +29,11 @@ export function calculateTimeDistance(pastDate: any) {
 		return `Vừa xong`;
 	}
 	if (seconds < 60) {
-		return `${seconds} giây trước`;
+		return `${seconds} giây ${!isEnd ? "trước" : ""}`;
 	} else if (minutes < 60) {
-		return `${minutes} phút trước`;
+		return `${minutes} phút ${!isEnd ? "trước" : ""}`;
 	} else if (hours < 24) {
-		return `${hours} giờ trước`;
+		return `${hours} giờ ${!isEnd ? "trước" : ""}`;
 	} else if (days < 7) {
 		return `${days} ngày`;
 	} else if (days < 30) {
@@ -46,4 +46,21 @@ export function calculateTimeDistance(pastDate: any) {
 		const year = Math.floor(days / 365);
 		return `${year} năm`;
 	}
+}
+
+export function formatDateMessage(pastDate: any) {
+	if (!pastDate) return "";
+
+	const now = new Date();
+	const oldDate = new Date(pastDate);
+
+	if (
+		oldDate.getDate() === now.getDate() &&
+		oldDate.getMonth() === now.getMonth() &&
+		oldDate.getFullYear() === now.getFullYear()
+	) {
+		return `${oldDate?.getHours()}:${oldDate?.getMinutes()}`;
+	}
+
+	return `${oldDate?.getHours()}:${oldDate?.getMinutes()} ${oldDate?.getDate()}/${oldDate.getMonth()}/${oldDate.getFullYear()}`;
 }

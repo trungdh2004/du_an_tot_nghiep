@@ -219,7 +219,24 @@ class ProductController {
         },
       })
         .skip(random)
-        .limit(4);
+        .limit(6)
+        .populate([
+          {
+            path: "attributes",
+            populate: [
+              {
+                path: "color",
+                model: "Color",
+              },
+              {
+                path: "size",
+                model: "Size",
+              },
+            ],
+          },
+          "category",
+        ])
+        .exec();
 
       return res.status(STATUS.OK).json({
         data: {
@@ -382,7 +399,7 @@ class ProductController {
           thumbnail,
           category,
           quantitySold,
-          quantity:is_simple ? quantity : quantityAttribute,
+          quantity: is_simple ? quantity : quantityAttribute,
           images,
           attributes: dataAttributes,
           slug: slugProduct,
@@ -734,8 +751,8 @@ class ProductController {
 
       if (rating) {
         queryRating = {
-          $lte: {
-            rating: rating,
+          rating: {
+            $lte: rating,
           },
         };
       }
@@ -767,6 +784,7 @@ class ProductController {
           },
           "category",
         ])
+        .select("-description -category")
         .exec();
 
       const countProduct = await ProductModel.countDocuments({
@@ -831,6 +849,51 @@ class ProductController {
         count: countProduct,
       });
       return res.status(STATUS.OK).json(result);
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async listProductHot(req: Request, res: Response) {
+    try {
+      const limit = 10;
+
+      const listProduct = await ProductModel.find({
+        is_hot: true,
+      })
+        .populate([
+          {
+            path: "category",
+            select: {
+              _id: 1,
+              name: 1,
+            },
+          },
+          {
+            path: "attributes",
+            populate: [
+              {
+                path: "color",
+                model: "Color",
+              },
+              {
+                path: "size",
+                model: "Size",
+              },
+            ],
+          },
+        ])
+        .sort({
+          createdAt: -1,
+        })
+        .skip(0)
+        .limit(limit);
+
+      return res.status(STATUS.OK).json({
+        listProduct,
+      });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,

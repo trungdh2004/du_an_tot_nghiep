@@ -1,103 +1,93 @@
-import React, { ChangeEvent, UIEvent } from "react";
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectLabel,
-	SelectTrigger,
-	SelectValue,
-	SelectScrollDownButton,
-	SelectScrollUpButton,
-} from "@/components/ui/select";
+import { Rnd } from "react-rnd";
+import { useEffect, useRef, useState } from "react";
+const Test = () => {
+	const videoRef = useRef<HTMLVideoElement>(null);
 
-const TestComponent = () => {
+	useEffect(() => {
+		// Yêu cầu quyền truy cập vào camera và gán luồng video vào thẻ video
+		const startVideo = async () => {
+			try {
+				const stream = await navigator.mediaDevices.getUserMedia({
+					video: true,
+				});
+				if (videoRef.current) {
+					videoRef.current.srcObject = stream;
+				}
+			} catch (error) {
+				console.error("Lỗi khi truy cập camera:", error);
+			}
+		};
+
+		startVideo();
+
+		// Dọn dẹp luồng khi component bị hủy
+		return () => {
+			if (videoRef.current && videoRef.current.srcObject) {
+				const stream = videoRef.current.srcObject;
+				const tracks = stream.getTracks();
+				tracks.forEach((track) => track.stop());
+			}
+		};
+	}, []);
 	return (
-		<div className="flex items-center justify-center w-full min-h-screen">
-			<Select>
-				<SelectTrigger className="w-[280px]">
-					<SelectValue placeholder="Select a timezone" />
-				</SelectTrigger>
-				<SelectContent
-					onScrollCapture={(e: UIEvent<HTMLDivElement>) => {
-						const target = e.target as HTMLInputElement;
-						if (
-							target.scrollHeight - target.scrollTop <
-							target.clientHeight + 50
-						) {
-							console.log("Scrolled to the bottom!");
+		<div className="w-full min-h-screen flex justify-center items-center">
+			<div
+				className="w-[500px] h-[500px] border relative overflow-hidden"
+				//   ref={refBoxParent}
+				id="boxChane"
+			>
+				<Rnd
+					default={{
+						x: 0,
+						y: 0,
+						width: 166,
+						height: 219,
+					}}
+					bounds="#boxChane"
+					lockAspectRatio={128 / 169}
+					className="z-[2] border border-gray-50 border-opacity-40"
+					minHeight={169}
+					minWidth={128}
+					// size={{ width: this.state.width, height: this.state.height }}
+					// position={{ x: this.state.x, y: this.state.y }}
+					onDragStop={(e, d) => {
+						console.log("d", d);
 
-							return;
-						}
-						// console.log("scrollHeight:",e.target.scrollHeight - e.target.scrollTop);
-						// console.log("scroll:",e.target.clientHeight - 50);
-						// console.log("scrollHeight:",e.target.scrollHeight - e.target.scrollTop);
-						// console.log("scroll:",e.target.clientHeight - 50);
-						// console.log("scrollHeight:",e.target.scrollHeight - e.target.scrollTop);
-						// console.log("scroll:",e.target.clientHeight - 50);
+						//   this.setState({ x: d.x, y: d.y });
+					}}
+					onResizeStop={(e, direction, ref, delta, position) => {
+						//   this.setState({
+						//     width: ref.style.width,
+						//     height: ref.style.height,
+						//     ...position,
+						//   });
+
+						console.log({
+							direction,
+							ref,
+							delta,
+							position,
+						});
 					}}
 				>
-					<SelectScrollUpButton>hehe</SelectScrollUpButton>
+					<img
+						src="https://res.cloudinary.com/dundmo7q8/image/upload/v1730643972/shopApp/to6udmkh7eanwg7nudl3.png"
+						alt=""
+						className="w-full h-full"
+					/>
+					<div className="inset-0 absolute z-[2]"></div>
+				</Rnd>
 
-					<SelectGroup>
-						<SelectLabel>North America</SelectLabel>
-						<SelectItem value="est">Eastern Standard Time (EST)</SelectItem>
-						<SelectItem value="cst">Central Standard Time (CST)</SelectItem>
-						<SelectItem value="mst">Mountain Standard Time (MST)</SelectItem>
-						<SelectItem value="pst">Pacific Standard Time (PST)</SelectItem>
-						<SelectItem value="akst">Alaska Standard Time (AKST)</SelectItem>
-						<SelectItem value="hst">Hawaii Standard Time (HST)</SelectItem>
-					</SelectGroup>
-					<SelectGroup>
-						<SelectLabel>Europe & Africa</SelectLabel>
-						<SelectItem value="gmt">Greenwich Mean Time (GMT)</SelectItem>
-						<SelectItem value="cet">Central European Time (CET)</SelectItem>
-						<SelectItem value="eet">Eastern European Time (EET)</SelectItem>
-						<SelectItem value="west">
-							Western European Summer Time (WEST)
-						</SelectItem>
-						<SelectItem value="cat">Central Africa Time (CAT)</SelectItem>
-						<SelectItem value="eat">East Africa Time (EAT)</SelectItem>
-					</SelectGroup>
-					<SelectGroup>
-						<SelectLabel>Asia</SelectLabel>
-						<SelectItem value="msk">Moscow Time (MSK)</SelectItem>
-						<SelectItem value="ist">India Standard Time (IST)</SelectItem>
-						<SelectItem value="cst_china">China Standard Time (CST)</SelectItem>
-						<SelectItem value="jst">Japan Standard Time (JST)</SelectItem>
-						<SelectItem value="kst">Korea Standard Time (KST)</SelectItem>
-						<SelectItem value="ist_indonesia">
-							Indonesia Central Standard Time (WITA)
-						</SelectItem>
-					</SelectGroup>
-					<SelectGroup>
-						<SelectLabel>Australia & Pacific</SelectLabel>
-						<SelectItem value="awst">
-							Australian Western Standard Time (AWST)
-						</SelectItem>
-						<SelectItem value="acst">
-							Australian Central Standard Time (ACST)
-						</SelectItem>
-						<SelectItem value="aest">
-							Australian Eastern Standard Time (AEST)
-						</SelectItem>
-						<SelectItem value="nzst">
-							New Zealand Standard Time (NZST)
-						</SelectItem>
-						<SelectItem value="fjt">Fiji Time (FJT)</SelectItem>
-					</SelectGroup>
-					<SelectGroup>
-						<SelectLabel>South America</SelectLabel>
-						<SelectItem value="art">Argentina Time (ART)</SelectItem>
-						<SelectItem value="bot">Bolivia Time (BOT)</SelectItem>
-						<SelectItem value="brt">Brasilia Time (BRT)</SelectItem>
-						<SelectItem value="clt">Chile Standard Time (CLT)</SelectItem>
-					</SelectGroup>
-					<SelectScrollDownButton asChild>hihi</SelectScrollDownButton>
-				</SelectContent>
-			</Select>
+				<video
+					className="inset-0 absolute scaleX-1"
+					ref={videoRef}
+					autoPlay
+					style={{ transform: "scaleX(-1)" }}
+					// playsInline
+				></video>
+			</div>
 		</div>
 	);
 };
 
-export default TestComponent;
+export default Test;

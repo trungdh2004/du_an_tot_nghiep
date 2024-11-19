@@ -1,5 +1,5 @@
 export interface SizeTypes {
-	_id?:string;
+	_id?: string;
 	name: string;
 	toWeight: number;
 	fromHeight: number;

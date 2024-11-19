@@ -20,9 +20,9 @@ const itemVariants: Variants = {
 
 const AccountLayout = () => {
 	const [isOpen, setIsOpen] = useState(true);
-	const {authUser} = useAuth();
+	const { authUser } = useAuth();
 	const isMobile = useMediaQuery("(max-width: 1024px)");
-	const router = useNavigate()
+	const router = useNavigate();
 
 	useEffect(() => {
 		if (isMobile) {
@@ -35,6 +35,8 @@ const AccountLayout = () => {
 	const location = window.location.pathname;
 	return (
 		<>
+			<div className="bg-magic"></div>
+
 			<div className="padding max-md:px-0 min-h-[calc(100vh-60px)] ">
 				<div className="relative flex flex-col w-full gap-2 px-0 py-2 lg:flex-row lg:gap-8 lg:py-12">
 					<div className="block w-full lg:w-[250px]">
@@ -47,7 +49,16 @@ const AccountLayout = () => {
 								<motion.button className="flex items-center w-full px-2 border-b border-blue-400 ">
 									<div className="flex items-center flex-1 w-full gap-2 p-2 sm:pb-4">
 										<div className="overflow-hidden border rounded-full size-8 sm:size-12">
-											<img src={optimizeCloudinaryUrl(authUser?.avatarUrl as string,50,50)} className="w-full h-full " />
+											<img
+												src={
+													optimizeCloudinaryUrl(
+														authUser?.avatarUrl as string,
+														50,
+														50,
+													) || "/avatar_25.jpg"
+												}
+												className="w-full h-full "
+											/>
 										</div>
 										<div className="">
 											<p className="font-semibold">{authUser?.full_name}</p>
@@ -114,10 +125,10 @@ const AccountLayout = () => {
 													isCheck && "text-blue-500 bg-slate-50/40",
 												)}
 												onClick={() => {
-													if(isMobile) {
-														setIsOpen(false)
+													if (isMobile) {
+														setIsOpen(false);
 													}
-													router(item.path)
+													router(item.path);
 												}}
 											>
 												{<item.icon size={20} className="mr-4" />}{" "}
@@ -129,7 +140,7 @@ const AccountLayout = () => {
 							</motion.nav>
 						</div>
 					</div>
-					<div className="flex-1 w-full border-l">
+					<div className="flex-1 w-full ">
 						<Outlet />
 					</div>
 				</div>

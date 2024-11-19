@@ -75,3 +75,5 @@ const authorization = async (
     });
   }
 };
+
+export default authorization

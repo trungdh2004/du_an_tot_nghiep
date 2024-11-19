@@ -11,11 +11,13 @@ type FroalaEditorType = {
 	content: string;
 	onChangeContext: (value: string) => void;
 	props?: any;
+	disabled?: boolean;
 };
 const FroalaEditor = ({
 	content,
 	onChangeContext,
 	props,
+	disabled,
 }: FroalaEditorType) => {
 	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
 		useProcessBarLoadingEventNone();
@@ -28,6 +30,7 @@ const FroalaEditor = ({
 		imageOutputSize: true,
 		imageRoundPercent: true,
 		fontFamilySelection: true,
+		fontFamily:true,
 		imageMaxSize: 1024 * 1024 * 2.5,
 		imageEditButtons: [
 			"imageReplace",
@@ -70,17 +73,20 @@ const FroalaEditor = ({
 			"#640487",
 			"REMOVE",
 		],
+		fontSize:["8", "10", "12", "14", "16", "18", "20", "22", "24", "26", "28", "30", "32", "34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54", "56", "58", "60", "62", "64", "66", "68", "70", "72", "74", "76", "78", "80", "82", "84", "86", "88", "90", "92", "94", "96"],
 		toolbarButtons: {
 			moreText: {
 				buttons: [
 					"paragraphFormat",
-					"|",
+					// "|",
 					"fontSize",
 					"fontFamily",
 					"textColor",
 					"backgroundColor",
 					"insertImage",
+					"alignRight",
 					"alignLeft",
+					"alignCenter",
 					"alignRight",
 					"alignJustify",
 					"formatOL",
@@ -112,6 +118,7 @@ const FroalaEditor = ({
 				align: "right",
 				buttonsVisible: 2,
 			},
+			
 		},
 		tableEditButtons: [
 			"tableHeader",
@@ -182,6 +189,7 @@ const FroalaEditor = ({
 			},
 		},
 	};
+
 	return (
 		<div className="z-0">
 			<Froala

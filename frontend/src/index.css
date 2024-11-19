@@ -1,5 +1,6 @@
 /* @import url("https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&family=Gabarito:wght@400..900&family=Lexend:wght@100..900&family=Libre+Franklin:ital,wght@0,100..900;1,100..900&display=swap"); */
-
+/* @import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&family=Gabarito:wght@400..900&family=Lexend:wght@100..900&family=Libre+Franklin:ital,wght@0,100..900;1,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&family=Lexend:wght@100..900&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Unna:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,15 +9,19 @@
 	@apply px-[10px] sm:px-[30px] md:px-[40px] xl:px-[50px] 2xl:px-[60px];
 }
 
+.text-header {
+	@apply w-full text-base md:text-xl lg:text-2xl font-bold 
+}
+
 .hover-text {
 	@apply text-white;
 }
-/* 
-html {
-	font-family: "Libre Franklin", sans-serif;
-	font-optical-sizing: auto;
-	font-weight: 400;
-	font-style: medium;
+
+/* html {
+	font-family: "Montserrat", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
 } */
 
 @layer base {

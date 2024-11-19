@@ -17,9 +17,15 @@ const SidebarShipper = () => {
 			<div className="p-4 sticky top-[0px]  backdrop-blur-sm z-10">
 				<div className="rounded-md bg-gray-current h-[60px] flex items-center px-5 ">
 					<div className="w-10 h-10 rounded-full mr-2 border">
-					
 						<Avatar>
-							<AvatarImage src={optimizeCloudinaryUrl(current?.avatar as string,40,40) || "/avatar_25.jpg"} alt="@avatar" className="rounded-full w-full h-full border border-gray-400"/>
+							<AvatarImage
+								src={
+									optimizeCloudinaryUrl(current?.avatar as string, 40, 40) ||
+									"/avatar_25.jpg"
+								}
+								alt="@avatar"
+								className="rounded-full w-full h-full border border-gray-400"
+							/>
 							<AvatarFallback>T</AvatarFallback>
 						</Avatar>
 					</div>

@@ -8,17 +8,17 @@ const ShipperPending = () => {
 
 	useEffect(() => {
 		let timeout = setInterval(() => {
-			setTime(prev => --prev);
+			setTime((prev) => --prev);
 		}, 1000);
 
-        return () => {
-            clearTimeout(timeout);
-        }
+		return () => {
+			clearTimeout(timeout);
+		};
 	}, []);
 
-    if(time === 0) {
-        return <Navigate to={"/"} />;
-    }
+	if (time === 0) {
+		return <Navigate to={"/"} />;
+	}
 
 	return (
 		<div className="h-[100vh] ">
@@ -37,7 +37,10 @@ const ShipperPending = () => {
 							Tài khoản của bạn đã đăng kí vui lòng chờ chủ shop xác nhận thông
 							tin
 						</h1>
-						<h2 className="text-sm  mt-2">Tự chuyển về trang chủ sau : <span className="font-medium">{time}</span> giây</h2>
+						<h2 className="text-sm  mt-2">
+							Tự chuyển về trang chủ sau :{" "}
+							<span className="font-medium">{time}</span> giây
+						</h2>
 						<p className="text-center text-xs mt-2 pt-2 border-t border-gray-300 text-gray-400">
 							Cảm ơn bạn đã đăng kí shipper tại shop chúng tôi
 						</p>

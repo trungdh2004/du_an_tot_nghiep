@@ -17,7 +17,7 @@ interface DataTablePaginationProps<TData> {
 	dataPageSize?: number[];
 	handleChangePageSize: (value: number) => void;
 	pageSize: number;
-	pageIndex:number
+	pageIndex: number;
 }
 
 export function DataTablePagination<TData>({
@@ -28,7 +28,7 @@ export function DataTablePagination<TData>({
 	handleChangePageSize,
 	dataPageSize,
 	pageSize,
-	pageIndex
+	pageIndex,
 }: DataTablePaginationProps<TData>) {
 	const listSize = dataPageSize ? dataPageSize : [5, 10, 15, 20, 25];
 

@@ -16,6 +16,7 @@ import sendToMail from "../mail/mailConfig";
 import OtpModel from "../models/Otp.schema";
 import { IUser, RequestModel } from "../interface/models";
 import { TYPEBLOCKED } from "../utils/confirm";
+import CartModel from "../models/cart/Cart.schema";
 
 interface PayloadToken {
   id: any;
@@ -157,6 +158,10 @@ class AuthController {
         full_name: userName,
       });
 
+      await CartModel.create({
+        user: newUser?._id,
+      });
+
       return res.status(STATUS.OK).json({
         message: "Đăng kí tài khoản thành công",
       });
@@ -225,6 +230,10 @@ class AuthController {
         uid,
         provider,
         avatarUrl: picture,
+      });
+
+      await CartModel.create({
+        user: newUser?._id,
       });
       const accessToken = await this.generateAccessToken({
         id: newUser._id,
@@ -376,6 +385,12 @@ class AuthController {
         });
       }
 
+      if (existing.provider === "google.com") {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Tài khoản đăng nhập bằng google ?",
+        });
+      }
+
       const randomOtp = Math.floor(100000 + Math.random() * 900000);
 
       const data = {
@@ -444,6 +459,12 @@ class AuthController {
       if (!existingEmail) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Email chưa được đăng kí",
+        });
+      }
+
+      if (existingEmail.provider === "google.com") {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Tài khoản đăng nhập bằng google ?",
         });
       }
 
@@ -525,15 +546,15 @@ class AuthController {
 
       const hashPassword = await bcrypt.hash(password, 10);
 
-      await UserModel.findOneAndUpdate(
-        {
-          email: existingEmail,
-          _id: existingEmail._id,
-        },
+      const updateNew = await UserModel.findByIdAndUpdate(
+        existingEmail._id,
         {
           password: hashPassword,
-        }
+        },
+        { new: true }
       );
+
+      console.log("updateNew", updateNew);
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập mật khẩu thành công",
@@ -725,12 +746,16 @@ class AuthController {
         });
       }
 
-      const updateUser = await UserModel.findByIdAndUpdate(user?.id, {
-        birthDay,
-        full_name,
-        avatarUrl,
-        phone,
-      });
+      const updateUser = await UserModel.findByIdAndUpdate(
+        user?.id,
+        {
+          birthDay,
+          full_name,
+          avatarUrl,
+          phone,
+        },
+        { new: true }
+      );
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập thành công",
