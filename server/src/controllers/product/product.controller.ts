@@ -750,11 +750,51 @@ class ProductController {
       }
 
       if (rating) {
-        queryRating = {
-          rating: {
-            $lte: rating,
-          },
-        };
+        switch (rating) {
+          case 5:
+            queryRating = {
+              rating: {
+                $lte: 5,
+                $gt:4
+              },
+            };
+            break;
+          case 4:
+            queryRating = {
+              rating: {
+                $lte: 4,
+                $gt:3
+              },
+            };
+            break;
+          case 3:
+            queryRating = {
+              rating: {
+                $lte: 3,
+                $gt:2
+              },
+            };
+            break;
+          case 2:
+            queryRating = {
+              rating: {
+                $lte: 2,
+                $gt:1
+              },
+            };
+            break;
+          case 1:
+            queryRating = {
+              rating: {
+                $lte: 1,
+                $gte:0
+              },
+            };
+            break;
+
+          default:
+            queryRating = {};
+        }
       }
 
       const listProduct = await ProductModel.find({
