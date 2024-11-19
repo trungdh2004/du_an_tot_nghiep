@@ -39,11 +39,13 @@ const Category = ({ setSearchParamsObject }: Props) => {
 	// }, [searchParams, setSearchParamsObject]);
 	const handleSearchCategory = (id: string) => {
 		searchParams.set("category", id);
+		searchParams.set("pageIndex", "1");
 		setSearchParams(searchParams);
 		const paramsObject: any = Object.fromEntries(searchParams.entries());
 		setSearchParamsObject((prev) => ({
 			...prev,
 			category: paramsObject.category,
+			pageIndex: 1,
 		}));
 	};
 	return (
