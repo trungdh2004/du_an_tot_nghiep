@@ -10,10 +10,11 @@ import useCart from "@/store/cart.store";
 import { AxiosError } from "axios";
 import { getAuth, signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { IoMenu } from "react-icons/io5";
+import { IoMenu, IoSearch } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
+import SearchMobile from "./SearchMobile";
 const MenuMobile = () => {
 	const { isLoggedIn, authUser, setAuthUser, setIsLoggedIn } = useAuth();
 	const { clearStateCart } = useCart();
@@ -70,7 +71,8 @@ const MenuMobile = () => {
 					</div>
 				</SheetHeader>
 				<div className="">
-					<ul className="text-black font-medium flex flex-col items-start justify-center  *:py-4 *:px-1 *:rounded *:cursor-pointer  transition-all *:w-full ">
+         <SearchMobile handleCloseSidebar={()=>setClose(false)}/>
+					<ul className="text-black font-medium flex flex-col gap-1 items-start justify-center  *:py-2.5 *:px-1 *:rounded *:cursor-pointer  transition-all *:w-full ">
 						<li className=" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14]">
 							<NavLink to={"/"} className="block">
 								Trang chủ
