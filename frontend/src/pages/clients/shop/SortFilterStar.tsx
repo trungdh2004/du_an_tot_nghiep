@@ -17,11 +17,13 @@ const SortFilterStar = ({ setSearchParamsObject }: Props) => {
 	const handleRatingChange = (rating: string) => {
 		setRating(parseInt(rating));
 		searchParams.set("rating", rating);
+		searchParams.set("pageIndex", "1");
 		setSearchParams(searchParams);
 		const paramsObject: any = Object.fromEntries(searchParams.entries());
 		setSearchParamsObject((prev) => ({
 			...prev,
 			rating: parseInt(paramsObject.rating),
+			pageIndex: 1,
 		}));
 	};
 	return (
