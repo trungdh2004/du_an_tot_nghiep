@@ -8,10 +8,20 @@ export interface IOrder extends Document {
     _id:string;
     user:string | IUser
     code:string;
-    address:string | IAddress;
+    address:{
+        username:string,
+        phone:string,
+        address:string,
+        detailAddress:string,
+        location:{
+            type:string,
+            coordinates:number[]
+        }
+    };
     status:number
     statusList:number[]
     voucher?:any;
+    voucherAmount:number
     totalMoney:number;
     amountToPay:number;
     orderDate:string;
@@ -26,6 +36,7 @@ export interface IOrder extends Document {
     estimatedDeliveryDate:string;
     paymentMethod:number;
     paymentStatus:boolean;
+    paymentAmount:number;
     note?:string;
     shipper:string;
     createdAt:string;

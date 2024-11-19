@@ -17,7 +17,7 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 			const data = await confirmOrder(id);
 			getOrderById();
 			return data;
-		} catch (error:any) {
+		} catch (error: any) {
 			toast.error(error?.response?.data?.message);
 			console.log(error);
 		}
@@ -65,9 +65,9 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 					</div>
 
 					<div className="flex justify-between">
-						<p className="font-medium text-sm text-black">Tổng tiền</p>
+						<p className="font-medium text-sm text-black">Tổng tiền đơn hàng</p>
 						<p className="font-medium text-sm text-red-500">
-							{formatCurrency(data.amountToPay)}
+							{formatCurrency(data.totalMoney + data?.shippingCost)}
 						</p>
 					</div>
 				</div>
@@ -80,6 +80,10 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 					<div className="flex justify-between">
 						<p className="font-medium text-sm text-black">Họ và tên</p>
 						<p className="text-sm">{data?.address?.username}</p>
+					</div>
+					<div className="flex justify-between">
+						<p className="font-medium text-sm text-black">Email</p>
+						<p className="text-sm">{data?.user?.email}</p>
 					</div>
 					<div className="flex justify-between">
 						<p className="font-medium text-sm text-black">Số điện thoại</p>

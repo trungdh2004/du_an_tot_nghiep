@@ -5,13 +5,13 @@ export const createComment = (
 	content: string,
 	commentId: string,
 	commentType: string,
-	parent_id?: string
+	parent_id?: string,
 ) => {
 	const data = instance.post(`/comment/createComment`, {
 		content,
 		commentId,
 		commentType,
-		parent_id
+		parent_id,
 	});
 	return data;
 };
@@ -29,6 +29,6 @@ export const reactionsComment = (id: string, is_reacted: boolean) => {
 };
 
 export const deleteComment = (id: string) => {
-  const data = instance.delete(`/comment/deleteComment/${id}`);
-  return data;
+	const data = instance.delete(`/comment/deleteComment/${id}`);
+	return data;
 };

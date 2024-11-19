@@ -16,6 +16,7 @@ interface IProps {
 	allowNegative?: boolean;
 	isAllowed?: (value: NumberFormatValues) => void;
 	disabled?: boolean;
+	placeholder?: string;
 }
 
 const InputNumberFormat = ({
@@ -26,6 +27,7 @@ const InputNumberFormat = ({
 	allowNegative = false,
 	isAllowed,
 	disabled = false,
+	placeholder
 }: IProps) => {
 	return (
 		<NumericFormat
@@ -37,11 +39,9 @@ const InputNumberFormat = ({
 			suffix={suffix}
 			{...option}
 			allowNegative={allowNegative}
-			onChange={(e) => {
-				console.log(e);
-			}}
 			isAllowed={isAllowed}
 			disabled={disabled}
+			placeholder={placeholder}
 		/>
 	);
 };

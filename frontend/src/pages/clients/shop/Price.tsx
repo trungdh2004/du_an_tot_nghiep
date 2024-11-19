@@ -42,13 +42,14 @@ const Price = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 		const [minPriceSearch, maxPriceSearch] = debouncedValues;
 		searchParams.set("min", (minPriceSearch as number).toString());
 		searchParams.set("max", (maxPriceSearch as number).toString());
+		searchParams.set("pageIndex", "1");
 		setSearchParams(searchParams);
 		setSearchParamsObject((prev) => ({
 			...prev,
 			min: minPriceSearch,
 			max: maxPriceSearch,
+			pageIndex: 1,
 		}));
-		query.invalidateQueries({ queryKey: ["productShop"] });
 	}, [debouncedValues]);
 	return (
 		<div className="w-full flex flex-col gap-3 lg:py-2 py-1">
@@ -70,10 +71,14 @@ const Price = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 				/>
 			</div>
 			<div className="flex justify-between">
-				<p className="lg:text-sm text-xs">{debouncedValues[0].toLocaleString()}đ</p>
-				<p className="lg:text-sm text-xs">{debouncedValues[1].toLocaleString()}đ</p>
-      </div>
-      <hr />
+				<p className="lg:text-sm text-xs">
+					{debouncedValues[0].toLocaleString()}đ
+				</p>
+				<p className="lg:text-sm text-xs">
+					{debouncedValues[1].toLocaleString()}đ
+				</p>
+			</div>
+			<hr />
 		</div>
 	);
 };

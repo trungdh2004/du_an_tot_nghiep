@@ -6,10 +6,16 @@ export const findOrUpdateConversation = async () =>
 export const pagingMessage = async (
 	conversationId: string,
 	pageIndex: number,
+	before: string | null,
+	sender?: string,
 ) =>
-	instance.post(`/chat/message/${conversationId}`, {
-		pageIndex,
-	});
+	instance.post(
+		`/chat/message/${conversationId}${before ? `?before=${before}` : ""}`,
+		{
+			pageIndex,
+			sender,
+		},
+	);
 
 export const createMessage = async (
 	content: string,
@@ -18,10 +24,22 @@ export const createMessage = async (
 ) =>
 	instance.post(`/chat/createMessage/${conversationId}`, {
 		content,
-		sender
+		sender,
 	});
 
-export const pagingConversation = (pageIndex:number) => instance.post("/chat/pagingConversation",{
-	pageIndex
-})
-export const findConversation = (id:string) => instance.get("/chat/findConversation/"+id)
+export const pagingConversation = (pageIndex: number) =>
+	instance.post("/chat/pagingConversation", {
+		pageIndex,
+	});
+export const findConversation = (id: string) =>
+	instance.get("/chat/findConversation/" + id);
+
+export const updateReadMany = (sender: string, id: string) =>
+	instance.put("/chat/readMessageMany/" + id, {
+		sender,
+	});
+
+export const updateReadOne = (sender: string, id: string) =>
+	instance.put("/chat/readMessageById/" + id, {
+		sender,
+	});

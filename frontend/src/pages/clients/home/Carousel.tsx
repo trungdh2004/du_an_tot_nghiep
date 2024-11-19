@@ -67,17 +67,16 @@ const Carousel = () => {
 	const swiperRef = useRef<SwiperType>();
 	return (
 		<div className="py-8 padding">
+			
 			<div className="flex flex-col items-end justify-between sm:flex-row sm:items-center">
 				<h2 className="text-2xl font-semibold sm:text-4xl sm:font-bold">
 					Sản phẩm mới mẻ
 				</h2>
 				<div className="flex items-center gap-7 *:flex *:items-center *:justify-center *:size-10 *:max-w-10 *:max-h-10 *:rounded-full *:border *:border-gray-200">
-				<button
+					<button
 						onClick={() => swiperRef.current?.slidePrev()}
 						disabled={isBeginning}
-						className={`${
-							isBeginning ? "opacity-50 cursor-not-allowed" : ""
-						}`}
+						className={`${isBeginning ? "opacity-50 cursor-not-allowed" : ""}`}
 					>
 						<PiArrowLeftThin size={26} className="text-slate-700" />
 					</button>

@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 
 import { useAuth } from "@/hooks/auth";
 import { LucideShoppingCart } from "lucide-react";
@@ -19,6 +18,7 @@ import {
 	INotification,
 	ISearchObjectNotifications,
 } from "@/types/notification.interface";
+import { Button } from "@/components/ui/button";
 
 const Actions = () => {
 	const { isLoggedIn, authUser, socket } = useAuth();
@@ -31,7 +31,7 @@ const Actions = () => {
 			totalOptionPage: 0,
 			totalPage: 0,
 		});
-	const [before,setBefore] = useState<null|string>(null)
+	const [before, setBefore] = useState<null | string>(null);
 	const [countNotRead, setCountNotRead] = useState(0);
 
 	useEffect(() => {
@@ -56,7 +56,7 @@ const Actions = () => {
 				try {
 					const { data } = await getPagingNotification(1);
 					setDataNotification(data);
-					setBefore(data?.before)
+					setBefore(data?.before);
 					setCountNotRead(data.countNotificationNotRead);
 				} catch (error) {
 					setCountNotRead(0);
@@ -79,7 +79,7 @@ const Actions = () => {
 			// if (dataNotification.pageIndex < dataNotification.totalPage) {
 			const { data } = await getPagingNotification(
 				dataNotification.pageIndex + 1,
-				before
+				before,
 			);
 
 			setDataNotification((prev) => {
@@ -187,10 +187,8 @@ const Actions = () => {
 					<User />
 				</div>
 			) : (
-				<Link to={"/auth/login"} className="hidden md:block">
-					<Button className="h-8 px-3 text-xs rounded " size={"sm"}>
-						Đăng nhập
-					</Button>
+				<Link to={`/auth/login`}>
+					<Button className="text-sm lg:block md:block hidden">Đăng nhập</Button>
 				</Link>
 			)}
 		</div>

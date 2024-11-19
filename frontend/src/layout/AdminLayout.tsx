@@ -2,7 +2,7 @@ import HeaderAdmin from "@/components/admin/header/HeaderAdmin";
 import Sidebar from "@/components/admin/sidebar/Sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import React, { useEffect } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, ScrollRestoration } from "react-router-dom";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useOpenSidebar } from "@/store/useSidebarAdmin";
 import { useMediaQuery } from "usehooks-ts";
@@ -33,6 +33,8 @@ const AdminLayout = () => {
 					<Outlet />
 				</div>
 			</div>
+			<ScrollRestoration />
+
 		</div>
 	);
 };

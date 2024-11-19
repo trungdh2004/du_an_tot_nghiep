@@ -31,8 +31,8 @@ export interface ObjectCheckoutOrder {
 	voucher?: string | null;
 	paymentMethod: number;
 	note?: string;
-  shippingCost?: number;
-  returnUrl?: string;
+	shippingCost?: number;
+	returnUrl?: string;
 }
 
 interface Color {

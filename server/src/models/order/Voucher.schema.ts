@@ -24,11 +24,11 @@ const VoucherSchema = new mongoose.Schema(
       trim: true,
     },
     startDate: {
-      type: String,
+      type: Date,
       required: true,
     },
     endDate: {
-      type: String,
+      type: Date,
       required: true,
     },
     // dang % hay là sô tiền
@@ -76,6 +76,10 @@ const VoucherSchema = new mongoose.Schema(
     modifiedBy: {
       type: mongoose.Types.ObjectId,
       default: null,
+    },
+    isHome:{
+      type:Boolean,
+      default: false,
     },
     listUseProduct: [
       {

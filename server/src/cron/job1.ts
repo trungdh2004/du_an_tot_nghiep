@@ -8,8 +8,6 @@ const updateStatusShippedToSuccess = async () => {
     const endOfToday = new Date();
     endOfToday.setHours(23, 59, 59, 999);
 
-    console.log("đang cập nhập");
-    
 
     await OrderModel.updateMany({
       status: 4,

@@ -118,7 +118,6 @@ const CategoryAdd = ({
 
 	const onHandleUpdate = async (dataForm: any) => {
 		try {
-			setOpenProcessLoadingEventNone();
 			const { data } = await updateCategory(open, dataForm);
 			handleClose();
 			handlePaging();
@@ -131,7 +130,6 @@ const CategoryAdd = ({
 	};
 	const onHandleAdd = async (dataForm: any) => {
 		try {
-			setOpenProcessLoadingEventNone();
 			const { data } = await addCategory(dataForm);
 			form.reset();
 			handleClose();
@@ -163,6 +161,7 @@ const CategoryAdd = ({
 	}, [open]);
 
 	const onSubmit = async (data: z.infer<typeof formSchema>) => {
+		setOpenProcessLoadingEventNone();
 		let url = data.thumbnail.url;
 		if (data?.thumbnail?.file) {
 			url = await handleUploadFile(data?.thumbnail?.file as File);
@@ -195,9 +194,9 @@ const CategoryAdd = ({
 								name="name"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Name</FormLabel>
+										<FormLabel>Tên danh mục</FormLabel>
 										<FormControl>
-											<Input placeholder="Name" {...field} />
+											<Input placeholder="Tên" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -276,9 +275,9 @@ const CategoryAdd = ({
 								name="description"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Description</FormLabel>
+										<FormLabel>Mô tả</FormLabel>
 										<FormControl>
-											<Input placeholder="Description" {...field} />
+											<Input placeholder="Mô tả" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>

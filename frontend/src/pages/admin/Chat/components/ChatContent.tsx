@@ -1,15 +1,17 @@
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Smile } from "lucide-react";
-import ChatMessage from "./ChatMessage";
-import { useParams } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
-import { createMessage, findConversation, pagingMessage } from "@/service/chat";
-import { IConversation } from "./Conversation";
-import { Button } from "@/components/ui/button";
-import { CiLogout } from "react-icons/ci";
 import EmojiModal from "@/components/common/EmojiModal";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/auth";
+import { createMessage, findConversation, pagingMessage } from "@/service/chat";
+import { Send } from "lucide-react";
+import { ElementRef, useEffect, useRef, useState } from "react";
+import { CiLogout } from "react-icons/ci";
+import { Link, useParams } from "react-router-dom";
+import ChatMessage from "./ChatMessage";
+import { IConversation } from "./Conversation";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { cn } from "@/lib/utils";
+import { FaArrowDown } from "react-icons/fa";
 
 export interface IMessage {
 	_id: string;
@@ -50,28 +52,39 @@ const ChatContent = () => {
 	const [loading, setLoading] = useState(false);
 	const [scroll, setScroll] = useState(false);
 	const { socket } = useAuth();
+	const [hidden, setHidden] = useState(false);
+	const [hasRequest, setHasRequest] = useState(true);
+	const [page, setPage] = useState(1);
+	const [openScroll, setOpenScroll] = useState(false);
+	const [before, setBefore] = useState(null);
 
-	const refBox = useRef<HTMLDivElement | null>(null);
+	const refBottom = useRef<HTMLDivElement>(null);
+	const refBoxChat = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		if (socket) {
 			socket?.emit("joinChat", id as string);
-			socket.on("messageSender",(message) => {
-				console.log("message",message);
+			socket.on("messageSender", (message) => {
 				setMessage((prev) => ({
 					...prev,
-					content: [...prev.content, message],
+					content: [
+						{
+							...message,
+							user: conversation?.user,
+						},
+						...prev.content,
+					],
 				}));
-				setScroll(true)
-			})
+				setScroll(true);
+			});
 		}
 		(async () => {
 			try {
 				setLoading(true);
 				const { data: conversation } = await findConversation(id as string);
 				setConversation(conversation);
-
-				const { data } = await pagingMessage(id as string, 1);
+				const { data } = await pagingMessage(id as string, 1, null, "ADMIN");
+				setBefore(data?.before);
 				setMessage(data);
 			} catch (error) {
 			} finally {
@@ -84,55 +97,153 @@ const ChatContent = () => {
 			if (socket) {
 				socket?.emit("leaveRoom", id as string);
 			}
+			setHasRequest(true);
 		};
 	}, [id]);
-
 
 	const handleNewMessage = async () => {
 		try {
 			const { data } = await createMessage(messageNew, "ADMIN", id as string);
 			setMessage((prev) => ({
 				...prev,
-				content: [...prev.content, data.data],
+				content: [data.data,...prev.content],
 			}));
 			if (socket) {
 				socket?.emit("newMessage", data?.data, data?.conversation);
 			}
-			setScroll(true);
-			setMessageNew("")
+			setMessageNew("");
+		} catch (error) {}
+	};
+
+	const handlePagingMessage = async () => {
+		try {
+			const page = message?.pageIndex + 1;
+			const { data: dataMes } = await pagingMessage(
+				conversation?._id as string,
+				page,
+				before,
+				"USER",
+			);
+			setMessage((prev) => {
+				return {
+					...dataMes,
+					content: [...prev.content, ...dataMes?.content],
+				};
+			});
 		} catch (error) {}
 	};
 
 	useEffect(() => {
-		if (scroll) {
-			if (refBox.current) {
-				refBox.current.scrollTop = refBox.current.scrollHeight;
+		const handleScroll = () => {
+			if (refBoxChat.current && refBoxChat.current.scrollTop < -100) {
+				setOpenScroll(true);
+			} else {
+				setOpenScroll(false);
 			}
-			setScroll(false);
-		}
-	}, [scroll]);
+		};
+
+		refBoxChat.current?.addEventListener("scroll", handleScroll);
+
+		return () => {
+			refBoxChat.current?.removeEventListener("scroll", handleScroll);
+		};
+	}, [refBoxChat]);
+
+	const scrollBottom = async () => {
+		refBottom.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+	};
+
 	return (
-		<div className="h-full flex flex-col">
+		<div className="h-full flex flex-col relative">
 			<header className="flex items-center justify-between w-full px-3 border-b h-[60px]">
 				<div className="flex items-center gap-3">
 					<div className="overflow-hidden border rounded-full size-10">
-						<img src="/avatar_25.jpg" alt="" />
+						<img
+							src={conversation?.user?.avatarUrl || "/avatar_25.jpg"}
+							alt=""
+						/>
 					</div>
 					<div>
 						<h2 className="font-semibold">{conversation?.user?.full_name}</h2>
-						<span className="text-sm text-green-500">online</span>
+						{/* <span className="text-sm text-green-500">online</span> */}
 					</div>
 				</div>
 
-				<Button variant={"outline"} className="block md:hidden">
-					<CiLogout size={20} />
-				</Button>
+				<Link to={"/admin/chat"}>
+					<Button variant={"outline"} className="block md:hidden">
+						<CiLogout size={20} />
+					</Button>
+				</Link>
 			</header>
+
+			{/* {message.content?.length > 0 &&
+					message.content?.map((item) => (
+						<div key={item._id}>
+							<ChatMessage
+								{...item}
+								avatar={conversation?.user?.avatarUrl || ""}
+							/>
+						</div>
+					))} */}
+
 			<div
-				className=" flex-1 block scroll-custom overflow-y-auto space-y-2 p-2"
-				ref={refBox}
+				id="scrollableChatDiv"
+				style={{
+					// height: 320,
+					flex: "1 1 0%",
+					overflow: "auto",
+					display: "flex",
+					flexDirection: "column-reverse",
+				}}
+				ref={refBoxChat}
+				className="scroll-custom p-1 relative"
+				// className="flex-1 overflow-y-auto p-2 scroll-custom h-[350px]"
 			>
-				{message?.content.map((msg) => <ChatMessage key={msg._id} {...msg} />)}
+				<InfiniteScroll
+					dataLength={message?.content.length}
+					next={handlePagingMessage}
+					style={{
+						display: "flex",
+						flexDirection: "column-reverse",
+						position: "relative",
+					}} //To put endMessage and loader to the top.
+					inverse={true} //
+					hasMore={message?.pageIndex !== message?.totalPage}
+					loader={
+						<p className="text-center text-sm text-gray-400">Loading...</p>
+					}
+					scrollableTarget="scrollableChatDiv"
+					// below props only if you need pull down functionality
+					refreshFunction={handlePagingMessage}
+					pullDownToRefresh
+					pullDownToRefreshThreshold={50}
+					pullDownToRefreshContent={
+						false
+						// <h3 style={{ textAlign: "center" }}>&#8595;</h3>
+					}
+					releaseToRefreshContent={false}
+				>
+					<div className="" ref={refBottom}></div>
+					{message.content?.length > 0 &&
+						message.content?.map((item) => (
+							<div key={item._id}>
+								<ChatMessage
+									{...item}
+									avatar={conversation?.user?.avatarUrl || ""}
+								/>
+							</div>
+						))}
+				</InfiniteScroll>
+			</div>
+			{/* </div> */}
+			<div
+				className={cn(
+					"absolute z-10  size-7 bg-gray-50 rounded-full bottom-20 left-1/2 -translate-x-1/2 flex items-center justify-center hover:bg-gray-100 cursor-pointer",
+					!openScroll && "hidden",
+				)}
+				onClick={scrollBottom}
+			>
+				<FaArrowDown />
 			</div>
 
 			<div className="p-4 border-t">

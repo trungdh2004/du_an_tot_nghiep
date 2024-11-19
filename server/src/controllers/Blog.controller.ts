@@ -21,6 +21,7 @@ class BlogController {
   async postBlogs(req: RequestModel, res: Response) {
     try {
       const user = req.user;
+      const { title, content } = req.body;
 
       if (!user?.id) {
         return res.status(STATUS.AUTHENTICATOR).json({
@@ -30,7 +31,8 @@ class BlogController {
 
       const newPos = await BlogsModel.create({
         user_id: user.id,
-        ...req.body,
+        title,
+        content
       });
 
       return res.status(STATUS.OK).json(newPos);
@@ -191,6 +193,58 @@ class BlogController {
       });
     }
   }
+
+  async cancelPublish(req: RequestModel, res: Response) {
+    try {
+      const user = req.user;
+      const { id } = req.params;
+  
+      if (!user?.id) {
+        return res.status(STATUS.AUTHENTICATOR).json({
+          message: "Bạn chưa đăng nhập",
+        });
+      }
+  
+      if (!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn bài viết",
+        });
+      }
+  
+      const existingBlog = await BlogsModel.findById(id);
+  
+      if (!existingBlog) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có bài viết nào",
+        });
+      }
+  
+      if (!existingBlog.isPublish) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bài viết chưa được đăng",
+        });
+      }
+  
+      const updatedBlog = await BlogsModel.findByIdAndUpdate(
+        existingBlog._id,
+        {
+          isPublish: false,
+          published_at: null,
+        },
+        { new: true }
+      );
+  
+      return res.status(STATUS.OK).json({
+        message: "Hủy đăng bài viết thành công",
+        data: updatedBlog,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error?.message,
+      });
+    }
+  }
+
   async pagingBlog(req: RequestModel, res: Response) {
     try {
       const {
@@ -515,7 +569,7 @@ class BlogController {
     try {
       const { isLike = true } = req.body;
       const { id } = req.params;
-      const user = req.user;      
+      const user = req.user;
       if (!id)
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Chưa nhập bài viết",
@@ -561,9 +615,76 @@ class BlogController {
 
       return res.status(STATUS.OK).json({
         blog,
-        message:"Like thành công"
-      })
+        message: "Like thành công",
+      });
     } catch (error) {}
+  }
+
+  async pagingBlogClient(req: RequestModel, res: Response) {
+    try {
+      const {
+        keyword,
+        pageSize,
+        pageIndex,
+        tags,
+      } = req.body;
+
+      let limit = pageSize || 10;
+      let skip = (pageIndex - 1) * limit || 0;
+      let querySort = {};
+      let queryTab = {};
+      let queryTags = {};
+
+      if (tags) {
+        const select = await TagsModel.findOne({
+          slug: tags,
+        });
+
+        queryTags = {
+          selected_tags: {
+            $in: select?._id,
+          },
+        };
+      }
+
+      const newDate = new Date();
+
+
+      const listBlogs = await BlogsModel.find({
+        ...queryTab,
+        ...queryTags,
+        published_at:{
+          $lte: newDate,
+        }
+      })
+        .sort(querySort)
+        .skip(skip)
+        .limit(limit)
+        .populate([
+          {
+            path: "user_id",
+            select: "_id full_name email avatarUrl",
+          },
+          "selected_tags",
+        ])
+        .exec();
+
+      const countBlogs = await BlogsModel.countDocuments({
+        ...queryTab,
+        ...queryTags,
+      });
+
+      const data = formatDataPaging({
+        limit,
+        pageIndex,
+        data: listBlogs,
+        count: countBlogs,
+      });
+
+      return res.status(STATUS.OK).json(data);
+    } catch (error) {
+      return res.status(STATUS.INTERNAL).json({ error: error });
+    }
   }
 }
 

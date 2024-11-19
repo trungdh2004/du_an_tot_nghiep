@@ -750,11 +750,51 @@ class ProductController {
       }
 
       if (rating) {
-        queryRating = {
-          $lte: {
-            rating: rating,
-          },
-        };
+        switch (rating) {
+          case 5:
+            queryRating = {
+              rating: {
+                $lte: 5,
+                $gt:4
+              },
+            };
+            break;
+          case 4:
+            queryRating = {
+              rating: {
+                $lte: 4,
+                $gt:3
+              },
+            };
+            break;
+          case 3:
+            queryRating = {
+              rating: {
+                $lte: 3,
+                $gt:2
+              },
+            };
+            break;
+          case 2:
+            queryRating = {
+              rating: {
+                $lte: 2,
+                $gt:1
+              },
+            };
+            break;
+          case 1:
+            queryRating = {
+              rating: {
+                $lte: 1,
+                $gte:0
+              },
+            };
+            break;
+
+          default:
+            queryRating = {};
+        }
       }
 
       const listProduct = await ProductModel.find({
@@ -784,6 +824,7 @@ class ProductController {
           },
           "category",
         ])
+        .select("-description -category")
         .exec();
 
       const countProduct = await ProductModel.countDocuments({
@@ -862,13 +903,28 @@ class ProductController {
       const listProduct = await ProductModel.find({
         is_hot: true,
       })
-        .populate({
-          path: "category",
-          select: {
-            _id: 1,
-            name: 1,
+        .populate([
+          {
+            path: "category",
+            select: {
+              _id: 1,
+              name: 1,
+            },
           },
-        })
+          {
+            path: "attributes",
+            populate: [
+              {
+                path: "color",
+                model: "Color",
+              },
+              {
+                path: "size",
+                model: "Size",
+              },
+            ],
+          },
+        ])
         .sort({
           createdAt: -1,
         })

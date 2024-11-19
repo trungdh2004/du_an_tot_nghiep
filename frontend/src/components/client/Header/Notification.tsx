@@ -121,7 +121,7 @@ const Notification = ({
 													}
 												}
 											}
-											setOpen(false)
+											setOpen(false);
 										}}
 									>
 										<div className="flex w-full items-center justify-start gap-x-2 cursor-pointer ">

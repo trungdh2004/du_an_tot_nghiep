@@ -110,7 +110,7 @@ const ResetPassword = ({ setStep, email }: PropsRestPassword) => {
 										name="confirmPassword"
 										render={({ field }) => (
 											<FormItem className="space-y-0">
-												<FormLabel className="text-xs">
+												<FormLabel className="">
 													Xác nhận mật khẩu
 												</FormLabel>
 												<div className="relative">
