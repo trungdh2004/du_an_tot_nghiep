@@ -29,7 +29,7 @@ export const publishBlogs = (id: string, data: any) => {
 	return instance.put(uri, data);
 };
 export const pagingBlogs = (searchObj: SearchObjectType) => {
-	const uri = `/blogs/pagingBlog`;
+	const uri = `/blogs/pagingBlogClient`;
 	return instance.post(uri, searchObj);
 };
 export const deleteBlogBYId = (id: string | boolean) => {
