@@ -58,6 +58,7 @@ const Color = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 				colors = colors.filter((_color) => _color !== color);
 			}
 			searchParams.set("color", colors.join());
+			searchParams.set("pageIndex", "1");
 			setSearchParams(searchParams);
 
 			const paramsObject: any = Object.fromEntries(searchParams.entries());
@@ -69,8 +70,8 @@ const Color = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 			setSearchParamsObject((prev) => ({
 				...prev,
 				color: colorCheck,
+				pageIndex: 1,
 			}));
-		
 		},
 		[searchParams, setSearchParams, setSearchParamsObject, query],
 	);
