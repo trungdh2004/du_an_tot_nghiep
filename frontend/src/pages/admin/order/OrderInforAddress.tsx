@@ -82,6 +82,10 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 						<p className="text-sm">{data?.address?.username}</p>
 					</div>
 					<div className="flex justify-between">
+						<p className="font-medium text-sm text-black">Email</p>
+						<p className="text-sm">{data?.user?.email}</p>
+					</div>
+					<div className="flex justify-between">
 						<p className="font-medium text-sm text-black">Số điện thoại</p>
 						<p className="text-sm">{data?.address?.phone}</p>
 					</div>
