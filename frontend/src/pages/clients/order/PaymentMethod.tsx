@@ -41,7 +41,7 @@ const PaymentMethod = ({
 					<h3 className="text-lg text-[#595959] font-semibold pb-6">
 						Phương thức thanh toán
 					</h3>
-					<div className="flex gap-2">
+					<div className="flex gap-2 flex-col">
 						<Label
 							htmlFor={"paymentMethod1"}
 							className={cn(
@@ -157,7 +157,7 @@ const PaymentMethod = ({
 				<div className="lg:flex md:flex hidden justify-between py-2 mx-4">
 					<p>
 						Nhấn "Đặt hàng" đồng nghĩa với việc bạn đồng ý tuân theo Điều khoản
-						Shopee
+						NUCSHOP
 					</p>
 					<Button className="px-9" onClick={() => handleCheckout()}>
 						Đặt hàng
@@ -194,7 +194,7 @@ const PaymentMethod = ({
 			<div className="lg:hidden md:hidden block px-4 bg-white border border-gray-200 mt-4 mb-2 py-2">
 				<p className="text-sm">
 					Nhấn "Đặt hàng" đồng nghĩa với việc bạn đồng ý tuân theo Điều khoản
-					Shopee
+					NUCSHOP
 				</p>
 			</div>
 		</div>

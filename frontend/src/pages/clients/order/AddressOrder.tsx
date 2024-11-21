@@ -54,10 +54,22 @@ const AddressOrder = ({ data, handleChangeAddress }: any) => {
 						</div>
 					) : (
 						<div className="flex flex-col gap-3">
-							<span className="text-sm font-semibold tracking-normal">
-								{data?.address?.username} {data?.address?.phone}
+							<span className="text-sm tracking-normal pr-3">
+								<span>
+									<strong>Họ tên : </strong>
+								</span>
+								{data?.address?.username}
 							</span>
-							<p className="text-sm tracking-normal">
+							<span className="text-sm tracking-normal pr-3">
+								<span>
+									<strong>Số điện thoại : </strong>
+								</span>
+								{data?.address?.phone}
+							</span>
+							<p className="text-sm tracking-normal pr-3">
+								<span>
+									<strong>Địa chỉ : </strong>
+								</span>
 								{data?.address?.detailAddress} , {data?.address?.address}
 							</p>
 							{data?.address?.is_main && (

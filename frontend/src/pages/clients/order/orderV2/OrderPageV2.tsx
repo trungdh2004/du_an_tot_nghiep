@@ -118,14 +118,23 @@ const OrderPageV2 = () => {
 
 	return (
 		<div className="grid grid-cols-12 gap-5 lg:px-[100px] md:px-[65px] px-0 py-8">
-			<div className="col-span-12 lg:col-span-8 md:col-span-8">
-				<AddressOrder data={order} handleChangeAddress={handleChangeAddress} />
-				<ProductOrderV2 data={order} />
+			<div className="col-span-12 lg:col-span-8">
+				<ProductOrderV2
+					data={order}
+					handleChangeAddress={handleChangeAddress}
+				/>
 			</div>
-			<div className="col-span-12 lg:col-span-4 md:col-span-4">
+			<div className="col-span-12 lg:col-span-4">
 				<div className="w-full">
-					<h4 className="font-bold text-xl pb-9">Thông tin liên quan</h4>
-
+					<h4 className="font-bold text-xl pb-5 lg:pb-7  lg:text-left text-center ">
+						Thông tin liên quan
+					</h4>
+					<div className="hidden md:hidden lg:block">
+						<AddressOrder
+							data={order}
+							handleChangeAddress={handleChangeAddress}
+						/>
+					</div>
 					<Vorcher
 						data={order}
 						setOrderCheckout={setOrderCheckout}
