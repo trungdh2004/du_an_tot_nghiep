@@ -9,4 +9,6 @@ routerChat.post("/message/:id", authentication, ChatController.pagingMessageConv
 routerChat.post("/createMessage/:id", authentication, ChatController.createMessage);
 routerChat.post("/pagingConversation", authentication, ChatController.pagingConversation);
 routerChat.get("/findConversation/:id", authentication, ChatController.findConversation);
+routerChat.put("/readMessageMany/:id", authentication, ChatController.readMessageMany);
+routerChat.put("/readMessageById/:id", authentication, ChatController.readMessageById);
 export default routerChat;

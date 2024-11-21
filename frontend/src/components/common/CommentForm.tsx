@@ -16,7 +16,7 @@ interface CommentEditorProps {
 	content: string;
 	handleChange: (content: string) => void;
 	handleOpen?: () => void;
-	size?:Size
+	size?: Size;
 }
 
 const CommentEditor: React.FC<CommentEditorProps> = ({
@@ -27,7 +27,7 @@ const CommentEditor: React.FC<CommentEditorProps> = ({
 	content,
 	handleChange,
 	handleOpen,
-	size="medium"
+	size = "medium",
 }) => {
 	const editorRef = useRef<FroalaEditorComponent | null>(null);
 	const { isLoggedIn } = useAuth();
@@ -70,7 +70,12 @@ const CommentEditor: React.FC<CommentEditorProps> = ({
 	return (
 		<div className="">
 			<div className="flex items-start w-full gap-1 fr-body md:gap-3">
-				<div className={cn(" rounded-full flex items-center overflow-hidden justify-center bg-white border",size == 'medium' ? 'size-7 md:size-10' : 'size-4 md:size-7')}>
+				<div
+					className={cn(
+						" rounded-full flex items-center overflow-hidden justify-center bg-white border",
+						size == "medium" ? "size-7 md:size-10" : "size-4 md:size-7",
+					)}
+				>
 					<img src={avatar} alt="" className="object-cover w-full h-full" />
 				</div>
 

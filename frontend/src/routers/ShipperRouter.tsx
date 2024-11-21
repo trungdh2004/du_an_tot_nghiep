@@ -12,42 +12,49 @@ import AccountShipperIndex from "@/pages/shipper/AccountShipper/AccountShipperIn
 const ShipperRouter = [
 	{
 		path: "/shipper",
-		element: <PrivateRouterShipper><ShipperLayout /></PrivateRouterShipper>,
+		element: (
+			<PrivateRouterShipper>
+				<ShipperLayout />
+			</PrivateRouterShipper>
+		),
 		children: [
 			{
-				path:"",
-				element:<ShipperIndex />
+				path: "",
+				element: <ShipperIndex />,
 			},
 			{
-				path:"orderNew",
-				element:<OrderNewIndex />
+				path: "orderNew",
+				element: <OrderNewIndex />,
 			},
 			{
-				path:"orderSuccess",
-				element:<OrderSusccesIndex />
+				path: "orderSuccess",
+				element: <OrderSusccesIndex />,
 			},
 			{
-				path:"dashboard",
-				element:<OrderDashboardIndex />
+				path: "dashboard",
+				element: <OrderDashboardIndex />,
 			},
 			{
-				path:"account",
-				element:<AccountShipperIndex />
+				path: "account",
+				element: <AccountShipperIndex />,
 			},
 		],
 	},
 	{
-		path:"/shipper/auth",
-		element:<ShipperAuth />
+		path: "/shipper/auth",
+		element: <ShipperAuth />,
 	},
 	{
-		path:"/shipper/pending",
-		element:<ShipperPending />
+		path: "/shipper/pending",
+		element: <ShipperPending />,
 	},
 	{
-		path:"/shipper/transport/:code",
-		element:<PrivateRouterShipper><ShipperTranSport /></PrivateRouterShipper>
-	}
-
+		path: "/shipper/transport/:code",
+		element: (
+			<PrivateRouterShipper>
+				<ShipperTranSport />
+			</PrivateRouterShipper>
+		),
+	},
 ];
 export default ShipperRouter;

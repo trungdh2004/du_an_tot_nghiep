@@ -24,10 +24,10 @@ const User = () => {
 	const regex = /\b\/?admin\b/;
 
 	const { authUser, setAuthUser, setIsLoggedIn } = useAuth();
-	const {clearStateCart  } = useCart();
+	const { clearStateCart } = useCart();
 	const handleLogout = async () => {
 		try {
-			 await logOut();
+			await logOut();
 			delete instance.defaults.headers.common.Authorization;
 			setAuthUser?.(undefined);
 			setIsLoggedIn?.(false);
@@ -95,42 +95,46 @@ const User = () => {
 					</DropdownMenuItem>
 				</Link>
 				<DropdownMenuSeparator
-					className={cn("cursor-pointer",regex.test(location.pathname) ? "hidden" : "block")}
+					className={cn(
+						"cursor-pointer",
+						regex.test(location.pathname) ? "hidden" : "block",
+					)}
 				/>
-				<Link
-					to={"/account/profile"}
-					className="cursor-pointer "
-				>
+				<Link to={"/account/profile"} className="cursor-pointer ">
 					<DropdownMenuItem
-						className={cn("cursor-pointer",regex.test(location.pathname) ? "hidden" : "block")}
+						className={cn(
+							"cursor-pointer",
+							regex.test(location.pathname) ? "hidden" : "block",
+						)}
 					>
 						Tài khoản của tôi
 					</DropdownMenuItem>
 				</Link>
 				<Link to={"/account/address"} className="cursor-pointer">
 					<DropdownMenuItem
-						className={cn("cursor-pointer",regex.test(location.pathname) ? "hidden" : "block")}
+						className={cn(
+							"cursor-pointer",
+							regex.test(location.pathname) ? "hidden" : "block",
+						)}
 					>
 						Địa chỉ
 					</DropdownMenuItem>
 				</Link>
-				<Link
-					to="/account/purchase"
-					className="cursor-pointer"
-				>
+				<Link to="/account/purchase" className="cursor-pointer">
 					<DropdownMenuItem
-						className={cn("cursor-pointer",regex.test(location.pathname) ? "hidden" : "block")}
+						className={cn(
+							"cursor-pointer",
+							regex.test(location.pathname) ? "hidden" : "block",
+						)}
 					>
 						Đơn hàng
 					</DropdownMenuItem>
 				</Link>
 				<DropdownMenuSeparator />
-				<Link
-					to={"/shipper/auth"}
-					className="cursor-pointer"
-				>
+				<Link to={"/shipper/auth"} className="cursor-pointer">
 					<DropdownMenuItem
-						className={cn("cursor-pointer",
+						className={cn(
+							"cursor-pointer",
 							!regex.test(location.pathname) &&
 								!authUser?.is_shipper &&
 								!authUser?.is_admin
@@ -144,7 +148,8 @@ const User = () => {
 				<Link to={"/shipper"} className="cursor-pointer">
 					<DropdownMenuItem
 						className={cn(
-							"cursor-pointer",!regex.test(location.pathname) &&
+							"cursor-pointer",
+							!regex.test(location.pathname) &&
 								authUser?.is_shipper &&
 								!authUser?.is_admin
 								? "block"

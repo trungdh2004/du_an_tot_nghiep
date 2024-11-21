@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-teal-500 flex items-center justify-center min-h-screen">
+    <div class="bg-teal-400 p-8 rounded-lg shadow-lg w-full max-w-xl text-white">
+        <h1 class="text-4xl font-bold mb-4 text-center">CONTACT</h1>
+        <p class="text-center mb-8">Interested in working together? Fill out the form below with details about your project, and I'll get back to you as soon as I can.</p>
+        
+        <form class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Name Field -->
+            <div class="flex items-center bg-teal-300 rounded-md p-2">
+                <input type="text" placeholder="*Name" class="w-full bg-transparent p-2 outline-none placeholder-white text-white">
+            </div>
+            <!-- Email Field -->
+            <div class="flex items-center bg-teal-300 rounded-md p-2">
+                <input type="email" placeholder="*Email" class="w-full bg-transparent p-2 outline-none placeholder-white text-white">
+            </div>
+            <!-- Website Field -->
+            <div class="flex items-center bg-teal-300 rounded-md p-2">
+                <input type="text" placeholder="Website" class="w-full bg-transparent p-2 outline-none placeholder-white text-white">
+            </div>
+            <!-- Budget Field -->
+            <div class="flex items-center bg-teal-300 rounded-md p-2">
+                <input type="text" placeholder="Budget" class="w-full bg-transparent p-2 outline-none placeholder-white text-white">
+            </div>
+            <!-- Timeline Field -->
+            <div class="flex items-center bg-teal-300 rounded-md p-2">
+                <input type="text" placeholder="Timeline" class="w-full bg-transparent p-2 outline-none placeholder-white text-white">
+            </div>
+            <!-- Project Description Field -->
+            <div class="col-span-1 md:col-span-2">
+                <textarea placeholder="Tell me a little about your project" class="w-full bg-teal-300 rounded-md p-2 h-32 outline-none placeholder-white text-white"></textarea>
+            </div>
+            <!-- Submit Button -->
+            <div class="col-span-1 md:col-span-2">
+                <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-md">Submit</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

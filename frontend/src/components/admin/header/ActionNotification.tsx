@@ -1,7 +1,7 @@
 import { useAuth } from "@/hooks/auth";
 import {
 	pagingNotificationAdmin,
-	watchedNotificationAdmin
+	watchedNotificationAdmin,
 } from "@/service/notification.service";
 import {
 	INotificationAdmin,
@@ -45,7 +45,7 @@ const ActionsNotification = () => {
 				try {
 					const { data } = await pagingNotificationAdmin(1);
 					setDataNotification(data);
-					setBefore(data?.before)
+					setBefore(data?.before);
 					setCountNotRead(data.countNotificationNotRead);
 					setDataContent(data.content);
 				} catch (error) {
@@ -70,7 +70,7 @@ const ActionsNotification = () => {
 			// if (dataNotification.pageIndex < dataNotification.totalPage) {
 			const { data } = await pagingNotificationAdmin(
 				dataNotification.pageIndex + 1,
-				before
+				before,
 			);
 
 			setDataNotification((prev) => {

@@ -12,6 +12,8 @@ import updateStatusShippedToSuccess from "./cron/job1";
 import { createServer } from "http";
 import { initSocket } from "./socket";
 import LocationModel from "./models/Location.schema";
+import compression from "compression"
+
 const job = new cron.CronJob(
   rootCron.jobSchedules.job1,
   updateStatusShippedToSuccess,
@@ -34,12 +36,14 @@ app.use(
     extended: true,
   })
 );
+app.use(compression({
+  level:6
+}))
 app.use(
   cors({
     origin: [
       process.env.CLIENT_URL!,
       "http://localhost:4000",
-      "http://localhost:8080",
     ],
     credentials: true,
   })
@@ -64,7 +68,9 @@ app.use("/api/v1", router);
     }
   } catch (error) {}
 })();
-
+app.get("/hello",(req,res) => {
+  return res.status(200).send("XIn chào")
+})
 app.use("*", (req, res) => {
   res.status(STATUS.BAD_REQUEST).json({
     message: "Đường dẫn không đúng",

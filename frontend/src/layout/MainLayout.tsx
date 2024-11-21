@@ -1,5 +1,6 @@
 import ChatAction from "@/components/chat/ChatAction";
 import Footer from "@/components/client/Footer";
+import FooterV2 from "@/components/client/FooterV2";
 import Header from "@/components/client/Header";
 import OverlayVioletV2 from "@/components/OverlayVioletV2";
 import { cn } from "@/lib/utils";
@@ -9,15 +10,16 @@ import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 const MainLayout = () => {
 	const location = useLocation();
 	return (
-		<div>
+		<div className="bg-[#fafafa]">
 			{/* <div className="bg-magic"></div> */}
-			<OverlayVioletV2 />
+			{/* <OverlayVioletV2 /> */}
 			{/* {location.pathname == "/" ? <HeaderAndSlider /> : <Header />} */}
 			<Header />
-			<main className={cn("mt-[64px]",location.pathname == "/" && "mt-0")}>
+			<main className={cn(" ", location.pathname == "/" && "mt-0")}>
 				<Outlet />
 			</main>
-			<Footer />
+			{/* <Footer /> */}
+			<FooterV2 />
 
 			<ChatAction />
 			<ScrollRestoration />

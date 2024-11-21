@@ -10,13 +10,14 @@ import useCart from "@/store/cart.store";
 import { AxiosError } from "axios";
 import { getAuth, signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { IoMenu } from "react-icons/io5";
+import { IoMenu, IoSearch } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
+import SearchMobile from "./SearchMobile";
 const MenuMobile = () => {
 	const { isLoggedIn, authUser, setAuthUser, setIsLoggedIn } = useAuth();
-	const { updateTotalCart, setCarts } = useCart();
+	const { clearStateCart } = useCart();
 	const matches = useMediaQuery("(min-width: 768px)");
 	const [isOpen, setClose] = useState(false);
 	useEffect(() => {
@@ -26,14 +27,13 @@ const MenuMobile = () => {
 	}, [matches]);
 	const handleLogout = async () => {
 		try {
-			const data = await logOut();
+			await logOut();
 			delete instance.defaults.headers.common.Authorization;
 			setAuthUser?.(undefined);
 			setIsLoggedIn?.(false);
 			removeItemLocal("token");
 			signOut(getAuth(app));
-			updateTotalCart(0);
-			setCarts([]);
+			clearStateCart();
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				toast.error(error.response?.data?.message);
@@ -71,7 +71,8 @@ const MenuMobile = () => {
 					</div>
 				</SheetHeader>
 				<div className="">
-					<ul className="text-black font-medium flex flex-col items-start justify-center  *:py-4 *:px-1 *:rounded *:cursor-pointer  transition-all *:w-full ">
+         <SearchMobile handleCloseSidebar={()=>setClose(false)}/>
+					<ul className="text-black font-medium flex flex-col gap-1 items-start justify-center  *:py-2.5 *:px-1 *:rounded *:cursor-pointer  transition-all *:w-full ">
 						<li className=" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14]">
 							<NavLink to={"/"} className="block">
 								Trang chủ
@@ -115,6 +116,16 @@ const MenuMobile = () => {
 						>
 							<NavLink to={"/auth/login"} className="block">
 								Đăng nhập
+							</NavLink>
+						</li>
+						<li
+							className={cn(
+								" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14] hidden",
+								isLoggedIn && "block",
+							)}
+						>
+							<NavLink to={"/cart"} className="block">
+								Giỏ hàng
 							</NavLink>
 						</li>
 						<li

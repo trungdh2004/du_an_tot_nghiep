@@ -8,13 +8,13 @@ import {
 	TableCell,
 	TableHead,
 	TableHeader,
-	TableRow
+	TableRow,
 } from "@/components/ui/table";
 import { getNewOrder } from "@/service/dashboard.service";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const statusOrder = [
 	{
@@ -64,6 +64,7 @@ const ListOrderNew = () => {
 			} catch (error) {}
 		},
 	});
+	const router = useNavigate()
 
 	// const table = useReactTable({
 	// 	data: data,
@@ -85,8 +86,8 @@ const ListOrderNew = () => {
 							<TableHead className="w-[100px]">Mã</TableHead>
 							<TableHead className="w-[100px]">Người đặt</TableHead>
 							<TableHead>Tổng tiền</TableHead>
-							<TableHead>Đã thanh toán</TableHead>
 							<TableHead>Thanh toán</TableHead>
+							<TableHead>Phương thức</TableHead>
 							<TableHead>Số sản phẩm</TableHead>
 							<TableHead>Ngày đặt</TableHead>
 							<TableHead className="min-w-[120px]">Trạng thái</TableHead>
@@ -96,20 +97,32 @@ const ListOrderNew = () => {
 						{data &&
 							data?.length > 0 &&
 							data?.map((row: any) => (
-								<TableRow key={row._id}>
+								<TableRow key={row._id} onDoubleClick={() => {
+									console.log("double");
+									router(`/admin/order/${row._id}`)
+								}} className="cursor-pointer">
 									<TableCell className="text-center">
 										<TooltipComponent label="Xem chi tiết">
 											<Link to={`/admin/order/${row._id}`}>
-												<MdOutlineRemoveRedEye size={20} className="text-blue-500"/>
+												<MdOutlineRemoveRedEye
+													size={20}
+													className="text-blue-500"
+												/>
 											</Link>
 										</TooltipComponent>
 									</TableCell>
-									<TableCell className="font-medium">{row.code}</TableCell>
+									<TableCell className="font-medium">
+										<Link to={`/admin/order/${row._id}`}>{row.code}</Link>
+									</TableCell>
 									<TableCell>
 										<TooltipComponent label={row?.user?.full_name}>
 											<Avatar>
 												<AvatarImage
-													src={row?.user?.avatar ? optimizeCloudinaryUrl(row?.user?.avatar,40,40) : "/avatar_25.jpg"}
+													src={
+														row?.user?.avatar
+															? optimizeCloudinaryUrl(row?.user?.avatar, 40, 40)
+															: "/avatar_25.jpg"
+													}
 												/>
 												<AvatarFallback>CN</AvatarFallback>
 											</Avatar>
@@ -155,7 +168,11 @@ const ListOrderNew = () => {
 								</TableRow>
 							))}
 						{!data ||
-							(data.length === 0 && <TableCell>Không có giá trị</TableCell>)}
+							(data.length === 0 && (
+								<TableCell colSpan={9} className="text-center">
+									Không có giá trị
+								</TableCell>
+							))}
 					</TableBody>
 				</Table>
 			</div>

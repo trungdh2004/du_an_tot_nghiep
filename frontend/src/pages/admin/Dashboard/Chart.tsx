@@ -22,8 +22,6 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
 	payload,
 	label,
 }) => {
-	console.log({ active, payload, label });
-
 	if (active && payload && payload.length) {
 		return (
 			<div className="p-2 rounded-sm bg-white box-shadow min-w-[120px]">

@@ -25,17 +25,19 @@ const OrderNeedConfirm = () => {
 	}
 
 	const [orderNeed, setOrderNeed] = useState<any>({});
-	const [searchObjectOrder, setSearchObjectOrder] = useState<SearchObjectOrder>({
-		status: 1,
-		pageIndex: 1,
-		pageSize: 5,
-		sort: 1,
-		method: null,
-		startDate: null,
-		endDate: null,
-		paymentStatus: null,
-		is_shipper: null,
-	});
+	const [searchObjectOrder, setSearchObjectOrder] = useState<SearchObjectOrder>(
+		{
+			status: 1,
+			pageIndex: 1,
+			pageSize: 5,
+			sort: -1,
+			method: null,
+			startDate: null,
+			endDate: null,
+			paymentStatus: null,
+			is_shipper: null,
+		},
+	);
 	useEffect(() => {
 		handleOrderNeed();
 	}, [searchObjectOrder]);

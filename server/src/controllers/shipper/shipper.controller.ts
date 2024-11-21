@@ -1,17 +1,15 @@
-import { IOrderItem } from "./../../interface/order";
 import { Response } from "express";
-import { RequestModel, RequestShipper } from "../../interface/models";
-import STATUS from "../../utils/status";
-import { shipperValidation } from "../../validation/shipper.validation";
-import ShipperModel from "../../models/shipper/Shipper.schema";
-import OrderModel from "../../models/order/Order.schema";
 import { formatDataPaging } from "../../common/pagingData";
-import ProductModel from "../../models/products/Product.schema";
-import OrderItemsModel from "../../models/order/OrderProduct.schema";
-import { socketNotificationOrderClient } from "../../socket/socketNotifycationClient.service";
-import { resolveSoa } from "dns";
-import UserModel from "../../models/User.Schema";
+import { RequestModel, RequestShipper } from "../../interface/models";
 import CustomerModel from "../../models/Customer.schema";
+import OrderModel from "../../models/order/Order.schema";
+import OrderItemsModel from "../../models/order/OrderProduct.schema";
+import ProductModel from "../../models/products/Product.schema";
+import ShipperModel from "../../models/shipper/Shipper.schema";
+import UserModel from "../../models/User.Schema";
+import { socketNotificationOrderClient } from "../../socket/socketNotifycationClient.service";
+import STATUS from "../../utils/status";
+import { IOrderItem } from "./../../interface/order";
 
 class ShipperController {
   async registerShipper(req: RequestModel, res: Response) {
@@ -236,7 +234,6 @@ class ShipperController {
           $in: [2, 3],
         },
       })
-        .populate(["address"])
         .select({
           code: 1,
           address: 1,
@@ -397,7 +394,6 @@ class ShipperController {
           $in: [2, 3],
         },
       }).populate([
-        "address",
         {
           path: "orderItems",
           populate: {
@@ -659,7 +655,6 @@ class ShipperController {
         .sort({ confirmedDate: -1 })
         .skip(skip)
         .limit(limit)
-        .populate("address");
 
       const count = await OrderModel.countDocuments({
         status: status,
@@ -719,7 +714,6 @@ class ShipperController {
         .sort({ confirmedDate: -1 })
         .skip(skip)
         .limit(limit)
-        .populate("address");
 
       const count = await OrderModel.countDocuments({
         status: status,
