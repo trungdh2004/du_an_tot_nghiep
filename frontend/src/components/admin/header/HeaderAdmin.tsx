@@ -17,9 +17,9 @@ const HeaderAdmin = () => {
 				>
 					<IoMenu size={20} strokeWidth={0.5} />
 				</div>
-				<div className="p-1 hover:bg-gray-100 rounded-full cursor-pointer">
+				{/* <div className="p-1 hover:bg-gray-100 rounded-full cursor-pointer">
 					<Search />
-				</div>
+				</div> */}
 			</div>
 
 			<div className="flex items-center gap-2">
