@@ -16,6 +16,7 @@ import { ObjectCheckoutOrder, ResponseData } from "@/types/ObjectCheckoutOrder";
 import { toast } from "sonner";
 import { IOrderMoneyValue } from "@/types/order";
 import ProductOrderV2 from "./orderV2/ProductOrderV2";
+import MoneyOrder from "./MoneyOrder";
 
 const OrderPage = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -129,8 +130,8 @@ const OrderPage = () => {
 				<div className="col-span-12 lg:col-span-8">
 					<ProductOrderV2
 						data={order}
-            handleChangeAddress={handleChangeAddress}
-            isLoading={isLoading}
+						handleChangeAddress={handleChangeAddress}
+						isLoading={isLoading}
 					/>
 				</div>
 				<div className="col-span-12 lg:col-span-4">
@@ -138,12 +139,19 @@ const OrderPage = () => {
 						<h4 className="font-bold text-xl pb-5 lg:pb-7 hidden lg:block   lg:text-left text-center ">
 							Thông tin liên quan
 						</h4>
-						<div className="hidden md:hidden lg:block">
+						{/* <div className="hidden md:hidden lg:block">
 							<AddressOrder
 								data={order}
 								handleChangeAddress={handleChangeAddress}
 							/>
-						</div>
+						</div> */}
+						<MoneyOrder
+							data={order}
+							handleCheckout={handleCheckout}
+							setOrderCheckout={setOrderCheckout}
+							orderCheckout={orderCheckout}
+							moneyVoucher={moneyVoucher}
+						/>
 						<Vorcher
 							data={order}
 							setOrderCheckout={setOrderCheckout}

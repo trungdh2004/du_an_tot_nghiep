@@ -13,7 +13,7 @@ const ProductOrderV2 = ({ data, handleChangeAddress, isLoading }: any) => {
 			<h4 className="font-bold text-xl pb-5 lg:pb-7  lg:text-left text-center ">
 				Đơn hàng của tôi
 			</h4>
-			<div className="block md:block lg:hidden pb-5">
+			<div className="pb-5">
 				<AddressOrder data={data} handleChangeAddress={handleChangeAddress} />
 			</div>
 			<div className="flex-col hidden gap-3 py-2 mb-5 bg-white border border-gray-200 rounded-none lg:flex lg:rounded-md md:rounded-md box-shadow">

@@ -94,8 +94,8 @@ const PaymentMethod = ({
 						</Label>
 					</div>
 				</div>
-				<hr />
-				<div className="py-4 lg:pr-4 md:pr-4 px-4">
+				{/* <hr /> */}
+				<div className="block lg:hidden py-4 lg:pr-4 md:pr-4 px-4">
 					<div className="flex flex-col gap-3">
 						<div className="flex items-center gap-2">
 							<MdOutlineEventNote size={20} />
@@ -154,12 +154,12 @@ const PaymentMethod = ({
 					</div>
 				</div>
 				<hr />
-				<div className="lg:flex md:flex hidden justify-between py-2 mx-4">
-					<p>
+				<div className="lg:block md:block hidden justify-between py-2 mx-4 ">
+					<p className="pb-4">
 						Nhấn "Đặt hàng" đồng nghĩa với việc bạn đồng ý tuân theo Điều khoản
 						NUCSHOP
 					</p>
-					<Button className="px-9" onClick={() => handleCheckout()}>
+					<Button className="px-9 w-full py-1" onClick={() => handleCheckout()}>
 						Đặt hàng
 					</Button>
 				</div>

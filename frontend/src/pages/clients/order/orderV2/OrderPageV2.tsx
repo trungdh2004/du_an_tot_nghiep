@@ -122,11 +122,12 @@ const OrderPageV2 = () => {
 				<ProductOrderV2
 					data={order}
 					handleChangeAddress={handleChangeAddress}
+					// isLoading={isLoading}
 				/>
 			</div>
 			<div className="col-span-12 lg:col-span-4">
 				<div className="w-full">
-					<h4 className="font-bold text-xl pb-5 lg:pb-7  lg:text-left text-center ">
+					<h4 className="font-bold text-xl pb-5 lg:pb-7 hidden lg:block   lg:text-left text-center ">
 						Thông tin liên quan
 					</h4>
 					<div className="hidden md:hidden lg:block">

@@ -71,7 +71,7 @@ const Vorcher = ({
 	}, [data]);
 	return (
 		<div className="py-2">
-			<div className="flex flex-col bg-white lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow">
+			<div className="flex flex-col bg-white lg:rounded-md md:rounded-md rounded-none border border-gray-200">
 				<div className="flex lg:flex-row gap-6 items-center justify-between py-2">
 					<div className="col-span-3">
 						<div className="flex pl-4 gap-3 items-center">
