@@ -28,11 +28,10 @@ const Dashboard = () => {
 				</div>
 				<div className="col-span-12 md:col-span-4 bg-white box-shadow  rounded-xl">
 					{/* <OrderToDayDashBoard /> */}
-					<ComponentChartType />
-
+					<CategoryDashboard />
 				</div>
 				<div className="col-span-12 md:col-span-4 bg-white box-shadow rounded-xl">
-					<CategoryDashboard />
+					<ComponentChartType />
 				</div>
 				<div className="col-span-12 md:col-span-8 ">
 					<BlogNewPublic />
