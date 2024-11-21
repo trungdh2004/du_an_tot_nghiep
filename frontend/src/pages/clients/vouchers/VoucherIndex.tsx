@@ -4,15 +4,14 @@ import { getPaginatedVouchersClient } from "@/service/voucher";
 import { SearchObjectType } from "@/types/searchObjecTypes";
 import { typeResponse } from "@/types/typeReponse";
 import { IVoucher } from "@/types/voucher";
-import { useIsFetching } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const VoucherIndex = () => {
 	const [vouchers, setVouchers] = useState<IVoucher[]>([]);
 
 	const [searchObject, setSearchObject] = useState<SearchObjectType>({
 		pageIndex: 1,
-		pageSize: 1,
+		pageSize: 9,
 		keyword: "",
 		fieldSort: "",
 		sort: 1,
@@ -34,7 +33,6 @@ const VoucherIndex = () => {
 				totalElement: data.totalAllOptions,
 				totalOptionPage: data.totalOptionPage,
 			});
-			console.log("data", data);
 		} catch (error) {
 			console.log(error);
 		}
@@ -43,7 +41,6 @@ const VoucherIndex = () => {
 		handleVouchers();
 	}, [searchObject]);
 	const handleChangePag = async (value: any) => {
-		console.log("value", value);
 		try {
 			setSearchObject((prev) => ({
 				...prev,
