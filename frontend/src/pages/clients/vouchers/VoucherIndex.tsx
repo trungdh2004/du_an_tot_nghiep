@@ -53,7 +53,10 @@ const VoucherIndex = () => {
 	return (
 		<div>
 			<div className="padding">
-				<div className="py-10">
+				<div className="pt-6">
+					<h3 className="text-xl font-semibold">Danh sách voucher của cửa hàng</h3>
+				</div>
+				<div className="pt-5 pb-10">
 					<div className=" grid md:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-2  ">
 						{vouchers?.map((voucher) => (
 							<div className="" key={voucher?._id}>
