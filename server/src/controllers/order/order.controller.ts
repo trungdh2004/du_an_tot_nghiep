@@ -1473,6 +1473,9 @@ class OrderController {
         const check = await OrderModel.findOne({
           voucher: existingVoucher._id,
           user: user?.id,
+          status: {
+            $ne: 0,
+          },
         });
 
         if (check) {
