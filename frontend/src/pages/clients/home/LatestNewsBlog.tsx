@@ -15,7 +15,7 @@ import { MdOutlineNavigateNext } from "react-icons/md";
 import { useMediaQuery } from "usehooks-ts";
 
 const LatestNewsBlog = () => {
-  const matches = useMediaQuery('(max-width: 1024px)')
+	const matches = useMediaQuery("(max-width: 1024px)");
 	const { data: newBlogs } = useQuery({
 		queryKey: ["listBlogHome"],
 		queryFn: async () => {
@@ -46,14 +46,12 @@ const LatestNewsBlog = () => {
 						<Swiper
 							modules={[Navigation]}
 							loop={true}
-              spaceBetween={16}
+							spaceBetween={16}
 							breakpoints={{
-
 								320: {
 									slidesPerView: 1,
 								},
 								768: {
-                  
 									slidesPerView: 2,
 								},
 
@@ -128,12 +126,15 @@ const LatestNewsBlog = () => {
 						</Swiper>
 						{matches && (
 							<>
-								<div className="absolute z-10 flex items-center justify-center transform -translate-y-1/2 cursor-pointer rounded-full bg-gray-200/35 hover:bg-gray-100 size-14 min-w-[48px] min-h-[48px] max-w-[48px] max-h-[48px] top-1/2 lg:left-2 left-2 custom-prev">
-									<GrFormPrevious size={28} color="#000" />
+								<div className="absolute z-10 flex items-center justify-center transform -translate-y-1/2 rounded-full cursor-pointer bg-gray-200/35 hover:bg-gray-100 size-8 md:size-14 top-1/2 lg:left-2 left-2 custom-prev">
+									<GrFormPrevious className="size-5 md:size-7" color="#000" />
 								</div>
 
-								<div className="absolute z-10 flex items-center justify-center transform -translate-y-1/2 cursor-pointer rounded-full bg-gray-200/35 hover:bg-gray-100 size-14 min-w-[48px] min-h-[48px] max-w-[48px] max-h-[48px] top-1/2 lg:right-2 right-2 custom-next">
-									<MdOutlineNavigateNext size={28} color="#000" />
+								<div className="absolute z-10 flex items-center justify-center transform -translate-y-1/2 rounded-full cursor-pointer bg-gray-200/35 hover:bg-gray-100 size-8 md:size-14 top-1/2 lg:right-2 right-2 custom-next">
+									<MdOutlineNavigateNext
+										className="size-5 md:size-7"
+										color="#000"
+									/>
 								</div>
 							</>
 						)}
@@ -146,7 +147,10 @@ const LatestNewsBlog = () => {
 			</div>
 
 			<div className="text-center">
-				<Link to={"/blogs"} className="inline-flex items-center justify-center gap-2 group">
+				<Link
+					to={"/blogs"}
+					className="inline-flex items-center justify-center gap-2 group"
+				>
 					<span className="font-medium text-gray-500">Xem thêm</span>
 					<span className="duration-200 group-hover:translate-x-4">
 						<FaAnglesRight size={16} className="text-gray-300" />

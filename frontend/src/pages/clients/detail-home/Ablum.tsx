@@ -105,12 +105,12 @@ const Album: React.FC<AlbumProps> = ({ images = [], isLoading }) => {
 					)}
 
 					{/* Custom Navigation Buttons */}
-					<div className="absolute z-10 flex items-center justify-center transform -translate-y-1/2 cursor-pointer rounded-full bg-gray-200/35 hover:bg-gray-100 size-14 min-w-[48px] min-h-[48px] max-w-[48px] max-h-[48px] top-1/2 lg:left-2 left-2 custom-prev">
-						<GrFormPrevious size={28} color="#000" />
+					<div className="absolute z-10 flex items-center justify-center transform -translate-y-1/2 rounded-full cursor-pointer bg-gray-200/35 hover:bg-gray-100 size-8 md:size-14 top-1/2 lg:left-2 left-2 custom-prev">
+						<GrFormPrevious className="size-5 md:size-7"  color="#000" />
 					</div>
 
-					<div className="absolute z-10 flex items-center justify-center transform -translate-y-1/2 cursor-pointer rounded-full bg-gray-200/35 hover:bg-gray-100 size-14 min-w-[48px] min-h-[48px] max-w-[48px] max-h-[48px] top-1/2 lg:right-2 right-2 custom-next">
-						<MdOutlineNavigateNext size={28} color="#000" />
+					<div className="absolute z-10 flex items-center justify-center transform -translate-y-1/2 rounded-full cursor-pointer bg-gray-200/35 hover:bg-gray-100 size-8 md:size-14 top-1/2 lg:right-2 right-2 custom-next">
+						<MdOutlineNavigateNext className="size-5 md:size-7"  color="#000" />
 					</div>
 				</div>
 			</div>

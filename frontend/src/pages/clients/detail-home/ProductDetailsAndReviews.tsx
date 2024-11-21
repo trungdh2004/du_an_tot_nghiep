@@ -43,7 +43,7 @@ const ProductDetailsAndReviews = ({ product, isLoading }: Props) => {
 	}, [product?._id, searchRating?.pageIndex, searchRating?.rating]);
 	return (
 		<div>
-			<ul className="flex items-center justify-center text-xl font-medium py-3 *:cursor-pointer *:px-5 [&>li+li]:border-l [&>li]:border-gray-200 last:border-none">
+			<ul className="flex items-center justify-center text-base md:text-xl font-medium py-3 *:cursor-pointer *:px-5 [&>li+li]:border-l [&>li]:border-gray-200 last:border-none">
 				{steps?.map((item, index) => (
 					<li
 						key={index + new Date().toISOString()}

@@ -72,7 +72,7 @@ const MenuMobile = () => {
 				</SheetHeader>
 				<div className="">
          <SearchMobile handleCloseSidebar={()=>setClose(false)}/>
-					<ul className="text-black font-medium flex flex-col gap-1 items-start justify-center  *:py-2.5 *:px-1 *:rounded *:cursor-pointer  transition-all *:w-full ">
+					<ul className="text-black font-medium mt-3 flex flex-col gap-1 items-start justify-center  *:py-2.5 *:px-1 *:rounded *:cursor-pointer  transition-all *:w-full ">
 						<li className=" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14]">
 							<NavLink to={"/"} className="block">
 								Trang chủ

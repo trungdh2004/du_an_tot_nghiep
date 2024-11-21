@@ -29,9 +29,9 @@ const Coupon = ({ voucher, className }: Props) => {
       <div className={styles.voucherItemInfo}>
         <div className={styles.voucherItemDetail}>
           <div className={styles.voucherItemTitle}>{voucher?.name}</div>
-          <div className={styles.voucherItemDes}>{voucher?.description}</div>
+          <div className={cn(styles.voucherItemDes)}>{voucher?.description}</div>
           <div className={styles.voucherItemDate}>
-            <span className={styles.date}>
+            <span className={"max-sm:text-xs"}>
               HSD: {new Date(voucher?.endDate)?.toLocaleDateString()}
             </span>
             <div className={styles.voucherItemCondition}>
