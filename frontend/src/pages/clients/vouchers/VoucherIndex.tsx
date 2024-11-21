@@ -27,7 +27,7 @@ const VoucherIndex = () => {
 	const handleVouchers = async () => {
 		try {
 			const { data } = await getPaginatedVouchersClient(searchObject);
-			setVouchers(data.content);
+			setVouchers(data?.content);
 			setResponse({
 				pageCount: data.totalPage,
 				totalElement: data.totalAllOptions,
@@ -54,19 +54,28 @@ const VoucherIndex = () => {
 		<div>
 			<div className="padding">
 				<div className="py-10">
-					<div className=" grid md:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-2  ">
-						{vouchers?.map((voucher) => (
-							<div className="" key={voucher?._id}>
-								<Coupon voucher={voucher} className="w-full" />
-							</div>
-						))}
-					</div>
+					{vouchers.length > 0 ? (
+						<div className=" grid md:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-2  ">
+							{vouchers?.map((voucher) => (
+								<div className="" key={voucher?._id}>
+									<Coupon voucher={voucher} className="w-full" />
+								</div>
+							))}
+						</div>
+					) : (
+						<div className="text-center py-[70px] flex flex-col justify-between items-center ">
+							<img src="/no-product.png" width={70} alt="" />
+							<h2 className="">Không tìm thấy voucher nào</h2>
+						</div>
+					)}
 					<div className="flex justify-center pt-8">
-						<Paginations
-							forcePage={searchObject.pageIndex - 1}
-							pageCount={response.pageCount}
-							handlePageClick={handleChangePag}
-						/>
+						{vouchers.length > 0 && (
+							<Paginations
+								forcePage={searchObject.pageIndex - 1}
+								pageCount={response.pageCount}
+								handlePageClick={handleChangePag}
+							/>
+						)}
 					</div>
 				</div>
 			</div>
