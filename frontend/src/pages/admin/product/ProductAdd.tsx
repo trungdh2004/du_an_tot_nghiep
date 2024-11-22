@@ -521,12 +521,40 @@ const ProductAddPage = () => {
 											<FormItem>
 												<FormLabel>Ảnh sản phẩm</FormLabel>
 												<FormControl>
-													<div className="w-full ">
+													<div className="w-full bg-white border rounded-sm">
 														<label
 															htmlFor="file-upload"
 															className={cn("w-full relative ")}
+															onDragOver={(e) => {
+																e.preventDefault();
+															}}
+															onDrop={(event) => {
+																const items = event.dataTransfer.items; // Lấy danh sách items được kéo thả
+
+																for (const item of items) {
+																	if (
+																		item.kind === "file" &&
+																		item.type.startsWith("image/")
+																	) {
+																		const file = item.getAsFile(); // Lấy file ảnh
+
+																		if (file) {
+																			field.onChange(async () => {
+																				setPreviewUrl({
+																					url: URL.createObjectURL(file),
+																					isLoading: true,
+																				});
+																				form.clearErrors("thumbnail");
+																				const url =
+																					await handleUploadFile(file);
+																				field.onChange(url);
+																			});
+																		}
+																	}
+																}
+															}}
 														>
-															<div className="relative w-full bg-white border rounded-sm">
+															<div className="relative w-full bg-white  ">
 																<div
 																	className={cn(
 																		"w-full h-[160px] flex justify-center items-center flex-col",
@@ -571,6 +599,36 @@ const ProductAddPage = () => {
 																)}
 															</div>
 														</label>
+
+														<div className="px-2 mb-2 h-6 flex justify-center">
+															<div
+																className="w-40 text-center text-sm bg-blue-100 rounded-sm text-blue-500 cursor-pointer hover:bg-blue-200"
+																onPaste={(event) => {
+																	console.log("paste dc nè");
+																	const items = event.clipboardData.items;
+																	for (const item of items) {
+																		if (item.type.startsWith("image/")) {
+																			const file = item.getAsFile();
+																			if (file) {
+																				field.onChange(async () => {
+																					setPreviewUrl({
+																						url: URL.createObjectURL(file),
+																						isLoading: true,
+																					});
+																					form.clearErrors("thumbnail");
+																					const url =
+																						await handleUploadFile(file);
+																					field.onChange(url);
+																				});
+																			}
+																		}
+																	}
+																}}
+															>
+																Click to paste image
+															</div>
+														</div>
+
 														<input
 															type="file"
 															name=""
@@ -613,7 +671,7 @@ const ProductAddPage = () => {
 											<FormItem>
 												<FormLabel>Ảnh khác</FormLabel>
 												<FormControl>
-													<div className="w-full ">
+													<div className="w-full bg-white rounded-sm border">
 														<ImageUploading
 															multiple
 															value={images}
@@ -641,54 +699,96 @@ const ProductAddPage = () => {
 																dragProps,
 															}) => {
 																return (
-																	// Khu vực kéo và thả hoặc nhấp để tải ảnh
-																	<div
-																		className={cn(
-																			"w-full relative h-[160px] rounded-sm border grid grid-cols-4 grid-rows-2 gap-1 p-1 bg-white",
-																		)}
-																	>
-																		{imageList?.map(
-																			(image: any, index: number) => {
-																				return (
-																					<div className="col-span-1 row-span-1">
-																						<div
-																							// key={index}
-																							className="relative flex items-center justify-center w-full h-full border rounded "
-																						>
-																							<img
-																								src={image?.url}
-																								alt=""
-																								onClick={() =>
-																									onImageUpdate(index)
-																								}
-																								className="cursor-pointer h-[90%] object-cover 	"
-																							/>
-																							<AiFillCloseCircle
-																								className="absolute right-0 cursor-pointer top-2 right"
-																								size={20}
-																								onClick={() =>
-																									onImageRemove(index)
-																								}
-																							/>
-																						</div>
-																					</div>
-																				);
-																			},
-																		)}
-																		<button
-																			type="button"
-																			onClick={onImageUpload}
-																			{...dragProps}
+																	<div>
+																		<div
 																			className={cn(
-																				"col-span-1 row-span-1 relative w-full h-full border rounded flex justify-center items-center",
-																				images.length === maxNumber && "hidden",
+																				"w-full relative h-[160px]   grid grid-cols-4 grid-rows-2 gap-1 p-1 ",
 																			)}
 																		>
-																			<AiOutlineCloudUpload
-																				size={50}
-																				strokeWidth={1}
-																			/>
-																		</button>
+																			{imageList?.map(
+																				(image: any, index: number) => {
+																					return (
+																						<div className="col-span-1 row-span-1" key={index}>
+																							<div
+																								// key={index}
+																								className="relative flex items-center justify-center w-full h-full border rounded "
+																							>
+																								<img
+																									src={image?.url}
+																									alt=""
+																									onClick={() =>
+																										onImageUpdate(index)
+																									}
+																									className="cursor-pointer h-[90%] object-cover 	"
+																								/>
+																								<AiFillCloseCircle
+																									className="absolute right-0 cursor-pointer top-2 right"
+																									size={20}
+																									onClick={() =>
+																										onImageRemove(index)
+																									}
+																								/>
+																							</div>
+																						</div>
+																					);
+																				},
+																			)}
+																			<button
+																				type="button"
+																				onClick={onImageUpload}
+																				{...dragProps}
+																				className={cn(
+																					"col-span-1 row-span-1 relative w-full h-full border rounded flex justify-center items-center",
+																					images.length === maxNumber &&
+																						"hidden",
+																				)}
+																			>
+																				<AiOutlineCloudUpload
+																					size={50}
+																					strokeWidth={1}
+																				/>
+																			</button>
+																		</div>
+																		<div className="px-2 mb-2 h-6 flex justify-center">
+																			<div
+																				className="w-40 text-center text-sm bg-blue-100 rounded-sm text-blue-500 cursor-pointer hover:bg-blue-200"
+																				onPaste={(event) => {
+																					const items =
+																						event.clipboardData.items;
+																					for (const item of items) {
+																						if (
+																							item.type.startsWith("image/")
+																						) {
+																							const file = item.getAsFile();
+																							if (file) {
+																								const url = URL.createObjectURL(
+																									file,
+																								);
+
+																								const list = [
+																									...imageList,
+																									{
+																										url,
+																										file,
+																									},
+																								];
+
+																								console.log("list",list);
+																								
+
+																								setImages(list);
+																								field.onChange(list);
+																								if (list.length > 0) {
+																									form.clearErrors("images");
+																								}
+																							}
+																						}
+																					}
+																				}}
+																			>
+																				Click to paste image
+																			</div>
+																		</div>
 																	</div>
 																);
 															}}
