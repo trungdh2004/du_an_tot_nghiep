@@ -240,6 +240,11 @@ export type ProductFormValues = Omit<FormSchemaType, "attributes"> & {
 	attributes: AttributeType[];
 };
 
+type ICate = {
+	_id: string;
+	name: string;
+};
+
 const ProductUpdate = () => {
 	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
 		useProcessBarLoadingEventNone();
@@ -478,9 +483,9 @@ const ProductUpdate = () => {
 											<FormItem>
 												<FormLabel>Danh mục</FormLabel>
 												<FormControl>
-													<SelectComponent<ICategory>
+													<SelectComponent<ICate>
 														value={field.value}
-														onChange={(newValue: ICategory, action) => {
+														onChange={(newValue: ICate, action) => {
 															field.onChange(newValue);
 															form.clearErrors(`category`);
 														}}
