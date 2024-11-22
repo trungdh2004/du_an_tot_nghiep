@@ -56,7 +56,7 @@ const sidebarConfig: any[] = [
 				path: "/client",
 				icon: AiOutlineUsergroupAdd,
 				isVisible: true,
-				label: "Khác hàng",
+				label: "Khách hàng",
 			},
 			{
 				path: "/staff",

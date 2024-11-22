@@ -198,6 +198,9 @@ class OrderController {
           const check = await OrderModel.findOne({
             voucher: existingVoucher._id,
             user: user?.id,
+            status: {
+              $ne: 0,
+            },
           });
 
           if (!check) {
@@ -542,6 +545,9 @@ class OrderController {
         const check = await OrderModel.findOne({
           voucher: existingVoucher._id,
           user: user?.id,
+          status: {
+            $ne: 0,
+          },
         });
 
         if (check) {
@@ -702,6 +708,9 @@ class OrderController {
           const check = await OrderModel.findOne({
             voucher: existingVoucher._id,
             user: user.id,
+            status: {
+              $ne: 0,
+            },
           });
 
           if (!check) {
@@ -1142,6 +1151,9 @@ class OrderController {
           const check = await OrderModel.findOne({
             voucher: existingVoucher._id,
             user: user.id,
+            status: {
+              $ne: 0,
+            },
           });
           if (!check) {
             const data = checkVoucher(existingVoucher);
@@ -1271,6 +1283,9 @@ class OrderController {
           const check = await OrderModel.findOne({
             voucher: existingVoucher._id,
             user: user?.id,
+            status: {
+              $ne: 0,
+            },
           });
           if (!check) {
             const data = checkVoucher(existingVoucher);
@@ -1458,6 +1473,9 @@ class OrderController {
         const check = await OrderModel.findOne({
           voucher: existingVoucher._id,
           user: user?.id,
+          status: {
+            $ne: 0,
+          },
         });
 
         if (check) {
@@ -2046,13 +2064,13 @@ class OrderController {
 
       const existingOrder = await OrderModel.findById(id).populate([
         {
-          path:"user",
-          select:{
-            _id:1,
-            email:1,
-            full_name:1,
-            avatarUrl:1
-          }
+          path: "user",
+          select: {
+            _id: 1,
+            email: 1,
+            full_name: 1,
+            avatarUrl: 1,
+          },
         },
         "shipper",
         "payment",

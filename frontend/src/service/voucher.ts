@@ -16,6 +16,12 @@ export const getPaginatedVouchers = async (
 ) => {
 	return instance.post(`${url}/paging`, SearchObjectType);
 };
+export const getPaginatedVouchersClient = async (
+	SearchObjectType: SearchObjectType,
+) => {
+	return instance.post(`${url}/paging`, SearchObjectType);
+};
+
 export const updateVoucherById = async (payload?: IVoucher) => {
 	const voucherId = payload?._id;
 	delete (payload as any)._id;
@@ -34,9 +40,9 @@ export const deActiveVoucherById = async (id: string) => {
 export const generateCodeAuto = async () => {
 	return instance.get(`${url}/generateCodeAuto`);
 };
-export const updateViewHomeVoucherById =  (id: string,isHome:boolean) => {
-	return instance.put(`${url}/updatePublicHome/${id}`,{isHome});
+export const updateViewHomeVoucherById = (id: string, isHome: boolean) => {
+	return instance.put(`${url}/updatePublicHome/${id}`, { isHome });
 };
-export const getVoucherViewHome = (limit=3) => {
+export const getVoucherViewHome = (limit = 3) => {
 	return instance.get(`${url}/listVoucherHome?limit=${limit}`);
 };
