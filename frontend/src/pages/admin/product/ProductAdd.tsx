@@ -1,12 +1,9 @@
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { z } from "zod";
+import { array, z } from "zod";
 
-import FroalaEditor from "@/components/common/Froala";
-import SelectComponent from "@/components/common/SelectComponent";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
 	Form,
 	FormControl,
@@ -16,30 +13,41 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import instance from "@/config/instance";
+import {
+	AiOutlineCloudUpload,
+	AiOutlineLoading3Quarters,
+	AiFillCloseCircle,
+} from "react-icons/ai";
 import { cn } from "@/lib/utils";
-import { getAllCategory } from "@/service/category-admin";
-import { addProduct } from "@/service/product";
-import { getAllSize } from "@/service/size-admin";
 import { uploadFileService, uploadMultipleFileService } from "@/service/upload";
 import {
 	useProcessBarLoading,
 	useProcessBarLoadingEventNone,
 } from "@/store/useSidebarAdmin";
-import { ICategory } from "@/types/category";
-import { IColor, IProduct } from "@/types/typeProduct";
-import { ISize } from "@/types/variants";
-import { useMutation } from "@tanstack/react-query";
-import {
-	AiFillCloseCircle,
-	AiOutlineCloudUpload,
-	AiOutlineLoading3Quarters,
-} from "react-icons/ai";
-import { CiCirclePlus } from "react-icons/ci";
-import { MdDeleteForever } from "react-icons/md";
 import ImageUploading, { ImageListType } from "react-images-uploading";
-import { useNavigate } from "react-router-dom";
+import { CiCirclePlus } from "react-icons/ci";
+import { getAllCategory } from "@/service/category-admin";
+import { getAllSize } from "@/service/size-admin";
+import instance from "@/config/instance";
+import { IColor, IItemListColor, IProduct } from "@/types/typeProduct";
+import { MdDeleteForever } from "react-icons/md";
+import FroalaEditor from "@/components/common/Froala";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { addProduct } from "@/service/product";
+import { useNavigate } from "react-router-dom";
+import SelectComponent from "@/components/common/SelectComponent";
+import { ISize } from "@/types/variants";
+import { ICategory } from "@/types/category";
+import { Checkbox } from "@/components/ui/checkbox";
+import InputNumberFormat from "@/components/common/InputNumberFormat";
+import { IoEyeOutline } from "react-icons/io5";
+import { FaStar } from "react-icons/fa";
+import { formatCurrency } from "@/common/func";
+import {
+	ListColorComponent,
+	ListSizeComponent,
+} from "@/components/common/Product";
 
 const formSchema = z
 	.object({
@@ -226,6 +234,11 @@ type AttributeType = {
 	discount: number;
 };
 
+type ICate = {
+	_id: string;
+	name: string;
+};
+
 // Mở rộng kiểu FormSchemaType để đảm bảo attributes là một mảng
 export type ProductFormValues = Omit<FormSchemaType, "attributes"> & {
 	attributes: AttributeType[];
@@ -236,7 +249,7 @@ const ProductAddPage = () => {
 	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
 		useProcessBarLoadingEventNone();
 	const form = useForm<ProductFormValues>({
-		resolver: zodResolver(formSchema),
+		// resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: "",
 			category: null,
@@ -372,6 +385,24 @@ const ProductAddPage = () => {
 			}, [])
 		: [];
 
+	const listSize = form.watch("attributes")
+		? form.watch("attributes")?.reduce((acc: ISize[], item) => {
+				if (!item?.size?._id) return acc;
+				let group = acc.find((g) => g._id === (item.color as ISize)?._id);
+
+				// Nếu nhóm không tồn tại, tạo nhóm mới
+				if (!group) {
+					group = {
+						_id: (item.size as ISize)._id as string,
+						name: (item.size as ISize).name as string,
+					};
+					acc.push(group);
+					return acc;
+				}
+				return acc;
+			}, [])
+		: [];
+
 	return (
 		<div>
 			<h4 className="text-xl font-medium">Thêm mới sản phẩm</h4>
@@ -408,46 +439,18 @@ const ProductAddPage = () => {
 									<FormField
 										disabled={isPending}
 										control={form.control}
-										name="price"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Giá sản phẩm</FormLabel>
-												<FormControl>
-													<Input
-														placeholder="Giá sản phẩm"
-														{...field}
-														onChange={(event) => {
-															const numericValue = event.target.value.replace(
-																/[^0-9]/g,
-																"",
-															);
-															return field.onChange(numericValue);
-														}}
-													/>
-												</FormControl>
-
-												<FormMessage className="text-xs" />
-											</FormItem>
-										)}
-									/>
-								</div>
-								{/* category */}
-								<div className="col-span-2 sm:col-span-1">
-									<FormField
-										disabled={isPending}
-										control={form.control}
 										name="category"
 										render={({ field }) => (
 											<FormItem>
 												<FormLabel>Danh mục</FormLabel>
 												<FormControl>
-													<SelectComponent<ICategory>
+													<SelectComponent<ICate>
 														value={field.value}
-														onChange={(newValue: ICategory, action) => {
+														onChange={(newValue: ICate, action) => {
 															field.onChange(newValue);
 															form.clearErrors(`category`);
 														}}
-														placeholder="Kích thước"
+														placeholder="Danh mục"
 														options={category}
 														getOptionLabel={(option) => option.name}
 														getOptionValue={(option) => option?._id as string}
@@ -462,21 +465,44 @@ const ProductAddPage = () => {
 									<FormField
 										disabled={isPending}
 										control={form.control}
+										name="price"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Giá sản phẩm</FormLabel>
+												<FormControl>
+													<InputNumberFormat
+														value={field.value}
+														onChange={(value) => {
+															field.onChange(value.floatValue);
+														}}
+														suffix="đ"
+														placeholder="Giá sản phẩm"
+													/>
+												</FormControl>
+
+												<FormMessage className="text-xs" />
+											</FormItem>
+										)}
+									/>
+								</div>
+								{/* category */}
+
+								<div className="col-span-2 sm:col-span-1">
+									<FormField
+										disabled={isPending}
+										control={form.control}
 										name="discount"
 										render={({ field }) => (
 											<FormItem>
 												<FormLabel>Giảm giá</FormLabel>
 												<FormControl>
-													<Input
-														placeholder="Giá sản phẩm"
-														{...field}
-														onChange={(event) => {
-															const numericValue = event.target.value.replace(
-																/[^0-9]/g,
-																"",
-															);
-															return field.onChange(numericValue);
+													<InputNumberFormat
+														value={field.value}
+														onChange={(value) => {
+															field.onChange(value.floatValue);
 														}}
+														suffix="đ"
+														placeholder="Giá giảm"
 													/>
 												</FormControl>
 
@@ -747,11 +773,19 @@ const ProductAddPage = () => {
 												<FormItem>
 													<FormLabel>Số lượng</FormLabel>
 													<FormControl>
-														<Input
+														{/* <Input
 															placeholder="Số lượng"
 															{...field}
 															type="number"
 															onChange={(e) => field.onChange(+e.target.value)}
+														/> */}
+														<InputNumberFormat
+															value={field.value}
+															onChange={(value) => {
+																field.onChange(value.floatValue);
+															}}
+															suffix=""
+															placeholder="Số lượng"
 														/>
 													</FormControl>
 
@@ -858,38 +892,13 @@ const ProductAddPage = () => {
 																<FormItem className="flex flex-col w-full">
 																	<FormLabel>Giá</FormLabel>
 																	<FormControl>
-																		<Input
-																			placeholder="Giá"
-																			type="number"
-																			{...field}
-																			className=""
-																			onChange={(event) =>
-																				field.onChange(+event.target.value)
-																			}
-																			min={0}
-																		/>
-																	</FormControl>
-																	<FormMessage className="text-xs" />
-																</FormItem>
-															)}
-														/>
-														<FormField
-															disabled={isPending}
-															name={`attributes.${index}.quantity`}
-															control={control}
-															render={({ field }) => (
-																<FormItem className="flex flex-col w-full">
-																	<FormLabel>Số lượng</FormLabel>
-																	<FormControl>
-																		<Input
-																			placeholder="Số lượng"
-																			type="number"
-																			{...field}
-																			className=""
-																			onChange={(event) =>
-																				field.onChange(+event.target.value)
-																			}
-																			min={0}
+																		<InputNumberFormat
+																			value={field.value}
+																			onChange={(value) => {
+																				field.onChange(value.floatValue);
+																			}}
+																			suffix="đ"
+																			placeholder=""
 																		/>
 																	</FormControl>
 																	<FormMessage className="text-xs" />
@@ -904,21 +913,41 @@ const ProductAddPage = () => {
 																<FormItem className="flex flex-col w-full">
 																	<FormLabel>Giảm giá</FormLabel>
 																	<FormControl>
-																		<Input
-																			placeholder="Giảm giá"
-																			type="number"
-																			{...field}
-																			className=""
-																			onChange={(event) =>
-																				field.onChange(+event.target.value)
-																			}
-																			min={0}
+																		<InputNumberFormat
+																			value={field.value}
+																			onChange={(value) => {
+																				field.onChange(value.floatValue);
+																			}}
+																			suffix="đ"
+																			placeholder=""
 																		/>
 																	</FormControl>
 																	<FormMessage className="text-xs" />
 																</FormItem>
 															)}
 														/>
+														<FormField
+															disabled={isPending}
+															name={`attributes.${index}.quantity`}
+															control={control}
+															render={({ field }) => (
+																<FormItem className="flex flex-col w-full">
+																	<FormLabel>Số lượng</FormLabel>
+																	<FormControl>
+																		<InputNumberFormat
+																			value={field.value}
+																			onChange={(value) => {
+																				field.onChange(value.floatValue);
+																			}}
+																			suffix=""
+																			placeholder=""
+																		/>
+																	</FormControl>
+																	<FormMessage className="text-xs" />
+																</FormItem>
+															)}
+														/>
+
 														<div className="flex items-center justify-center w-full">
 															<button
 																type="button"
@@ -996,7 +1025,7 @@ const ProductAddPage = () => {
 					</form>
 				</Form>
 				<div className="hidden p-4 lg:block lg:col-span-3 ">
-					<div className="w-full border rounded relative">
+					{/* <div className="w-full border rounded relative">
 						{form.watch("is_hot") && (
 							<div className="absolute py-[2px] font-semibold text-white rounded-r-md pr-2 pl-1 left-0 top-2 bg-red-500">
 								HOT
@@ -1028,6 +1057,100 @@ const ProductAddPage = () => {
 									{form.watch("price") || 0} đ
 								</span>
 								<span className="text-xs">Đã bán : 0</span>
+							</div>
+						</div>
+					</div> */}
+
+					<div className="relative flex flex-col overflow-hidden transition-all duration-300 bg-white border border-gray-200 rounded-xl group hover:shadow-lg">
+						<div className="relative overflow-hidden border bg-[#fff] flex justify-center items-center max-w-full min-w-full box-shadow">
+							<div className="relative inline-block w-full group aspect-square">
+								<div className="transition duration-500 transform bg-white ">
+									<img
+										className="object-cover w-full h-full aspect-square"
+										src={
+											form.watch("thumbnail") ||
+											"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTixbrVNY9XIHQBZ1iehMIV0Z9AtHB9dp46lg&s"
+										}
+										alt="Image 1"
+									/>
+								</div>
+								{/* <div className="absolute top-0 left-0 transition duration-500 bg-white opacity-0 group-hover:opacity-100">
+									<img
+										className="object-cover w-full h-full aspect-square"
+										src={optimizeCloudinaryUrl(
+											product?.images[0]?.url || "",
+											350,
+											370,
+										)}
+										alt="Image 2"
+									/>
+								</div> */}
+
+								{/* {product?.quantity <= 0 && (
+									<div className="absolute top-0 left-0 w-full h-full flex items-center justify-center transition duration-500 bg-[#f0dddd] bg-opacity-0 opacity-0 group-hover:opacity-100 group-hover:bg-opacity-50">
+										<img
+											src={optimizeCloudinaryUrl(OutOfStock)}
+											alt=""
+											className="lg:w-[140px] lg:h-[140px] md:w-[110px] md:h-[110px] w-[80px] h-[80px] aspect-square"
+										/>
+									</div>
+								)} */}
+							</div>
+							<div className="absolute flex items-center justify-center w-full transition-all duration-300 ease-in-out rounded -bottom-10 group-hover:bottom-8">
+								<div className="flex justify-center gap-1 items-center lg:w-[200px] w-[150px] lg:text-base text-sm lg:py-2 py-1 bg-opacity-30 border text-white bg-[#232323] text-center leading-[40px] border-none transition-transform hover:scale-90 hover:bg-[#f5f5f5] hover:text-[#262626] duration-300">
+									<IoEyeOutline />
+									<p className="text-xs lg:text-sm">Xem chi tiết</p>
+								</div>
+							</div>
+							{form.watch("is_hot") && (
+								<div className="absolute left-3 top-5 text-center rounded-full w-[35px] h-[35px]  p-1 bg-[#f54040]">
+									<p className="lg:text-[12px] text-xs pt-1 text-white">HOT</p>
+								</div>
+							)}
+						</div>
+						<div className="flex flex-col gap-1 p-2 sm:gap-2">
+							<div className="flex items-center justify-between">
+								<div className="flex items-center gap-1 ">
+									<FaStar className="text-yellow-400" size={10} />
+									<FaStar className="text-yellow-400" size={10} />
+									<FaStar className="text-yellow-400" size={10} />
+									<FaStar className="text-yellow-400" size={10} />
+									<FaStar className="text-yellow-400" size={10} />
+								</div>
+								<div>
+									<p className="text-xs lg:text-sm">Đã bán 0</p>
+								</div>
+							</div>
+							<h3 className=" md:text-[18px] text-sm text-[#1A1E26] font-semibold min-w-0 truncate">
+								{form.watch("name")}
+							</h3>
+
+							<div className="flex items-center gap-2">
+								<span className="md:text-base text-xs justify-start font-[500] text-red-500">
+									{formatCurrency(form.watch("discount") || 0)}
+								</span>
+								<span className="lg:text-[13px] md:text-[13px] text-[10px] font-normal hidden sm:block">
+									<del>{formatCurrency(form.watch("price") || 0)}</del>
+								</span>
+							</div>
+							<div
+								className={cn(
+									"flex items-center justify-between",
+									form.watch("is_simple") && "hidden",
+								)}
+							>
+								<ListColorComponent listColor={listColor} />
+								<ListSizeComponent listSize={listSize} />
+							</div>
+							<div
+								className={cn(
+									"h-5 w-full hidden text-xs gap-1",
+									form.watch("is_simple") && "flex",
+								)}
+							>
+								<div className="flex items-center justify-center px-1.5 border text-gray-500 rounded border-gray-500 ">
+									Đơn giản
+								</div>
 							</div>
 						</div>
 					</div>
