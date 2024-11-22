@@ -22,10 +22,10 @@ const OrderRouter = [
 				path: "success",
 				element: <OrderSuccess />,
 			},
-			{
-				path: "v2",
-				element: <OrderPageV2 />,
-			},
+			// {
+			// 	path: "v2",
+			// 	element: <OrderPageV2 />,
+			// },
 		],
 	},
 ];

@@ -29,7 +29,7 @@ const MoneyOrder = ({
 		0,
 	);
 	return (
-		<div className="py-4 bg-white border border-gray-200 rounded-none lg:rounded-md md:rounded-md">
+		<div className="py-5 bg-white border border-gray-200 rounded-none lg:rounded-md md:rounded-md mb-3">
 			<div className="py-4 lg:pr-4 md:pr-4 px-4">
 				<div className="flex flex-col gap-3">
 					<div className="flex items-center gap-2">
