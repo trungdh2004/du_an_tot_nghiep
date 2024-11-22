@@ -48,6 +48,8 @@ import {
 	ListColorComponent,
 	ListSizeComponent,
 } from "@/components/common/Product";
+import { TooltipComponent } from "@/components/common/TooltipComponent";
+import { BsStars } from "react-icons/bs";
 
 const formSchema = z
 	.object({
@@ -403,6 +405,12 @@ const ProductAddPage = () => {
 			}, [])
 		: [];
 
+	const handleDescription = () => {
+		const text = `<p><span style=\"font-size: 16px;\"><strong>M&ocirc; tả</strong><br>${form.watch("name")} có phom d&aacute;ng rộng, ph&ugrave; hợp mọi v&oacute;c d&aacute;ng, gi&uacute;p người mặc dễ d&agrave;ng che đi khuyết điểm.<br style=\"box-sizing: border-box; letter-spacing: 0px;\" id=\"isPasted\">Thiết kế &aacute;o c&oacute;  gi&uacute;p bảo vệ cơ thể, tăng t&iacute;nh thời trang.<br style=\"box-sizing: border-box; letter-spacing: 0px;\">Ngực &aacute;o c&oacute; h&igrave;nh in chữ to tạo một điểm nhấn.</span></p><p><span style=\"font-size: 16px;\"><br></span></p><p><span style=\"font-size: 16px;\"><strong>Chất liệu</strong></span></p><p><span style=\"font-size: 16px;\"><strong><span style=\"color: rgb(51, 63, 72); font-family: sans-serif; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 500; letter-spacing: normal; orphans: 2; text-align: justify; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;\" id=\"isPasted\">60% cotton 40% polyester.</span></strong></span></p><p><span style=\"font-size: 16px;\"><br></span></p><p><span style=\"font-size: 16px;\"><strong><span id=\"isPasted\">Hưỡng dẫn sử dụng</span></strong></span></p><p><span style=\"font-size: 16px;\">Giặt m&aacute;y ở chế độ nhẹ, nhiệt độ thường.</span></p><p><span style=\"font-size: 16px;\">Kh&ocirc;ng sử dụng h&oacute;a chất tẩy c&oacute; chứa Clo</span></p><p><span style=\"font-size: 16px;\">Phơi trong b&oacute;ng m&aacute;t</span></p><p><span style=\"font-size: 16px;\">Sấy th&ugrave;ng, chế độ nhẹ nh&agrave;ng</span></p>`;
+
+		form.setValue("description", text);
+	};
+
 	return (
 		<div>
 			<h4 className="text-xl font-medium">Thêm mới sản phẩm</h4>
@@ -708,7 +716,10 @@ const ProductAddPage = () => {
 																			{imageList?.map(
 																				(image: any, index: number) => {
 																					return (
-																						<div className="col-span-1 row-span-1" key={index}>
+																						<div
+																							className="col-span-1 row-span-1"
+																							key={index}
+																						>
 																							<div
 																								// key={index}
 																								className="relative flex items-center justify-center w-full h-full border rounded "
@@ -761,9 +772,8 @@ const ProductAddPage = () => {
 																						) {
 																							const file = item.getAsFile();
 																							if (file) {
-																								const url = URL.createObjectURL(
-																									file,
-																								);
+																								const url =
+																									URL.createObjectURL(file);
 
 																								const list = [
 																									...imageList,
@@ -773,8 +783,7 @@ const ProductAddPage = () => {
 																									},
 																								];
 
-																								console.log("list",list);
-																								
+																								console.log("list", list);
 
 																								setImages(list);
 																								field.onChange(list);
@@ -1100,7 +1109,21 @@ const ProductAddPage = () => {
 										control={control}
 										render={({ field }) => (
 											<FormItem className="flex flex-col w-full">
-												<FormLabel>Mô tả</FormLabel>
+												<div className="flex justify-between items-center">
+													<FormLabel>Mô tả</FormLabel>
+
+													<TooltipComponent label="Tự tạo mô tả theo tên">
+														<div
+															className=" flex items-center justify-center  rounded-full cursor-pointer size-7  group hover:bg-gray-50"
+															onClick={handleDescription}
+														>
+															<BsStars
+																size={20}
+																className="text-blue-500 group-hover:text-blue-700"
+															/>
+														</div>
+													</TooltipComponent>
+												</div>
 												<FormControl>
 													<FroalaEditor
 														content={field.value}
