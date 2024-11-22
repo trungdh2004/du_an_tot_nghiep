@@ -10,6 +10,7 @@
 	min-height: 116px;
 	position: relative;
 	width: 100%;
+  height: 100%;
 }
 .voucherItemInfo:before {
 	content: "";
@@ -57,14 +58,7 @@
 	-webkit-line-clamp: 2;
 	overflow: hidden;
 }
-.voucherItemDate {
-	display: flex;
-	flex-wrap: wrap;
-	margin-top: auto;
-	align-items: flex-end;
-	line-height: 16px;
-	justify-content: space-between;
-}
+
 .voucherItemCondition {
 	font-weight: 600;
 	cursor: pointer;

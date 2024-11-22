@@ -42,13 +42,14 @@ const Price = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 		const [minPriceSearch, maxPriceSearch] = debouncedValues;
 		searchParams.set("min", (minPriceSearch as number).toString());
 		searchParams.set("max", (maxPriceSearch as number).toString());
+		searchParams.set("pageIndex", "1");
 		setSearchParams(searchParams);
 		setSearchParamsObject((prev) => ({
 			...prev,
 			min: minPriceSearch,
 			max: maxPriceSearch,
+			pageIndex: 1,
 		}));
-		
 	}, [debouncedValues]);
 	return (
 		<div className="w-full flex flex-col gap-3 lg:py-2 py-1">

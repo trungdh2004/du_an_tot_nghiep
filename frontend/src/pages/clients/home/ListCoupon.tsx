@@ -40,12 +40,12 @@ const ListCoupon = () => {
 				</Link>
 			</div>
 			<Swiper
-				className="h-full"
+				className="flex items-center h-full justify-stretch [&>.swiper-wrapper]:flex [&>.swiper-wrapper]:items-stretch"
 				modules={[Autoplay, Pagination]}
-				autoplay={{
-					delay: 4000,
-					disableOnInteraction: false,
-				}}
+				// autoplay={{
+				// 	delay: 4000,
+				// 	disableOnInteraction: false,
+				// }}
 				spaceBetween={20} // Khoảng cách giữa các voucher
 				breakpoints={{
 					320: { 
@@ -59,8 +59,8 @@ const ListCoupon = () => {
 				pagination={{ clickable: true }} // Kích hoạt pagination
 			>
 				{vouchers?.map((voucher) => (
-					<SwiperSlide key={voucher?._id}>
-						<Coupon voucher={voucher} className="w-full" />
+					<SwiperSlide key={voucher?._id} className="flex flex-col items-stretch justify-between flex-1 h-auto">
+						<Coupon voucher={voucher} className=" shadow-[rgba(0,0,0,0.05)_0px_3px_10px] h-32" />
 					</SwiperSlide>
 				))}
 			</Swiper>

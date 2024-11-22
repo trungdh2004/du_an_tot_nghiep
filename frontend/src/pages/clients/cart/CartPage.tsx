@@ -287,14 +287,16 @@ const CartPage = () => {
 					)
 				: itemCart?.quantity || 0;
 			const newTotal = totalCart - quantityDecreased;
-			const newCarts = carts.map((cart) => ({
-				...cart,
-				items: cart.items.filter((item) =>
-					!Array.isArray(id)
-						? item._id !== id
-						: !id.includes(item._id as string),
-				),
-			})).filter((item) =>(item?.items?.length > 0));      
+			const newCarts = carts
+				.map((cart) => ({
+					...cart,
+					items: cart.items.filter((item) =>
+						!Array.isArray(id)
+							? item._id !== id
+							: !id.includes(item._id as string),
+					),
+				}))
+				.filter((item) => item?.items?.length > 0);
 			setCarts(newCarts);
 			setTotalCart(newTotal);
 		} catch (error) {
@@ -474,14 +476,11 @@ const CartPage = () => {
 															?.status && "max-md:flex",
 													)}
 												>
-													Giảm{" "}
-													{discountCode?.currentVoucherCode?.voucher
-														?.discountType == 2
-														? formatCurrency(
-																discountCode?.currentVoucherCode?.valueCheck
-																	?.amount,
-															)
-														: `${discountCode?.currentVoucherCode?.valueCheck?.amount}%`}
+													Giảm
+													{formatCurrency(
+														discountCode?.currentVoucherCode?.valueCheck
+															?.amount || 0,
+													)}
 													<button
 														onClick={() =>
 															setDiscountCode({
@@ -508,13 +507,10 @@ const CartPage = () => {
 													)}
 												>
 													Giảm{" "}
-													{discountCode?.currentVoucherCode?.voucher
-														?.discountType == 2
-														? formatCurrency(
-																discountCode?.currentVoucherCode?.valueCheck
-																	?.amount,
-															)
-														: `${discountCode?.currentVoucherCode?.valueCheck?.amount}%`}
+													{formatCurrency(
+														discountCode?.currentVoucherCode?.valueCheck
+															?.amount || 0,
+													)}
 													<button
 														onClick={() =>
 															setDiscountCode({
