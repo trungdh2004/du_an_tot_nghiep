@@ -775,6 +775,12 @@ const ProductAddPage = () => {
 																								const url =
 																									URL.createObjectURL(file);
 
+																								if (
+																									imageList.length >= maxNumber
+																								) {
+																									return;
+																								}
+
 																								const list = [
 																									...imageList,
 																									{
