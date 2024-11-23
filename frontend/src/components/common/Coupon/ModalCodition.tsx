@@ -54,7 +54,7 @@ export function ModalCodition(voucher:IVoucher) {
 					</div>
 				</div>
 				<DialogFooter>
-					<Button onClick={handleCopy} type="button" className="relative w-full bg-blue-500 hover:bg-blue-600">
+					<Button onClick={handleCopy} type="button" className="relative w-full bg-custom-500 hover:bg-custom-600">
 						{isCopied ? (
 							<motion.div
 								initial={{ scale: 0 }}

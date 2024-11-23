@@ -27,6 +27,7 @@ import routerCustomer from "./customer.route";
 import routerChat from "./chat.route";
 import routerProductComing from "./product/productComing.route";
 import routerRevenue from "./revenue.route";
+import routerTest from "./test.route";
 // import routerTest from "./test.route";
 // import routerTest from "./test.route";
 
@@ -60,6 +61,6 @@ router.use("/chat", routerChat);
 router.use("/productComing", routerProductComing);
 router.use("/revenue", routerRevenue);
 
-// router.use("/test", routerTest);
+router.use("/test", routerTest);
 
 export default router;

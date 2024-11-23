@@ -100,7 +100,7 @@ const TableComponent = <TData, TValue>({
 							<div className="inset-0 absolute bg-gray-300/40 flex justify-center items-center">
 								<AiOutlineLoading3Quarters
 									size={20}
-									className="text-blue-500 animate-spin"
+									className="text-custom animate-spin"
 								/>
 							</div>
 						)}

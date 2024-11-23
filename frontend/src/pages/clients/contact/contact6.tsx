@@ -102,7 +102,7 @@ const ContactPage: React.FC = () => {
               Fanpage:{" "}
               <a
                 href="https://www.facebook.com/sapo.vn"
-                className="text-blue-500"
+                className="text-custom"
               >
                 https://www.facebook.com/sapo.vn
               </a>

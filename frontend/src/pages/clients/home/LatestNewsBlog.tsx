@@ -40,7 +40,7 @@ const LatestNewsBlog = () => {
 				<div className="flex-1 text-header">Thông tin mới tại NUCSHOP</div>
 			</div>
 
-			<div className="relative my-5">
+			<div className="relative my-5 group/parrent">
 				{newBlogs?.length ? (
 					<>
 						<Swiper
@@ -64,8 +64,8 @@ const LatestNewsBlog = () => {
 							}}
 							navigation={{
 								enabled: matches,
-								prevEl: ".custom-prev",
-								nextEl: ".custom-next",
+								prevEl: ".btn-prev",
+								nextEl: ".btn-next",
 							}}
 							className="thumbShow"
 						>
@@ -126,16 +126,16 @@ const LatestNewsBlog = () => {
 						</Swiper>
 						{matches && (
 							<>
-								<div className="absolute z-10 flex items-center justify-center transform -translate-y-1/2 rounded-full cursor-pointer bg-gray-200/35 hover:bg-gray-100 size-8 md:size-14 top-1/2 lg:left-2 left-2 custom-prev">
-									<GrFormPrevious className="size-5 md:size-7" color="#000" />
-								</div>
-
-								<div className="absolute z-10 flex items-center justify-center transform -translate-y-1/2 rounded-full cursor-pointer bg-gray-200/35 hover:bg-gray-100 size-8 md:size-14 top-1/2 lg:right-2 right-2 custom-next">
-									<MdOutlineNavigateNext
-										className="size-5 md:size-7"
-										color="#000"
-									/>
-								</div>
+								<button
+									className={`btn-next    absolute z-20 top-[39%] right-0  group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`}
+								>
+									<MdOutlineNavigateNext className="text-sm group-hover/parrent:text-base" />
+								</button>
+								<button
+									className={`btn-prev  absolute z-20 top-[39%] left-0  group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`}
+								>
+									<GrFormPrevious className="text-sm group-hover/parrent:text-base" />
+								</button>
 							</>
 						)}
 					</>
@@ -149,11 +149,11 @@ const LatestNewsBlog = () => {
 			<div className="text-center">
 				<Link
 					to={"/blogs"}
-					className="inline-flex items-center justify-center gap-2 group"
+					className="inline-flex items-center justify-center gap-2 text-gray-500 group hover:text-custom"
 				>
-					<span className="font-medium text-gray-500">Xem thêm</span>
+					<span className="font-medium ">Xem thêm</span>
 					<span className="duration-200 group-hover:translate-x-4">
-						<FaAnglesRight size={16} className="text-gray-300" />
+						<FaAnglesRight size={16} className="" />
 					</span>
 				</Link>
 			</div>

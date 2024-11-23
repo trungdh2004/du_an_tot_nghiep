@@ -95,7 +95,7 @@ const SendComment = ({ sizeAvatar = 40 }: Props) => {
 						ref={(e) => (elements.current.content = e)}
 						className={cn(
 							"w-full border-b border-gray-200 outline-none break-all transition-all duration-500",
-							isOpen.focus && "border-blue-500",
+							isOpen.focus && "border-custom",
 						)}
 						contentEditable
 						data-lexical-editor="true"
@@ -133,7 +133,7 @@ const SendComment = ({ sizeAvatar = 40 }: Props) => {
 								onClick={sendComment}
 								disabled={isOpen.sendComment}
 								ref={(e) => (elements.current.sendComment = e)}
-								className="bg-blue-500 text-white px-5 hover:bg-blue-600"
+								className="bg-custom-500 text-white px-5 hover:bg-custom-600"
 							>
 								Bình luận
 							</Button>

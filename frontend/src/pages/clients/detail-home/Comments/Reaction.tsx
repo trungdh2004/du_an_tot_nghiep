@@ -75,7 +75,7 @@ const Reaction = ({
 								{checkLike ? (
 									<AiFillLike
 										size={20}
-										className="text-blue-500 cursor-pointer"
+										className="text-custom cursor-pointer"
 										onClick={() => {
 											handleDislike();
 										}}

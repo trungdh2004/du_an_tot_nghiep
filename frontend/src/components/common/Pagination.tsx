@@ -54,7 +54,7 @@ function Paginations({
 						size === "md" && "md:w-10 md:h-10",
 						size === "sm" && "md:w-8 md:h-8",
 					)}
-					activeLinkClassName={"border-blue-500  text-blue-500 font-medium"}
+					activeLinkClassName={"border-custom  text-custom font-medium"}
 					containerClassName={"flex gap-1"}
 				/>
 			) : (
@@ -69,7 +69,7 @@ function Paginations({
 					</button>
 					<button
 						className={cn(
-							"border w-8 h-8  flex items-center justify-center rounded-md p-0 border-blue-500  text-blue-500 font-medium cursor-pointer",
+							"border w-8 h-8  flex items-center justify-center rounded-md p-0 border-custom  text-custom font-medium cursor-pointer",
 						)}
 					>
 						1

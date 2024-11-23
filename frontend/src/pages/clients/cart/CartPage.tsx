@@ -402,7 +402,7 @@ const CartPage = () => {
 						</p>
 						<Link
 							to={"/shop"}
-							className="px-10 py-2 text-white bg-red-500 rounded hover:bg-red-600"
+							className="px-10 py-2 text-white rounded bg-custom-500 hover:bg-custom-600"
 						>
 							Mua ngay
 						</Link>
@@ -414,7 +414,7 @@ const CartPage = () => {
 								<Checkbox
 									checked={allChecked}
 									onCheckedChange={handleCheckAll}
-									className="data-[state=checked]:bg-red-500 border-gray-300 data-[state=checked]:border-red-500"
+									className="data-[state=checked]:bg-custom-500 border-gray-300 data-[state=checked]:border-red-500"
 								/>
 							</div>
 							<div className="w-full md:w-[46.27949%]">Sản phẩm</div>
@@ -471,12 +471,12 @@ const CartPage = () => {
 												</div>
 												<div
 													className={cn(
-														"hidden  justify-between text-nowrap bg-red-500 text-xs md:text-sm text-white px-2.5 py-1 rounded-xl items-center gap-2",
+														"hidden  justify-between text-nowrap bg-custom-500 text-xs md:text-sm text-white px-2.5 py-1 rounded-xl items-center gap-2",
 														discountCode?.currentVoucherCode?.valueCheck
 															?.status && "max-md:flex",
 													)}
 												>
-													Giảm
+													Giảm{" "}
 													{formatCurrency(
 														discountCode?.currentVoucherCode?.valueCheck
 															?.amount || 0,
@@ -501,7 +501,7 @@ const CartPage = () => {
 												</div>
 												<div
 													className={cn(
-														"hidden max-sm:w-full justify-between text-nowrap bg-red-500 text-xs md:text-sm text-white px-2.5 py-1 rounded-xl items-center gap-2",
+														"hidden max-sm:w-full justify-between text-nowrap bg-custom-500 text-xs md:text-sm text-white px-2.5 py-1 rounded-xl items-center gap-2",
 														discountCode?.currentVoucherCode?.valueCheck
 															?.status && "hidden md:flex",
 													)}
@@ -559,7 +559,7 @@ const CartPage = () => {
 															getAllSelectedItems()?.length <= 0
 														}
 														className={cn(
-															"h-8 md:h-10 w-full md:w-40 bg-red-500 hover:bg-red-600 text-white px-5",
+															"h-8 md:h-10 w-full md:w-40 bg-custom-500 hover:bg-custom-600 text-white px-5",
 															(discountCode?.applyCode?.length < 3 ||
 																getAllSelectedItems()?.length <= 0) &&
 																"pointer-events-none bg-black/35",
@@ -579,7 +579,7 @@ const CartPage = () => {
 												id="checkedAllFotter"
 												checked={allChecked}
 												onCheckedChange={handleCheckAll}
-												className="data-[state=checked]:bg-red-500 border-gray-300 data-[state=checked]:border-red-500"
+												className="data-[state=checked]:bg-custom-500 border-gray-300 data-[state=checked]:border-red-500"
 											/>
 											<label
 												htmlFor="checkedAllFotter"
@@ -626,7 +626,7 @@ const CartPage = () => {
 										</div>
 										<Button
 											onClick={handleSubmitted}
-											className="text-xs sm:text-sm md:text-base md:h-12  w-32 md:w-[320px] bg-red-500 hover:bg-red-600"
+											className="text-xs sm:text-sm md:text-base md:h-12  w-32 md:w-[320px] bg-custom-500 hover:bg-custom-600"
 										>
 											Mua hàng{" "}
 											<span className="inline-block md:hidden">
