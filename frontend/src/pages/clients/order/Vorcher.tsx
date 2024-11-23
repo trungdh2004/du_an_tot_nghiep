@@ -69,48 +69,46 @@ const Vorcher = ({
 			setShow(true);
 		}
 	}, [data]);
-	// console.log(voucher.voucher);
-
 	return (
 		<div className="py-2">
-			<div className="flex flex-col bg-white lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow">
-				<div className="flex lg:flex-row gap-3  items-center  justify-between py-2">
+			<div className="flex flex-col bg-white lg:rounded-md md:rounded-md rounded-none border border-gray-200">
+				<div className="flex lg:flex-row gap-6 items-center justify-between py-2">
 					<div className="col-span-3">
 						<div className="flex pl-4 gap-3 items-center">
 							<img src={voucher1} alt="" className="w-8 h-8" />
-							<h3 className="lg:text-lg md:text-base text-sm hidden md:block">
-								Voucher
-							</h3>
 						</div>
 					</div>
 					<div className="flex text-center pr-4 gap-2 items-center">
-						<h5 className="lg:text-base text-sm w-[50%] hidden md:block">
-							Mã voucher
-						</h5>
 						<form
 							action=""
 							onSubmit={handleSubmit(onSubmit)}
 							className="flex items-center w-full gap-2 md:w-min md:justify-end"
 						>
-							<div className="relative w-full md:w-52 ">
+							<div className="relative sm:w-3/4 md:w-52">
 								<input
 									placeholder="Nhập mã giảm giá"
 									type="text"
 									className="w-full outline-none border border-gray-200 bg-gray-100 h-8 md:h-10 p-1.5"
 									{...register("voucherCode")}
 								/>
-								<div className="absolute top-1/2 -translate-y-1/2 right-1.5 size-5 bg-black/30 rounded-full flex items-center justify-center cursor-pointer">
-									<IoClose
-										className="text-white"
-										onClick={() => {
-											reset();
-										}}
-									/>
+								<div
+									className="absolute top-1/2 -translate-y-1/2 right-1.5 size-5 bg-black/30 rounded-full flex items-center justify-center cursor-pointer"
+									onClick={() => {
+										setVoucher(null);
+										setShow(true);
+										setOrderCheckout((prev: any) => {
+											return { ...prev, voucher: null };
+										});
+										setMoneyVoucher(null);
+										reset();
+									}}
+								>
+									<IoClose className="text-white" />
 								</div>
 							</div>
 							<Button
 								className={cn(
-									"h-8 md:h-10 w-full md:w-40 bg-red-500 hover:bg-red-600 text-white px-5",
+									"h-8 md:h-10 w-1/3 max-w-lg bg-red-500 hover:bg-red-600 text-white px-5",
 								)}
 							>
 								Áp dụng
@@ -121,11 +119,14 @@ const Vorcher = ({
 
 				{show &&
 					(voucher === null ? (
-						<div className="flex justify-center bg-white py-3">
+						<div className="flex justify-center py-3">
 							<h3 className="text-red-400">Bạn chưa có voucher nào</h3>
 						</div>
 					) : (
-						<Coupon voucher={voucher} />
+						<Coupon
+							voucher={voucher}
+							className="w-1/2 lg:w-full lg:max-w-full px-6 h-1/3 lg:h-2/3"
+						/>
 					))}
 			</div>
 		</div>
