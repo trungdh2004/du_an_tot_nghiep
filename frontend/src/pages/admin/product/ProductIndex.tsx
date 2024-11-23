@@ -28,7 +28,7 @@ import {
 	unDeletedById,
 	unDeleteMany,
 } from "@/service/product";
-import { formatQuantity } from "@/common/localFunction";
+import { formatQuantity, optimizeCloudinaryUrl } from "@/common/localFunction";
 import { SizeTypes } from "@/types/typeSize";
 import { Link } from "react-router-dom";
 import useDebounceV2 from "@/hooks/debounce";
@@ -185,15 +185,15 @@ const ProductIndex = () => {
 		{
 			accessorKey: "thumbnail",
 			header: () => {
-				return <div className="md:text-base text-xs">Ảnh</div>;
+				return <div className="text-xs md:text-base">Ảnh</div>;
 			},
 			cell: ({ row }) => {
 				return (
 					<div className="w-10 h-10 border">
 						<img
-							src={row.original.thumbnail}
+							src={optimizeCloudinaryUrl(row.original.thumbnail,40,40) }
 							alt=""
-							className="w-full h-full object-cover"
+							className="object-cover w-full h-full"
 						/>
 					</div>
 				);
@@ -219,11 +219,11 @@ const ProductIndex = () => {
 		{
 			accessorKey: "category",
 			header: () => {
-				return <div className="md:text-base text-xs">Danh mục</div>;
+				return <div className="text-xs md:text-base">Danh mục</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs ">
+					<div className="text-xs md:text-base ">
 						{(row.original.category as ICategory).name}
 					</div>
 				);
@@ -233,11 +233,11 @@ const ProductIndex = () => {
 		{
 			accessorKey: "price",
 			header: () => {
-				return <div className="md:text-base text-xs">Giá</div>;
+				return <div className="text-xs md:text-base">Giá</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs text-red-500">
+					<div className="text-xs text-red-500 md:text-base">
 						{formatQuantity(row?.original?.price, "đ")}
 					</div>
 				);
@@ -247,11 +247,11 @@ const ProductIndex = () => {
 		{
 			accessorKey: "discount",
 			header: () => {
-				return <div className="md:text-base text-xs">Giá KM</div>;
+				return <div className="text-xs md:text-base">Giá KM</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs text-red-500">
+					<div className="text-xs text-red-500 md:text-base">
 						{formatQuantity(row?.original?.discount, "đ")}
 					</div>
 				);
@@ -261,11 +261,11 @@ const ProductIndex = () => {
 		{
 			accessorKey: "quantity",
 			header: () => {
-				return <div className="md:text-base text-xs">SL</div>;
+				return <div className="text-xs md:text-base">SL</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs ">
+					<div className="text-xs md:text-base ">
 						{formatQuantity(row?.original?.quantity as number)}
 					</div>
 				);
@@ -275,11 +275,11 @@ const ProductIndex = () => {
 		{
 			accessorKey: "quantitySold",
 			header: () => {
-				return <div className="md:text-base text-xs">SL bán</div>;
+				return <div className="text-xs md:text-base">SL bán</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs ">
+					<div className="text-xs md:text-base ">
 						{formatQuantity(row?.original?.quantitySold as number)}
 					</div>
 				);
@@ -289,7 +289,7 @@ const ProductIndex = () => {
 		{
 			accessorKey: "is_simple",
 			header: () => {
-				return <div className="md:text-base text-xs">Đơn giản</div>;
+				return <div className="text-xs md:text-base">Đơn giản</div>;
 			},
 			cell: ({ row }) => {
 				return (
@@ -307,11 +307,11 @@ const ProductIndex = () => {
 		{
 			accessorKey: "is_hot",
 			header: () => {
-				return <div className="md:text-base text-xs">Nổi bật</div>;
+				return <div className="text-xs md:text-base">Nổi bật</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className=" text-center">
+					<div className="text-center ">
 						{row?.original?.is_hot && (
 							<Badge className="bg-rose-500">HOT</Badge>
 						)}
@@ -326,8 +326,8 @@ const ProductIndex = () => {
 				return (
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-							<Button variant="ghost" className="h-8 w-8 p-0">
-								<HiOutlineDotsVertical className="h-4 w-4" />
+							<Button variant="ghost" className="w-8 h-8 p-0">
+								<HiOutlineDotsVertical className="w-4 h-4" />
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end" className="min-w-10">
@@ -338,7 +338,7 @@ const ProductIndex = () => {
 							</Link>
 							{row?.original?.is_deleted ? (
 								<DropdownMenuItem
-									className="text-green-400 text-center cursor-pointer"
+									className="text-center text-green-400 cursor-pointer"
 									onClick={() => {
 										handleUnDeleteProduct(row.original._id as string);
 									}}
@@ -347,7 +347,7 @@ const ProductIndex = () => {
 								</DropdownMenuItem>
 							) : (
 								<DropdownMenuItem
-									className="text-red-400 text-center cursor-pointer"
+									className="text-center text-red-400 cursor-pointer"
 									onClick={() => {
 										setOpenConfirm(row.original._id as string);
 									}}
@@ -402,7 +402,7 @@ const ProductIndex = () => {
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex flex-col gap-3">
-				<h4 className="font-medium md:text-xl text-base">Danh sách danh mục</h4>
+				<h4 className="text-base font-medium md:text-xl">Danh sách danh mục</h4>
 				<div className="flex flex-wrap justify-between gap-2">
 					<Input
 						placeholder="Tìm kiếm danh mục"
@@ -410,7 +410,7 @@ const ProductIndex = () => {
 						value={key}
 						onChange={(e) => setKey(e.target.value)}
 					/>
-					<div className="justify-between flex-1 sm:justify-end flex items-center gap-4">
+					<div className="flex items-center justify-between flex-1 gap-4 sm:justify-end">
 						{rowSelection.length > 0 && searchObject.tab === 1 && (
 							<Button
 								variant={"danger"}

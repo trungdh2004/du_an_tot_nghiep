@@ -30,7 +30,7 @@ export function ModalCodition(voucher:IVoucher) {
 			<DialogTrigger asChild>
 				<button className="text-sm border-none hover:bg-none bg-none">Điều kiện</button>
 			</DialogTrigger>
-			<DialogContent className="sm:max-w-[425px]">
+			<DialogContent className="sm:max-w-[425px] max-w-[95%] max-sm:rounded">
 				<DialogHeader>
 					<DialogTitle className="text-xl font-bold text-[#333f48]">
 						Chi tiết mã ưu đãi

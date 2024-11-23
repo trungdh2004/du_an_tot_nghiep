@@ -321,7 +321,7 @@ const ProductFilter = ({ onSubmit }: IProps) => {
 							</Button>
 						</TooltipComponent>
 						<Button
-							className="bg-custom-500 text-white hover:bg-custom-600"
+							className="bg-blue-500 text-white hover:bg-blue-600"
 							onClick={handleSubmit}
 						>
 							Tìm kiếm
