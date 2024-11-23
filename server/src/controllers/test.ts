@@ -26,8 +26,8 @@ const getAllDaysInMonth = (year: number, month: number) => {
 
   // Vòng lặp qua từng ngày trong tháng
   while (date.getMonth() === month - 1) {
-    date.setDate(date.getDate() + 1);
     days.push(new Date(date));
+    date.setDate(date.getDate() + 1);
   }
 
   return days;
@@ -339,8 +339,6 @@ export const toolOrder = async (req: RequestModel, res: Response) => {
 
     return res.json({
       dateMonth,
-      listDateNew,
-      shippingCost,
       countOrder,
     });
   } catch (error: any) {
