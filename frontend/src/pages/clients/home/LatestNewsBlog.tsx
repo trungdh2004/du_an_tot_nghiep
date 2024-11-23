@@ -127,12 +127,12 @@ const LatestNewsBlog = () => {
 						{matches && (
 							<>
 								<button
-									className={`btn-next    absolute z-20 top-[39%] right-0  group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`}
+									className={`btn-next    absolute z-10 top-[39%] right-0  group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`}
 								>
 									<MdOutlineNavigateNext className="text-sm group-hover/parrent:text-base" />
 								</button>
 								<button
-									className={`btn-prev  absolute z-20 top-[39%] left-0  group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`}
+									className={`btn-prev  absolute z-10 top-[39%] left-0  group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`}
 								>
 									<GrFormPrevious className="text-sm group-hover/parrent:text-base" />
 								</button>

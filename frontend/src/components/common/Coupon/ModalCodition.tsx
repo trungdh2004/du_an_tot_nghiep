@@ -28,9 +28,9 @@ export function ModalCodition(voucher:IVoucher) {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
-				<button className="text-sm border-none hover:bg-none bg-none">Điều kiện</button>
+				<button className="border-none hover:bg-none bg-none">Điều kiện</button>
 			</DialogTrigger>
-			<DialogContent className="sm:max-w-[425px] max-w-[95%] max-sm:rounded">
+			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
 					<DialogTitle className="text-xl font-bold text-[#333f48]">
 						Chi tiết mã ưu đãi
@@ -54,7 +54,7 @@ export function ModalCodition(voucher:IVoucher) {
 					</div>
 				</div>
 				<DialogFooter>
-					<Button onClick={handleCopy} type="button" className="relative w-full bg-custom-500 hover:bg-custom-600">
+					<Button onClick={handleCopy} type="button" className="relative w-full bg-blue-500 hover:bg-blue-600">
 						{isCopied ? (
 							<motion.div
 								initial={{ scale: 0 }}

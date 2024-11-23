@@ -60,7 +60,7 @@ const InputQuantity: React.FC<InputQuantityProps> = ({
 		large: "h-12 text-lg",
 		mobile: "h-5 text-sm",
 		responsive:
-			"h-8 text-xs sm:h-8 sm:text-sm md:h-8 md:text-sm lg:h-8 lg:text-base",
+			"h-8 text-sm sm:h-9 sm:text-base md:h-10 md:text-base lg:h-12 lg:text-lg",
 	};
 
 	const buttonClasses = cn(
