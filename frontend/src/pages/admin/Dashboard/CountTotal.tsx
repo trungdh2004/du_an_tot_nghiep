@@ -17,7 +17,7 @@ const CountTotal = () => {
 
 	return (
 		<>
-			<div className="h-20 md:h-[100px] rounded-xl relative box-shadow col-span-6 lg:col-span-3 overflow-hidden bg-gradient-to-r from-[rgba(191,230,255,0.48)] to-[rgba(115,185,251,0.84)] flex items-center px-1 md:px-4 justify-between border-l-[4px] border-blue-500">
+			<div className="h-20 md:h-[100px] rounded-xl relative box-shadow col-span-6 lg:col-span-3 overflow-hidden bg-gradient-to-r from-[rgba(191,230,255,0.48)] to-[rgba(115,185,251,0.84)] flex items-center px-1 md:px-4 justify-between border-l-[4px] border-custom">
 				<div className="size-8 md:size-12 flex items-center justify-center bg-white rounded-full">
 					<img
 						src="/ic-glass-bag.svg"
@@ -35,7 +35,7 @@ const CountTotal = () => {
 					style={{
 						mask: "url(/shape-square.svg) center center / contain no-repeat",
 					}}
-					className="absolute -top-6 -left-2 size-[240px] z-[-1] bg-blue-800 text-blue-800"
+					className="absolute -top-6 -left-2 size-[240px] z-[-1] bg-custom-800 text-blue-800"
 				></div>
 			</div>
 
@@ -59,7 +59,7 @@ const CountTotal = () => {
 					style={{
 						mask: "url(/shape-square.svg) center center / contain no-repeat",
 					}}
-					className="absolute -top-6 -left-2 size-[240px] z-[-1] bg-blue-800 text-blue-800"
+					className="absolute -top-6 -left-2 size-[240px] z-[-1] bg-custom-800 text-blue-800"
 				></div>
 			</div>
 			<div className="h-20 md:h-[100px] rounded-xl relative box-shadow  col-span-6 lg:col-span-3 overflow-hidden bg-gradient-to-r from-[rgba(239,214,255,0.48)] to-[rgba(198,132,255,0.48)] flex items-center px-1 md:px-4 justify-between border-l-[4px] border-violet-500">
@@ -82,7 +82,7 @@ const CountTotal = () => {
 					style={{
 						mask: "url(/shape-square.svg) center center / contain no-repeat",
 					}}
-					className="absolute -top-6 -left-2 size-[240px] z-[-1] bg-blue-800 text-blue-800"
+					className="absolute -top-6 -left-2 size-[240px] z-[-1] bg-custom-800 text-blue-800"
 				></div>
 			</div>
 			<div className="h-20 md:h-[100px] rounded-xl relative box-shadow  col-span-6 lg:col-span-3 overflow-hidden bg-gradient-to-r from-[rgba(255,230,206,0.48)] to-[rgba(255,172,130,0.76)] flex items-center px-1 md:px-4 justify-between border-l-[4px] border-orange-500">
@@ -103,7 +103,7 @@ const CountTotal = () => {
 					style={{
 						mask: "url(/shape-square.svg) center center / contain no-repeat",
 					}}
-					className="absolute -top-6 -left-2 size-[240px] z-[-1] bg-blue-800 text-blue-800"
+					className="absolute -top-6 -left-2 size-[240px] z-[-1] bg-custom-800 text-blue-800"
 				></div>
 			</div>
 		</>

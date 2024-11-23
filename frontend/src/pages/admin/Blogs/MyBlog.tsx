@@ -229,7 +229,7 @@ const MyBlogs = () => {
 													{item.isPublish ? (
 														<MdOutlinePublic
 															size={22}
-															className="text-blue-500"
+															className="text-custom"
 														/>
 													) : (
 														<MdOutlinePublicOff size={22} />

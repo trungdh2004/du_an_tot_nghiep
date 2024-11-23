@@ -205,7 +205,7 @@ const ListOrder = ({ id }: Props) => {
 						}}
 					>
 						<div className="flex items-center gap-x-1">
-							<FaTruckFast size={18} className="text-blue-500" />
+							<FaTruckFast size={18} className="text-custom" />
 							<p className="hidden md:block">Đơn hàng đang giao</p>
 						</div>
 					</TabsTrigger>

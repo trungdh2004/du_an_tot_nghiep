@@ -1,18 +1,14 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import voucher1 from "@/assets/voucher.png";
-import { Input } from "@/components/ui/input";
+import Coupon from "@/components/common/Coupon/Coupon";
 import { Button } from "@/components/ui/button";
-import Outofstock from "@/assets/OutofStock.png";
-import { useForm } from "react-hook-form";
-import { format } from "date-fns";
-import { toast } from "sonner";
-import { FaRegCircleXmark } from "react-icons/fa6";
-import { IVoucher } from "@/types/voucher";
+import { cn } from "@/lib/utils";
 import { takeApplyDiscountCode } from "@/service/voucher";
 import { IOrderMoneyValue } from "@/types/order";
+import { IVoucher } from "@/types/voucher";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { IoClose } from "react-icons/io5";
-import { cn } from "@/lib/utils";
-import Coupon from "@/components/common/Coupon/Coupon";
+import { toast } from "sonner";
 
 interface Props {
 	data: any;
@@ -71,14 +67,14 @@ const Vorcher = ({
 	}, [data]);
 	return (
 		<div className="py-2">
-			<div className="flex flex-col bg-white lg:rounded-md md:rounded-md rounded-none border border-gray-200">
-				<div className="flex lg:flex-row gap-6 items-center justify-between py-2">
+			<div className="flex flex-col bg-white border border-gray-200 rounded-none lg:rounded-md md:rounded-md">
+				<div className="flex items-center justify-between gap-6 py-2 lg:flex-row">
 					<div className="col-span-3">
-						<div className="flex pl-4 gap-3 items-center">
+						<div className="flex items-center gap-3 pl-4">
 							<img src={voucher1} alt="" className="w-8 h-8" />
 						</div>
 					</div>
-					<div className="flex text-center pr-4 gap-2 items-center">
+					<div className="flex items-center gap-2 pr-4 text-center">
 						<form
 							action=""
 							onSubmit={handleSubmit(onSubmit)}
@@ -108,7 +104,7 @@ const Vorcher = ({
 							</div>
 							<Button
 								className={cn(
-									"h-8 md:h-10 w-1/3 max-w-lg bg-red-500 hover:bg-red-600 text-white px-5",
+									"h-8 md:h-10 w-1/3 max-w-lg bg-custom-500 hover:bg-custom-600 text-white px-5",
 								)}
 							>
 								Áp dụng
@@ -125,7 +121,7 @@ const Vorcher = ({
 					) : (
 						<Coupon
 							voucher={voucher}
-							className="w-1/2 lg:w-full lg:max-w-full px-6 h-1/3 lg:h-2/3"
+							className="w-1/2 px-6 lg:w-full lg:max-w-full h-1/3 lg:h-2/3"
 						/>
 					))}
 			</div>

@@ -35,7 +35,7 @@ const Cart = () => {
 					>
 						<span
 							className={cn(
-								" rounded-full bg-red-500 text-center text-white absolute w-4 h-4 text-xs flex items-center justify-center top-0 -right-1 ",
+								" rounded-full bg-custom-500 text-center text-white absolute w-4 h-4 text-xs flex items-center justify-center top-0 -right-1 ",
 								isLoggedIn && "inline-block",
 							)}
 						>

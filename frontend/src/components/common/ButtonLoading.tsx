@@ -14,7 +14,7 @@ const ButtonLoading = ({ type }: Props) => {
 				role="status"
 				className={cn(
 					"inline mr-3 w-4 h-4 animate-spin",
-					type === "primary" && "text-blue-500",
+					type === "primary" && "text-custom",
 					type === "white" && "text-white",
 				)}
 				viewBox="0 0 100 101"
@@ -32,7 +32,7 @@ const ButtonLoading = ({ type }: Props) => {
 			</svg>
 			<span
 				className={cn(
-					type === "primary" && "text-blue-500",
+					type === "primary" && "text-custom",
 					type === "white" && "text-white",
 				)}
 			>

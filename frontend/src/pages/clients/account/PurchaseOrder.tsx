@@ -130,7 +130,7 @@ const PurchaseOrder = () => {
 								className={cn(
 									data?.data?.statusList.find((item: any) => item === 6)
 										? "text-red-500 text-xs md:text-base font-medium"
-										: "text-xs md:text-base font-medium text-blue-500",
+										: "text-xs md:text-base font-medium text-custom",
 								)}
 							>
 								{
@@ -420,7 +420,7 @@ const PurchaseOrder = () => {
 										</div>
 										<button
 											onClick={() => mutate(data?.data?._id)}
-											className="px-3 max-w-[200px] mx-auto md:mx-0 py-2 lg:px-8 lg:py-3 focus:outline-none text-white bg-blue-500 border border-blue-600 hover:bg-blue-600 transition-all duration-300 rounded-sm text-xs lg:text-[16px]"
+											className="px-3 max-w-[200px] mx-auto md:mx-0 py-2 lg:px-8 lg:py-3 focus:outline-none text-white bg-custom-500 border border-blue-600 hover:bg-custom-600 transition-all duration-300 rounded-sm text-xs lg:text-[16px]"
 										>
 											Đã nhận hàng
 										</button>

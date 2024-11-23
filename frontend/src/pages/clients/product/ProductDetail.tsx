@@ -84,8 +84,8 @@ const ProductDetail = (props: Props) => {
 					<div className="flex lg:gap-[55px] gap-[70px]">
 						<h3 className="lg:text-[15px] text-[13px] font-bold ">Color</h3>
 						<div className="flex gap-3 items-center">
-							<button className="lg:w-[65px] lg:h-[25px] w-[40px] h-[15px] bg-red-500 rounded-full align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none"></button>
-							<button className="lg:w-[65px] lg:h-[25px] w-[40px] h-[15px] bg-blue-500 rounded-full align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none"></button>
+							<button className="lg:w-[65px] lg:h-[25px] w-[40px] h-[15px] bg-custom-500 rounded-full align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none"></button>
+							<button className="lg:w-[65px] lg:h-[25px] w-[40px] h-[15px] bg-custom-500 rounded-full align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none"></button>
 							<button className="lg:w-[65px] lg:h-[25px] w-[40px] h-[15px] bg-yellow-500 rounded-full align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none"></button>
 							<button className="lg:w-[65px] lg:h-[25px] w-[40px] h-[15px] bg-green-500 rounded-full align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none"></button>
 						</div>
@@ -150,7 +150,7 @@ const ProductDetail = (props: Props) => {
 										Thêm giỏ hàng
 									</button>
 								</div>
-								<div className="flex lg:w-[260px] lg:h-[45px] w-[130px] h-[30px] bg-red-500 rounded-full justify-center items-center">
+								<div className="flex lg:w-[260px] lg:h-[45px] w-[130px] h-[30px] bg-custom-500 rounded-full justify-center items-center">
 									<button className="text-white font-medium lg:text-base text-[10px]">
 										Mua ngay
 									</button>
@@ -163,7 +163,7 @@ const ProductDetail = (props: Props) => {
 										Thêm giỏ hàng
 									</button>
 								</div>
-								<div className="flex lg:w-[260px] lg:h-[45px] w-[130px] h-[30px] bg-red-500 rounded-full justify-center items-center">
+								<div className="flex lg:w-[260px] lg:h-[45px] w-[130px] h-[30px] bg-custom-500 rounded-full justify-center items-center">
 									<button className="text-white font-medium lg:text-base text-[10px]">
 										Mua ngay
 									</button>
@@ -178,7 +178,7 @@ const ProductDetail = (props: Props) => {
 											Thêm giỏ hàng
 										</button>
 									</div>
-									<div className="flex w-1/2 bg-red-500 rounded-full justify-center items-center">
+									<div className="flex w-1/2 bg-custom-500 rounded-full justify-center items-center">
 										<button className="text-white font-medium text-[10px]">
 											Mua ngay
 										</button>

@@ -297,7 +297,7 @@ const NewBlog = () => {
 									<div className="flex items-center justify-end px-5 py-3">
 										<Button
 											type="submit"
-											className="py-0.5 px-5 bg-blue-500 hover:bg-blue-500/80"
+											className="py-0.5 px-5 bg-custom-500 hover:bg-custom-500/80"
 											disabled
 										>
 											Đăng tải

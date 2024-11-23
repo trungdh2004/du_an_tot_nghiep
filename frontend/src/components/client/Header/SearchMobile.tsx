@@ -121,7 +121,7 @@ const SearchMobile = ({ handleCloseSidebar }: Props) => {
 						<Link
 							onClick={handleChangePath}
 							to={`/search?topic=product&q=${encodeURIComponent(textKeyWord)}`}
-							className="text-xs hover:text-blue-500"
+							className="text-xs hover:text-custom"
 						>
 							Xem thêm
 						</Link>
@@ -164,7 +164,7 @@ const SearchMobile = ({ handleCloseSidebar }: Props) => {
 						<Link
 							onClick={handleChangePath}
 							to={`/search?topic=blog&q=${encodeURIComponent(textKeyWord)}`}
-							className="text-sm hover:text-blue-500"
+							className="text-sm hover:text-custom"
 						>
 							Xem thêm
 						</Link>

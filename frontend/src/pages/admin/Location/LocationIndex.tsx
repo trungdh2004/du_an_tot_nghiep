@@ -200,10 +200,10 @@ const LocationIndex = () => {
 							<Button
 								type="submit"
 								variant={"outline"}
-								className=" border-blue-500"
+								className=" border-custom"
 							>
-								<CiLocationOn className="mr-2 text-blue-500" size={20} />{" "}
-								<span className="text-blue-500">Tìm kiếm</span>
+								<CiLocationOn className="mr-2 text-custom" size={20} />{" "}
+								<span className="text-custom">Tìm kiếm</span>
 							</Button>
 						</form>
 					</Form>
@@ -255,7 +255,7 @@ const LocationIndex = () => {
 					</form>
 				</Form>
 			</div> */}
-			<div className="border w-full min-h-[500px] border-blue-500">
+			<div className="border w-full min-h-[500px] border-custom">
 				<MapComponent
 					height="500px"
 					longitude={viewState.longitude}
@@ -281,7 +281,7 @@ const LocationIndex = () => {
 					Tọa độ hiện tại : {marker?.latitude} - {marker?.longitude}
 				</div>
 				<Button
-					className="bg-blue-500 hover:bg-blue-400"
+					className="bg-custom-500 hover:bg-custom-400"
 					onClick={handleUpdate}
 				>
 					<CiLocationOn size={20} className="mr-2" /> Lưu vị trí

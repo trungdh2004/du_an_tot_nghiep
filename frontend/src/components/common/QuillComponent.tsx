@@ -9,7 +9,7 @@ const QuillComponent = () => {
 		<div>
 			<ReactQuill theme="snow" value={value} onChange={setValue} />
 			<button
-				className="px-4 py-2 bg-blue-300 rounded-md"
+				className="px-4 py-2 bg-custom-300 rounded-md"
 				onClick={() => console.log(value)}
 			>
 				click

@@ -54,10 +54,10 @@ const ProductV2 = ({ product }: Props) => {
 		<Link
 			key={product?._id}
 			to={`/shop/detail/${encodeURIComponent(product?.slug || "")}`}
-			className="relative flex flex-col overflow-hidden transition-all duration-300 bg-white border border-gray-200 rounded-xl group hover:shadow-lg"
+			className="relative overflow-hidden flex flex-col transition-all duration-300 bg-white rounded-xl group shadow-[rgba(0,0,0,0.15)_0px_5px_15px]"
 		>
 			<div>
-				<div className="relative overflow-hidden border bg-[#F4F4F4] flex justify-center items-center max-w-full min-w-full box-shadow">
+				<div className="relative overflow-hidden  bg-[#F4F4F4] flex justify-center items-center max-w-full min-w-full ">
 					<div className="relative inline-block w-full group aspect-square">
 						<div className="transition duration-500 transform bg-white group-hover:scale-50">
 							<img

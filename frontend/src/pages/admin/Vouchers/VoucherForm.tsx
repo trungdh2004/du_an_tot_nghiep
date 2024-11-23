@@ -268,7 +268,7 @@ const VoucherForm = () => {
 												>
 													<BsStars
 														size={20}
-														className="text-blue-500 group-hover:text-blue-700"
+														className="text-custom group-hover:text-blue-700"
 													/>
 												</div>
 											</TooltipComponent>
@@ -594,7 +594,7 @@ const VoucherForm = () => {
 					/>
 					<Button
 						type="submit"
-						className="w-full text-white bg-blue-600 hover:bg-blue-700"
+						className="w-full text-white bg-custom-600 hover:bg-custom-700"
 					>
 						Lưu
 					</Button>

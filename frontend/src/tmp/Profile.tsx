@@ -98,7 +98,7 @@ function ProfilePage() {
         ) : (
           <button
             onClick={handleEditClick}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+            className="bg-custom-500 text-white px-4 py-2 rounded hover:bg-custom-600 transition-colors"
           >
             Chỉnh Sửa
           </button>

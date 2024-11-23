@@ -26,7 +26,7 @@ const OrderTracking = ({ data }: any) => {
 										sub: string;
 									}) => order && order.status === 1,
 								)
-									? "text-blue-500"
+									? "text-custom"
 									: "",
 							)}
 						/>
@@ -70,7 +70,7 @@ const OrderTracking = ({ data }: any) => {
 								sub: string;
 							}) => order && order.status === 2,
 						)
-							? "border-blue-500"
+							? "border-custom"
 							: "",
 						data.some(
 							(order: {
@@ -99,7 +99,7 @@ const OrderTracking = ({ data }: any) => {
 										sub: string;
 									}) => order && order.status === 2,
 								)
-									? "text-blue-500"
+									? "text-custom"
 									: "",
 								data.some(
 									(order: {
@@ -153,7 +153,7 @@ const OrderTracking = ({ data }: any) => {
 								sub: string;
 							}) => order && order.status === 3,
 						)
-							? "border-blue-500"
+							? "border-custom"
 							: "",
 						data.some(
 							(order: {
@@ -182,7 +182,7 @@ const OrderTracking = ({ data }: any) => {
 										sub: string;
 									}) => order && order.status === 3,
 								)
-									? "text-blue-500"
+									? "text-custom"
 									: "",
 								data.some(
 									(order: {
@@ -236,7 +236,7 @@ const OrderTracking = ({ data }: any) => {
 								sub: string;
 							}) => order && order.status === 4,
 						)
-							? "border-blue-500"
+							? "border-custom"
 							: "",
 						data.some(
 							(order: {
@@ -265,7 +265,7 @@ const OrderTracking = ({ data }: any) => {
 										sub: string;
 									}) => order && order.status === 4,
 								)
-									? "text-blue-500"
+									? "text-custom"
 									: "",
 								data.some(
 									(order: {
@@ -318,7 +318,7 @@ const OrderTracking = ({ data }: any) => {
 								sub: string;
 							}) => order && order.status === 5,
 						)
-							? "border-blue-500"
+							? "border-custom"
 							: "",
 						data.some(
 							(order: {
@@ -347,7 +347,7 @@ const OrderTracking = ({ data }: any) => {
 										sub: string;
 									}) => order && order.status === 5,
 								)
-									? "text-blue-500"
+									? "text-custom"
 									: "",
 								data.some(
 									(order: {
