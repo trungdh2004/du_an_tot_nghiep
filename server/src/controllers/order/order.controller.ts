@@ -1214,6 +1214,16 @@ class OrderController {
         },
       ]);
 
+      const checkProduct = listCartItem.find(
+        (item) => item?.product?.is_deleted
+      );
+
+      if (checkProduct) {
+        const stringName = truncateSentence(checkProduct.product.name, 30);
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: `Sản phẩm '${stringName}' đã bị xóa`,
+        });
+      }
       const checkAttribute = listCartItem.find(
         (item) => !item.attribute && !item.is_simple
       );
