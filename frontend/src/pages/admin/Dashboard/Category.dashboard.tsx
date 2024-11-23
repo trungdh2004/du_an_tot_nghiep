@@ -53,7 +53,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
 				<table className="w-full text-xs">
 					<tr>
 						<td colSpan={1}>
-							<div className="size-3 bg-custom-500 rounded-sm "></div>
+							<div className="size-3 bg-blue-500 rounded-sm "></div>
 						</td>
 						<td className=" text-left" colSpan={2}>
 							<div className="">Doanh thu</div>

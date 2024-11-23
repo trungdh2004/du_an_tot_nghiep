@@ -22,7 +22,7 @@ const OrderToDayDashBoard = () => {
 			<div className="py-4">
 				<div className="flex relative min-h-14 ">
 					<div className="flex flex-col relative items-center mr-2">
-						<p className="size-3 bg-custom-500 rounded-full my-1"></p>
+						<p className="size-3 bg-blue-500 rounded-full my-1"></p>
 						<div className="flex-1 w-[2px] bg-gray-500"></div>
 					</div>
 					<div>
