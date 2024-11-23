@@ -89,7 +89,7 @@ const Album: React.FC<AlbumProps> = ({ images = [], isLoading }) => {
 							{images.map((item) => (
 								<SwiperSlide
 									key={item?._id}
-									className="!w-[82px] !h-[82px] opacity-50 transition-opacity duration-300 ease-in-out hover:opacity-100 [&.swiper-slide-thumb-active]:border [&.swiper-slide-thumb-active]:border-blue-500 [&.swiper-slide-thumb-active]:opacity-100"
+									className="!w-[82px] !h-[82px] opacity-50 transition-opacity duration-300 ease-in-out hover:opacity-100 [&.swiper-slide-thumb-active]:border-2 [&.swiper-slide-thumb-active]:border-custom [&.swiper-slide-thumb-active]:opacity-100"
 								>
 									<div className="w-full h-full border">
 										<img
@@ -105,12 +105,12 @@ const Album: React.FC<AlbumProps> = ({ images = [], isLoading }) => {
 					)}
 
 					{/* Custom Navigation Buttons */}
-					<div className="absolute z-10 flex items-center justify-center transform -translate-y-1/2 cursor-pointer rounded-full bg-gray-200/35 hover:bg-gray-100 size-14 min-w-[48px] min-h-[48px] max-w-[48px] max-h-[48px] top-1/2 lg:left-2 left-2 custom-prev">
-						<GrFormPrevious size={28} color="#000" />
+					<div className="absolute z-10 flex items-center justify-center transform -translate-y-1/2 cursor-pointer rounded-full bg-gray-200/35 hover:bg-gray-100 size-14 min-w-[44px] min-h-[44px] max-w-[44px] max-h-[44px] top-1/2 lg:left-2 left-2 custom-prev">
+						<GrFormPrevious size={28} className="text-custom" />
 					</div>
 
-					<div className="absolute z-10 flex items-center justify-center transform -translate-y-1/2 cursor-pointer rounded-full bg-gray-200/35 hover:bg-gray-100 size-14 min-w-[48px] min-h-[48px] max-w-[48px] max-h-[48px] top-1/2 lg:right-2 right-2 custom-next">
-						<MdOutlineNavigateNext size={28} color="#000" />
+					<div className="absolute z-10 flex items-center justify-center transform -translate-y-1/2 cursor-pointer rounded-full bg-gray-200/35 hover:bg-gray-100 size-14 min-w-[44px] min-h-[44px] max-w-[44px] max-h-[44px] top-1/2 lg:right-2 right-2 custom-next">
+						<MdOutlineNavigateNext size={28} className="text-custom" />
 					</div>
 				</div>
 			</div>

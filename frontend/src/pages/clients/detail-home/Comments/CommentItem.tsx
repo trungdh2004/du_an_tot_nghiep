@@ -286,7 +286,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 								handleChange={handleChange}
 							/>
 						) : (
-							<div className="bg-blue-400 p-2 px-4 rounded-full">
+							<div className="bg-custom-400 p-2 px-4 rounded-full">
 								Bạn hãy đăng nhập để được bình luận
 							</div>
 						))}
@@ -360,7 +360,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 											handleChange={handleChange}
 										/>
 									) : (
-										<div className="bg-blue-400 p-2 px-4 rounded-full">
+										<div className="bg-custom-400 p-2 px-4 rounded-full">
 											Bạn hãy đăng nhập để được bình luận
 										</div>
 									))}

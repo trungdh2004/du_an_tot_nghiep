@@ -610,7 +610,7 @@ const ProductAddPage = () => {
 
 														<div className="px-2 mb-2 h-6 flex justify-center">
 															<div
-																className="w-40 text-center text-sm bg-blue-100 rounded-sm text-blue-500 cursor-pointer hover:bg-blue-200"
+																className="w-40 text-center text-sm bg-custom-100 rounded-sm text-custom cursor-pointer hover:bg-custom-200"
 																onPaste={(event) => {
 																	console.log("paste dc nè");
 																	const items = event.clipboardData.items;
@@ -762,7 +762,7 @@ const ProductAddPage = () => {
 																		</div>
 																		<div className="px-2 mb-2 h-6 flex justify-center">
 																			<div
-																				className="w-40 text-center text-sm bg-blue-100 rounded-sm text-blue-500 cursor-pointer hover:bg-blue-200"
+																				className="w-40 text-center text-sm bg-custom-100 rounded-sm text-custom cursor-pointer hover:bg-custom-200"
 																				onPaste={(event) => {
 																					const items =
 																						event.clipboardData.items;
@@ -1125,7 +1125,7 @@ const ProductAddPage = () => {
 														>
 															<BsStars
 																size={20}
-																className="text-blue-500 group-hover:text-blue-700"
+																className="text-custom group-hover:text-blue-700"
 															/>
 														</div>
 													</TooltipComponent>
@@ -1156,7 +1156,7 @@ const ProductAddPage = () => {
 				<div className="hidden p-4 lg:block lg:col-span-3 ">
 					{/* <div className="w-full border rounded relative">
 						{form.watch("is_hot") && (
-							<div className="absolute py-[2px] font-semibold text-white rounded-r-md pr-2 pl-1 left-0 top-2 bg-red-500">
+							<div className="absolute py-[2px] font-semibold text-white rounded-r-md pr-2 pl-1 left-0 top-2 bg-custom-500">
 								HOT
 							</div>
 						)}

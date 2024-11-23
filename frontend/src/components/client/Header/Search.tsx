@@ -112,7 +112,7 @@ const Search = () => {
 						<Link
 							onClick={handleChangePath}
 							to={`/search?topic=product&q=${encodeURIComponent(textKeyWord)}`}
-							className="hover:text-blue-500 text-sm"
+							className="hover:text-custom text-sm"
 						>
 							Xem thêm
 						</Link>
@@ -155,7 +155,7 @@ const Search = () => {
 						<Link
 							onClick={handleChangePath}
 							to={`/search?topic=blog&q=${encodeURIComponent(textKeyWord)}`}
-							className="hover:text-blue-500 text-sm"
+							className="hover:text-custom text-sm"
 						>
 							Xem thêm
 						</Link>

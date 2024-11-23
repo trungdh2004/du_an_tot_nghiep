@@ -362,7 +362,7 @@ const EditBlog = () => {
 												}
 												type="submit"
 												variant={"danger"}
-												// className="py-0.5 px-5 bg-blue-500 hover:bg-blue-500/80"
+												// className="py-0.5 px-5 bg-custom-500 hover:bg-custom-500/80"
 											>
 												Gỡ bài viết
 											</Button>
@@ -372,7 +372,7 @@ const EditBlog = () => {
 													previewUrl.isLoading || statusLoading.isLoading
 												}
 												type="submit"
-												className="py-0.5 px-5 bg-blue-500 hover:bg-blue-500/80"
+												className="py-0.5 px-5 bg-custom-500 hover:bg-custom-500/80"
 											>
 												Đăng tải
 											</Button>

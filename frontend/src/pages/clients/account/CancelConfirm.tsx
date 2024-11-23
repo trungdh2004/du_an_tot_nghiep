@@ -140,7 +140,7 @@ const CancelConfirm = ({ open, handleClose, handleFetchOrder }: Props) => {
 									)}
 								/>
 								<button
-									className="w-full bg-red-500 py-3 text-sm md:text-base uppercase text-white rounded-sm"
+									className="w-full bg-custom-500 py-3 text-sm md:text-base uppercase text-white rounded-sm"
 									type="submit"
 								>
 									Đồng ý

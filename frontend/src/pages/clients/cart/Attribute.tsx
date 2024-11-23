@@ -121,10 +121,10 @@ const Attribute = ({
 				<div
 					className={cn(
 						"space-y-3 p-1.5 rounded",
-						errors?.color && errors?.size && "bg-red-50",
+						errors?.color && errors?.size && "bg-custom-50",
 					)}
 				>
-					<div className={cn("w-full p-1", errors?.color && "bg-red-50")}>
+					<div className={cn("w-full p-1", errors?.color && "bg-custom-50")}>
 						<ListColor
 							onChoose={handleColorChange}
 							validExits
@@ -145,7 +145,7 @@ const Attribute = ({
 							Bạn chưa chọn màu sắc cho sản phẩm
 						</span>
 					</div>
-					<div className={cn("w-full p-1", errors?.size && "bg-red-50")}>
+					<div className={cn("w-full p-1", errors?.size && "bg-custom-50")}>
 						<ListSize
 							validExits
 							widthLabel={120}
@@ -187,7 +187,7 @@ const Attribute = ({
 					</Button>
 					<Button
 						onClick={handleConfirm}
-						className="bg-blue-500 hover:bg-blue-600 outline-none w-24 h-8 md:h-10 md:w-40 py-0.5"
+						className="bg-custom-500 hover:bg-custom-600 outline-none w-24 h-8 md:h-10 md:w-40 py-0.5"
 					>
 						Xác nhận
 					</Button>

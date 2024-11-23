@@ -36,7 +36,7 @@ const DealProductSection: React.FC = () => {
 	
 
 	return (
-		<section className="py-6 md:py-12 relative mt-14">
+		<section className="relative py-6 md:py-12 mt-14">
 			{/* <div className="bg-magic"></div> */}
 			<div className="absolute inset-0 z-[0] ">
 				<div className="absolute inset-0 bg-white z-[-2]"></div>
@@ -45,26 +45,26 @@ const DealProductSection: React.FC = () => {
 			<div className="padding z-[1]">
 				<div className="flex flex-col items-center gap-5 md:gap-10 lg:flex-row">
 					{/* Nội dung sản phẩm */}
-					<div className=" relative flex flex-col gap-6 lg:w-1/2">
-						<span className="text-xs  md:text-sm font-medium tracking-wide text-gray-500 uppercase">
+					<div className="relative flex flex-col gap-6 lg:w-1/2">
+						<span className="text-xs font-medium tracking-wide text-gray-500 uppercase md:text-sm">
 							Sản phẩm nổi bật
 						</span>
 
-						<h2 className="text-[#2c3f58] text-[18px] sm:text-xl md:text-2xl lg:text-4xl font-medium leading-tight">
+						<h2 className="text-custom text-[18px] sm:text-xl md:text-2xl lg:text-4xl font-medium leading-tight">
 							{dealProduct?.product?.name}
 						</h2>
 
-						<div className="flex max-sm:flex-col max-sm:items-start flex-wrap items-center gap-4 md:gap-8 mt-2">
+						<div className="flex flex-wrap items-center gap-4 mt-2 max-sm:flex-col max-sm:items-start md:gap-8">
 							<div className="flex items-center">
-								<span className="text-[#2c3f58] text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium">
+								<span className="text-xl font-medium text-custom sm:text-2xl md:text-3xl lg:text-4xl">
 									{formatCurrency(dealProduct?.product?.discount || 0)}
 								</span>
-								<span className="ml-4 text-base sm:text-xl text-gray-400 line-through">
+								<span className="ml-4 text-base text-gray-400 line-through sm:text-xl">
 									{formatCurrency(dealProduct?.product?.price || 0)}
 								</span>
 							</div>
 
-							<button className="bg-[#2c3f58] text-white px-8 py-3 rounded hover:bg-[#1f2937] transition-colors">
+							<button className="px-8 py-3 text-white transition-colors rounded bg-custom hover:bg-custom-600">
 								Mua ngay
 							</button>
 						</div>
@@ -90,7 +90,7 @@ const DealProductSection: React.FC = () => {
 							}}
 						></motion.div>
 
-						<div className="relative z-10 max-md:w-1/2 h-auto max-w-96">
+						<div className="relative z-10 h-auto max-md:w-1/2 max-w-96">
 							<img
 								src={dealProduct?.product?.thumbnail}
 								alt={dealProduct?.product?.name}

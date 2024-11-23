@@ -108,7 +108,7 @@ const BlogPage = () => {
 	return (
 		<>
 			{/* {isLoading && (
-                <div className='absolute w-screen h-screen z-[1000] bg-red-400/20'></div>
+                <div className='absolute w-screen h-screen z-[1000] bg-custom-400/20'></div>
             )} */}
 			<div className="padding pt-12 pb-10 text-[#1A1E26]">
 				<div className="flex items-center gap-3 mb-3">
@@ -126,7 +126,7 @@ const BlogPage = () => {
 										className={cn(
 											"rounded-lg border border-slate-300 pr-3",
 											newTags === tag.slug
-												? "border-blue-500 text-blue-500"
+												? "border-custom text-custom"
 												: "border-slate-300",
 										)}
 									>

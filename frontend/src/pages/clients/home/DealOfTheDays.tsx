@@ -79,7 +79,7 @@ const DealOfTheDays = () => {
 							</li>
 						))}
 					</ul>
-					<Button className="uppercase px-10 rounded-3xl bg-red-500 hover:bg-red-700 text-white">
+					<Button className="uppercase px-10 rounded-3xl bg-custom-500 hover:bg-custom-700 text-white">
 						Mua ngay
 					</Button>
 				</div>
