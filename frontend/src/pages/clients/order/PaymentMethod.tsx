@@ -35,17 +35,17 @@ const PaymentMethod = ({
 	console.log(orderCheckout);
 
 	return (
-		<div className="py-2 pb-14">
+		<div className="py-2 pb-6">
 			<div className="lg:flex flex-col gap-3 bg-white lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow">
 				<div className="p-4">
 					<h3 className="text-lg text-[#595959] font-semibold pb-6">
 						Phương thức thanh toán
 					</h3>
-					<div className="flex gap-2">
+					<div className="flex gap-2 flex-col">
 						<Label
 							htmlFor={"paymentMethod1"}
 							className={cn(
-								`relative max-w-80 max-h-[50px] overflow-hidden flex items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-2 md:px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
+								`relative max-w-full max-h-[50px] overflow-hidden flex items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-2 md:px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
 							)}
 						>
 							<input
@@ -70,7 +70,7 @@ const PaymentMethod = ({
 						<Label
 							htmlFor={"paymentMethod2"}
 							className={cn(
-								`relative max-w-80 max-h-[50px] overflow-hidden flex items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
+								`relative max-w-full max-h-[50px] overflow-hidden flex items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
 							)}
 						>
 							<input
@@ -94,8 +94,8 @@ const PaymentMethod = ({
 						</Label>
 					</div>
 				</div>
-				<hr />
-				<div className="self-end py-4 lg:pr-4 md:pr-4 px-4">
+				{/* <hr /> */}
+				<div className="block lg:hidden py-4 lg:pr-4 md:pr-4 px-4">
 					<div className="flex flex-col gap-3">
 						<div className="flex items-center gap-2">
 							<MdOutlineEventNote size={20} />
@@ -154,12 +154,12 @@ const PaymentMethod = ({
 					</div>
 				</div>
 				<hr />
-				<div className="lg:flex md:flex hidden justify-between py-2 mx-4">
-					<p>
+				<div className="lg:block md:block hidden justify-between py-2 mx-4 ">
+					<p className="pb-4">
 						Nhấn "Đặt hàng" đồng nghĩa với việc bạn đồng ý tuân theo Điều khoản
-						Shopee
+						NUCSHOP
 					</p>
-					<Button className="px-9" onClick={() => handleCheckout()}>
+					<Button className="px-9 w-full py-1" onClick={() => handleCheckout()}>
 						Đặt hàng
 					</Button>
 				</div>
@@ -194,7 +194,7 @@ const PaymentMethod = ({
 			<div className="lg:hidden md:hidden block px-4 bg-white border border-gray-200 mt-4 mb-2 py-2">
 				<p className="text-sm">
 					Nhấn "Đặt hàng" đồng nghĩa với việc bạn đồng ý tuân theo Điều khoản
-					Shopee
+					NUCSHOP
 				</p>
 			</div>
 		</div>
