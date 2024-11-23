@@ -49,6 +49,8 @@ import {
 	ListColorComponent,
 	ListSizeComponent,
 } from "@/components/common/Product";
+import { TooltipComponent } from "@/components/common/TooltipComponent";
+import { BsStars } from "react-icons/bs";
 
 const formSchema = z
 	.object({
@@ -238,6 +240,11 @@ type AttributeType = {
 // Mở rộng kiểu FormSchemaType để đảm bảo attributes là một mảng
 export type ProductFormValues = Omit<FormSchemaType, "attributes"> & {
 	attributes: AttributeType[];
+};
+
+type ICate = {
+	_id: string;
+	name: string;
 };
 
 const ProductUpdate = () => {
@@ -436,6 +443,12 @@ const ProductUpdate = () => {
 			}, [])
 		: [];
 
+	const handleDescription = () => {
+		const text = `<p><span style=\"font-size: 16px;\"><strong>M&ocirc; tả</strong><br>${form.watch("name")} có phom d&aacute;ng rộng, ph&ugrave; hợp mọi v&oacute;c d&aacute;ng, gi&uacute;p người mặc dễ d&agrave;ng che đi khuyết điểm.<br style=\"box-sizing: border-box; letter-spacing: 0px;\" id=\"isPasted\">Thiết kế &aacute;o c&oacute;  gi&uacute;p bảo vệ cơ thể, tăng t&iacute;nh thời trang.<br style=\"box-sizing: border-box; letter-spacing: 0px;\">Ngực &aacute;o c&oacute; h&igrave;nh in chữ to tạo một điểm nhấn.</span></p><p><span style=\"font-size: 16px;\"><br></span></p><p><span style=\"font-size: 16px;\"><strong>Chất liệu</strong></span></p><p><span style=\"font-size: 16px;\"><strong><span style=\"color: rgb(51, 63, 72); font-family: sans-serif; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 500; letter-spacing: normal; orphans: 2; text-align: justify; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;\" id=\"isPasted\">60% cotton 40% polyester.</span></strong></span></p><p><span style=\"font-size: 16px;\"><br></span></p><p><span style=\"font-size: 16px;\"><strong><span id=\"isPasted\">Hưỡng dẫn sử dụng</span></strong></span></p><p><span style=\"font-size: 16px;\">Giặt m&aacute;y ở chế độ nhẹ, nhiệt độ thường.</span></p><p><span style=\"font-size: 16px;\">Kh&ocirc;ng sử dụng h&oacute;a chất tẩy c&oacute; chứa Clo</span></p><p><span style=\"font-size: 16px;\">Phơi trong b&oacute;ng m&aacute;t</span></p><p><span style=\"font-size: 16px;\">Sấy th&ugrave;ng, chế độ nhẹ nh&agrave;ng</span></p>`;
+
+		form.setValue("description", text);
+	};
+
 	return (
 		<div>
 			<h4 className="text-xl font-medium">Chỉnh sửa sản phẩm</h4>
@@ -478,9 +491,9 @@ const ProductUpdate = () => {
 											<FormItem>
 												<FormLabel>Danh mục</FormLabel>
 												<FormControl>
-													<SelectComponent<ICategory>
+													<SelectComponent<ICate>
 														value={field.value}
-														onChange={(newValue: ICategory, action) => {
+														onChange={(newValue: ICate, action) => {
 															field.onChange(newValue);
 															form.clearErrors(`category`);
 														}}
@@ -555,12 +568,40 @@ const ProductUpdate = () => {
 											<FormItem>
 												<FormLabel>Ảnh sản phẩm</FormLabel>
 												<FormControl>
-													<div className="w-full ">
+													<div className="w-full bg-white border rounded-sm">
 														<label
 															htmlFor="file-upload"
 															className={cn("w-full relative ")}
+															onDragOver={(e) => {
+																e.preventDefault();
+															}}
+															onDrop={(event) => {
+																const items = event.dataTransfer.items; // Lấy danh sách items được kéo thả
+
+																for (const item of items) {
+																	if (
+																		item.kind === "file" &&
+																		item.type.startsWith("image/")
+																	) {
+																		const file = item.getAsFile(); // Lấy file ảnh
+
+																		if (file) {
+																			field.onChange(async () => {
+																				setPreviewUrl({
+																					url: URL.createObjectURL(file),
+																					isLoading: true,
+																				});
+																				form.clearErrors("thumbnail");
+																				const url =
+																					await handleUploadFile(file);
+																				field.onChange(url);
+																			});
+																		}
+																	}
+																}
+															}}
 														>
-															<div className="relative w-full bg-white border rounded-sm">
+															<div className="relative w-full bg-white  ">
 																<div
 																	className={cn(
 																		"w-full h-[160px] flex justify-center items-center flex-col",
@@ -605,6 +646,36 @@ const ProductUpdate = () => {
 																)}
 															</div>
 														</label>
+
+														<div className="px-2 mb-2 h-6 flex justify-center">
+															<div
+																className="w-40 text-center text-sm bg-blue-100 rounded-sm text-blue-500 cursor-pointer hover:bg-blue-200"
+																onPaste={(event) => {
+																	console.log("paste dc nè");
+																	const items = event.clipboardData.items;
+																	for (const item of items) {
+																		if (item.type.startsWith("image/")) {
+																			const file = item.getAsFile();
+																			if (file) {
+																				field.onChange(async () => {
+																					setPreviewUrl({
+																						url: URL.createObjectURL(file),
+																						isLoading: true,
+																					});
+																					form.clearErrors("thumbnail");
+																					const url =
+																						await handleUploadFile(file);
+																					field.onChange(url);
+																				});
+																			}
+																		}
+																	}
+																}}
+															>
+																Click to paste image
+															</div>
+														</div>
+
 														<input
 															type="file"
 															name=""
@@ -647,7 +718,7 @@ const ProductUpdate = () => {
 											<FormItem>
 												<FormLabel>Ảnh khác</FormLabel>
 												<FormControl>
-													<div className="w-full ">
+													<div className="w-full bg-white rounded-sm border">
 														<ImageUploading
 															multiple
 															value={images}
@@ -675,54 +746,97 @@ const ProductUpdate = () => {
 																dragProps,
 															}) => {
 																return (
-																	// Khu vực kéo và thả hoặc nhấp để tải ảnh
-																	<div
-																		className={cn(
-																			"w-full relative h-[160px] rounded-sm border grid grid-cols-4 grid-rows-2 gap-1 p-1 bg-white",
-																		)}
-																	>
-																		{imageList?.map(
-																			(image: any, index: number) => {
-																				return (
-																					<div className="col-span-1 row-span-1">
-																						<div
-																							// key={index}
-																							className="relative flex items-center justify-center w-full h-full border rounded "
-																						>
-																							<img
-																								src={image?.url}
-																								alt=""
-																								onClick={() =>
-																									onImageUpdate(index)
-																								}
-																								className="cursor-pointer h-[90%] object-cover 	"
-																							/>
-																							<AiFillCloseCircle
-																								className="absolute right-0 cursor-pointer top-2 right"
-																								size={20}
-																								onClick={() =>
-																									onImageRemove(index)
-																								}
-																							/>
-																						</div>
-																					</div>
-																				);
-																			},
-																		)}
-																		<button
-																			type="button"
-																			onClick={onImageUpload}
-																			{...dragProps}
+																	<div>
+																		<div
 																			className={cn(
-																				"col-span-1 row-span-1 relative w-full h-full border rounded flex justify-center items-center",
-																				images.length === maxNumber && "hidden",
+																				"w-full relative h-[160px]   grid grid-cols-4 grid-rows-2 gap-1 p-1 ",
 																			)}
 																		>
-																			<AiOutlineCloudUpload
-																				size={50}
-																				strokeWidth={1}
-																			/>
-																		</button>
+																			{imageList?.map(
+																				(image: any, index: number) => {
+																					return (
+																						<div
+																							className="col-span-1 row-span-1"
+																							key={index}
+																						>
+																							<div
+																								// key={index}
+																								className="relative flex items-center justify-center w-full h-full border rounded "
+																							>
+																								<img
+																									src={image?.url}
+																									alt=""
+																									onClick={() =>
+																										onImageUpdate(index)
+																									}
+																									className="cursor-pointer h-[90%] object-cover 	"
+																								/>
+																								<AiFillCloseCircle
+																									className="absolute right-0 cursor-pointer top-2 right"
+																									size={20}
+																									onClick={() =>
+																										onImageRemove(index)
+																									}
+																								/>
+																							</div>
+																						</div>
+																					);
+																				},
+																			)}
+																			<button
+																				type="button"
+																				onClick={onImageUpload}
+																				{...dragProps}
+																				className={cn(
+																					"col-span-1 row-span-1 relative w-full h-full border rounded flex justify-center items-center",
+																					images.length === maxNumber &&
+																						"hidden",
+																				)}
+																			>
+																				<AiOutlineCloudUpload
+																					size={50}
+																					strokeWidth={1}
+																				/>
+																			</button>
+																		</div>
+																		<div className="px-2 mb-2 h-6 flex justify-center">
+																			<div
+																				className="w-40 text-center text-sm bg-blue-100 rounded-sm text-blue-500 cursor-pointer hover:bg-blue-200"
+																				onPaste={(event) => {
+																					const items =
+																						event.clipboardData.items;
+																					for (const item of items) {
+																						if (
+																							item.type.startsWith("image/")
+																						) {
+																							const file = item.getAsFile();
+																							if (file) {
+																								const url =
+																									URL.createObjectURL(file);
+
+																								const list = [
+																									...imageList,
+																									{
+																										url,
+																										file,
+																									},
+																								];
+
+																								console.log("list", list);
+
+																								setImages(list);
+																								field.onChange(list);
+																								if (list.length > 0) {
+																									form.clearErrors("images");
+																								}
+																							}
+																						}
+																					}
+																				}}
+																			>
+																				Click to paste image
+																			</div>
+																		</div>
 																	</div>
 																);
 															}}
@@ -1034,7 +1148,21 @@ const ProductUpdate = () => {
 										control={control}
 										render={({ field }) => (
 											<FormItem className="flex flex-col w-full">
-												<FormLabel>Mô tả</FormLabel>
+												<div className="flex justify-between items-center">
+													<FormLabel>Mô tả</FormLabel>
+
+													<TooltipComponent label="Tự tạo mô tả theo tên">
+														<div
+															className=" flex items-center justify-center  rounded-full cursor-pointer size-7  group hover:bg-gray-50"
+															onClick={handleDescription}
+														>
+															<BsStars
+																size={20}
+																className="text-blue-500 group-hover:text-blue-700"
+															/>
+														</div>
+													</TooltipComponent>
+												</div>
 												<FormControl>
 													<FroalaEditor
 														content={field.value}
@@ -1053,7 +1181,7 @@ const ProductUpdate = () => {
 								disabled={isPending || previewUrl.isLoading}
 								className="mt-4"
 							>
-								Thêm sản phẩm
+								Lưu sản phẩm
 							</Button>
 						</div>
 					</form>
