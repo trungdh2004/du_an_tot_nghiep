@@ -187,7 +187,7 @@ const PopupTableService = ({
 						Bỏ tất cả
 					</Button>
 					<Button
-						className="bg-custom-500 px-2 hover:bg-custom-600"
+						className="bg-blue-500 px-2 hover:bg-blue-600"
 						size={"sm"}
 						onClick={() => {
 							handleSubmit(listSelect);

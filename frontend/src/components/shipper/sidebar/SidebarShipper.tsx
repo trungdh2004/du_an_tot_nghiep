@@ -12,7 +12,7 @@ const SidebarShipper = () => {
 	const { current } = useStoreShipper();
 
 	return (
-		<ScrollArea className="w-full lg:w-[280px] h-full overflow-y-auto lg:border-r border-blue-400 bg-custom-100/50 border-dashed pb-4">
+		<ScrollArea className="w-full lg:w-[280px] h-full overflow-y-auto lg:border-r border-blue-400 bg-blue-100/50 border-dashed pb-4">
 			{/* user */}
 			<div className="p-4 sticky top-[0px]  backdrop-blur-sm z-10">
 				<div className="rounded-md bg-gray-current h-[60px] flex items-center px-5 ">

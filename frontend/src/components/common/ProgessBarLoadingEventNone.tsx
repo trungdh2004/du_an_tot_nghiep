@@ -19,8 +19,8 @@ const ProgessBarLoadingEventNone = () => {
 				</div>
 			</div>
 			<div className="absolute inset-x-0 bottom-0">
-				<div className="h-1.5 w-full bg-custom-100 overflow-hidden">
-					<div className="w-full h-full bg-custom-500 progress left-right"></div>
+				<div className="h-1.5 w-full bg-blue-100 overflow-hidden">
+					<div className="w-full h-full bg-blue-500 progress left-right"></div>
 				</div>
 			</div>
 		</div>

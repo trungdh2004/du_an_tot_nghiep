@@ -44,13 +44,13 @@ const OrderDashboardIndex = () => {
 			<div className="grid grid-cols-12 px-2 sm:px-4 gap-2 sm:gap-4">
 				<div className="col-span-6 md:col-span-3 h-16 sm:h-20 bg-white box-shadow flex items-center justify-between px-2 sm:px-4 border border-blue-200 rounded-lg">
 					<TooltipComponent label="Doanh thu">
-						<div className="p-1 sm:p-3 rounded-md border border-custom text-custom bg-custom-50 cursor-pointer">
+						<div className="p-1 sm:p-3 rounded-md border border-blue-500 text-blue-500 bg-blue-50 cursor-pointer">
 							<FaMoneyBillTrendUp size={20} />
 						</div>
 					</TooltipComponent>
 					<div className="text-end">
 						<h4 className="text-sm sm:text-base">Doanh thu</h4>
-						<span className="text-base sm:text-xl font-semibold text-custom">
+						<span className="text-base sm:text-xl font-semibold text-blue-500">
 							100.000đ
 						</span>
 					</div>
@@ -83,7 +83,7 @@ const OrderDashboardIndex = () => {
 				</div>
 				<div className="col-span-6 md:col-span-3 h-16 sm:h-20 bg-white box-shadow flex items-center justify-between px-2 sm:px-4 border border-red-200 rounded-lg">
 					<TooltipComponent label="Doanh thu">
-						<div className="p-1 sm:p-3 rounded-md border border-red-500 text-red-500 bg-custom-50 cursor-pointer">
+						<div className="p-1 sm:p-3 rounded-md border border-red-500 text-red-500 bg-red-50 cursor-pointer">
 							<MdRemoveShoppingCart size={20} />
 						</div>
 					</TooltipComponent>

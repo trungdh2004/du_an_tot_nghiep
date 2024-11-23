@@ -54,8 +54,9 @@ const Conversation = () => {
 	useEffect(() => {
 		if (socket) {
 			socket.on("updateConversation", (dataConver: any) => {
-				// console.log("dataConver",dataConver);
 
+				// console.log("dataConver",dataConver);
+				
 				setConversation((prev) => {
 					const dataFilter = prev?.content?.filter(
 						(item) => item?._id !== dataConver?._id,
@@ -75,55 +76,41 @@ const Conversation = () => {
 			</div>
 			<div className="flex-1 overflow-y-auto scroll-custom">
 				<div className="p-2">
-					{/* <h3 className="px-2 py-1 text-sm text-gray-500">ACTIVE CHATS</h3> */}
-					{isLoad &&
-						conversation?.content.map((chat) => (
-							<Link to={"/admin/chat/" + chat?._id} key={chat._id}>
-								<div
-									className="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-gray-100"
-									onClick={() => {}}
-								>
-									<div className="relative">
-										<Avatar>
-											<AvatarImage src={chat?.user?.avatarUrl} />
-											<AvatarFallback>{chat.user.full_name[0]}</AvatarFallback>
-										</Avatar>
+					<h3 className="px-2 py-1 text-sm text-gray-500">ACTIVE CHATS</h3>
+					{conversation?.content.map((chat) => (
+						<Link to={"/admin/chat/" + chat?._id} key={chat._id}>
+							<div
+								className="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-gray-100"
+								onClick={() => {}}
+							>
+								<div className="relative">
+									<Avatar>
+										<AvatarImage src={chat?.user?.avatarUrl} />
+										<AvatarFallback>{chat.user.full_name[0]}</AvatarFallback>
+									</Avatar>
+								</div>
+								<div className="flex-1">
+									<div className="flex justify-between">
+										<span className="font-medium">{chat.user.full_name}</span>
+										<span className="text-xs text-gray-500">
+											{calculateTimeDistance(chat?.lastMessage, true)}
+										</span>
 									</div>
-									<div className="flex-1">
-										<div className="flex justify-between">
-											<span className="font-medium">{chat.user.full_name}</span>
-											<span className="text-xs text-gray-500">
-												{calculateTimeDistance(chat?.lastMessage, true)}
-											</span>
-										</div>
-										<div className="flex justify-between">
-											<span
-												className={cn("text-sm text-gray-500 line-clamp-1")}
-											>
-												{chat.lastSender === "ADMIN" && "Bạn: "}
-												{chat.lastContent}
-											</span>
-											{/* {chat.unread && (
+									<div className="flex justify-between">
+										<span className={cn("text-sm text-gray-500 line-clamp-1")}>
+											{chat.lastSender === "ADMIN" && "Bạn: "}
+											{chat.lastContent}
+										</span>
+										{/* {chat.unread && (
 											<Badge variant="secondary" className="bg-green-100">
 												{chat.unread}
 											</Badge>
 										)} */}
-										</div>
 									</div>
 								</div>
-							</Link>
-						))}
-
-					{!isLoad && (
-						<div className="space-y-2">
-							<div className="h-14 w-full rounded-sm animate-pulse bg-gray-100"></div>
-							<div className="h-14 w-full rounded-sm animate-pulse bg-gray-100"></div>
-							<div className="h-14 w-full rounded-sm animate-pulse bg-gray-100"></div>
-							<div className="h-14 w-full rounded-sm animate-pulse bg-gray-100"></div>
-							<div className="h-14 w-full rounded-sm animate-pulse bg-gray-100"></div>
-							<div className="h-14 w-full rounded-sm animate-pulse bg-gray-100"></div>
-						</div>
-					)}
+							</div>
+						</Link>
+					))}
 				</div>
 			</div>
 			<div className="w-full h-6 bg-white"></div>

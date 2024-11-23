@@ -30,7 +30,7 @@ const OrderShipSuccess = () => {
 			status: 4,
 			pageIndex: 1,
 			pageSize: 5,
-			sort: -1,
+			sort: 1,
 			method: null,
 			startDate: null,
 			endDate: null,
