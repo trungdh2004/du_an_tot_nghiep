@@ -118,8 +118,12 @@ const CartItem = ({
 					/>
 					<div className="absolute inset-x-0 bottom-0 bg-black/45">
 						<p className="text-xs text-center text-white">
-							{!item?.attribute?._id && !item?.is_simple && "Không khả dụng"}
-							{!item?.attribute?.quantity && !item?.is_simple ? "Hết hàng" : ""}
+							{(item?.is_simple && Number(item?.quantity) <= 0) ||
+							(Number(item?.attribute?.quantity) <= 0 && !item?.is_simple)
+								? "Hết hàng"
+								: !item?.attribute?._id && !item?.is_simple
+									? "Không khả dụng"
+									: ""}
 						</p>
 					</div>
 				</div>
