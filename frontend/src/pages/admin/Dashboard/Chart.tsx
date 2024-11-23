@@ -22,6 +22,8 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
 	payload,
 	label,
 }) => {
+	console.log({ active, payload, label });
+
 	if (active && payload && payload.length) {
 		return (
 			<div className="p-2 rounded-sm bg-white box-shadow min-w-[120px]">
@@ -29,7 +31,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
 				<table className="w-full text-xs">
 					<tr>
 						<td colSpan={1}>
-							<div className="size-3 bg-custom-500 rounded-sm "></div>
+							<div className="size-3 bg-blue-500 rounded-sm "></div>
 						</td>
 						<td className=" text-left" colSpan={2}>
 							<div className="">Đơn mới</div>
@@ -89,8 +91,8 @@ export function ComponentChart() {
 				<div className="flex items-center gap-2">
 					<button
 						className={cn(
-							"py-1 px-2 rounded-sm  font-medium border text-sm hover:bg-custom-500 hover:text-white",
-							status === 1 && "bg-custom-500 text-white",
+							"py-1 px-2 rounded-sm  font-medium border text-sm hover:bg-blue-500 hover:text-white",
+							status === 1 && "bg-blue-500 text-white",
 						)}
 						onClick={() => {
 							setStatus(1);
@@ -100,8 +102,8 @@ export function ComponentChart() {
 					</button>
 					<button
 						className={cn(
-							"py-1 px-2 rounded-sm  font-medium border text-sm hover:bg-custom-500 hover:text-white",
-							status === 2 && "bg-custom-500 text-white",
+							"py-1 px-2 rounded-sm  font-medium border text-sm hover:bg-blue-500 hover:text-white",
+							status === 2 && "bg-blue-500 text-white",
 						)}
 						onClick={() => {
 							setStatus(2);

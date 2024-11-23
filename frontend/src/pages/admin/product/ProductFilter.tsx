@@ -61,12 +61,6 @@ const listField: IListName[] = [
 	},
 ];
 
-type ICate = {
-	_id: string;
-	name: string;
-};
-
-
 const ProductFilter = ({ onSubmit }: IProps) => {
 	const [categorys, setCategorys] = useState<ICategory[]>([]);
 	const [colors, setColors] = useState<IColor[]>([]);
@@ -132,10 +126,10 @@ const ProductFilter = ({ onSubmit }: IProps) => {
 				className="md:min-w-[400px] max-w-[80wh] p-2 "
 			>
 				<div className="grid grid-cols-2 gap-2">
-					<SelectComponent<ICate>
+					<SelectComponent<ICategory>
 						value={data.category}
 						label="Danh mục"
-						onChange={(newValue: ICate | null, action) => {
+						onChange={(newValue: ICategory | null, action) => {
 							if (action.action === "select-option") {
 								setData((prev) => ({
 									...prev,
@@ -321,7 +315,7 @@ const ProductFilter = ({ onSubmit }: IProps) => {
 							</Button>
 						</TooltipComponent>
 						<Button
-							className="bg-custom-500 text-white hover:bg-custom-600"
+							className="bg-blue-500 text-white hover:bg-blue-600"
 							onClick={handleSubmit}
 						>
 							Tìm kiếm

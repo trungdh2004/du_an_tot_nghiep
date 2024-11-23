@@ -69,14 +69,14 @@ const ShipperIndex = () => {
 				>
 					{/* <FaMapMarkerAlt size={20} className="text-red-500" /> */}
 					<div className="relative flex items-center justify-center">
-						<div className="relative size-10 rounded-full flex justify-center items-center bg-custom-500 z-10">
+						<div className="relative size-10 rounded-full flex justify-center items-center bg-red-500 z-10">
 							<img
 								src={current?.avatar || "/avatar_25.jpg"}
 								alt=""
 								className="size-8 rounded-full object-cover"
 							/>
 						</div>
-						<div className="absolute size-4 -bottom-1 bg-custom-500 rotate-45 z-0"></div>
+						<div className="absolute size-4 -bottom-1 bg-red-500 rotate-45 z-0"></div>
 					</div>
 				</Marker>
 				{data &&

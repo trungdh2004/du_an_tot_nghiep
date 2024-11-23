@@ -285,7 +285,7 @@ const SizeIndex = () => {
 								onClick={() => {
 									setOpenHiddenManyIdSize(true);
 								}}
-								className="bg-custom-500 text-[#ffffff] hover:bg-custom-400 w-full border"
+								className="bg-blue-500 text-[#ffffff] hover:bg-blue-400 w-full border"
 							>
 								Ẩn nhiều kích thước
 							</Button>
@@ -297,7 +297,7 @@ const SizeIndex = () => {
 								onClick={() => {
 									setOpenUnHiddenManyIdSize(true);
 								}}
-								className="bg-custom-500 text-[#ffffff] hover:bg-custom-400 w-full border"
+								className="bg-blue-500 text-[#ffffff] hover:bg-blue-400 w-full border"
 							>
 								Bỏ Ẩn nhiều kích thước
 							</Button>

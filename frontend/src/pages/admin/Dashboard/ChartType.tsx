@@ -67,7 +67,7 @@ export function ComponentChartType() {
 			</div>
 			<div className="flex items-center justify-around py-2">
 				<div className="flex items-center gap-2">
-					<p className="size-3 bg-custom-500 rounded-sm"></p>
+					<p className="size-3 bg-blue-500 rounded-sm"></p>
 					<p>Đăng kí</p>
 				</div>
 				<div className="flex items-center gap-2">

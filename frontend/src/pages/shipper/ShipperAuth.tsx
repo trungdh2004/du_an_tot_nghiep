@@ -380,7 +380,7 @@ const ShipperAuth = () => {
 									</div>
 									<Button
 										type="submit"
-										className="w-full mt-3 text-white text-base font-bold bg-custom-500 hover:bg-custom-400"
+										className="w-full mt-3 text-white text-base font-bold bg-blue-500 hover:bg-blue-400"
 										disabled={previewUrl?.isLoading}
 									>
 										{previewUrl?.isLoading && (

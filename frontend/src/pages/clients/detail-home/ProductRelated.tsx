@@ -79,7 +79,7 @@ const ProductRelated = ({ product }: Props) => {
 					</Swiper>
 					<button
 						className={cn(
-							`btn-next    absolute z-20 top-[39%] right-0 translate-x-1/2 group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`,
+							`btn-next    absolute z-10 top-[39%] right-0 translate-x-1/2 group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`,
 							!isBlock && "hidden",
 						)}
 					>
@@ -87,7 +87,7 @@ const ProductRelated = ({ product }: Props) => {
 					</button>
 					<button
 						className={cn(
-							`btn-prev  absolute z-20 top-[39%] left-0 -translate-x-1/2 group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`,
+							`btn-prev  absolute z-10 top-[39%] left-0 -translate-x-1/2 group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`,
 							!isBlock && "hidden",
 						)}
 					>
