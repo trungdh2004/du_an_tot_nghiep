@@ -74,19 +74,22 @@ const ProductsList = () => {
 				</Swiper>
 
 				<button
-					className={`btn-next-product  absolute z-20 top-[39%] right-4 text-black w-[50px] h-[50px] border flex justify-center items-center rounded-full p-3 hover:text-white hover:bg-[#585858] duration-300 cursor-pointer`}
+					className={`btn-next-product  absolute z-10 top-[39%] right-4 text-black w-[50px] h-[50px] border flex justify-center items-center rounded-full p-3 bg-gray-100 bg-opacity-70 hover:bg-gray-100 duration-300 cursor-pointer`}
 				>
 					<GrLinkNext />
 				</button>
 				<button
-					className={`btn-prev-product  absolute z-20 top-[39%] left-4 text-black w-[50px] h-[50px] border flex justify-center items-center rounded-full p-3 hover:text-white hover:bg-[#585858] duration-300 cursor-pointer`}
+					className={`btn-prev-product  absolute z-10 top-[39%] left-4 text-black w-[50px] h-[50px] border flex justify-center items-center rounded-full p-3 bg-gray-100 bg-opacity-70 hover:bg-gray-100 duration-300 cursor-pointer`}
 				>
 					<GrLinkPrevious />
 				</button>
 			</div>
 
 			<div className="text-center  ">
-				<Link to={"/shop"} className="inline-flex items-center justify-center gap-2 group">
+				<Link
+					to={"/shop"}
+					className="inline-flex items-center justify-center gap-2 group"
+				>
 					<span className="font-medium text-gray-500">Xem tất cả</span>
 
 					<span className="group-hover:translate-x-4 duration-200">

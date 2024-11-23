@@ -72,26 +72,27 @@ const ListProductHot = () => {
 						},
 					}}
 				>
-					{!isLoading && data?.map((product: IProduct) => (
-						<SwiperSlide className="lg:w-[260px] w-[240px] group">
-							<Link
-								key={product?._id}
-								to={`/shop/detail/${encodeURIComponent(product?.slug || "")}`}
-								className="relative flex flex-col overflow-hidden transition-all duration-300 bg-white border border-gray-200 rounded-xl group hover:shadow-lg"
-							>
-								<ProductV2 product={product} />
-							</Link>
-						</SwiperSlide>
-					))}
+					{!isLoading &&
+						data?.map((product: IProduct) => (
+							<SwiperSlide className="lg:w-[260px] w-[240px] group">
+								<Link
+									key={product?._id}
+									to={`/shop/detail/${encodeURIComponent(product?.slug || "")}`}
+									className="relative flex flex-col overflow-hidden transition-all duration-300 bg-white border border-gray-200 rounded-xl group hover:shadow-lg"
+								>
+									<ProductV2 product={product} />
+								</Link>
+							</SwiperSlide>
+						))}
 				</Swiper>
 
 				<button
-					className={`btn-next  absolute z-20 top-[39%] right-4 text-black w-[50px] h-[50px] border flex justify-center items-center rounded-full p-3 hover:text-white hover:bg-[#585858] duration-300 cursor-pointer`}
+					className={`btn-next  absolute z-10 top-[39%] right-4 text-black w-[50px] h-[50px] border flex justify-center items-center rounded-full p-3 bg-gray-100 bg-opacity-70 hover:bg-gray-100 duration-300 cursor-pointer`}
 				>
 					<GrLinkNext />
 				</button>
 				<button
-					className={`btn-prev  absolute z-20 top-[39%] left-4 text-black w-[50px] h-[50px] border flex justify-center items-center rounded-full p-3 hover:text-white hover:bg-[#585858] duration-300 cursor-pointer`}
+					className={`btn-prev  absolute z-10 top-[39%] left-4 text-black w-[50px] h-[50px] border flex justify-center items-center rounded-full p-3 bg-gray-100 bg-opacity-70 hover:bg-gray-100 duration-300 cursor-pointer`}
 				>
 					<GrLinkPrevious />
 				</button>
