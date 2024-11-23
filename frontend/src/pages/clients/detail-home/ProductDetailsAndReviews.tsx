@@ -48,7 +48,7 @@ const ProductDetailsAndReviews = ({ product, isLoading }: Props) => {
 					<li
 						key={index + new Date().toISOString()}
 						onClick={() => setStep(index + 1)}
-						className={cn(step == index + 1 && "text-blue-500")}
+						className={cn(step == index + 1 && "text-custom")}
 					>
 						{item}
 					</li>

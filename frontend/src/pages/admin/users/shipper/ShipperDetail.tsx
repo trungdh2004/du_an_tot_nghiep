@@ -107,7 +107,7 @@ const UserShipperDetail = () => {
 								) : (
 									<button
 										onClick={handleBlock}
-										className="flex items-center  px-2.5 py-1.5 font-bold text-white bg-red-500 rounded-full hover:bg-red-600 focus:outline-none focus:shadow-outline"
+										className="flex items-center  px-2.5 py-1.5 font-bold text-white bg-custom-500 rounded-full hover:bg-custom-600 focus:outline-none focus:shadow-outline"
 									>
 										<FaLock className="mr-2" />
 										<span className="text-xs">Khóa tài khoản</span>
@@ -159,7 +159,7 @@ const UserShipperDetail = () => {
 						label="Đơn hàng mới"
 					/>
 					<StatCard
-						icon={<FaTruckFast size={40} className="text-blue-500" />}
+						icon={<FaTruckFast size={40} className="text-custom" />}
 						count={infoDetailShipper?.countOrderRunning as number}
 						label="Đơn hàng đang giao"
 					/>
@@ -182,8 +182,8 @@ const UserShipperDetail = () => {
 					<ChartOrderShipper />
 					<div className="flex items-center justify-center gap-6 mt-6">
 						<LegendItem color="bg-green-500" label="Thành công" />
-						<LegendItem color="bg-blue-500" label="Đang giao" />
-						<LegendItem color="bg-red-500" label="Thất bại" />
+						<LegendItem color="bg-custom-500" label="Đang giao" />
+						<LegendItem color="bg-custom-500" label="Thất bại" />
 					</div>
 				</div> */}
 			</div>
@@ -197,7 +197,7 @@ const UserShipperDetail = () => {
 					label="Đơn hàng giao thành công"
 				/>
 				<StatCard
-					icon={<FaTruckFast size={40} className="text-blue-500" />}
+					icon={<FaTruckFast size={40} className="text-custom" />}
 					count={orderStats.inProgress}
 					label="Đơn hàng đang giao"
 				/>

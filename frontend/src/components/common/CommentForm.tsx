@@ -96,7 +96,7 @@ const CommentEditor: React.FC<CommentEditorProps> = ({
 								HỦY
 							</button>
 							<button
-								className="px-3 py-1 text-xs text-white bg-blue-500 border-none rounded-sm cursor-pointer sm:text-sm hover:bg-blue-600"
+								className="px-3 py-1 text-xs text-white bg-custom-500 border-none rounded-sm cursor-pointer sm:text-sm hover:bg-custom-600"
 								onClick={onSubmit}
 							>
 								BÌNH LUẬN

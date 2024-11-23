@@ -90,7 +90,7 @@ const OrderNewIndex = () => {
 									className={cn(
 										"py-[2px] h-8 text-sm hover:bg-gray-100",
 										status === 2
-											? "text-blue-500 hover:text-blue-500"
+											? "text-custom hover:text-custom"
 											: "text-green-500 hover:text-green-500",
 									)}
 								>

@@ -116,9 +116,9 @@ const Color = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 								>
 									<Checkbox
 										className={cn(
-											`data-[state=checked]:bg-white data-[state=checked]:text-[#ffffff] rounded-full lg:w-7 lg:h-7 w-6 h-6 border-[#eee] p-1 text-[10px] font-bold `,
+											` data-[state=checked]:bg-white data-[state=checked]:text-[#ffffff] rounded-full lg:w-6 lg:h-6 w-5 h-5 border-[#eee] p-1 text-[10px] font-bold `,
 											color.code === "#ffffff" &&
-												"data-[state=checked]:text-black",
+												"data-[state=checked]:text-black ",
 										)}
 										style={{ backgroundColor: color.code }}
 										value={color._id}

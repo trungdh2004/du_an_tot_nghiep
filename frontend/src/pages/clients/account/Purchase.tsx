@@ -129,8 +129,8 @@ const OrderManagements = () => {
 								onClick={() => handleMenuClick(item)}
 								className={cn(
 									`flex-1 text-nowrap text-sm md:text-base px-5 cursor-pointer font-medium flex justify-center py-3 md:py-5 border-b-2 border-gray-200 hover:border-b-2
-                                 hover:border-blue-500 hover:text-blue-500 transition-all duration-300 `,
-									active === item.index && `border-blue-500 text-blue-500`,
+                                 hover:border-custom hover:text-custom transition-all duration-300 `,
+									active === item.index && `border-custom text-custom`,
 								)}
 							>
 								{item.name}
@@ -165,7 +165,7 @@ const OrderManagements = () => {
 												className={cn(
 													item.status == 6
 														? "text-red-500 text-xs md:text-base font-medium"
-														: "text-xs md:text-base text-blue-500 font-medium ",
+														: "text-xs md:text-base text-custom font-medium ",
 												)}
 											>
 												{
@@ -244,7 +244,7 @@ const OrderManagements = () => {
 																<div className="w-full">
 																	{itemOrderList?.is_evaluate === true ? (
 																		<div className="">
-																			<span className="text-blue-500 text-sm">
+																			<span className="text-custom text-sm">
 																				Đã đánh giá
 																			</span>
 																		</div>
@@ -265,7 +265,7 @@ const OrderManagements = () => {
 																						),
 																					);
 																			}}
-																			className="flex items-center px-3 py-2 cursor-pointer text-blue-500  border border-blue-500 hover:bg-blue-100 rounded-sm text-sm "
+																			className="flex items-center px-3 py-2 cursor-pointer text-custom  border border-custom hover:bg-custom-100 rounded-sm text-sm "
 																		>
 																			<FaStar className="text-orange-500 mr-1" />{" "}
 																			<span className="">Đánh giá</span>
@@ -301,7 +301,7 @@ const OrderManagements = () => {
 												<button
 													onClick={() => setOpenId(item._id)}
 													className="px-3 py-2 cursor-pointer  border
-                           border-red-600 text-red-600 hover:bg-red-100 transition-all  duration-300    rounded-sm text-xs lg:text-[16px]"
+                           border-red-600 text-red-600 hover:bg-custom-100 transition-all  duration-300    rounded-sm text-xs lg:text-[16px]"
 												>
 													Hủy đơn hàng
 												</button>
@@ -309,7 +309,7 @@ const OrderManagements = () => {
 											{[4].includes(item.status) && (
 												<button
 													onClick={() => mutate(item._id)}
-													className="max-w-[200px] px-3 py-2 lg:px-8 lg:py-3 text-white bg-blue-500 border border-blue-600 hover:bg-blue-600 transition-all  duration-300    rounded-sm text-xs lg:text-[16px]"
+													className="max-w-[200px] px-3 py-2 lg:px-8 lg:py-3 text-white bg-custom-500 border border-blue-600 hover:bg-custom-600 transition-all  duration-300    rounded-sm text-xs lg:text-[16px]"
 												>
 													Đã nhận hàng
 												</button>

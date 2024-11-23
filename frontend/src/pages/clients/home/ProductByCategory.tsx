@@ -33,7 +33,7 @@ const ProductByCategory = () => {
 					<div className="text-header flex-1">Đa dạng mẫu mã sản phẩm</div>
 					<Link
 						to={"/shop"}
-						className="text-gray-400 hover:text-gray-700 cursor-pointer flex items-center gap-1"
+						className="text-gray-400 hover:text-custom cursor-pointer flex items-center gap-1"
 					>
 						<span className="text-sm">Xem thêm </span>
 						<FaAnglesRight size={14} />

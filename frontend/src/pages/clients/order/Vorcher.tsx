@@ -110,7 +110,7 @@ const Vorcher = ({
 							</div>
 							<Button
 								className={cn(
-									"h-8 md:h-10 w-full md:w-40 bg-red-500 hover:bg-red-600 text-white px-5",
+									"h-8 md:h-10 w-full md:w-40 bg-custom-500 hover:bg-custom-600 text-white px-5",
 								)}
 							>
 								Áp dụng

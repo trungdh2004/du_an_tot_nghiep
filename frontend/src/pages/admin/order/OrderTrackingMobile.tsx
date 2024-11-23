@@ -37,7 +37,7 @@ const OrderTrackingMobile = ({ data }: any) => {
 								sub: string;
 							}) => order && order.status === 2,
 						)
-							? "bg-blue-600"
+							? "bg-custom-600"
 							: "",
 						data.some(
 							(order: {
@@ -47,7 +47,7 @@ const OrderTrackingMobile = ({ data }: any) => {
 								sub: string;
 							}) => order && order.status === 6,
 						)
-							? "bg-red-600"
+							? "bg-custom-600"
 							: "",
 					)}
 				></div>
@@ -119,7 +119,7 @@ const OrderTrackingMobile = ({ data }: any) => {
 								sub: string;
 							}) => order && order.status === 3,
 						)
-							? "bg-blue-600"
+							? "bg-custom-600"
 							: "",
 						data.some(
 							(order: {
@@ -129,7 +129,7 @@ const OrderTrackingMobile = ({ data }: any) => {
 								sub: string;
 							}) => order && order.status === 6,
 						)
-							? "bg-red-600"
+							? "bg-custom-600"
 							: "",
 					)}
 				></div>
@@ -201,7 +201,7 @@ const OrderTrackingMobile = ({ data }: any) => {
 								sub: string;
 							}) => order && order.status === 4,
 						)
-							? "bg-blue-600"
+							? "bg-custom-600"
 							: "",
 						data.some(
 							(order: {
@@ -211,7 +211,7 @@ const OrderTrackingMobile = ({ data }: any) => {
 								sub: string;
 							}) => order && order.status === 6,
 						)
-							? "bg-red-600"
+							? "bg-custom-600"
 							: "",
 					)}
 				></div>
@@ -283,7 +283,7 @@ const OrderTrackingMobile = ({ data }: any) => {
 								sub: string;
 							}) => order && order.status === 5,
 						)
-							? "bg-blue-600"
+							? "bg-custom-600"
 							: "",
 						data.some(
 							(order: {
@@ -293,7 +293,7 @@ const OrderTrackingMobile = ({ data }: any) => {
 								sub: string;
 							}) => order && order.status === 6,
 						)
-							? "bg-red-600"
+							? "bg-custom-600"
 							: "",
 					)}
 				></div>

@@ -106,7 +106,7 @@ const ListOrderNew = () => {
 											<Link to={`/admin/order/${row._id}`}>
 												<MdOutlineRemoveRedEye
 													size={20}
-													className="text-blue-500"
+													className="text-custom"
 												/>
 											</Link>
 										</TooltipComponent>
@@ -141,7 +141,7 @@ const ListOrderNew = () => {
 									<TableCell>{format(row.orderDate, "dd/MM/yyy")}</TableCell>
 									<TableHead>
 										<div
-											className="w-full h-5 text-xs leading-5 text-center text-white bg-red-500 rounded-full text-nowrap"
+											className="w-full h-5 text-xs leading-5 text-center text-white bg-custom-500 rounded-full text-nowrap"
 											style={{
 												backgroundColor:
 													statusOrder?.find(

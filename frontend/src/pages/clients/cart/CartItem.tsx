@@ -101,7 +101,7 @@ const CartItem = ({
 						onCheckedChange={() =>
 							onCheckedChange(productId, item._id as string)
 						}
-						className="data-[state=checked]:bg-red-500 border-gray-300 data-[state=checked]:border-red-500"
+						className="data-[state=checked]:bg-custom-500 border-gray-300 data-[state=checked]:border-red-500"
 					/>
 				) : (
 					<>
