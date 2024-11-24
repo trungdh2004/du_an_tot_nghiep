@@ -48,7 +48,7 @@ const MarketItem = ({ order, location }: IProps) => {
 						<div className="relative flex items-center justify-center">
 							<div
 								className={cn(
-									"relative size-10 rounded-full flex justify-center items-center bg-custom-500 z-10",
+									"relative size-10 rounded-full flex justify-center items-center bg-blue-500 z-10",
 									order.status === 3 && "bg-green-500",
 								)}
 							>
@@ -56,7 +56,7 @@ const MarketItem = ({ order, location }: IProps) => {
 							</div>
 							<div
 								className={cn(
-									"absolute size-4 -bottom-1 bg-custom-500 rotate-45 z-0",
+									"absolute size-4 -bottom-1 bg-blue-500 rotate-45 z-0",
 									order.status === 3 && "bg-green-500",
 								)}
 							></div>
@@ -100,7 +100,7 @@ const MarketItem = ({ order, location }: IProps) => {
 						<div className="pt-2 border-t mt-1">
 							<div
 								className={cn(
-									"w-full text-center border rounded-md border-custom text-custom hover:bg-custom-100",
+									"w-full text-center border rounded-md border-blue-500 text-blue-500 hover:bg-blue-100",
 									order.status === 3 && "border-green-500 text-green-500",
 								)}
 								onClick={() => {

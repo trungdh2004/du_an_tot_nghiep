@@ -33,10 +33,10 @@ const OrderItem = ({ order, isSuccess = false }: IProps) => {
 				<div className="text-sm flex items-center justify-between">
 					<p>
 						Mã đơn hàng:{" "}
-						<span className="font-semibold text-custom">{order.code}</span>
+						<span className="font-semibold text-blue-500">{order.code}</span>
 					</p>
 					<p>
-						<span className="font-semibold text-custom">
+						<span className="font-semibold text-blue-500">
 							{order.orderItems?.length}
 						</span>{" "}
 						sp
@@ -73,7 +73,7 @@ const OrderItem = ({ order, isSuccess = false }: IProps) => {
 						<div>
 							{order?.status === 2 ? (
 								<button
-									className="px-4 py-[2px] mt-1 border border-custom text-custom rounded-full text-sm font-semibold hover:bg-custom-500 hover:text-white leading-5"
+									className="px-4 py-[2px] mt-1 border border-blue-500 text-blue-500 rounded-full text-sm font-semibold hover:bg-blue-500 hover:text-white leading-5"
 									onClick={() => {
 										mutate(order._id as string);
 									}}
@@ -98,7 +98,7 @@ const OrderItem = ({ order, isSuccess = false }: IProps) => {
 					) : (
 						<p className="text-sm ">
 							Đã giao:{" "}
-							<span className="font-medium text-custom">
+							<span className="font-medium text-blue-500">
 								{format(order.shippedDate, "hh:mm dd-MM-yyyy")}
 							</span>
 						</p>

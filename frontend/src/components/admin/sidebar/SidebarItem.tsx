@@ -26,8 +26,8 @@ const SidebarItem = ({ Icon, label, path, isAction, isParent }: Props) => {
 				{!!Icon && (
 					<Icon
 						className={cn(
-							"group-hover:text-custom text-[#4b5563]",
-							isAction && "text-custom",
+							"group-hover:text-blue-500 text-[#4b5563]",
+							isAction && "text-blue-500",
 						)}
 						size={18}
 					/>
@@ -35,8 +35,8 @@ const SidebarItem = ({ Icon, label, path, isAction, isParent }: Props) => {
 
 				<span
 					className={cn(
-						"group-hover:text-custom text-[#4b5563] text-sm",
-						isAction && "text-custom",
+						"group-hover:text-blue-500 text-[#4b5563] text-sm",
+						isAction && "text-blue-500",
 					)}
 				>
 					{label}

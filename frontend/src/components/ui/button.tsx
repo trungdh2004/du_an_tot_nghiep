@@ -18,7 +18,7 @@ const buttonVariants = cva(
 					"bg-green-500 text-white hover:bg-green-600 border-green-600",
 				ghost: "hover:bg-accent hover:text-accent-foreground",
 				link: "text-primary underline-offset-4 hover:underline",
-				danger: "bg-custom-500 text-white hover:bg-custom-700 transition",
+				danger: "bg-red-500 text-white hover:bg-red-700 transition",
 				success: "bg-green-500 text-white hover:bg-green-700 transition",
 				add: "bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border",
 			},
