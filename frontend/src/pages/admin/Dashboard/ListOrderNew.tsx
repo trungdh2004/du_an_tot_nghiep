@@ -14,7 +14,7 @@ import { getNewOrder } from "@/service/dashboard.service";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const statusOrder = [
 	{
@@ -64,6 +64,7 @@ const ListOrderNew = () => {
 			} catch (error) {}
 		},
 	});
+	const router = useNavigate();
 
 	// const table = useReactTable({
 	// 	data: data,
@@ -84,8 +85,8 @@ const ListOrderNew = () => {
 							<TableHead className="w-[50px]"></TableHead>
 							<TableHead className="w-[100px]">Mã</TableHead>
 							<TableHead className="w-[100px]">Người đặt</TableHead>
-							<TableHead>Tổng tiền</TableHead>
-							<TableHead>Đã thanh toán</TableHead>
+							<TableHead>Giá trị đơn</TableHead>
+							<TableHead>Thanh toán</TableHead>
 							<TableHead>Thanh toán</TableHead>
 							<TableHead>Số sản phẩm</TableHead>
 							<TableHead>Ngày đặt</TableHead>
@@ -96,7 +97,13 @@ const ListOrderNew = () => {
 						{data &&
 							data?.length > 0 &&
 							data?.map((row: any) => (
-								<TableRow key={row._id}>
+								<TableRow
+									key={row._id}
+									onDoubleClick={() => {
+										router(`/admin/order/${row._id}`);
+									}}
+									className="cursor-pointer"
+								>
 									<TableCell className="text-center">
 										<TooltipComponent label="Xem chi tiết">
 											<Link to={`/admin/order/${row._id}`}>
