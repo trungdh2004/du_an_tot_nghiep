@@ -23,7 +23,7 @@ const Coupon = ({ voucher, className }: Props) => {
 
 	return (
 		<div className={cn("w-full h-full rounded-md self-auto", className)}>
-			<div className={styles.voucherItemInfo}>
+			<div className={cn(styles.voucherItemInfo,'h-full')}>
 				<div className={styles.voucherItemDetail}>
 					<div className={styles.voucherItemTitle}>{voucher?.name} </div>
 					<div className={cn(styles.voucherItemDes, 'md:line-clamp-2 line-clamp-1')}>

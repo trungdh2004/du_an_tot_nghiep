@@ -25,9 +25,9 @@ const ProductsList = () => {
 
 	return (
 		<div className="padding">
-		 <div className="relative w-full pt-10 pb-6 group/parrent [&>.swiper-button-disabled]:opacity-50 [&>.swiper-button-disabled]:pointer-events-none">
+			<div className="relative w-full pt-10 pb-6 group/parrent [&>.swiper-button-disabled]:opacity-50 [&>.swiper-button-disabled]:pointer-events-none">
 				<Swiper
-          className="[&>.swiper-wrapper]:p-1.5"
+					className="[&>.swiper-wrapper]:p-1.5"
 					modules={[Navigation]}
 					loop={false}
 					spaceBetween={20}
@@ -56,15 +56,16 @@ const ProductsList = () => {
 						},
 					}}
 				>
-					{!isLoading && data?.map((product: IProduct) => (
-						<SwiperSlide className="lg:w-[260px] w-[240px] group">
+					{!isLoading &&
+						data?.map((product: IProduct) => (
+							<SwiperSlide className="lg:w-[260px] w-[240px] group">
 								<ProductV2 product={product} key={product?._id} />
-						</SwiperSlide>
-					))}
+							</SwiperSlide>
+						))}
 				</Swiper>
 
 				<button
-					className={`btn-next  absolute z-10 top-[39%] right-0 translate-x-1/2 group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`}
+					className={`btn-next    absolute z-10 top-[39%] right-0 translate-x-1/2 group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`}
 				>
 					<GrLinkNext className="text-sm group-hover/parrent:text-base" />
 				</button>

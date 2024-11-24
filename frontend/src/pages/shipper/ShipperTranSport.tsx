@@ -168,7 +168,7 @@ const ShipperTranSport = () => {
 	return (
 		<div className="w-full h-full flex relative overflow-hidden">
 			<Link to={"/shipper"}>
-				<div className="fixed top-4 left-4 size-10 rounded-full bg-custom-500 z-10 flex items-center justify-center cursor-pointer">
+				<div className="fixed top-4 left-4 size-10 rounded-full bg-blue-500 z-10 flex items-center justify-center cursor-pointer">
 					<AiFillHome size={20} className="text-white" />
 				</div>
 			</Link>
@@ -194,14 +194,14 @@ const ShipperTranSport = () => {
 							latitude={location[1]}
 							anchor="bottom"
 						>
-							<FaMapMarkerAlt size={20} className="text-custom" />
+							<FaMapMarkerAlt size={20} className="text-blue-500" />
 						</Marker>
 					)}
 				</MapComponent>
 			</div>
 			<div
 				className={cn(
-					"absolute -right-[280px] w-[280px] lg:static flex lg:w-1/5 h-screen bg-custom-200 p-2 sm:p-4 space-y-2  flex-col duration-1000 ease-in-out z-50 border-l border-custom",
+					"absolute -right-[280px] w-[280px] lg:static flex lg:w-1/5 h-screen bg-blue-200 p-2 sm:p-4 space-y-2  flex-col duration-1000 ease-in-out z-50 border-l border-blue-500",
 					isOpen && "right-0",
 				)}
 			>
@@ -324,7 +324,7 @@ const ShipperTranSport = () => {
 				</Button>
 
 				<div
-					className="absolute h-10 w-6 top-1/2 -translate-y-1/2 bg-custom-200 -left-5 cursor-pointer rounded-s-full border-l border-custom"
+					className="absolute h-10 w-6 top-1/2 -translate-y-1/2 bg-blue-200 -left-5 cursor-pointer rounded-s-full border-l border-blue-500"
 					onClick={() => {
 						setIsOpen((prev) => !prev);
 					}}

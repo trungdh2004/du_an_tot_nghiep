@@ -183,7 +183,7 @@ const Register = () => {
 						</div>
 						<Button
 							type="submit"
-							className="w-full mt-3 mb-6 text-base font-bold text-white bg-custom-500 hover:bg-custom-400"
+							className="w-full mt-3 mb-6 text-base font-bold text-white bg-custom hover:bg-custom-400"
 						>
 							Đăng ký
 						</Button>

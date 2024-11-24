@@ -601,7 +601,7 @@ const ProductUpdate = () => {
 																}
 															}}
 														>
-															<div className="relative w-full bg-white  ">
+															<div className="relative w-full bg-white ">
 																<div
 																	className={cn(
 																		"w-full h-[160px] flex justify-center items-center flex-col",
@@ -647,9 +647,9 @@ const ProductUpdate = () => {
 															</div>
 														</label>
 
-														<div className="px-2 mb-2 h-6 flex justify-center">
+														<div className="flex justify-center h-6 px-2 mb-2">
 															<div
-																className="w-40 text-center text-sm bg-blue-100 rounded-sm text-blue-500 cursor-pointer hover:bg-blue-200"
+																className="w-40 text-sm text-center text-blue-500 bg-blue-100 rounded-sm cursor-pointer hover:bg-blue-200"
 																onPaste={(event) => {
 																	console.log("paste dc nè");
 																	const items = event.clipboardData.items;
@@ -718,7 +718,7 @@ const ProductUpdate = () => {
 											<FormItem>
 												<FormLabel>Ảnh khác</FormLabel>
 												<FormControl>
-													<div className="w-full bg-white rounded-sm border">
+													<div className="w-full bg-white border rounded-sm">
 														<ImageUploading
 															multiple
 															value={images}
@@ -799,9 +799,9 @@ const ProductUpdate = () => {
 																				/>
 																			</button>
 																		</div>
-																		<div className="px-2 mb-2 h-6 flex justify-center">
+																		<div className="flex justify-center h-6 px-2 mb-2">
 																			<div
-																				className="w-40 text-center text-sm bg-blue-100 rounded-sm text-blue-500 cursor-pointer hover:bg-blue-200"
+																				className="w-40 text-sm text-center text-blue-500 bg-blue-100 rounded-sm cursor-pointer hover:bg-blue-200"
 																				onPaste={(event) => {
 																					const items =
 																						event.clipboardData.items;
@@ -1148,12 +1148,12 @@ const ProductUpdate = () => {
 										control={control}
 										render={({ field }) => (
 											<FormItem className="flex flex-col w-full">
-												<div className="flex justify-between items-center">
+												<div className="flex items-center justify-between">
 													<FormLabel>Mô tả</FormLabel>
 
 													<TooltipComponent label="Tự tạo mô tả theo tên">
 														<div
-															className=" flex items-center justify-center  rounded-full cursor-pointer size-7  group hover:bg-gray-50"
+															className="flex items-center justify-center rounded-full cursor-pointer size-7 group hover:bg-gray-50"
 															onClick={handleDescription}
 														>
 															<BsStars
@@ -1187,7 +1187,7 @@ const ProductUpdate = () => {
 					</form>
 				</Form>
 				<div className="hidden p-4 lg:block lg:col-span-3 ">
-					{/* <div className="w-full border rounded relative">
+					{/* <div className="relative w-full border rounded">
 						{form.watch("is_hot") && (
 							<div className="absolute py-[2px] font-semibold text-white rounded-r-md pr-2 pl-1 left-0 top-2 bg-red-500">
 								HOT
