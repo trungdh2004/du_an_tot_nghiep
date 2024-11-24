@@ -183,7 +183,7 @@ const ChatAction = () => {
 	};
 
 	return (
-		<div>
+		<div className={cn("hidden",isLoggedIn && "block")}>
 			<div className="fixed bottom-4 right-4 size-12 rounded-full bg-blue-500 z-10 cursor-pointer">
 				<div
 					className={cn(

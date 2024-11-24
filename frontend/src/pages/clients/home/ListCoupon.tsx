@@ -32,7 +32,7 @@ const ListCoupon = () => {
 			<div className="flex items-center justify-between w-full mb-6">
 				<div className="flex-1 text-header">Ưu đãi lớn</div>
 				<Link
-					to={"/shop"}
+					to={"/vouchers"}
 					className="flex items-center gap-1 text-gray-400 cursor-pointer hover:text-gray-700"
 				>
 					<span className="text-sm">Xem thêm </span>
@@ -48,9 +48,9 @@ const ListCoupon = () => {
 				}}
 				spaceBetween={20} // Khoảng cách giữa các voucher
 				breakpoints={{
-					320: { 
-						slidesPerView: 1, 
-						pagination: { clickable: true } // Thêm pagination khi ở kích thước mobile
+					320: {
+						slidesPerView: 1,
+						pagination: { clickable: true }, // Thêm pagination khi ở kích thước mobile
 					},
 					768: { slidesPerView: 2 },
 					1024: { slidesPerView: 3.5 },

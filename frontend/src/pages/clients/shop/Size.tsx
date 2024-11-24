@@ -54,6 +54,8 @@ const Size = ({ setSearchParamsObject }: Props) => {
 				sizes = sizes.filter((_size) => _size !== size);
 			}
 			searchParams.set("size", sizes.join());
+			searchParams.set("pageIndex", "1");
+
 			setSearchParams(searchParams);
 
 			const paramsObject: any = Object.fromEntries(searchParams.entries());
@@ -65,8 +67,8 @@ const Size = ({ setSearchParamsObject }: Props) => {
 			setSearchParamsObject((prev) => ({
 				...prev,
 				size: sizeCheck,
+				pageIndex: 1,
 			}));
-			query.invalidateQueries({ queryKey: ["productShop"] });
 		},
 		[searchParams, setSearchParams, setSearchParamsObject, query],
 	);
