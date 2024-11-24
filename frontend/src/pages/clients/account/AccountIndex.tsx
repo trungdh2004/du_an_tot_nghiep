@@ -31,6 +31,7 @@ import { vi } from "date-fns/locale";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/hooks/auth";
 import { IUser } from "@/contexts/AuthContext";
+import CalendarYear from "@/components/common/CalendarYear";
 
 const formSchema = z.object({
 	full_name: z
@@ -217,11 +218,8 @@ const AccountIndex = () => {
 																</Button>
 															</FormControl>
 														</PopoverTrigger>
-														<PopoverContent
-															className="w-auto p-0"
-															align="start"
-														>
-															<Calendar
+														<PopoverContent className=" p-0" align="start">
+															{/* <Calendar
 																locale={vi}
 																mode="single"
 																selected={field.value as any}
@@ -232,6 +230,22 @@ const AccountIndex = () => {
 																	date < new Date() ||
 																	date < new Date("1900-01-01")
 																}
+																initialFocus
+															/> */}
+															<CalendarYear
+																value={
+																	field.value
+																		? new Date(field.value)
+																		: undefined
+																}
+																onSelect={(value) => {
+																	field.onChange(value?.toISOString());
+																}}
+																disabled={(date) =>
+																	date > new Date() ||
+																	date < new Date("1900-01-01")
+																}
+																lengthYear={40}
 																initialFocus
 															/>
 														</PopoverContent>

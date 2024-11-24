@@ -175,7 +175,7 @@ const ChatAction = () => {
 			<div className="fixed z-10 bg-white rounded-full shadow-[rgba(0,0,0,0.35)_0px_5px_15px] cursor-pointer bottom-4 right-4 size-12">
 				<div
 					className={cn(
-						"absolute w-80 h-[400px] rounded-md  box-shadow bottom-14 right-0 z-10 p-2 hidden",
+						"absolute w-80 h-[400px] rounded-md shadow-lg bottom-14 right-0 z-10 hidden ",
 						openChat && "block",
 					)}
 				>
@@ -184,7 +184,7 @@ const ChatAction = () => {
 							<h3 className="p-2 font-semibold text-white">NUCSHOP</h3>
 							<IoCloseSharp
 								size={25}
-								className="pr-2"
+								className="pr-2 text-white"
 								onClick={() => setOpenChat(false)}
 							/>
 						</div>
@@ -264,7 +264,7 @@ const ChatAction = () => {
 						>
 							<FaArrowDown />
 						</div>
-						<div className="flex items-center w-full p-1 bg-white border-t">
+						<div className="flex items-center w-full p-1 border-t">
 							<Form {...form}>
 								<form
 									onSubmit={form.handleSubmit(onSubmit)}
