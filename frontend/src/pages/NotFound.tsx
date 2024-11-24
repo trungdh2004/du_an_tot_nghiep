@@ -1,22 +1,21 @@
-import React from "react";
 import { Link } from "react-router-dom";
 
 const NotFound = () => {
 	return (
-		<div className="grid h-screen bg-white px-4">
+		<div className="fixed inset-0 z-50 grid h-screen px-4 bg-white">
 			<Link
-				className="flex justify-center lg:justify-start pt-6 lg:pt-0  items-center gap-2 h-1/3"
+				className="flex items-center justify-center gap-2 pt-6 lg:justify-start lg:pt-0 h-1/3"
 				to={"/"}
 			>
-				<img src="./NUC.svg" alt="" className="size-12 lg:size-16" />
-				<p className="text-base lg:text-lg font-semibold">
+				<img src="/NUC.svg" alt="" className="size-12 lg:size-16" />
+				<p className="text-base font-semibold lg:text-lg">
 					Website thời trang uy tín
 				</p>
 			</Link>
-			<div className="text-center flex flex-col gap-3 items-center">
-				<h1 className="text-6xl lg:text-9xl font-black text-custom-400">404</h1>
+			<div className="flex flex-col items-center gap-3 text-center">
+				<h1 className="text-6xl font-black lg:text-9xl text-custom-400">404</h1>
 
-				<p className="text-lg lg:text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+				<p className="text-lg font-bold tracking-tight text-gray-900 lg:text-2xl sm:text-4xl">
 					Không tìm thấy nội dung
 				</p>
 				<div className="flex flex-col">

@@ -64,3 +64,6 @@ export function formatDateMessage(pastDate: any) {
 
 	return `${oldDate?.getHours()}:${oldDate?.getMinutes()} ${oldDate?.getDate()}/${oldDate.getMonth()}/${oldDate.getFullYear()}`;
 }
+export function getYearsArray(startYear:number, endYear:number) {
+  return Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
+}
