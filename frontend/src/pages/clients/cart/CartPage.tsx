@@ -79,10 +79,10 @@ const CartPage = () => {
 		error: "",
 	});
 	const isItemValid = useCallback((item: any) => {
-		if (item?.is_simple) {
+		if (item?.is_simple && item?.totalQuantity > 0) {
 			return true;
 		}
-		return item?.attribute?._id && item?.attribute?.quantity > 0;
+		return !item?.is_simple && item?.attribute?._id && item?.attribute?.quantity > 0;
 	}, []);
 	useEffect(() => {
 		(async () => {
