@@ -49,6 +49,7 @@ const ShopProduct = () => {
 				rating: null,
 			};
 		});
+
 	const {
 		data: productShop,
 		isLoading,
@@ -115,7 +116,7 @@ const ShopProduct = () => {
 									searchParams.set("pageIndex", event.selected + 1);
 									setSearchParams(searchParams);
 								}}
-								forcePage={pageIndex - 1}
+								forcePage={searchParamsObject.pageIndex - 1}
 							/>
 						</div>
 					)}

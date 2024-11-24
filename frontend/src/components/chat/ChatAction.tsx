@@ -1,11 +1,6 @@
 import { formatDateMessage } from "@/common/func";
 import { Button } from "@/components/ui/button";
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/auth";
 import { cn } from "@/lib/utils";
@@ -26,8 +21,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { z } from "zod";
 import { TooltipComponent } from "../common/TooltipComponent";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-
-
+import { IoCloseSharp } from "react-icons/io5";
 
 const formSchema = z.object({
 	content: z.string().min(1),
@@ -72,8 +66,7 @@ const ChatAction = () => {
 		totalPage: 0,
 	});
 	const [checkNewMessage, setCheckNewMessage] = useState<null | string>(null);
-	const [openScroll,setOpenScroll] = useState(false);
-
+	const [openScroll, setOpenScroll] = useState(false);
 
 	const refBottom = useRef<HTMLDivElement>(null);
 	const refBoxChat = useRef<HTMLDivElement>(null);
@@ -84,7 +77,6 @@ const ChatAction = () => {
 			content: "",
 		},
 	});
-
 
 	useEffect(() => {
 		(async () => {
@@ -112,25 +104,21 @@ const ChatAction = () => {
 		});
 	}, []);
 
-	
-	
-
 	useEffect(() => {
 		const handleScroll = () => {
 			if (refBoxChat.current && refBoxChat.current.scrollTop < -100) {
-			  setOpenScroll(true)
-			}else {
-				setOpenScroll(false)
+				setOpenScroll(true);
+			} else {
+				setOpenScroll(false);
 			}
-		  };
+		};
 
-		refBoxChat.current?.addEventListener("scroll",handleScroll)
+		refBoxChat.current?.addEventListener("scroll", handleScroll);
 
 		return () => {
-			refBoxChat.current?.removeEventListener("scroll",handleScroll)
-
-		}
-	},[refBoxChat])
+			refBoxChat.current?.removeEventListener("scroll", handleScroll);
+		};
+	}, [refBoxChat]);
 
 	useEffect(() => {
 		if (checkNewMessage) {
@@ -179,21 +167,28 @@ const ChatAction = () => {
 	};
 
 	const scrollBottom = async () => {
-		refBottom.current?.scrollIntoView({ behavior: "smooth",block:"center"});
+		refBottom.current?.scrollIntoView({ behavior: "smooth", block: "center" });
 	};
 
 	return (
-		<div className={cn("hidden",isLoggedIn && "block")}>
+		<div className={cn("hidden", isLoggedIn && "block")}>
 			<div className="fixed z-10 bg-white rounded-full shadow-[rgba(0,0,0,0.35)_0px_5px_15px] cursor-pointer bottom-4 right-4 size-12">
 				<div
 					className={cn(
-						"absolute w-80 h-[400px] border rounded-md bg-custom-200 box-shadow bottom-14 right-0 z-10 border-custom-500 p-2 hidden",
+						"absolute w-80 h-[400px] rounded-md  box-shadow bottom-14 right-0 z-10 p-2 hidden",
 						openChat && "block",
 					)}
 				>
-					<div className="flex flex-col w-full h-full bg-white">
-						
-
+					<div className="flex flex-col w-full h-full bg-white rounded-md">
+						<div className="bg-custom-300 rounded-t-md flex justify-between items-center">
+							<h3 className="p-2 font-semibold text-white">NUCSHOP</h3>
+							<IoCloseSharp
+								size={25}
+								className="pr-2"
+								onClick={() => setOpenChat(false)}
+							/>
+						</div>
+						<hr />
 						<div
 							id="scrollableChatDiv"
 							style={{
@@ -210,7 +205,11 @@ const ChatAction = () => {
 							<InfiniteScroll
 								dataLength={data?.content.length}
 								next={handlePagingMessage}
-								style={{ display: "flex", flexDirection: "column-reverse",position:"relative" }} //To put endMessage and loader to the top.
+								style={{
+									display: "flex",
+									flexDirection: "column-reverse",
+									position: "relative",
+								}} //To put endMessage and loader to the top.
 								inverse={true} //
 								hasMore={data?.pageIndex !== data?.totalPage}
 								loader={
@@ -256,8 +255,14 @@ const ChatAction = () => {
 							</InfiniteScroll>
 						</div>
 						{/* </div> */}
-						<div className={cn("absolute z-10  size-7 bg-gray-50 rounded-full bottom-16 left-1/2 -translate-x-1/2 flex items-center justify-center hover:bg-gray-100 cursor-pointer",!openScroll && "hidden")} onClick={scrollBottom}>
-								<FaArrowDown />
+						<div
+							className={cn(
+								"absolute z-10  size-7 bg-gray-50 rounded-full bottom-16 left-1/2 -translate-x-1/2 flex items-center justify-center hover:bg-gray-100 cursor-pointer",
+								!openScroll && "hidden",
+							)}
+							onClick={scrollBottom}
+						>
+							<FaArrowDown />
 						</div>
 						<div className="flex items-center w-full p-1 bg-white border-t">
 							<Form {...form}>
