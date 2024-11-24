@@ -73,22 +73,22 @@ const Size = ({ setSearchParamsObject }: Props) => {
 		[searchParams, setSearchParams, setSearchParamsObject, query],
 	);
 	return (
-		<div className="w-full flex flex-col gap-3 lg:py-2 pb-8">
+		<div className="flex flex-col w-full gap-3 pb-8 lg:py-2">
 			<div
-				className="flex justify-between items-center cursor-pointer"
+				className="flex items-center justify-between cursor-pointer"
 				onClick={!check ? () => setCheck(true) : () => setCheck(false)}
 			>
-				<h3 className="text-uppercase py-1 font-semibold leading-7 tracking-wide lg:text-base md:text-sm sm:text-xs">
+				<h3 className="py-1 font-semibold leading-7 tracking-wide text-uppercase lg:text-base md:text-sm sm:text-xs">
 					Kích thước
 				</h3>
 				{!check ? (
 					<FaAngleDown
-						className="cursor-pointer transition-transform"
+						className="transition-transform cursor-pointer"
 						onClick={() => setCheck(true)}
 					/>
 				) : (
 					<FaAngleUp
-						className="cursor-pointer transition-transform"
+						className="transition-transform cursor-pointer"
 						onClick={() => setCheck(false)}
 					/>
 				)}
@@ -105,7 +105,7 @@ const Size = ({ setSearchParamsObject }: Props) => {
 							<div className="flex flex-col items-center gap-3" key={size._id}>
 								<Checkbox
 									className={cn(
-										`data-[state=checked]:bg-white data-[state=checked]:text-[#000000] rounded-full lg:w-7 lg:h-7 w-6 h-6 border-[#909090] p-1 text-[10px]`,
+										`data-[state=checked]:bg-white data-[state=checked]:text-[#000000] rounded-full lg:w-6 lg:h-6 w-5 h-5 border-[#909090] p-1 text-[10px]`,
 									)}
 									value={size._id}
 									checked={
@@ -116,7 +116,7 @@ const Size = ({ setSearchParamsObject }: Props) => {
 									}
 									onCheckedChange={handleCheckedSize(size._id as string)}
 								/>
-								<span className="font-medium lg:text-sm text-xs">
+								<span className="text-xs font-medium lg:text-sm">
 									{size.name}
 								</span>
 							</div>

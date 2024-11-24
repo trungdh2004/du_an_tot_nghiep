@@ -198,6 +198,9 @@ class OrderController {
           const check = await OrderModel.findOne({
             voucher: existingVoucher._id,
             user: user?.id,
+            status: {
+              $ne: 0,
+            },
           });
 
           if (!check) {
@@ -542,6 +545,9 @@ class OrderController {
         const check = await OrderModel.findOne({
           voucher: existingVoucher._id,
           user: user?.id,
+          status: {
+            $ne: 0,
+          },
         });
 
         if (check) {
@@ -702,6 +708,9 @@ class OrderController {
           const check = await OrderModel.findOne({
             voucher: existingVoucher._id,
             user: user.id,
+            status: {
+              $ne: 0,
+            },
           });
 
           if (!check) {
@@ -1142,6 +1151,9 @@ class OrderController {
           const check = await OrderModel.findOne({
             voucher: existingVoucher._id,
             user: user.id,
+            status: {
+              $ne: 0,
+            },
           });
           if (!check) {
             const data = checkVoucher(existingVoucher);
@@ -1202,6 +1214,16 @@ class OrderController {
         },
       ]);
 
+      const checkProduct = listCartItem.find(
+        (item) => item?.product?.is_deleted
+      );
+
+      if (checkProduct) {
+        const stringName = truncateSentence(checkProduct.product.name, 30);
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: `Sản phẩm '${stringName}' đã bị xóa`,
+        });
+      }
       const checkAttribute = listCartItem.find(
         (item) => !item.attribute && !item.is_simple
       );
@@ -1271,6 +1293,9 @@ class OrderController {
           const check = await OrderModel.findOne({
             voucher: existingVoucher._id,
             user: user?.id,
+            status: {
+              $ne: 0,
+            },
           });
           if (!check) {
             const data = checkVoucher(existingVoucher);
@@ -1458,6 +1483,9 @@ class OrderController {
         const check = await OrderModel.findOne({
           voucher: existingVoucher._id,
           user: user?.id,
+          status: {
+            $ne: 0,
+          },
         });
 
         if (check) {
@@ -2045,7 +2073,15 @@ class OrderController {
         });
 
       const existingOrder = await OrderModel.findById(id).populate([
-        "user",
+        {
+          path: "user",
+          select: {
+            _id: 1,
+            email: 1,
+            full_name: 1,
+            avatarUrl: 1,
+          },
+        },
         "shipper",
         "payment",
         {
@@ -2606,6 +2642,13 @@ class OrderController {
           totalOrderCancel: 1,
         });
       }
+
+      socketNotificationOrderClient(
+        existingOrder?.code as string,
+        6,
+        `${existingOrder?.user}`,
+        existingOrder?._id as string
+      );
 
       return res.status(STATUS.OK).json({
         message: "Hủy đơn hàng thành công",

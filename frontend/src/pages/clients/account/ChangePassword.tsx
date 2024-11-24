@@ -197,7 +197,7 @@ const ChangePassword = () => {
 						<div className="w-full  flex justify-center my-5">
 							<button
 								type="submit"
-								className="text-white bg-blue-500 px-5 py-2 border rounded-sm"
+								className="text-white bg-custom-500 px-5 py-2 border rounded-sm"
 							>
 								Cập nhật
 							</button>

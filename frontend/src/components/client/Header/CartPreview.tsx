@@ -57,7 +57,7 @@ const CartPreview = ({ totalCart, carts }: Props) => {
 				<p className="text-xs capitalize">{totalCart} thêm vào giỏ hàng</p>
 				<Link
 					to={"/cart"}
-					className="text-white text-sm px-5  py-1.5  bg-red-500 hover:bg-red-600 rounded"
+					className="text-white text-sm px-5  py-1.5  bg-custom-500 hover:bg-custom-600 rounded"
 				>
 					Xem giỏ hàng
 				</Link>

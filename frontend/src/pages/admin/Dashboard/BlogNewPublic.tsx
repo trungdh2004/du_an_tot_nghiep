@@ -1,11 +1,10 @@
+import { optimizeCloudinaryUrl } from "@/common/localFunction";
 import { getListBlogNew } from "@/service/dashboard.service";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { FaAngleRight } from "react-icons/fa6";
-import { optimizeCloudinaryUrl } from "@/common/localFunction";
+import { Link, useNavigate } from "react-router-dom";
 
 const BlogNewPublic = () => {
 	const { data } = useQuery({
@@ -17,10 +16,10 @@ const BlogNewPublic = () => {
 			} catch (error) {}
 		},
 	});
-	const router = useNavigate()
+	const router = useNavigate();
 
 	return (
-		<div className="bg-white box-shadow rounded-xl flex flex-col p-2">
+		<div className="flex flex-col p-2 bg-white box-shadow rounded-xl">
 			<div className="flex items-center justify-between py-2 border-b">
 				<p className="font-semibold">Danh sách bài viết mới đăng tải</p>
 			</div>
@@ -29,14 +28,18 @@ const BlogNewPublic = () => {
 				{!!data &&
 					data?.length > 0 &&
 					data.map((item: any) => (
-						<div className="flex gap-2 py-2 items-center border-b border-gray-100 cursor-pointer hover:bg-gray-50" key={item?._id} onDoubleClick={() => {
-							router(`/admin/blogs/${item?._id}`)
-						}}>
-							<div className="size-12 rounded-sm overflow-hidden border">
+						<div
+							className="flex items-center gap-2 py-2 border-b border-gray-100 cursor-pointer hover:bg-gray-50"
+							key={item._id}
+							onClick={() => {
+								router(`/admin/blogs/${item._id}`);
+							}}
+						>
+							<div className="overflow-hidden border rounded-sm size-12">
 								<img
 									src={optimizeCloudinaryUrl(item?.thumbnail_url, 48, 48)}
 									alt=""
-									className="w-full h-full object-cover"
+									className="object-cover w-full h-full"
 								/>
 							</div>
 							<div className="flex-1">
@@ -58,16 +61,16 @@ const BlogNewPublic = () => {
 					))}
 				{!data ||
 					(data?.length === 0 && (
-						<div className="flex gap-2 py-2 items-center border-b border-gray-100">
-							<div className="h-12 w-full flex items-center justify-center">
+						<div className="flex items-center gap-2 py-2 border-b border-gray-100">
+							<div className="flex items-center justify-center w-full h-12">
 								<span>Không có bài viết nào</span>
 							</div>
 						</div>
 					))}
-				<div className="w-full text-end pt-2 flex justify-end">
+				<div className="flex justify-end w-full pt-2 text-end">
 					<Link
 						to={"/admin/blogs/"}
-						className="font-semibold text-xs py-1 px-2 hover:bg-gray-100 rounded-sm "
+						className="px-2 py-1 text-xs font-semibold rounded-sm hover:bg-gray-100 "
 					>
 						<button className="flex items-center gap-1">
 							Xem tất cả <FaAngleRight size={11} />

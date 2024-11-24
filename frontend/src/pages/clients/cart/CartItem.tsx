@@ -77,6 +77,15 @@ const CartItem = ({
 			}
 		}
 	}, 700);
+	const getStockStatus = (product: ICartItem) => {
+		if (product?.attribute == null && !product?.is_simple)
+			return "Không khả dụng";
+		if (
+			(!product?.is_simple && Number(product?.attribute?.quantity) <= 0) ||
+			Number(product?.totalQuantity) <= 0
+		)
+			return "Hết hàng";
+	};
 	const handleChangeAttributes = (colorId: string, sizeId: string) => {
 		updateAttributeItemCart({
 			colorId,
@@ -95,13 +104,13 @@ const CartItem = ({
 				)}
 			>
 				{(item?.attribute?._id && item?.attribute?.quantity) ||
-				item?.is_simple ? (
+				(item?.is_simple && item?.totalQuantity > 0)? (
 					<Checkbox
 						checked={checked}
 						onCheckedChange={() =>
 							onCheckedChange(productId, item._id as string)
 						}
-						className="data-[state=checked]:bg-red-500 border-gray-300 data-[state=checked]:border-red-500"
+						className="data-[state=checked]:bg-custom-500 border-gray-300 data-[state=checked]:border-red-500"
 					/>
 				) : (
 					<>
@@ -118,8 +127,7 @@ const CartItem = ({
 					/>
 					<div className="absolute inset-x-0 bottom-0 bg-black/45">
 						<p className="text-xs text-center text-white">
-							{!item?.attribute?._id && !item?.is_simple && "Không khả dụng"}
-							{!item?.attribute?.quantity && !item?.is_simple ? "Hết hàng" : ""}
+							{getStockStatus(item)}
 						</p>
 					</div>
 				</div>
@@ -137,6 +145,19 @@ const CartItem = ({
 					>
 						{item.name}
 					</Link>
+					<div
+						className={cn(
+							"text-sm text-left pointer-events-none ",
+							(!item?.attribute?.color && !item?.attribute?.size) ||
+								!item?.attribute?.quantity
+								? "text-red-500 max-sm:max-w-44 text-[10px]"
+								: "text-gray-500 ",
+							item?.is_simple ? "inline-block" : "hidden",
+						)}
+					>
+						{Number(item?.totalQuantity || 0) <= 0 &&
+							`Mặt hàng sản phẩm đơn giản này đã bán hết.`}
+					</div>
 					<div className={cn(item?.is_simple ? "hidden" : "inline-block")}>
 						<Attribute
 							isOpen={isOpen}
@@ -192,7 +213,7 @@ const CartItem = ({
 						</div>
 						<div className="ml-auto">
 							{(item?.attribute?._id && item?.attribute?.quantity) ||
-							item?.is_simple ? (
+							(item?.is_simple && item?.totalQuantity > 0) ? (
 								<InputQuantity
 									size="mobile"
 									className="w-20"
@@ -215,24 +236,30 @@ const CartItem = ({
 				<span
 					className={cn(
 						"line-through text-black/50",
-						!item?.is_simple && !item?.attribute?.discount && "hidden",
+						(!item?.is_simple && !item?.attribute?.discount) ||
+							(item?.totalQuantity <= 0 && "hidden"),
 					)}
 				>
 					{formatCurrency(item?.attribute?.price || item?.price || 0)}
 				</span>
 				<span
 					className={cn(
-						item?.attribute?.discount || item?.is_simple
+						item?.totalQuantity > 0 &&
+							(item?.attribute?.discount || item?.is_simple)
 							? "text-red-500"
 							: "text-gray-700",
 					)}
 				>
-					{formatCurrency(item?.attribute?.discount || item?.discount || 0)}
+					{formatCurrency(
+						item?.totalQuantity > 0
+							? item?.attribute?.discount || item?.discount || 0
+							: 0,
+					)}
 				</span>
 			</div>
 			<div className="hidden lg:flex w-[15.4265%] text-center items-center justify-center">
 				{(item?.attribute?._id && item?.attribute?.quantity) ||
-				item?.is_simple ? (
+				(item?.is_simple && item?.totalQuantity > 0) ? (
 					<InputQuantity
 						size="small"
 						defaultValue={quantity}
@@ -248,9 +275,11 @@ const CartItem = ({
 			<div className="hidden lg:block w-[10.43557%] text-center">
 				<span className="text-red-500">
 					{formatCurrency(
-						item?.is_simple
-							? item?.discount * Number(item?.quantity)
-							: item?.attribute?.discount * Number(item?.quantity) || 0,
+						item?.totalQuantity > 0
+							? item?.is_simple
+								? item?.discount * Number(item?.quantity)
+								: item?.attribute?.discount * Number(item?.quantity) || 0
+							: 0,
 					)}
 				</span>
 			</div>

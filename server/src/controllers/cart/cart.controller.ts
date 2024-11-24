@@ -421,7 +421,6 @@ class CartController {
               return acc;
             }, []);
           }
-
           const data: IndexResAcc = {
             product: item.product,
             createdAt: item.createdAt,

@@ -286,7 +286,7 @@ const CommentItem = ({ comment, parrent_id, setComment }: Props) => {
 								size="small"
 							/>
 						) : (
-							<div className="p-2 px-4 bg-blue-400 rounded-full">
+							<div className="p-2 px-4 bg-custom-400 rounded-full">
 								Bạn hãy đăng nhập để được bình luận
 							</div>
 						))}
@@ -363,7 +363,7 @@ const CommentItem = ({ comment, parrent_id, setComment }: Props) => {
 											handleChange={handleChange}
 										/>
 									) : (
-										<div className="p-2 px-4 bg-blue-400 rounded-full">
+										<div className="p-2 px-4 bg-custom-400 rounded-full">
 											Bạn hãy đăng nhập để được bình luận
 										</div>
 									))}

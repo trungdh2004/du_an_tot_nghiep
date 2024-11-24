@@ -3,12 +3,12 @@ import { optimizeCloudinaryUrl } from "@/common/localFunction";
 import { TooltipComponent } from "@/components/common/TooltipComponent";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { getNewOrder } from "@/service/dashboard.service";
 import { useQuery } from "@tanstack/react-query";
@@ -64,7 +64,7 @@ const ListOrderNew = () => {
 			} catch (error) {}
 		},
 	});
-	const router = useNavigate()
+	const router = useNavigate();
 
 	// const table = useReactTable({
 	// 	data: data,
@@ -85,9 +85,9 @@ const ListOrderNew = () => {
 							<TableHead className="w-[50px]"></TableHead>
 							<TableHead className="w-[100px]">Mã</TableHead>
 							<TableHead className="w-[100px]">Người đặt</TableHead>
-							<TableHead>Tổng tiền</TableHead>
+							<TableHead>Giá trị đơn</TableHead>
 							<TableHead>Thanh toán</TableHead>
-							<TableHead>Phương thức</TableHead>
+							<TableHead>Thanh toán</TableHead>
 							<TableHead>Số sản phẩm</TableHead>
 							<TableHead>Ngày đặt</TableHead>
 							<TableHead className="min-w-[120px]">Trạng thái</TableHead>
@@ -97,10 +97,13 @@ const ListOrderNew = () => {
 						{data &&
 							data?.length > 0 &&
 							data?.map((row: any) => (
-								<TableRow key={row._id} onDoubleClick={() => {
-									console.log("double");
-									router(`/admin/order/${row._id}`)
-								}} className="cursor-pointer">
+								<TableRow
+									key={row._id}
+									onDoubleClick={() => {
+										router(`/admin/order/${row._id}`);
+									}}
+									className="cursor-pointer"
+								>
 									<TableCell className="text-center">
 										<TooltipComponent label="Xem chi tiết">
 											<Link to={`/admin/order/${row._id}`}>
@@ -111,9 +114,7 @@ const ListOrderNew = () => {
 											</Link>
 										</TooltipComponent>
 									</TableCell>
-									<TableCell className="font-medium">
-										<Link to={`/admin/order/${row._id}`}>{row.code}</Link>
-									</TableCell>
+									<TableCell className="font-medium">{row.code}</TableCell>
 									<TableCell>
 										<TooltipComponent label={row?.user?.full_name}>
 											<Avatar>

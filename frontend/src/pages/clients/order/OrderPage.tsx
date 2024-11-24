@@ -15,9 +15,12 @@ import {
 import { ObjectCheckoutOrder, ResponseData } from "@/types/ObjectCheckoutOrder";
 import { toast } from "sonner";
 import { IOrderMoneyValue } from "@/types/order";
+import ProductOrderV2 from "./orderV2/ProductOrderV2";
+import MoneyOrder from "./MoneyOrder";
 
 const OrderPage = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const paramsObject = Object.fromEntries(searchParams.entries());
 	const stateOrder = JSON.parse(paramsObject.state);
 	const [orderParams, setOrderParams] = useState<any | {}>(stateOrder || {});
@@ -33,11 +36,16 @@ const OrderPage = () => {
 				throw error;
 			}
 		},
+		onMutate: () => {
+			setIsLoading(true);
+		},
 		onSuccess: (data) => {
 			setOrder(data);
+			setIsLoading(false);
 		},
 		onError: (error) => {
 			console.error("Error in creating order:", error);
+			setIsLoading(false);
 		},
 	});
 	useEffect(() => {
@@ -118,28 +126,47 @@ const OrderPage = () => {
 
 	return (
 		<>
-			<div className=" w-full min-h-screen">
-				<div className=""></div>
-				<div className="lg:px-[130px] md:px-[65px] px-0">
-					<AddressOrder
+			<div className="grid grid-cols-12 gap-5 lg:px-[100px] md:px-[65px] px-0 py-8">
+				<div className="col-span-12 lg:col-span-8">
+					<ProductOrderV2
 						data={order}
 						handleChangeAddress={handleChangeAddress}
+						isLoading={isLoading}
 					/>
-					<ProductOrder data={order} />
-					<Vorcher
-						data={order}
-						setOrderCheckout={setOrderCheckout}
-						setMoneyVoucher={setMoneyVoucher}
-						stateOrder={stateOrder}
-					/>
-					<NoteOrder setOrderCheckout={setOrderCheckout} />
-					<PaymentMethod
-						data={order}
-						handleCheckout={handleCheckout}
-						setOrderCheckout={setOrderCheckout}
-						orderCheckout={orderCheckout}
-						moneyVoucher={moneyVoucher}
-					/>
+				</div>
+				<div className="col-span-12 lg:col-span-4">
+					<div className="w-full">
+						<h4 className="font-bold text-xl pb-5 lg:pb-7 hidden lg:block   lg:text-left text-center ">
+							Thông tin liên quan
+						</h4>
+						{/* <div className="hidden md:hidden lg:block">
+							<AddressOrder
+								data={order}
+								handleChangeAddress={handleChangeAddress}
+							/>
+						</div> */}
+						<MoneyOrder
+							data={order}
+							handleCheckout={handleCheckout}
+							setOrderCheckout={setOrderCheckout}
+							orderCheckout={orderCheckout}
+							moneyVoucher={moneyVoucher}
+						/>
+						<Vorcher
+							data={order}
+							setOrderCheckout={setOrderCheckout}
+							setMoneyVoucher={setMoneyVoucher}
+							stateOrder={stateOrder}
+						/>
+						<NoteOrder setOrderCheckout={setOrderCheckout} />
+						<PaymentMethod
+							data={order}
+							handleCheckout={handleCheckout}
+							setOrderCheckout={setOrderCheckout}
+							orderCheckout={orderCheckout}
+							moneyVoucher={moneyVoucher}
+						/>
+					</div>
 				</div>
 			</div>
 		</>

@@ -83,7 +83,7 @@ const Sliderv2 = () => {
 										>
 											<Link
 												to="/shop"
-												className="relative text-xs lg:text-base font-semibold md:text-sm bg-transparent px-4 py-2 top-3 md:top-8 md:px-10 md:py-4 uppercase transition-colors before:absolute before:left-0 before:top-0 before:-z-10 before:h-full before:w-full before:origin-top-left before:scale-y-0 before:bg-red-600 before:transition-transform before:duration-300 before:content-[''] before:hover:scale-y-100 before:text-black  hover:text-white border-2 border-red-600"
+												className="relative text-xs lg:text-base font-semibold md:text-sm bg-transparent px-4 py-2 top-3 md:top-8 md:px-10 md:py-4 uppercase transition-colors before:absolute before:left-0 before:top-0 before:-z-10 before:h-full before:w-full before:origin-top-left before:scale-y-0 before:bg-custom-600 before:transition-transform before:duration-300 before:content-[''] before:hover:scale-y-100 before:text-black  hover:text-white border-2 border-red-600"
 											>
 												Mua Ngay
 											</Link>
@@ -159,7 +159,7 @@ const Sliderv2 = () => {
 												{/* Container để giữ phần tử "WINTER" và "SALE" */}
 												<div className="relative w-full flex justify-center items-center mt-4">
 													<div className="relative inline-block px-4 py-2 md:px-6 md:py-3 lg:px-8 lg:py-3 font-bold text-white uppercase cursor-pointer">
-														<div className="absolute inset-0 bg-red-500 transform skew-x-12"></div>
+														<div className="absolute inset-0 bg-custom-500 transform skew-x-12"></div>
 														<span className="relative z-10 text-xl md:text-2xl lg:text-3xl px-2 md:px-4">
 															WINTER
 														</span>
@@ -183,7 +183,7 @@ const Sliderv2 = () => {
 										>
 											<Link
 												to="/shop"
-												className="relative z-10 text-sm font-semibold md:text-sm bg-transparent px-4 py-2 top-3 md:top-8 md:px-10 md:py-4 uppercase transition-colors before:absolute before:left-0 before:top-0 before:-z-10 before:h-full before:w-full before:origin-top-left before:scale-y-0 before:bg-red-600 before:transition-transform before:duration-300 before:content-[''] before:hover:scale-y-100 before:text-black  hover:text-white border-2 border-red-600"
+												className="relative z-10 text-sm font-semibold md:text-sm bg-transparent px-4 py-2 top-3 md:top-8 md:px-10 md:py-4 uppercase transition-colors before:absolute before:left-0 before:top-0 before:-z-10 before:h-full before:w-full before:origin-top-left before:scale-y-0 before:bg-custom-600 before:transition-transform before:duration-300 before:content-[''] before:hover:scale-y-100 before:text-black  hover:text-white border-2 border-red-600"
 											>
 												Mua Ngay
 											</Link>
@@ -220,7 +220,7 @@ const Sliderv2 = () => {
 
 export default Sliderv2;
 
-// inline-block px-4 py-2 mt-3 text-xs font-semibold text-white uppercase transition duration-300 bg-red-500 rounded-lg md:mt-8 md:px-10 md:py-4 hover:bg-red-600 md:text-sm md:rounded-xl
+// inline-block px-4 py-2 mt-3 text-xs font-semibold text-white uppercase transition duration-300 bg-custom-500 rounded-lg md:mt-8 md:px-10 md:py-4 hover:bg-custom-600 md:text-sm md:rounded-xl
 {
 	/* <motion.div
 	className="mt-2 text-2xl font-medium capitalize md:mt-5 md:text-4xl lg:text-6xl xl:text-7xl"
