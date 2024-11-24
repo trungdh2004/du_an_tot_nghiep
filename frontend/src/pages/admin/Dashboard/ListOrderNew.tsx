@@ -3,12 +3,12 @@ import { optimizeCloudinaryUrl } from "@/common/localFunction";
 import { TooltipComponent } from "@/components/common/TooltipComponent";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { getNewOrder } from "@/service/dashboard.service";
 import { useQuery } from "@tanstack/react-query";

@@ -36,6 +36,7 @@ import ChatContent from "@/pages/admin/Chat/components/ChatContent";
 import CustomerList from "@/pages/admin/users/customer/CustomerList";
 import ProductComing from "@/pages/admin/product/productComing/ProductComing";
 import StaffIndex from "@/pages/admin/users/staff/StaffIndex";
+import RevenueChart from "@/pages/admin/Revanue/RevenueChart";
 
 const AdminRouter = [
 	{
@@ -196,7 +197,11 @@ const AdminRouter = [
 				path: "order/orderconfirmShipper",
 				element: <OrderConfirmShipper />,
 			},
-
+      // Thống kê
+      {
+				path: "revenue",
+				element: <RevenueChart />,
+			},
 			// location
 			{
 				path: "location",

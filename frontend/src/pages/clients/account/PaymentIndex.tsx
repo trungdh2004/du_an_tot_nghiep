@@ -1,6 +1,7 @@
 import { formatQuantity } from "@/common/localFunction";
 import Paginations from "@/components/common/Pagination";
 import instance from "@/config/instance";
+import { cn } from "@/lib/utils";
 import { fetchPayments } from "@/types/payment";
 import { ISearchObjectPayment } from "@/types/searchObjecTypes";
 import { typeResponse } from "@/types/typeReponse";
@@ -94,6 +95,7 @@ const PaymentIndex = () => {
 						<h2 className="">Không tìm thấy giao dịch nào nào</h2>
 					</div>
 				)}
+
 			</div>
 		</>
 	);
