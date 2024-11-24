@@ -25,9 +25,9 @@ const ProductsList = () => {
 
 	return (
 		<div className="padding">
-		 <div className="relative w-full pt-10 pb-6 group/parrent [&>.swiper-button-disabled]:opacity-50 [&>.swiper-button-disabled]:pointer-events-none">
+			<div className="relative w-full pt-10 pb-6 group/parrent [&>.swiper-button-disabled]:opacity-50 [&>.swiper-button-disabled]:pointer-events-none">
 				<Swiper
-          className="[&>.swiper-wrapper]:p-1.5"
+					className="[&>.swiper-wrapper]:p-1.5"
 					modules={[Navigation]}
 					loop={false}
 					spaceBetween={20}
@@ -56,11 +56,12 @@ const ProductsList = () => {
 						},
 					}}
 				>
-					{!isLoading && data?.map((product: IProduct) => (
-						<SwiperSlide className="lg:w-[260px] w-[240px] group">
+					{!isLoading &&
+						data?.map((product: IProduct) => (
+							<SwiperSlide className="lg:w-[260px] w-[240px] group">
 								<ProductV2 product={product} key={product?._id} />
-						</SwiperSlide>
-					))}
+							</SwiperSlide>
+						))}
 				</Swiper>
 
 				<button

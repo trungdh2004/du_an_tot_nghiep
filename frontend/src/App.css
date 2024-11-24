@@ -370,3 +370,9 @@ header .sub-menu::after {
 		transform: translateX(-200%);
 	}
 }
+
+
+.rdp-vhidden {
+	display: none;
+	width: 100%;
+}

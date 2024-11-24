@@ -74,7 +74,7 @@ const Vorcher = ({
 							<img src={voucher1} alt="" className="w-8 h-8" />
 						</div>
 					</div>
-					<div className="flex items-center gap-2 pr-4 text-center">
+					<div className="flex items-center gap-2 pr-4 text-center ">
 						<form
 							action=""
 							onSubmit={handleSubmit(onSubmit)}
@@ -121,7 +121,7 @@ const Vorcher = ({
 					) : (
 						<Coupon
 							voucher={voucher}
-							className="w-1/2 px-6 lg:w-full lg:max-w-full h-1/3 lg:h-2/3"
+							className="w-1/2 px-6 lg:w-full lg:max-w-full h-1/3 lg:h-2/3 "
 						/>
 					))}
 			</div>
