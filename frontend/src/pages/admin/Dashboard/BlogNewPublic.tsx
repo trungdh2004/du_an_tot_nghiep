@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaAngleRight } from "react-icons/fa6";
 import { optimizeCloudinaryUrl } from "@/common/localFunction";
 
@@ -17,6 +17,7 @@ const BlogNewPublic = () => {
 			} catch (error) {}
 		},
 	});
+	const router = useNavigate();
 
 	return (
 		<div className="bg-white box-shadow rounded-xl flex flex-col p-2">
@@ -28,7 +29,13 @@ const BlogNewPublic = () => {
 				{!!data &&
 					data?.length > 0 &&
 					data.map((item: any) => (
-						<div className="flex gap-2 py-2 items-center border-b border-gray-100">
+						<div
+							className="flex gap-2 py-2 items-center border-b border-gray-100 cursor-pointer hover:bg-gray-50"
+							key={item._id}
+							onClick={() => {
+								router(`/admin/blogs/${item._id}`);
+							}}
+						>
 							<div className="size-12 rounded-sm overflow-hidden border">
 								<img
 									src={optimizeCloudinaryUrl(item?.thumbnail_url, 48, 48)}

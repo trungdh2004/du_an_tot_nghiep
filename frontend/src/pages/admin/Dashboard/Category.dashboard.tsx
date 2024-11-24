@@ -45,8 +45,6 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
 	payload,
 	label,
 }) => {
-	console.log({ active, payload, label });
-
 	if (active && payload && payload.length) {
 		return (
 			<div className="p-2 rounded-sm bg-white box-shadow min-w-[120px]">
@@ -59,8 +57,11 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
 						<td className="text-left " colSpan={2}>
 							<div className="">Doanh thu</div>
 						</td>
+						<td colSpan={1}>
+							<div className=""></div>
+						</td>
 						<td className="text-end" colSpan={2}>
-							<div className="">{payload[0].value}</div>
+							<div className="">{formatQuantity(payload[0].value || 0,"đ")}</div>
 						</td>
 					</tr>
 				</table>
@@ -96,8 +97,9 @@ export default function CategoryDashboard() {
 						layout="vertical"
 						margin={{
 							right: 16,
+							bottom: 12,
 						}}
-            barCategoryGap={"15%"}
+						barCategoryGap={"15%"}
 					>
 						<YAxis
 							dataKey="categoryName"
@@ -114,37 +116,48 @@ export default function CategoryDashboard() {
 							layout="horizontal"
 							fill="#008cff"
 							radius={4}
-              
 						>
-              <LabelList
-                dataKey="categoryName"
+							<LabelList
+								dataKey="categoryName"
 								position="insideRight"
 								content={(props) => {
 									const { x, y, value } = props;
 									return (
-                    <g >
-                    <foreignObject x={Number(x)+5} y={Number(y) + 40} width={100} height={50}>
-                      <div className="flex flex-col items-start text-xs">
-                        <span>{value}:</span>
-                      </div>
-                    </foreignObject>
-                  </g>
+										<g>
+											<foreignObject
+												x={Number(x) + 5}
+												y={Number(y) + 40}
+												width={100}
+												height={50}
+											>
+												<div className="flex flex-col items-start text-xs">
+													<span>{value}:</span>
+												</div>
+											</foreignObject>
+										</g>
 									);
 								}}
 							/>
 							<LabelList
-                dataKey="totalMoney"
+								dataKey="totalMoney"
 								position="insideRight"
 								content={(props) => {
 									const { x, y, value } = props;
 									return (
-                    <g >
-                    <foreignObject x={Number(x)+95} y={Number(y) + 40} width={100} height={50}>
-                      <div className="flex flex-col items-start text-xs">
-                        <span className="text-red-500">{formatQuantity(Number(value), "đ")}</span>
-                      </div>
-                    </foreignObject>
-                  </g>
+										<g>
+											<foreignObject
+												x={Number(x) + 95}
+												y={Number(y) + 40}
+												width={100}
+												height={50}
+											>
+												<div className="flex flex-col items-start text-xs">
+													<span className="text-red-500">
+														{formatQuantity(Number(value), "đ")}
+													</span>
+												</div>
+											</foreignObject>
+										</g>
 									);
 								}}
 							/>

@@ -20,7 +20,7 @@ const OrderToDayDashBoard = () => {
 				<div className="flex items-center gap-2"></div>
 			</div>
 			<div className="py-2">
-				<div className="flex relative min-h-12 ">
+				<div className="flex relative min-h-12 md:min-h-16 ">
 					<div className="flex flex-col relative items-center mr-2">
 						<p className="size-3 bg-blue-500 rounded-full my-1"></p>
 						<div className="flex-1 w-[2px] bg-gray-500"></div>
@@ -32,7 +32,7 @@ const OrderToDayDashBoard = () => {
 						</p>
 					</div>
 				</div>
-				<div className="flex relative min-h-12 ">
+				<div className="flex relative min-h-12 md:min-h-16 ">
 					<div className="flex flex-col relative items-center mr-2">
 						<p className="size-3 bg-[#ff6a00] rounded-full my-1"></p>
 						<div className="flex-1 w-[2px] bg-gray-500"></div>
@@ -44,7 +44,7 @@ const OrderToDayDashBoard = () => {
 						</p>
 					</div>
 				</div>
-				<div className="flex relative min-h-12 ">
+				<div className="flex relative min-h-12 md:min-h-16 ">
 					<div className="flex flex-col relative items-center mr-2">
 						<p className="size-3 bg-[#29f492] rounded-full my-1"></p>
 						<div className="flex-1 w-[2px] bg-gray-500"></div>
@@ -56,7 +56,7 @@ const OrderToDayDashBoard = () => {
 						</p>
 					</div>
 				</div>
-				<div className="flex relative min-h-12 ">
+				<div className="flex relative min-h-12 md:min-h-16 ">
 					<div className="flex flex-col relative items-center mr-2">
 						<p className="size-3 bg-green-500 rounded-full my-1"></p>
 						<div className="flex-1 w-[2px] bg-gray-500"></div>
@@ -68,7 +68,7 @@ const OrderToDayDashBoard = () => {
 						</p>
 					</div>
 				</div>
-				<div className="flex relative min-h-12 ">
+				<div className="flex relative min-h-12 md:min-h-16 ">
 					<div className="flex flex-col relative items-center mr-2">
 						<p className="size-3 bg-rose-500 rounded-full my-1"></p>
 					</div>
