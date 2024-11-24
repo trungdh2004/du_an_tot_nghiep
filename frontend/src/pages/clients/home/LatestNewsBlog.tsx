@@ -71,56 +71,58 @@ const LatestNewsBlog = () => {
 						>
 							{newBlogs.map((item: IBlogs, index: number) => (
 								<SwiperSlide key={index} className="h-[360px]">
-									<div className="h-[350px] grid grid-rows-2 border rounded-xl overflow-hidden relative">
-										<div className="bg-gray-200 border-b border-gray-300">
-											<img
-												src={item.thumbnail_url || "/no-image.png"}
-												className="object-cover w-full h-full"
-												alt=""
-											/>
-										</div>
-										<div className="px-4 pt-2 bg-white">
-											<div className="flex items-center gap-1 pb-2">
+									<Link to={`/blogDetail/${item?._id}`}>
+										<div className="h-[350px] grid grid-rows-2 border rounded-xl overflow-hidden relative">
+											<div className="bg-gray-200 border-b border-gray-300">
 												<img
-													src={item.user_id.avatarUrl || "/avatar_25.jpg"}
-													className="w-[40px] h-[40px] border-[3px] border-white rounded-full"
+													src={item.thumbnail_url || "/no-image.png"}
+													className="object-cover w-full h-full"
 													alt=""
 												/>
-												<div>
-													<h3 className="text-sm font-medium">
-														{item.user_id.full_name}
-													</h3>
+											</div>
+											<div className="px-4 pt-2 bg-white">
+												<div className="flex items-center gap-1 pb-2">
+													<img
+														src={item.user_id.avatarUrl || "/avatar_25.jpg"}
+														className="w-[40px] h-[40px] border-[3px] border-white rounded-full"
+														alt=""
+													/>
+													<div>
+														<h3 className="text-sm font-medium">
+															{item.user_id.full_name}
+														</h3>
+													</div>
 												</div>
-											</div>
-											<div className="flex items-center justify-between">
-												<Link
-													to={`/blogDetail/${item._id}`}
-													className="line-clamp-1 text-[#212B36] text-[18px] font-semibold hover:underline transition-all duration-300"
-												>
-													{item.title || "Bài viết chưa có tiêu đề"}
-												</Link>
-											</div>
-											<p className="pt-1 text-xs text-gray-400 line-clamp-2">
-												{item.meta_description}
-											</p>
-											<div className="flex space-x-4 min-[900px]:space-x-1 xl:space-x-4 absolute bottom-4 right-4">
-												<div className="flex gap-3">
-													<span className="text-[#212B36] text-xs flex items-center gap-1">
-														<FaRegHeart size={16} />
-														{item.countLike}
-													</span>
-													<span className="text-[#212B36] text-xs flex items-center gap-1">
-														<FaCommentDots size={16} />
-														{item.comments_count}
-													</span>
-													<span className="text-[#212B36] text-xs flex items-center gap-1">
-														<FaEye size={16} />
-														{item.views_count}
-													</span>
+												<div className="flex items-center justify-between">
+													<Link
+														to={`/blogDetail/${item._id}`}
+														className="line-clamp-1 text-[#212B36] text-[18px] font-semibold hover:underline transition-all duration-300"
+													>
+														{item.title || "Bài viết chưa có tiêu đề"}
+													</Link>
+												</div>
+												<p className="pt-1 text-xs text-gray-400 line-clamp-2">
+													{item.meta_description}
+												</p>
+												<div className="flex space-x-4 min-[900px]:space-x-1 xl:space-x-4 absolute bottom-4 right-4">
+													<div className="flex gap-3">
+														<span className="text-[#212B36] text-xs flex items-center gap-1">
+															<FaRegHeart size={16} />
+															{item.countLike}
+														</span>
+														<span className="text-[#212B36] text-xs flex items-center gap-1">
+															<FaCommentDots size={16} />
+															{item.comments_count}
+														</span>
+														<span className="text-[#212B36] text-xs flex items-center gap-1">
+															<FaEye size={16} />
+															{item.views_count}
+														</span>
+													</div>
 												</div>
 											</div>
 										</div>
-									</div>
+									</Link>
 								</SwiperSlide>
 							))}
 						</Swiper>
