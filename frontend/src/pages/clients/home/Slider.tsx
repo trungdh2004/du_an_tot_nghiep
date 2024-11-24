@@ -30,7 +30,7 @@ const Slider = () => {
 					animate={{ opacity: 1, scale: 1 }}
 					transition={{ duration: 1.5 }}
 				>
-					<Button className="px-5 py-3 md:px-14 md:py-7 capitalize text-base md:text-xl bg-blue-500 hover:bg-blue-400">
+					<Button className="px-5 py-3 md:px-14 md:py-7 capitalize text-base md:text-xl bg-custom-500 hover:bg-custom-400">
 						Mua ngay
 					</Button>
 				</motion.div>

@@ -139,7 +139,7 @@ const Carousel = () => {
 										</h2>
 									</div>
 									<div>
-										<button className="px-4 py-1 mt-1 text-red-500 border border-red-500 rounded-full hover:bg-red-500 hover:text-white ">
+										<button className="px-4 py-1 mt-1 text-red-500 border border-red-500 rounded-full hover:bg-custom-500 hover:text-white ">
 											<span className="font-medium leading-4">Mua ngay</span>
 										</button>
 									</div>

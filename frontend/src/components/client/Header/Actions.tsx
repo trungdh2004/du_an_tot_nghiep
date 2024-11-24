@@ -188,7 +188,7 @@ const Actions = () => {
 				</div>
 			) : (
 				<Link to={`/auth/login`}>
-					<Button className="text-sm lg:block md:block hidden">Đăng nhập</Button>
+					<Button className="hidden h-8 py-1 text-sm lg:block md:block bg-custom-300 hover:bg-custom">Đăng nhập</Button>
 				</Link>
 			)}
 		</div>

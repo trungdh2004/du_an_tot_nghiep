@@ -1,11 +1,6 @@
 import { formatDateMessage } from "@/common/func";
 import { Button } from "@/components/ui/button";
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/auth";
 import { cn } from "@/lib/utils";
@@ -26,8 +21,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { z } from "zod";
 import { TooltipComponent } from "../common/TooltipComponent";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-
-
+import { IoCloseSharp } from "react-icons/io5";
 
 const formSchema = z.object({
 	content: z.string().min(1),
@@ -72,8 +66,7 @@ const ChatAction = () => {
 		totalPage: 0,
 	});
 	const [checkNewMessage, setCheckNewMessage] = useState<null | string>(null);
-	const [openScroll,setOpenScroll] = useState(false);
-
+	const [openScroll, setOpenScroll] = useState(false);
 
 	const refBottom = useRef<HTMLDivElement>(null);
 	const refBoxChat = useRef<HTMLDivElement>(null);
@@ -84,7 +77,6 @@ const ChatAction = () => {
 			content: "",
 		},
 	});
-
 
 	useEffect(() => {
 		(async () => {
@@ -112,25 +104,21 @@ const ChatAction = () => {
 		});
 	}, []);
 
-	
-	
-
 	useEffect(() => {
 		const handleScroll = () => {
 			if (refBoxChat.current && refBoxChat.current.scrollTop < -100) {
-			  setOpenScroll(true)
-			}else {
-				setOpenScroll(false)
+				setOpenScroll(true);
+			} else {
+				setOpenScroll(false);
 			}
-		  };
+		};
 
-		refBoxChat.current?.addEventListener("scroll",handleScroll)
+		refBoxChat.current?.addEventListener("scroll", handleScroll);
 
 		return () => {
-			refBoxChat.current?.removeEventListener("scroll",handleScroll)
-
-		}
-	},[refBoxChat])
+			refBoxChat.current?.removeEventListener("scroll", handleScroll);
+		};
+	}, [refBoxChat]);
 
 	useEffect(() => {
 		if (checkNewMessage) {
@@ -179,21 +167,28 @@ const ChatAction = () => {
 	};
 
 	const scrollBottom = async () => {
-		refBottom.current?.scrollIntoView({ behavior: "smooth",block:"center"});
+		refBottom.current?.scrollIntoView({ behavior: "smooth", block: "center" });
 	};
 
 	return (
-		<div className={cn("hidden",isLoggedIn && "block")}>
-			<div className="fixed bottom-4 right-4 size-12 rounded-full bg-blue-500 z-10 cursor-pointer">
+		<div className={cn("hidden", isLoggedIn && "block")}>
+			<div className="fixed z-10 bg-white rounded-full shadow-[rgba(0,0,0,0.35)_0px_5px_15px] cursor-pointer bottom-4 right-4 size-12">
 				<div
 					className={cn(
-						"absolute w-80 h-[400px] border rounded-md bg-blue-500 box-shadow bottom-14 right-0 z-10 border-blue-500 p-2 hidden",
+						"absolute w-80 h-[400px] rounded-md shadow-lg bottom-14 right-0 z-10 hidden ",
 						openChat && "block",
 					)}
 				>
-					<div className="w-full h-full bg-white flex flex-col">
-						
-
+					<div className="flex flex-col w-full h-full bg-white rounded-md">
+						<div className="bg-custom-300 rounded-t-md flex justify-between items-center">
+							<h3 className="p-2 font-semibold text-white">NUCSHOP</h3>
+							<IoCloseSharp
+								size={25}
+								className="pr-2 text-white"
+								onClick={() => setOpenChat(false)}
+							/>
+						</div>
+						<hr />
 						<div
 							id="scrollableChatDiv"
 							style={{
@@ -204,17 +199,21 @@ const ChatAction = () => {
 								flexDirection: "column-reverse",
 							}}
 							ref={refBoxChat}
-							className="scroll-custom p-1 relative"
+							className="relative p-1 scroll-custom"
 							// className="flex-1 overflow-y-auto p-2 scroll-custom h-[350px]"
 						>
 							<InfiniteScroll
 								dataLength={data?.content.length}
 								next={handlePagingMessage}
-								style={{ display: "flex", flexDirection: "column-reverse",position:"relative" }} //To put endMessage and loader to the top.
+								style={{
+									display: "flex",
+									flexDirection: "column-reverse",
+									position: "relative",
+								}} //To put endMessage and loader to the top.
 								inverse={true} //
 								hasMore={data?.pageIndex !== data?.totalPage}
 								loader={
-									<p className="text-center text-sm text-gray-400">
+									<p className="text-sm text-center text-gray-400">
 										Loading...
 									</p>
 								}
@@ -256,10 +255,16 @@ const ChatAction = () => {
 							</InfiniteScroll>
 						</div>
 						{/* </div> */}
-						<div className={cn("absolute z-10  size-7 bg-gray-50 rounded-full bottom-16 left-1/2 -translate-x-1/2 flex items-center justify-center hover:bg-gray-100 cursor-pointer",!openScroll && "hidden")} onClick={scrollBottom}>
-								<FaArrowDown />
+						<div
+							className={cn(
+								"absolute z-10  size-7 bg-gray-50 rounded-full bottom-16 left-1/2 -translate-x-1/2 flex items-center justify-center hover:bg-gray-100 cursor-pointer",
+								!openScroll && "hidden",
+							)}
+							onClick={scrollBottom}
+						>
+							<FaArrowDown />
 						</div>
-						<div className="bg-white items-center flex w-full border-t p-1">
+						<div className="flex items-center w-full p-1 border-t">
 							<Form {...form}>
 								<form
 									onSubmit={form.handleSubmit(onSubmit)}
@@ -291,11 +296,11 @@ const ChatAction = () => {
 					</div>
 				</div>
 				{openChat && (
-					<div className=" size-4 bg-blue-500 absolute bottom-[52px] right-4 rotate-45 "></div>
+					<div className=" size-4 bg-custom-500 absolute bottom-[52px] right-4 rotate-45 "></div>
 				)}
 
 				<div
-					className="w-full h-full flex items-center justify-center "
+					className="flex items-center justify-center w-full h-full "
 					onClick={async () => {
 						setOpenChat(!openChat);
 						if (!boolenRef.current) {
@@ -308,10 +313,10 @@ const ChatAction = () => {
 						}
 					}}
 				>
-					<FiMessageSquare size={20} className="text-white" />
+					<FiMessageSquare size={20} className="text-custom" />
 				</div>
 
-				<div className="absolute size-5 left-0 -top-1 bg-red-500 text-white box-shadow rounded-full flex items-center justify-center ">
+				<div className="absolute left-0 flex items-center justify-center text-white rounded-full bg-custom size-5 -top-1 box-shadow ">
 					{countNotRead}
 				</div>
 			</div>

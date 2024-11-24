@@ -124,7 +124,7 @@ const Evaluate = ({ open, handleClose }: Props) => {
 								/>
 								<Button
 									type="submit"
-									className="w-full bg-red-500 py-3 text-sm md:text-base uppercase text-white rounded-sm"
+									className="w-full bg-custom-500 py-3 text-sm md:text-base uppercase text-white rounded-sm"
 								>
 									Đánh giá
 								</Button>

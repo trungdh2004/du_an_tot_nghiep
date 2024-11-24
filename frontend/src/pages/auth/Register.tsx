@@ -183,13 +183,13 @@ const Register = () => {
 						</div>
 						<Button
 							type="submit"
-							className="w-full mt-3 mb-6 text-base font-bold text-white bg-blue-500 hover:bg-blue-400"
+							className="w-full mt-3 mb-6 text-base font-bold text-white bg-custom hover:bg-custom-400"
 						>
 							Đăng ký
 						</Button>
 						<p className="text-center">
 							Bạn đã có tài khoản ?{" "}
-							<Link to={"/auth/login"} className="text-blue-500">
+							<Link to={"/auth/login"} className="text-custom">
 								Đăng nhập
 							</Link>
 						</p>

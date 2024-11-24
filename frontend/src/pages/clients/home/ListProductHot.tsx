@@ -28,11 +28,11 @@ const ListProductHot = () => {
 
 	return (
 		<div className="py-10 padding">
-			<div className="flex justify-between items-center w-full">
-				<div className="text-header flex-1">Sản phẩm nổi bật</div>
+			<div className="flex items-center justify-between w-full">
+				<div className="flex-1 text-header">Sản phẩm nổi bật</div>
 				<Link
 					to={"/shop"}
-					className="text-gray-400 hover:text-gray-700 cursor-pointer flex items-center gap-1"
+					className="flex items-center gap-1 text-gray-400 cursor-pointer hover:text-custom"
 				>
 					<span className="text-sm">Mua ngay</span>
 					<FaAnglesRight size={14} />
@@ -42,8 +42,9 @@ const ListProductHot = () => {
 			{/* {!isLoading &&
 					} */}
 
-			<div className="relative pb-6 w-full pt-10">
+			<div className="relative w-full pt-10 pb-6 group/parrent [&>.swiper-button-disabled]:opacity-50 [&>.swiper-button-disabled]:pointer-events-none">
 				<Swiper
+          className="[&>.swiper-wrapper]:py-1.5"
 					modules={[Navigation]}
 					loop={false}
 					spaceBetween={20}
@@ -74,26 +75,20 @@ const ListProductHot = () => {
 				>
 					{!isLoading && data?.map((product: IProduct) => (
 						<SwiperSlide className="lg:w-[260px] w-[240px] group">
-							<Link
-								key={product?._id}
-								to={`/shop/detail/${encodeURIComponent(product?.slug || "")}`}
-								className="relative flex flex-col overflow-hidden transition-all duration-300 bg-white border border-gray-200 rounded-xl group hover:shadow-lg"
-							>
-								<ProductV2 product={product} />
-							</Link>
+								<ProductV2 product={product} key={product?._id} />
 						</SwiperSlide>
 					))}
 				</Swiper>
 
 				<button
-					className={`btn-next  absolute z-20 top-[39%] right-4 text-black w-[50px] h-[50px] border flex justify-center items-center rounded-full p-3 hover:text-white hover:bg-[#585858] duration-300 cursor-pointer`}
+					className={`btn-next    absolute z-10 top-[39%] right-0 translate-x-1/2 group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`}
 				>
-					<GrLinkNext />
+					<GrLinkNext className="text-sm group-hover/parrent:text-base" />
 				</button>
 				<button
-					className={`btn-prev  absolute z-20 top-[39%] left-4 text-black w-[50px] h-[50px] border flex justify-center items-center rounded-full p-3 hover:text-white hover:bg-[#585858] duration-300 cursor-pointer`}
+					className={`btn-prev  absolute z-10 top-[39%] left-0 -translate-x-1/2 group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`}
 				>
-					<GrLinkPrevious />
+					<GrLinkPrevious className="text-sm group-hover/parrent:text-base" />
 				</button>
 			</div>
 		</div>
