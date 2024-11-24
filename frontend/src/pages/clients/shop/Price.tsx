@@ -52,14 +52,14 @@ const Price = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 		}));
 	}, [debouncedValues]);
 	return (
-		<div className="w-full flex flex-col gap-3 lg:py-2 py-1">
-			<h3 className="text-uppercase py-1 font-semibold leading-7 tracking-wide lg:text-base md:text-sm sm:text-xs">
+		<div className="flex flex-col w-full gap-3 py-1 lg:py-2">
+			<h3 className="py-1 font-semibold leading-7 tracking-wide text-uppercase lg:text-base md:text-sm sm:text-xs">
 				Khoảng giá
 			</h3>
 			<div className="py-5">
 				<ReactSlider
 					step={1000}
-					className="horizontal-slider"
+					className="horizontal-slider [&>.example-track-1]:bg-custom [&>.example-thumb]:border-custom  [&>.example-thumb]:bg-custom-100"
 					thumbClassName="example-thumb"
 					trackClassName="example-track"
 					min={0}
@@ -71,10 +71,10 @@ const Price = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 				/>
 			</div>
 			<div className="flex justify-between">
-				<p className="lg:text-sm text-xs">
+				<p className="text-xs lg:text-sm">
 					{debouncedValues[0].toLocaleString()}đ
 				</p>
-				<p className="lg:text-sm text-xs">
+				<p className="text-xs lg:text-sm">
 					{debouncedValues[1].toLocaleString()}đ
 				</p>
 			</div>

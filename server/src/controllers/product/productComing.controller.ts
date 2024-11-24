@@ -25,7 +25,7 @@ class ProductComingController {
 
       const newProductComing = await ProductComingModel.create({
         product: productId,
-        date,
+        date: new Date(date),
         active,
       });
 
@@ -192,7 +192,7 @@ class ProductComingController {
 
       const newUpdate = await ProductComingModel.findByIdAndUpdate(id, {
         product: productId,
-        date,
+        date:new Date(date),
         active,
       });
 

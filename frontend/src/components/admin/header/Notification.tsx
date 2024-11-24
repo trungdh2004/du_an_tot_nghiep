@@ -53,7 +53,7 @@ const Notification = ({
 						setOpen(!open);
 					}}
 				>
-					<span className=" rounded-full bg-red-500 text-white absolute w-4 h-4 text-xs flex items-center justify-center -top-1 -right-1">
+					<span className=" rounded-full bg-custom-500 text-white absolute w-4 h-4 text-xs flex items-center justify-center -top-1 -right-1">
 						{countNotRead}
 					</span>
 					<IoNotificationsOutline strokeWidth={4} size={20} />
@@ -69,7 +69,7 @@ const Notification = ({
 					<div className="flex items-center justify-between">
 						<h6 className="h6 text-lg max-sm:text-sm">Thông báo</h6>
 						{/* <button
-							className="text-sm font-normal border-none outline-none text-blue-500 px-2 py-1 hover:bg-gray-100 rounded-sm"
+							className="text-sm font-normal border-none outline-none text-custom px-2 py-1 hover:bg-gray-100 rounded-sm"
 							onClick={handleWatchedAllNotification}
 						>
 							Đánh dấu đã đọc
@@ -114,7 +114,7 @@ const Notification = ({
 										<DropdownMenuItem
 											className={cn(
 												" group mb-1 pr-6",
-												!isRead && "bg-blue-100/40",
+												!isRead && "bg-custom-100/40",
 											)}
 											onClick={async () => {
 												if (item.type === TYPE_NOTIFICATION.ORDER) {

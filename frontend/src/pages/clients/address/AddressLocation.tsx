@@ -76,7 +76,7 @@ const AddressLocation = ({
 						<TabsTrigger
 							value="idProvince"
 							onClick={() => setInitValue("idProvince")}
-							className="border-b data-[state=active]:border-blue-500 data-[state=active]:text-blue-500 rounded-none"
+							className="border-b data-[state=active]:border-custom data-[state=active]:text-custom rounded-none"
 						>
 							Thành phố
 						</TabsTrigger>
@@ -84,7 +84,7 @@ const AddressLocation = ({
 							onClick={() => setInitValue("idDistrict")}
 							value="idDistrict"
 							disabled={!iCity}
-							className="border-b data-[state=active]:border-blue-500 data-[state=active]:text-blue-500 rounded-none"
+							className="border-b data-[state=active]:border-custom data-[state=active]:text-custom rounded-none"
 						>
 							Huyện
 						</TabsTrigger>
@@ -92,7 +92,7 @@ const AddressLocation = ({
 							onClick={() => setInitValue("idCommune")}
 							disabled={!idDistrict}
 							value="idCommune"
-							className="border-b data-[state=active]:border-blue-500 data-[state=active]:text-blue-500 rounded-none"
+							className="border-b data-[state=active]:border-custom data-[state=active]:text-custom rounded-none"
 						>
 							Xã
 						</TabsTrigger>

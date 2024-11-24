@@ -26,8 +26,8 @@ const getAllDaysInMonth = (year: number, month: number) => {
       countOrderSuccess: 0,
       countOrderCancel: 0,
     });
-    date.setDate(date.getDate() + 1);
     i++;
+    date.setDate(date.getDate() + 1);
   }
 
   return days;

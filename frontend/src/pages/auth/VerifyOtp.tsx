@@ -127,7 +127,7 @@ const VerifyOtp = ({ setStep, email }: PropsVerifyOtp) => {
 						</div>
 						<Button
 							type="submit"
-							className="w-full mt-3 mb-6 text-white text-base font-bold bg-blue-500 hover:bg-blue-400"
+							className="w-full mt-3 mb-6 text-white text-base font-bold bg-custom-500 hover:bg-custom-400"
 						>
 							Xác thực
 						</Button>
