@@ -18,7 +18,10 @@ const ContactPage: React.FC = () => {
             <a href="#" className="block text-gray-400 hover:text-white">
               Mobile app
             </a>
-            <a href="#" className="block text-green-500 bg-green-600 px-3 py-1 rounded">
+            <a
+              href="#"
+              className="block text-green-500 bg-green-600 px-3 py-1 rounded"
+            >
               Domain
             </a>
             <a href="#" className="block text-gray-400 hover:text-white">
