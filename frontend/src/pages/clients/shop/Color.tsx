@@ -3,6 +3,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { getAllColor } from "@/service/color";
 import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
+import { IColor } from "@/types/typeProduct";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { useQueryClient } from "@tanstack/react-query";
 import React, {
@@ -35,18 +36,18 @@ const Color = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 			}
 		})();
 	}, []);
-	useEffect(() => {
-		const paramsObject = Object.fromEntries(searchParams.entries());
-		const colorCheck =
-			paramsObject?.color
-				?.split(",")
-				.map((c) => c.trim())
-				.filter(Boolean) ?? [];
-		setSearchParamsObject((prev) => ({
-			...prev,
-			color: colorCheck,
-		}));
-	}, [searchParams, setSearchParamsObject]);
+	// useEffect(() => {
+	// 	const paramsObject = Object.fromEntries(searchParams.entries());
+	// 	const colorCheck =
+	// 		paramsObject?.color
+	// 			?.split(",")
+	// 			.map((c) => c.trim())
+	// 			.filter(Boolean) ?? [];
+	// 	setSearchParamsObject((prev) => ({
+	// 		...prev,
+	// 		color: colorCheck,
+	// 	}));
+	// }, [searchParams, setSearchParamsObject]);
 
 	const handleCheckedColor = useCallback(
 		(color: string) => (checked: CheckedState) => {
@@ -57,6 +58,7 @@ const Color = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 				colors = colors.filter((_color) => _color !== color);
 			}
 			searchParams.set("color", colors.join());
+			searchParams.set("pageIndex", "1");
 			setSearchParams(searchParams);
 
 			const paramsObject: any = Object.fromEntries(searchParams.entries());
@@ -68,28 +70,28 @@ const Color = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 			setSearchParamsObject((prev) => ({
 				...prev,
 				color: colorCheck,
+				pageIndex: 1,
 			}));
-			query.invalidateQueries({ queryKey: ["productShop"] });
 		},
 		[searchParams, setSearchParams, setSearchParamsObject, query],
 	);
 	return (
-		<div className="w-full flex flex-col gap-3 lg:py-2 py-1">
+		<div className="flex flex-col w-full gap-3 py-1 lg:py-2">
 			<div
-				className="flex justify-between items-center cursor-pointer"
+				className="flex items-center justify-between cursor-pointer"
 				onClick={!check ? () => setCheck(true) : () => setCheck(false)}
 			>
-				<h3 className="text-uppercase py-1 font-semibold leading-7 tracking-wide lg:text-base md:text-sm sm:text-xs">
+				<h3 className="py-1 font-semibold leading-7 tracking-wide text-uppercase lg:text-base md:text-sm sm:text-xs">
 					Màu sắc
 				</h3>
 				{!check ? (
 					<FaAngleDown
-						className="cursor-pointer transition-transform"
+						className="transition-transform cursor-pointer"
 						onClick={() => setCheck(true)}
 					/>
 				) : (
 					<FaAngleUp
-						className="cursor-pointer transition-transform"
+						className="transition-transform cursor-pointer"
 						onClick={() => setCheck(false)}
 					/>
 				)}
@@ -101,18 +103,22 @@ const Color = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 				)}
 			>
 				<div className="grid grid-cols-4 gap-1">
-					{colors?.map((color: any) => {
-            return (
-							<TooltipComponent label={color.name} side="bottom">
+					{colors?.map((color: IColor) => {
+						return (
+							<TooltipComponent
+								key={color?._id}
+								label={color.name}
+								side="bottom"
+							>
 								<div
 									className="flex flex-col items-center gap-3"
 									key={color._id}
 								>
 									<Checkbox
 										className={cn(
-											`data-[state=checked]:bg-white data-[state=checked]:text-[#ffffff] rounded-full lg:w-7 lg:h-7 w-6 h-6 border-[#eee] p-1 text-[10px] font-bold `,
+											` data-[state=checked]:bg-white data-[state=checked]:text-[#ffffff] rounded-full lg:w-6 lg:h-6 w-5 h-5 border-[#eee] p-1 text-[10px] font-bold `,
 											color.code === "#ffffff" &&
-												"data-[state=checked]:text-black",
+												"data-[state=checked]:text-black ",
 										)}
 										style={{ backgroundColor: color.code }}
 										value={color._id}
@@ -125,7 +131,7 @@ const Color = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 										onCheckedChange={handleCheckedColor(color._id)}
 									/>
 
-									{/* <span className="font-medium lg:text-sm text-xs">
+									{/* <span className="text-xs font-medium lg:text-sm">
 									{color.name}
 								</span> */}
 								</div>

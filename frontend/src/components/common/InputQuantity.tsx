@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import React, { memo, useEffect, useRef, useState, useCallback } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { GoPlus } from "react-icons/go";
 import { HiMiniMinus } from "react-icons/hi2";
 
@@ -9,7 +9,7 @@ interface InputQuantityProps {
 	defaultValue?: number;
 	disabled?: boolean;
 	className?: string;
-	size?: "small" | "medium" | "large" | "responsive";
+	size?: "small" | "medium" | "large" | "responsive" | "mobile";
 }
 
 const InputQuantity: React.FC<InputQuantityProps> = ({
@@ -29,6 +29,7 @@ const InputQuantity: React.FC<InputQuantityProps> = ({
 			setValue(clampedValue);
 			getValue?.(clampedValue);
 		},
+
 		[maxTotal, getValue],
 	);
 
@@ -45,30 +46,33 @@ const InputQuantity: React.FC<InputQuantityProps> = ({
 		},
 		[value, updateValue],
 	);
-
 	useEffect(() => {
-		updateValue(defaultValue);
-	}, [defaultValue, updateValue]);
+		setValue(defaultValue);
+	}, [defaultValue]);
+	useEffect(() => {
+    const minValue = value <= 0 ? 1 : value
+		setValue(Math.min(minValue, maxTotal));
+	}, [maxTotal]);
 
 	const sizeClasses = {
 		small: "h-8 text-sm",
 		medium: "h-10 text-base",
 		large: "h-12 text-lg",
+		mobile: "h-5 text-sm",
 		responsive:
-			"h-8 text-sm sm:h-9 sm:text-base md:h-10 md:text-base lg:h-12 lg:text-lg",
+			"h-8 text-xs sm:h-8 sm:text-sm md:h-8 md:text-sm lg:h-8 lg:text-base",
 	};
 
 	const buttonClasses = cn(
-		"flex items-center justify-center w-8 sm:w-9 md:w-10 lg:w-12 border-gray-200 cursor-pointer bg-transparent transition-opacity",
+		"flex items-center justify-center w-8 sm:w-9 md:w-10 lg:w-12 border-gray-400 cursor-pointer bg-transparent transition-opacity",
 		sizeClasses[size],
 		{
 			"opacity-60 cursor-not-allowed": disabled,
-			"hover:bg-gray-100": !disabled,
 		},
 	);
 
 	const containerClasses = cn(
-		"flex items-center border border-gray-200 rounded w-full",
+		"flex items-center border border-gray-400 rounded w-full",
 		size === "responsive"
 			? "max-w-24 sm:max-w-28 md:max-w-32 lg:max-w-36"
 			: "max-w-32",
@@ -95,8 +99,9 @@ const InputQuantity: React.FC<InputQuantityProps> = ({
 				max={maxTotal}
 				min={1}
 				className={cn(
-					"flex-1 min-w-8 w-full text-center outline-none appearance-none bg-transparent [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+					"flex-1  w-full text-center outline-none appearance-none bg-transparent [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
 					sizeClasses[size],
+					size === "mobile" ? " min-w-7" : "min-w-12",
 				)}
 			/>
 			<button

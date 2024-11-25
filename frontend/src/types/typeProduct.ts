@@ -8,6 +8,7 @@ export interface IColor {
 }
 
 export interface IAttribute {
+	_id?: string;
 	color: IColor | string;
 	size: SizeTypes | string;
 	price: number;
@@ -40,5 +41,7 @@ export interface IProduct {
 	is_deleted?: boolean;
 	rating: number;
 	quantitySold?: number;
-	slug?:string
+	slug?: string;
+	is_hot?: boolean;
+	is_simple?: boolean;
 }

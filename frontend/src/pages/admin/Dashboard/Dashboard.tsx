@@ -1,39 +1,41 @@
-import React from "react";
+import BlogNewPublic from "./BlogNewPublic";
+import CategoryDashboard from "./Category.dashboard";
 import { ComponentChart } from "./Chart";
-import  { ComponentChartType } from "./ChartType";
 import CountTotal from "./CountTotal";
 import ListOrderNew from "./ListOrderNew";
-import CategoryDashboard from "./Category.dashboard";
-import ProductDashboard from "./Product.dashboad";
 import OrderToDayDashBoard from "./OrderToDay.dashboard";
-import BlogNewPublic from "./BlogNewPublic";
+import ProductDashboard from "./Product.dashboad";
 
 const Dashboard = () => {
 	return (
-		<div className="w-full min-h-screen grid grid-cols-12 gap-2 md:gap-4 lg:gap-6">
-			<CountTotal />
-			<div className="col-span-12 md:col-span-4 bg-white box-shadow rounded-xl">
-				<ComponentChartType />
-			</div>
-			<div className="col-span-12 md:col-span-8 bg-white box-shadow rounded-xl">
-				<ComponentChart />
-			</div>
+		<div>
+			<div className="grid w-full min-h-screen grid-cols-12 gap-2 md:gap-4 lg:gap-6">
+				<CountTotal />
+				<div className="col-span-12 md:col-span-4 ">
+					<OrderToDayDashBoard />
+				</div>
 
-			<div className="col-span-12 bg-white box-shadow rounded-xl" >
-				<ListOrderNew />
-			</div>
+				<div className="col-span-12 bg-white md:col-span-8 box-shadow rounded-xl">
+					<ComponentChart />
+				</div>
 
-			<div className="col-span-12 md:col-span-8 bg-white box-shadow rounded-xl">
-				<ProductDashboard />
-			</div>
-			<div className="col-span-12 md:col-span-4 ">
-				<OrderToDayDashBoard />
-			</div>
-			<div className="col-span-12 md:col-span-4 bg-white box-shadow rounded-xl">
-				<CategoryDashboard />
-			</div>
-			<div className="col-span-12 md:col-span-8 ">
-				<BlogNewPublic />
+				<div className="col-span-12 bg-white box-shadow rounded-xl">
+					<ListOrderNew />
+				</div>
+
+				<div className="col-span-12 bg-white md:col-span-8 box-shadow rounded-xl">
+					<ProductDashboard />
+				</div>
+				<div className="col-span-12 bg-white md:col-span-4 box-shadow rounded-xl">
+					<CategoryDashboard />
+				</div>
+
+				<div className="col-span-12 bg-white md:col-span-4 box-shadow rounded-xl">
+					<CategoryDashboard />
+				</div>
+				<div className="col-span-12 md:col-span-8 ">
+					<BlogNewPublic />
+				</div>
 			</div>
 		</div>
 	);

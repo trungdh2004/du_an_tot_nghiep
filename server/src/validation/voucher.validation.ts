@@ -9,4 +9,8 @@ export const voucherValidation = Joi.object({
   discountValue: Joi.number().required().messages({}),
   usageLimit: Joi.number().required().messages({}),
   minimumOrderValue: Joi.number().required().messages({}),
+  code: Joi.string().length(7).required().messages({}),
+  type: Joi.string().required().messages({}),
+  listUseProduct: Joi.array().items(Joi.string()).optional(),
+  maxAmount:Joi.number().required().messages({}),
 });

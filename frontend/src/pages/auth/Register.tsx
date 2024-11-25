@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { IoIosArrowRoundBack } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { Button } from "../../components/ui/button";
 import {
@@ -22,6 +22,7 @@ import { AxiosError } from "axios";
 import OverlayViolet from "@/components/OverlayViolet";
 
 const Register = () => {
+	const navigate = useNavigate();
 	const formSchema = z
 		.object({
 			userName: z.string({ required_error: "Bạn chưa nhập tên đăng nhập" }),
@@ -54,6 +55,7 @@ const Register = () => {
 		try {
 			const { data } = await createAccount(payload);
 			toast.success(data?.message);
+			navigate("/auth/login");
 		} catch (error: any) {
 			toast.error(error.response!.data!.message);
 		}
@@ -64,17 +66,17 @@ const Register = () => {
 
 			<Link
 				to={"/"}
-				className="dark:bg-slate-600 relative flex items-center justify-center max-w-36 p-3 bg-white rounded-lg shadow-lg"
+				className="relative flex items-center justify-center p-3 bg-white rounded-lg shadow-lg dark:bg-slate-600 max-w-36"
 			>
 				<IoIosArrowRoundBack size={20} className="mr-4" /> Trang chủ
 			</Link>
-			<div className="dark:bg-slate-800 w-full max-w-xs md:max-w-sm mx-auto mt-5  px-8 py-9 bg-white shadow-md border border-gray-200 rounded-2xl">
+			<div className="w-full max-w-xs px-8 mx-auto mt-5 bg-white border border-gray-200 shadow-md dark:bg-slate-800 md:max-w-sm py-9 rounded-2xl">
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)}>
-						<div className=" space-y-5">
-							<h2 className="text-center text-xl font-bold">Đăng ký</h2>
+						<div className="space-y-5 ">
+							<h2 className="text-xl font-bold text-center">Đăng ký</h2>
 							<SignInWithFacebookOrGoogle />
-							<div className=" space-y-1">
+							<div className="space-y-1 ">
 								<div className="">
 									<FormField
 										control={form.control}
@@ -123,13 +125,13 @@ const Register = () => {
 														<FaRegEyeSlash
 															onClick={() => setIsPassword((prev) => !prev)}
 															size={18}
-															className="absolute top-1/2 right-5 -translate-y-1/2 cursor-pointer"
+															className="absolute -translate-y-1/2 cursor-pointer top-1/2 right-5"
 														/>
 													) : (
 														<FaRegEye
 															onClick={() => setIsPassword((prev) => !prev)}
 															size={18}
-															className="absolute top-1/2 right-5 -translate-y-1/2 cursor-pointer"
+															className="absolute -translate-y-1/2 cursor-pointer top-1/2 right-5"
 														/>
 													)}
 												</div>
@@ -144,7 +146,7 @@ const Register = () => {
 										name="forgotPassword"
 										render={({ field }) => (
 											<FormItem className="space-y-0">
-												<FormLabel className="text-xs">
+												<FormLabel className="">
 													Xác nhận mật khẩu
 												</FormLabel>
 												<div className="relative">
@@ -160,7 +162,7 @@ const Register = () => {
 																setIsConfrimPassword((prev) => !prev)
 															}
 															size={18}
-															className="absolute top-1/2 right-5 -translate-y-1/2 cursor-pointer"
+															className="absolute -translate-y-1/2 cursor-pointer top-1/2 right-5"
 														/>
 													) : (
 														<FaRegEye
@@ -168,7 +170,7 @@ const Register = () => {
 																setIsConfrimPassword((prev) => !prev)
 															}
 															size={18}
-															className="absolute top-1/2 right-5 -translate-y-1/2 cursor-pointer"
+															className="absolute -translate-y-1/2 cursor-pointer top-1/2 right-5"
 														/>
 													)}
 												</div>
@@ -181,13 +183,13 @@ const Register = () => {
 						</div>
 						<Button
 							type="submit"
-							className="w-full mt-3 mb-6 text-white text-base font-bold bg-blue-500 hover:bg-blue-400"
+							className="w-full mt-3 mb-6 text-base font-bold text-white bg-custom hover:bg-custom-400"
 						>
 							Đăng ký
 						</Button>
 						<p className="text-center">
 							Bạn đã có tài khoản ?{" "}
-							<Link to={"/auth/login"} className="text-blue-500">
+							<Link to={"/auth/login"} className="text-custom">
 								Đăng nhập
 							</Link>
 						</p>

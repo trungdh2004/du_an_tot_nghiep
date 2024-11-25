@@ -38,6 +38,7 @@ import { registerShipper } from "@/service/shipper";
 import { IShipper } from "@/types/shipper.interface";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import CalendarYear from "@/components/common/CalendarYear";
 
 interface ICity {
 	idProvince: string;
@@ -54,7 +55,7 @@ interface ICommune {
 }
 
 const formSchema = z.object({
-	fullName: z.string({ required_error: "Bạn chưa  nhập email" }),
+	fullName: z.string({ required_error: "Bạn chưa  nhập tên" }),
 	phone: z.string().regex(/^(\+84|0)(3|5|7|8|9)\d{8}$/, {
 		message: "Số điện thoại không hợp lệ",
 	}),
@@ -87,7 +88,7 @@ const formSchema = z.object({
 });
 
 const ShipperAuth = () => {
-	const router = useNavigate()
+	const router = useNavigate();
 	const [districts, setDistricts] = useState<IDistrict[]>([]);
 	const [commune, setCommune] = useState<ICommune[]>([]);
 	const [previewUrl, setPreviewUrl] = useState({
@@ -108,9 +109,9 @@ const ShipperAuth = () => {
 	const onSubmit = async (payload: z.infer<typeof formSchema>) => {
 		try {
 			console.log("payload", payload);
-			const {data} = await registerShipper(payload as IShipper)
-			toast.success("Đăng kí tài khoản thành công")
-			router("/shipper/pending")
+			const { data } = await registerShipper(payload as IShipper);
+			toast.success("Đăng kí tài khoản thành công");
+			router("/shipper/pending");
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				toast.error(error.response?.data?.message);
@@ -147,7 +148,7 @@ const ShipperAuth = () => {
 		const address = `${value.name},${form.watch("district")?.name},${form.watch("city")?.name}`;
 		form.setValue("address", address);
 		form.setValue("commune", value);
-		form.clearErrors("address")
+		form.clearErrors("address");
 	};
 
 	const handleUploadFile = async (file: File) => {
@@ -333,7 +334,7 @@ const ShipperAuth = () => {
 																className="w-auto p-0"
 																align="start"
 															>
-																<Calendar
+																{/* <Calendar
 																	mode="single"
 																	selected={field.value}
 																	onSelect={field.onChange}
@@ -343,6 +344,16 @@ const ShipperAuth = () => {
 																	}
 																	initialFocus
 																	locale={vi}
+																/> */}
+																<CalendarYear
+																	value={field.value}
+																	onSelect={field.onChange}
+																	disabled={(date) =>
+																		date > new Date() ||
+																		date < new Date("1900-01-01")
+																	}
+																	initialFocus
+																	lengthYear={40}
 																/>
 															</PopoverContent>
 														</Popover>
@@ -383,7 +394,13 @@ const ShipperAuth = () => {
 										className="w-full mt-3 text-white text-base font-bold bg-blue-500 hover:bg-blue-400"
 										disabled={previewUrl?.isLoading}
 									>
-										{previewUrl?.isLoading &&  <AiOutlineLoading3Quarters size={20} className="animate-spin text-white mr-2" /> } Đăng kí
+										{previewUrl?.isLoading && (
+											<AiOutlineLoading3Quarters
+												size={20}
+												className="animate-spin text-white mr-2"
+											/>
+										)}{" "}
+										Đăng kí
 									</Button>
 								</form>
 							</Form>

@@ -1,22 +1,20 @@
 import { formatCurrency } from "@/common/func";
+import { optimizeCloudinaryUrl } from "@/common/localFunction";
+import { TooltipComponent } from "@/components/common/TooltipComponent";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-	Table,
-	TableBody,
-	TableCell,
-	TableFooter,
-	TableHead,
-	TableHeader,
-	TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { getNewOrder } from "@/service/dashboard.service";
 import { useQuery } from "@tanstack/react-query";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tooltip } from "@/components/ui/tooltip";
-import { TooltipComponent } from "@/components/common/TooltipComponent";
 import { format } from "date-fns";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
-import { Link } from "react-router-dom";
-import { optimizeCloudinaryUrl } from "@/common/localFunction";
+import { Link, useNavigate } from "react-router-dom";
 
 const statusOrder = [
 	{
@@ -66,6 +64,7 @@ const ListOrderNew = () => {
 			} catch (error) {}
 		},
 	});
+	const router = useNavigate();
 
 	// const table = useReactTable({
 	// 	data: data,
@@ -73,7 +72,7 @@ const ListOrderNew = () => {
 	// });
 
 	return (
-		<div className="w-full flex flex-col p-2 h-auto overflow-visible">
+		<div className="flex flex-col w-full h-auto p-2 overflow-visible">
 			<div className="flex items-center justify-between py-2 border-b">
 				<p className="font-semibold">Thông tin đơn hàng gần đây</p>
 				<div className="flex items-center gap-2"></div>
@@ -86,8 +85,8 @@ const ListOrderNew = () => {
 							<TableHead className="w-[50px]"></TableHead>
 							<TableHead className="w-[100px]">Mã</TableHead>
 							<TableHead className="w-[100px]">Người đặt</TableHead>
-							<TableHead>Tổng tiền</TableHead>
-							<TableHead>Đã thanh toán</TableHead>
+							<TableHead>Giá trị đơn</TableHead>
+							<TableHead>Thanh toán</TableHead>
 							<TableHead>Thanh toán</TableHead>
 							<TableHead>Số sản phẩm</TableHead>
 							<TableHead>Ngày đặt</TableHead>
@@ -98,11 +97,20 @@ const ListOrderNew = () => {
 						{data &&
 							data?.length > 0 &&
 							data?.map((row: any) => (
-								<TableRow key={row._id}>
+								<TableRow
+									key={row._id}
+									onDoubleClick={() => {
+										router(`/admin/order/${row._id}`);
+									}}
+									className="cursor-pointer"
+								>
 									<TableCell className="text-center">
 										<TooltipComponent label="Xem chi tiết">
 											<Link to={`/admin/order/${row._id}`}>
-												<MdOutlineRemoveRedEye size={20} className="text-blue-500"/>
+												<MdOutlineRemoveRedEye
+													size={20}
+													className="text-blue-500"
+												/>
 											</Link>
 										</TooltipComponent>
 									</TableCell>
@@ -111,16 +119,20 @@ const ListOrderNew = () => {
 										<TooltipComponent label={row?.user?.full_name}>
 											<Avatar>
 												<AvatarImage
-													src={row?.user?.avatar ? optimizeCloudinaryUrl(row?.user?.avatar,40,40) : "/avatar_25.jpg"}
+													src={
+														row?.user?.avatar
+															? optimizeCloudinaryUrl(row?.user?.avatar, 40, 40)
+															: "/avatar_25.jpg"
+													}
 												/>
 												<AvatarFallback>CN</AvatarFallback>
 											</Avatar>
 										</TooltipComponent>
 									</TableCell>
-									<TableCell className="text-rose-500 font-semibold">
+									<TableCell className="font-semibold text-rose-500">
 										{formatCurrency(row.totalMoney)}
 									</TableCell>
-									<TableCell className="text-rose-500 font-semibold">
+									<TableCell className="font-semibold text-rose-500">
 										{formatCurrency(row.amountToPay)}
 									</TableCell>
 									<TableCell className="font-semibold text-nowrap">
@@ -130,7 +142,7 @@ const ListOrderNew = () => {
 									<TableCell>{format(row.orderDate, "dd/MM/yyy")}</TableCell>
 									<TableHead>
 										<div
-											className="w-full h-5 rounded-full bg-red-500 text-center text-white leading-5 text-xs text-nowrap"
+											className="w-full h-5 text-xs leading-5 text-center text-white bg-red-500 rounded-full text-nowrap"
 											style={{
 												backgroundColor:
 													statusOrder?.find(
@@ -157,7 +169,11 @@ const ListOrderNew = () => {
 								</TableRow>
 							))}
 						{!data ||
-							(data.length === 0 && <TableCell>Không có giá trị</TableCell>)}
+							(data.length === 0 && (
+								<TableCell colSpan={9} className="text-center">
+									Không có giá trị
+								</TableCell>
+							))}
 					</TableBody>
 				</Table>
 			</div>

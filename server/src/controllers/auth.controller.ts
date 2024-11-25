@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import { Request, Response } from "express";
 import {
+  changePassValidation,
   loginFormValidation,
   registerForm,
   socialUserValidation,
@@ -15,6 +16,7 @@ import sendToMail from "../mail/mailConfig";
 import OtpModel from "../models/Otp.schema";
 import { IUser, RequestModel } from "../interface/models";
 import { TYPEBLOCKED } from "../utils/confirm";
+import CartModel from "../models/cart/Cart.schema";
 
 interface PayloadToken {
   id: any;
@@ -54,6 +56,7 @@ class AuthController {
 
       const existingEmail = await UserModel.findOne({
         email: email,
+        provider: "credential",
       });
 
       if (!existingEmail) {
@@ -89,19 +92,21 @@ class AuthController {
         id: existingEmail._id,
         email: existingEmail.email,
         is_admin: existingEmail.is_admin,
-        is_staff: existingEmail.is_staff
+        is_staff: existingEmail.is_staff,
       });
       const refreshToken = await this.generateRefreshToken({
         id: existingEmail._id,
         email: existingEmail.email,
         is_admin: existingEmail.is_admin,
-        is_staff: existingEmail.is_staff
+        is_staff: existingEmail.is_staff,
       });
-     
+
       res.cookie("token", refreshToken, {
         maxAge: 1000 * 60 * 24 * 60 * 60,
         httpOnly: true,
         path: "/",
+        secure: true, // Chỉ hoạt động qua HTTPS
+        sameSite: "none",
       });
 
       delete existingEmail._doc.password;
@@ -153,6 +158,10 @@ class AuthController {
         full_name: userName,
       });
 
+      await CartModel.create({
+        user: newUser?._id,
+      });
+
       return res.status(STATUS.OK).json({
         message: "Đăng kí tài khoản thành công",
       });
@@ -191,13 +200,13 @@ class AuthController {
           id: existingEmail._id,
           email: existingEmail.email,
           is_admin: existingEmail.is_admin,
-          is_staff: existingEmail.is_staff
+          is_staff: existingEmail.is_staff,
         });
         const refreshToken = await this.generateRefreshToken({
           id: existingEmail._id,
           email: existingEmail.email,
           is_admin: existingEmail.is_admin,
-          is_staff: existingEmail.is_staff
+          is_staff: existingEmail.is_staff,
         });
 
         res.cookie("token", refreshToken, {
@@ -222,19 +231,21 @@ class AuthController {
         provider,
         avatarUrl: picture,
       });
+
+      await CartModel.create({
+        user: newUser?._id,
+      });
       const accessToken = await this.generateAccessToken({
         id: newUser._id,
         email: newUser.email,
         is_admin: newUser.is_admin,
-        is_staff: newUser.is_staff
-
+        is_staff: newUser.is_staff,
       });
       const refreshToken = await this.generateRefreshToken({
         id: newUser._id,
         email: newUser.email,
         is_admin: newUser.is_admin,
-        is_staff: newUser.is_staff
-
+        is_staff: newUser.is_staff,
       });
 
       res.cookie("token", refreshToken, {
@@ -276,7 +287,7 @@ class AuthController {
             if (err.message === "jwt expired") {
               message = "Token đã hết hạn";
             }
-  
+
             return res.status(STATUS.AUTHORIZED).json({
               message: message,
             });
@@ -289,12 +300,12 @@ class AuthController {
             id: (data as PayloadToken).id,
             email: (data as PayloadToken).email,
             is_admin: (data as PayloadToken).is_admin,
-            is_staff: (data as PayloadToken).is_staff
+            is_staff: (data as PayloadToken).is_staff,
           };
 
           const newAccessToken = await this.generateAccessToken(payload);
           const newRefreshToken = await this.generateRefreshToken(payload);
-  
+
           res.cookie("token", newRefreshToken, {
             maxAge: 24 * 60 * 60 * 1000 * 60,
             httpOnly: true,
@@ -374,6 +385,12 @@ class AuthController {
         });
       }
 
+      if (existing.provider === "google.com") {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Tài khoản đăng nhập bằng google ?",
+        });
+      }
+
       const randomOtp = Math.floor(100000 + Math.random() * 900000);
 
       const data = {
@@ -442,6 +459,12 @@ class AuthController {
       if (!existingEmail) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Email chưa được đăng kí",
+        });
+      }
+
+      if (existingEmail.provider === "google.com") {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Tài khoản đăng nhập bằng google ?",
         });
       }
 
@@ -523,15 +546,15 @@ class AuthController {
 
       const hashPassword = await bcrypt.hash(password, 10);
 
-      await UserModel.findOneAndUpdate(
-        {
-          email: existingEmail,
-          _id: existingEmail._id,
-        },
+      const updateNew = await UserModel.findByIdAndUpdate(
+        existingEmail._id,
         {
           password: hashPassword,
-        }
+        },
+        { new: true }
       );
+
+      console.log("updateNew", updateNew);
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập mật khẩu thành công",
@@ -646,7 +669,6 @@ class AuthController {
     }
   }
 
-
   async blockedMany(req: RequestModel, res: Response) {
     try {
       const { listId } = req.body;
@@ -661,15 +683,14 @@ class AuthController {
 
       await UserModel.updateMany(
         { _id: { $in: listId } },
-        { $set: { blocked_at: true } }, { new: true }
+        { $set: { blocked_at: true } },
+        { new: true }
       );
-
 
       return res.status(STATUS.OK).json({
         message: "Chặn người dùng thành công",
       });
     } catch (error: any) {
-
       return res.status(STATUS.INTERNAL).json({
         message: error.kind
           ? "Có một người dùng không có trong dữ liệu"
@@ -692,19 +713,99 @@ class AuthController {
 
       await UserModel.updateMany(
         { _id: { $in: listId } },
-        { $set: { blocked_at: false } }, { new: true }
+        { $set: { blocked_at: false } },
+        { new: true }
       );
-
 
       return res.status(STATUS.OK).json({
         message: "Bỏ chặn người dùng thành công",
       });
     } catch (error: any) {
-
       return res.status(STATUS.INTERNAL).json({
         message: error.kind
           ? "Có một người dùng không có trong dữ liệu"
           : error.message,
+      });
+    }
+  }
+
+  async changeUser(req: RequestModel, res: Response) {
+    try {
+      const { birthDay, full_name, avatarUrl, phone } = req.body;
+      const user = req.user;
+
+      if (!full_name || !avatarUrl || !phone) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa truyền gì",
+        });
+      }
+
+      if (!full_name) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Tên tài khoản không được để trống",
+        });
+      }
+
+      const updateUser = await UserModel.findByIdAndUpdate(
+        user?.id,
+        {
+          birthDay,
+          full_name,
+          avatarUrl,
+          phone,
+        },
+        { new: true }
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Cập nhập thành công",
+        user: updateUser,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async changePassword(req: RequestModel, res: Response) {
+    try {
+      const { error } = changePassValidation.validate(req.body);
+      const user = req.user;
+      if (error) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: error.details[0].message,
+        });
+      }
+      const { passwordOld, passwordNew, confirmPassword } = req.body;
+
+      const existingUser = await UserModel.findById(user?.id);
+
+      if (!existingUser) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không tìm thấy tài khoản bạn",
+        });
+      }
+
+      const isConfim = await bcrypt.compare(passwordOld, existingUser.password);
+
+      if (!isConfim) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Mật khẩu cũ không đúng",
+        });
+      }
+
+      const hashPassword = await bcrypt.hash(passwordNew, 10);
+
+      const changeUser = await UserModel.findByIdAndUpdate(user?.id, {
+        password: hashPassword,
+      });
+      return res.status(STATUS.OK).json({
+        message: "Cập nhập mật khẩu thành công",
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
       });
     }
   }

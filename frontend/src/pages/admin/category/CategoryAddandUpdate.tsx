@@ -20,8 +20,23 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
-import { addCategory, getCategory, updateCategory } from "@/service/category-admin";
+import {
+	addCategory,
+	getCategory,
+	updateCategory,
+} from "@/service/category-admin";
 import instance from "@/config/instance";
+import {
+	useProcessBarLoading,
+	useProcessBarLoadingEventNone,
+} from "@/store/useSidebarAdmin";
+import {
+	AiOutlineCloudUpload,
+	AiOutlineLoading3Quarters,
+} from "react-icons/ai";
+import { cn } from "@/lib/utils";
+import { uploadFileService } from "@/service/upload";
+import { ImageType } from "react-images-uploading";
 
 interface FormDialog {
 	open: boolean | string;
@@ -30,6 +45,7 @@ interface FormDialog {
 	handleClose: () => void;
 	handlePaging: () => void;
 }
+
 const formSchema = z.object({
 	name: z
 		.string({
@@ -38,6 +54,17 @@ const formSchema = z.object({
 		.min(1, {
 			message: "Tên danh mục không được để trống",
 		}),
+	thumbnail: z
+		.object({
+			url: z.string().optional(),
+			file: z.instanceof(File).optional(),
+		})
+		.refine(
+			(data) => {
+				return !!data.url;
+			},
+			{ message: "Nhập ảnh khác" },
+		),
 	description: z
 		.string({
 			message: "Mô tả danh mục không được để trống",
@@ -52,34 +79,66 @@ const CategoryAdd = ({
 	handleClose,
 	handlePaging,
 }: FormDialog) => {
+	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
+		useProcessBarLoadingEventNone();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: "",
+			thumbnail: { url: "" },
 			description: "",
 		},
 	});
 	console.log(open);
+	const { isOpen, setOpen, setClose } = useProcessBarLoading();
+	const [isPending, setIsPending] = useState(false);
+	const [previewUrl, setPreviewUrl] = useState({
+		isLoading: false,
+		url: "",
+	});
+	const [image, setImage] = useState<ImageType>({});
+	const handleUploadFile = async (file: File) => {
+		try {
+			setOpen();
+			const formdata = new FormData();
+			formdata.append("image", file);
+			const { data } = await uploadFileService(formdata);
+			URL.revokeObjectURL(previewUrl.url);
+			setPreviewUrl({
+				url: data.path,
+				isLoading: false,
+			});
+			return data.path;
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setClose();
+		}
+	};
 
 	const onHandleUpdate = async (dataForm: any) => {
 		try {
-			const { data } = await updateCategory(open, dataForm)
+			const { data } = await updateCategory(open, dataForm);
 			handleClose();
 			handlePaging();
 			toast.success("Bạn cập nhật danh mục thành công");
 		} catch (error) {
 			console.error("Error:", error);
+		} finally {
+			setCloseProcessLoadingEventNone();
 		}
 	};
 	const onHandleAdd = async (dataForm: any) => {
 		try {
-			const { data } = await addCategory(dataForm)
+			const { data } = await addCategory(dataForm);
 			form.reset();
 			handleClose();
 			handlePaging();
 			toast.success("Bạn thêm danh mục thành công");
 		} catch (error) {
 			console.error("Error:", error);
+		} finally {
+			setCloseProcessLoadingEventNone();
 		}
 	};
 
@@ -87,8 +146,13 @@ const CategoryAdd = ({
 		if (typeof open === "string") {
 			(async () => {
 				try {
-					const { data } = await getCategory(open)
-					form.reset(data.data);
+					const { data } = await getCategory(open);
+					const dataReset = {
+						...data.data,
+						thumbnail: { url: data.data.thumbnail },
+					};
+					setImage({ dataURL: data.data.thumbnail });
+					form.reset(dataReset);
 				} catch (error) {
 					console.error("Error:", error);
 				}
@@ -96,11 +160,17 @@ const CategoryAdd = ({
 		}
 	}, [open]);
 
-	const onSubmit = (data: { name: string; description: string }) => {
+	const onSubmit = async (data: z.infer<typeof formSchema>) => {
+		setOpenProcessLoadingEventNone();
+		let url = data.thumbnail.url;
+		if (data?.thumbnail?.file) {
+			url = await handleUploadFile(data?.thumbnail?.file as File);
+		}
+		const dataPush = { ...data, thumbnail: url };
 		if (typeof open === "string") {
-			onHandleUpdate(data);
+			onHandleUpdate(dataPush);
 		} else {
-			onHandleAdd(data);
+			onHandleAdd(dataPush);
 		}
 	};
 
@@ -124,11 +194,79 @@ const CategoryAdd = ({
 								name="name"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Name</FormLabel>
+										<FormLabel>Tên danh mục</FormLabel>
 										<FormControl>
-											<Input placeholder="Name" {...field} />
+											<Input placeholder="Tên" {...field} />
 										</FormControl>
 										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								disabled={isPending}
+								control={form.control}
+								name="thumbnail"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Ảnh sản phẩm</FormLabel>
+										<FormControl>
+											<div className="w-full ">
+												<label
+													htmlFor="file-upload"
+													className={cn("w-full relative ")}
+												>
+													<div className="relative w-full bg-white border rounded-sm">
+														<div
+															className={cn(
+																"w-full h-[160px] flex justify-center items-center flex-col",
+																image?.dataURL && "hidden",
+															)}
+														>
+															<AiOutlineCloudUpload size={50} strokeWidth={1} />
+															<h3 className="mt-2 text-sm font-medium text-gray-900">
+																<span>Chọn ảnh</span>
+															</h3>
+															<p className="mt-1 text-xs text-gray-500">
+																PNG, JPG, GIF.
+															</p>
+														</div>
+
+														<div
+															className={cn(
+																" relative flex justify-center items-center h-[160px]",
+																image?.dataURL ? "" : "hidden",
+															)}
+														>
+															<img
+																src={image?.dataURL}
+																className={cn(
+																	"size-[140px] object-cover border border-slate-100",
+																)}
+																id="preview"
+															/>
+														</div>
+													</div>
+												</label>
+												<input
+													type="file"
+													name=""
+													id="file-upload"
+													accept="image/jpeg, image/png,image/svg,image/jpg,image/webp"
+													onChange={(event) => {
+														const file = (event?.target as HTMLInputElement)
+															?.files?.[0] as File;
+														const url = URL.createObjectURL(file);
+														setImage({ dataURL: url, file: file });
+														field.onChange({ url, file });
+														form.clearErrors("thumbnail");
+													}}
+													hidden
+													className="hidden outline-none focus-visible:ring-0 "
+												/>
+											</div>
+										</FormControl>
+
+										<FormMessage className="text-xs" />
 									</FormItem>
 								)}
 							/>
@@ -137,9 +275,9 @@ const CategoryAdd = ({
 								name="description"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Description</FormLabel>
+										<FormLabel>Mô tả</FormLabel>
 										<FormControl>
-											<Input placeholder="Description" {...field} />
+											<Input placeholder="Mô tả" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>

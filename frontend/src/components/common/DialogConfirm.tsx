@@ -9,7 +9,7 @@ interface IDialogConfirm {
 	content: string;
 	handleSubmit: () => void;
 	status?: "success" | "danger";
-	labelConfirm?:string
+	labelConfirm?: string;
 }
 
 const DialogConfirm = ({
@@ -19,9 +19,9 @@ const DialogConfirm = ({
 	content,
 	handleSubmit,
 	status = "danger",
-	labelConfirm
+	labelConfirm,
 }: IDialogConfirm) => {
-  const [check,setCheck]= useState(false)
+	const [check, setCheck] = useState(false);
 	return (
 		<>
 			<Dialog open={open} onOpenChange={handleClose}>
@@ -38,7 +38,7 @@ const DialogConfirm = ({
 						<Button
 							size={"xs"}
 							variant={"ghost"}
-							className="px-4 ml-4"
+							className="px-4 ml-4 border-none outline-none"
 							onClick={handleClose}
 						>
 							Hủy
@@ -49,7 +49,11 @@ const DialogConfirm = ({
 							variant={status === "danger" ? "danger" : "success"}
 							onClick={handleSubmit}
 						>
-							{labelConfirm ? labelConfirm : status === "danger" ? "Xoá" : "Lưu"}
+							{labelConfirm
+								? labelConfirm
+								: status === "danger"
+									? "Xoá"
+									: "Lưu"}
 						</Button>
 					</div>
 				</DialogContent>

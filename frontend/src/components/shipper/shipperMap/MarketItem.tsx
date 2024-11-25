@@ -17,20 +17,21 @@ import { toast } from "sonner";
 interface IProps {
 	order: IOrderShipper;
 	location: number[];
-	status: string;
 }
 
-const MarketItem = ({ order, location, status }: IProps) => {
-	const queryClient = useQueryClient()
+const MarketItem = ({ order, location }: IProps) => {
+	const queryClient = useQueryClient();
 	const { mutate } = useMutation({
 		mutationKey: ["mutation"],
 		mutationFn: (id: string): Promise<IOrderShipper> =>
 			updateStatusShippingOrder(id),
 		onSuccess(data: any, variables, context) {
 			queryClient.invalidateQueries({
-				queryKey:["listOrder", "shipper",status],
-			})
-			window.open(`/shipper/transport/${encodeURIComponent(data.data.data.code)}`);
+				queryKey: ["listOrder", "shipper"],
+			});
+			window.open(
+				`/shipper/transport/${encodeURIComponent(data.data.data.code)}`,
+			);
 		},
 		onError(data, error) {
 			console.log("error:", error);
@@ -45,10 +46,20 @@ const MarketItem = ({ order, location, status }: IProps) => {
 					<div>
 						{/* <GoDotFill size={20} className="text-red-500" /> */}
 						<div className="relative flex items-center justify-center">
-							<div className="relative size-10 rounded-full flex justify-center items-center bg-blue-500 z-10">
+							<div
+								className={cn(
+									"relative size-10 rounded-full flex justify-center items-center bg-blue-500 z-10",
+									order.status === 3 && "bg-green-500",
+								)}
+							>
 								<FaBox size={20} color="white" />
 							</div>
-							<div className="absolute size-4 -bottom-1 bg-blue-500 rotate-45 z-0"></div>
+							<div
+								className={cn(
+									"absolute size-4 -bottom-1 bg-blue-500 rotate-45 z-0",
+									order.status === 3 && "bg-green-500",
+								)}
+							></div>
 						</div>
 					</div>
 				</PopoverTrigger>
@@ -93,16 +104,17 @@ const MarketItem = ({ order, location, status }: IProps) => {
 									order.status === 3 && "border-green-500 text-green-500",
 								)}
 								onClick={() => {
-									if(order.status === 2) {
-										mutate(order._id as string)
+									if (order.status === 2) {
+										mutate(order._id as string);
 									}
-									if(order.status === 3) {
-										window.open(`/shipper/transport/${encodeURIComponent(order.code)}`);
+									if (order.status === 3) {
+										window.open(
+											`/shipper/transport/${encodeURIComponent(order.code)}`,
+										);
 									}
 								}}
 							>
-								{order.status === 2 && "Giao hàng"}
-								{order.status === 3 && "Đang giao hàng"}
+								{order.status === 3 ? "Đang giao hàng" : "Giao hàng"}
 							</div>
 						</div>
 					</div>

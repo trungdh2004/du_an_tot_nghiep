@@ -33,30 +33,32 @@ export interface IProductDetail {
 	};
 	quantitySold: number;
 	quantity: number;
+	is_simple: boolean;
 	isSpecial: boolean;
 	attributes?: [IAttribute];
 	createdAt?: string;
 	updatedAt?: string;
 	slug?: string;
-	listColor?: [
-		{
-			colorId: string;
-			colorName: string;
-			list: [IAttribute];
-			quantity: number;
-			colorCode: string;
-		},
-	];
-	listSize?: [
-		{
-			sizeId: string;
-			sizeName: string;
-			list: [IAttribute];
-			quantity: number;
-		},
-	];
+	listColor?: IListColorAttribute[];
+	listSize?: IListSizeAttribute[];
+	rating: number;
+	ratingCount: number;
+	ratingQuantity: number;
+	viewCount: number;
 }
-
+export interface IListSizeAttribute {
+	sizeId: string;
+	sizeName: string;
+	list: [IAttribute];
+	quantity: number;
+}
+export interface IListColorAttribute {
+	colorId: string;
+	colorName: string;
+	list: [IAttribute];
+	quantity: number;
+	colorCode: string;
+}
 export interface IProductSlider {
 	colorCode?: string;
 	createdAt?: string;
@@ -78,4 +80,15 @@ export interface IFilterProduct {
 	size: string[];
 	fieldSort: string;
 	sort: 1 | -1;
+}
+export interface IProductSearch {
+	discount: number;
+	name: string;
+	price: number;
+	quantity: number;
+	quantitySold: number;
+	rating: number;
+	slug: string;
+	thumbnail: string;
+	_id: string;
 }

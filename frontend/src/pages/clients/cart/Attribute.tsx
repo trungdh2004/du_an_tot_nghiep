@@ -1,78 +1,200 @@
-import LabelChecked from '@/components/common/LabelChecked'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { ICart } from '@/types/cart'
-import { IColor } from '@/types/typeProduct'
-import { ISize } from '@/types/variants'
-import { useState } from 'react'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useExitsColorSizeAttribute } from "@/hooks/cart";
+import {
+	IAttribute,
+	IListColorAttribute,
+	IListSizeAttribute,
+} from "@/types/product";
+import { motion } from "framer-motion";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { RiArrowDownSFill } from "react-icons/ri";
+import ListColor from "../detail-home/ListColor";
+import ListSize from "../detail-home/ListSize";
+import { Button } from "@/components/ui/button";
+import { useMediaQuery } from "usehooks-ts";
+import { cn } from "@/lib/utils";
+
 type Props = {
-    dataColor: any,
-    dataSize: any,
-    open?: boolean,
-}
-const Attribute = ({ dataColor, dataSize }: Props) => {
-    const [size, setSize] = useState<ISize>();
-    const [color, setColor] = useState<IColor>();
-    const handleChangeSize = (size: ISize) => {
-        setSize(size);
-    }
-    const handleChangeColor = (color: IColor) => {
-        setColor(color);
-    }
-    return (
-        <>
-            <Popover >
-                <PopoverTrigger asChild >
-                    <button className='text-sm text-left text-gray-500'>Phân loại sản phẩm  </button>
-                </PopoverTrigger>
-                <PopoverContent className='w-auto text-gray-500'>
-                    <div className="grid gap-4">
-                        <div className="flex gap-7 lg:gap-10">
-                            <h3 className="lg:text-[15px] text-[13px] font-semibold ">Màu</h3>
-                            <div className="flex gap-3 items-center">
-                                {dataColor && dataColor.map((color: any, index: number) => {
-                                    return (
-                                        <LabelChecked
-                                            isOneChecked
-                                            value={color.colorId}
-                                            nameInput='choosColor'
-                                            haxColor={color.colorCode}
-                                            key={color.colorId}
-                                            onChange={() => handleChangeColor(color.colorName)}
-                                            className='px-2'
-                                        >
-                                            {color.colorName}
-                                        </LabelChecked>
-                                    )
-                                })}
+	isOpen: boolean;
+	product?: {
+		_id?: string;
+		listColor?: IListColorAttribute[];
+		listSize?: IListSizeAttribute[];
+	};
+	attributeAlreadyExists?: {
+		listColor?: string[];
+		listSize?: string[];
+	};
+	errors?: {
+		color: boolean;
+		size: boolean;
+	};
+	isSubmitted?: boolean;
+	setIsOpen: (value: boolean) => void;
+	setErrors?: Dispatch<SetStateAction<{ color: boolean; size: boolean }>>;
+	attribute?: IAttribute;
+	handleChangeAttributes?: (colorId: string, sizeId: string) => void;
+};
 
-                            </div>
-                        </div>
-                        <div className="flex gap-7 lg:gap-10">
-                            <h3 className="lg:text-[15px] text-[13px] font-semibold ">Size</h3>
-                            <div className="grid lg:grid-cols-4 grid-cols-3 gap-4 w-full">
-                                {dataSize?.map((size: any, index: number) => {
-                                    return (
-                                        <LabelChecked
-                                            isOneChecked
-                                            value={size.sizeId}
-                                            nameInput='chooseSize'
-                                            key={size.sizeId}
-                                            onChange={() => handleChangeSize(size.sizeName)}
-                                            className='px-2'
-                                        >
-                                            {size.sizeName}
-                                        </LabelChecked>
-                                    )
-                                })}
-                            </div>
-                        </div>
-                    </div>
-                </PopoverContent>
-            </Popover>
-            <div className="text-sm text-left text-gray-500">{color as any}, {size}</div>
+const Attribute = ({
+	isOpen,
+	product,
+	attribute,
+	errors,
+	setIsOpen,
+	setErrors,
+	isSubmitted,
+	attributeAlreadyExists,
+	handleChangeAttributes,
+}: Props) => {
+	const isMobile = useMediaQuery("(max-width: 768px)");
+	const [attributesId, setAttributesId] = useState({
+		sizeId: "",
+		colorId: "",
+	});
+	const [exitsListSize, setExitsListSize] = useState<string[]>([]);
+	const [exitsListColor, setExitsListColor] = useState<string[]>([]);
+	const { listSizeExist, listColorExist } = useExitsColorSizeAttribute(
+		product as any,
+	);
 
-        </>
-    )
-}
+	useEffect(() => {
+		if (!isOpen) {
+			resetAttributes();
+		}
+	}, [isOpen]);
 
-export default Attribute
+	const resetAttributes = () => {
+		setAttributesId({ sizeId: "", colorId: "" });
+		setExitsListColor([]);
+		setExitsListSize([]);
+	};
+
+	const handleColorChange = (colorId: string) => {
+		setAttributesId((prev) => ({ ...prev, colorId }));
+		if (colorId && isSubmitted) {
+			setErrors?.((prev) => ({ ...prev, color: false }));
+		}
+	};
+
+	const handleSizeChange = (sizeId: string) => {
+		setAttributesId((prev) => ({ ...prev, sizeId }));
+		if (sizeId && isSubmitted) {
+			setErrors?.((prev) => ({ ...prev, size: false }));
+		}
+	};
+
+	const handleConfirm = () => {
+		handleChangeAttributes?.(attributesId.colorId, attributesId.sizeId);
+	};
+
+	const animationMenu = {
+		open: { rotate: "180deg" },
+		closed: { rotate: 0 },
+	};
+
+	return (
+		<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+			<DropdownMenuTrigger asChild className="outline-none">
+				<button className="inline-block text-sm text-left text-gray-500 outline-none">
+					<div className="flex items-start gap-1 w-min">
+						<span className="text-nowrap">Phân loại sản phẩm</span>{" "}
+						<motion.div
+							initial={false}
+							animate={isOpen ? "open" : "closed"}
+							variants={animationMenu}
+						>
+							<RiArrowDownSFill size={20} />
+						</motion.div>
+					</div>
+				</button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent
+				className="min-w-72 p-1.5"
+				// align={!attribute?.color && !attribute?.size ? "end" : "center"}
+				align="start"
+			>
+				<div
+					className={cn(
+						"space-y-3 p-1.5 rounded",
+						errors?.color && errors?.size && "bg-custom-50",
+					)}
+				>
+					<div className={cn("w-full p-1", errors?.color && "bg-custom-50")}>
+						<ListColor
+							onChoose={handleColorChange}
+							validExits
+							widthLabel={120}
+							listColorExist={listColorExist}
+							exitsListColor={exitsListColor}
+							colorIdChecked={attribute?.color?._id}
+							sizeInput={isMobile ? "mobile" : "small"}
+							selectedColor={attributeAlreadyExists?.listColor}
+							setExitsListSize={setExitsListSize}
+						/>
+						<span
+							className={cn(
+								"text-red-500 hidden text-xs",
+								errors?.color && !errors?.size && "inline-block",
+							)}
+						>
+							Bạn chưa chọn màu sắc cho sản phẩm
+						</span>
+					</div>
+					<div className={cn("w-full p-1", errors?.size && "bg-custom-50")}>
+						<ListSize
+							validExits
+							widthLabel={120}
+							listSizeExist={listSizeExist}
+							exitsListSize={exitsListSize}
+							sizeIdChecked={attribute?.size?._id}
+							setExitsListColor={setExitsListColor}
+							sizeInput={isMobile ? "mobile" : "small"}
+							selectedSize={attributeAlreadyExists?.listSize}
+							onChoose={handleSizeChange}
+						/>
+						<span
+							className={cn(
+								"text-red-500 hidden text-xs",
+								errors?.size && !errors?.color && "inline-block",
+							)}
+						>
+							Bạn chưa chọn kích thước cho sản phẩm
+						</span>
+					</div>
+					<span
+						className={cn(
+							"text-red-500 hidden text-xs",
+							errors?.color && errors?.size && "inline-block",
+						)}
+					>
+						Bạn biến thể cho sản phẩm
+					</span>
+				</div>
+				<div className="flex items-center justify-end gap-3 mt-5">
+					<Button
+						onClick={() => {
+							setErrors?.({ color: false, size: false });
+							setIsOpen(false);
+						}}
+						className="bg-transparent hover:bg-gray-50 outline-none text-gray-500 w-24 h-8 md:h-10 md:w-40 py-0.5"
+					>
+						Trở lại
+					</Button>
+					<Button
+						onClick={handleConfirm}
+						className="bg-custom-500 hover:bg-custom-600 outline-none w-24 h-8 md:h-10 md:w-40 py-0.5"
+					>
+						Xác nhận
+					</Button>
+				</div>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	);
+};
+
+export default Attribute;

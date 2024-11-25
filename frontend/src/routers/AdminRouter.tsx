@@ -7,24 +7,36 @@ import CategoryIndex from "@/pages/admin/category/CategoryIndex";
 import ColorList from "@/pages/admin/color/ColorList";
 import Dashboard from "@/pages/admin/Dashboard/Dashboard";
 
-import UserDetail from "@/pages/admin/users/UserDetail";
-import UserIndex from "@/pages/admin/users/UserIndex";
-import SizeIndex from "@/pages/admin/size/SizeIndex";
-import ProductIndex from "@/pages/admin/product/ProductIndex";
-import ProductUpdate from "@/pages/admin/product/ProductUpdate";
 import MyBlogs from "@/pages/admin/Blogs/MyBlog";
-import TagIndex from "@/pages/admin/tags/TagIndex";
-import PrivateRouter from "./PrivateRouter";
-import ProductAddPage from "@/pages/admin/product/ProductAdd";
-import OrderNeedConfirm from "@/pages/admin/order/OrderNeedConfirm";
+import LocationIndex from "@/pages/admin/Location/LocationIndex";
 import OrderById from "@/pages/admin/order/OrderById";
+import OrderCancel from "@/pages/admin/order/OrderCancel";
 import OrderConfirm from "@/pages/admin/order/OrderConfirm";
+import OrderConfirmShipper from "@/pages/admin/order/OrderConfirmShipper";
+import OrderNeedConfirm from "@/pages/admin/order/OrderNeedConfirm";
+import OrderReceived from "@/pages/admin/order/OrderReceived";
 import OrderShip from "@/pages/admin/order/OrderShip";
 import OrderShipSuccess from "@/pages/admin/order/OrderShipSuccess";
-import OrderReceived from "@/pages/admin/order/OrderReceived";
-import OrderCancel from "@/pages/admin/order/OrderCancel";
-import path from "path";
-import OrderConfirmShipper from "@/pages/admin/order/OrderConfirmShipper";
+import ProductAddPage from "@/pages/admin/product/ProductAdd";
+import ProductIndex from "@/pages/admin/product/ProductIndex";
+import ProductUpdate from "@/pages/admin/product/ProductUpdate";
+import SizeIndex from "@/pages/admin/size/SizeIndex";
+import TagIndex from "@/pages/admin/tags/TagIndex";
+import UserDetail from "@/pages/admin/users/UserDetail";
+import UserIndex from "@/pages/admin/users/UserIndex";
+import VoucherForm from "@/pages/admin/Vouchers/VoucherForm";
+import VoucherList from "@/pages/admin/Vouchers/VoucherList";
+import PrivateRouter from "./PrivateRouter";
+import UserShipper from "@/pages/admin/users/shipper/UserShipper";
+import UserShipperDetail from "@/pages/admin/users/shipper/ShipperDetail";
+import ChatIndex from "../pages/admin/Chat/ChatIndex";
+import LayoutChat from "@/pages/admin/Chat/LayoutChat";
+import ChatInit from "@/pages/admin/Chat/ChatInit";
+import ChatContent from "@/pages/admin/Chat/components/ChatContent";
+import CustomerList from "@/pages/admin/users/customer/CustomerList";
+import ProductComing from "@/pages/admin/product/productComing/ProductComing";
+import StaffIndex from "@/pages/admin/users/staff/StaffIndex";
+import RevenueChart from "@/pages/admin/Revanue/RevenueChart";
 
 const AdminRouter = [
 	{
@@ -43,6 +55,7 @@ const AdminRouter = [
 				path: "add",
 				element: <Dashboard />,
 			},
+			//Quản lý người dùng, vận chuyển, khách hàng, nhân viên
 			{
 				path: "users",
 				element: <UserIndex />,
@@ -52,17 +65,22 @@ const AdminRouter = [
 				element: <UserDetail />,
 			},
 			{
-				path: "category",
-				element: <CategoryIndex />,
+				path: "users/shipper",
+				element: <UserShipper />,
 			},
 			{
-				path: "tags",
-				element: <TagIndex />,
+				path: "users/shipper/:id/detail",
+				element: <UserShipperDetail />,
 			},
 			{
-				path: "blogs",
-				element: <BlogList />,
-			},
+				path: "users/client",
+				element: <CustomerList />,
+      },
+      {
+        path: "users/staff",
+        element: <StaffIndex />,
+      },
+			// Quản lý sản phẩm
 			{
 				path: "product/update/:id",
 				element: <ProductUpdate />,
@@ -72,18 +90,60 @@ const AdminRouter = [
 				element: <ProductIndex />,
 			},
 			{
+				path: "product/category",
+				element: <CategoryIndex />,
+			},
+			{
+				path: "product/voucher",
+				element: <VoucherList />,
+			},
+			{
+				path: "product/voucher/add",
+				element: <VoucherForm />,
+			},
+			{
+				path: "product/voucher",
+				element: <VoucherList />,
+			},
+			{
+				path: "product/voucher/add",
+				element: <VoucherForm />,
+			},
+			{
+				path: "product/voucher/:id/edit",
+				element: <VoucherForm />,
+			},
+			{
+				path: "product/voucher/:id/edit",
+				element: <VoucherForm />,
+			},
+			{
 				path: "product/add",
 				element: <ProductAddPage />,
 			},
 			{
-				path: "tags",
-				element: <TagIndex />,
+				path: "product/coming",
+				element: <ProductComing />,
 			},
+			// Quản lý biến thể
 			{
-				path: "size",
+				path: "variant/size",
 				element: <SizeIndex />,
 			},
-			// Blogs
+
+			{
+				path: "variant/color",
+				element: <ColorList />,
+			},
+			// Quản lý blogs
+			{
+				path: "blogs",
+				element: <BlogList />,
+			},
+			{
+				path: "blogs/tags",
+				element: <TagIndex />,
+			},
 			{
 				path: "blogs/new-blog",
 				element: <NewBlog />,
@@ -97,10 +157,6 @@ const AdminRouter = [
 				element: <MyBlogs />,
 			},
 			{
-				path: "color",
-				element: <ColorList />,
-			},
-			{
 				path: "blogs",
 				element: <BlogList />,
 			},
@@ -108,7 +164,6 @@ const AdminRouter = [
 				path: "blogs/:id/",
 				element: <BlogDetail />,
 			},
-
 			//order
 			{
 				path: "order",
@@ -141,6 +196,36 @@ const AdminRouter = [
 			{
 				path: "order/orderconfirmShipper",
 				element: <OrderConfirmShipper />,
+			},
+      // Thống kê
+      {
+				path: "revenue",
+				element: <RevenueChart />,
+			},
+			// location
+			{
+				path: "location",
+				element: <LocationIndex />,
+			},
+
+			// chat
+			{
+				path: "chat",
+				element: <LayoutChat></LayoutChat>,
+				children: [
+					{
+						path: "",
+						element: <ChatInit />,
+					},
+					{
+						path: ":id",
+						element: <ChatContent />,
+					},
+				],
+			},
+			{
+				path: "chatAdmin",
+				element: <ChatIndex />,
 			},
 		],
 	},

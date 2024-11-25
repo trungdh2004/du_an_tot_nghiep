@@ -1,25 +1,24 @@
 import { formatCurrency } from "@/common/func";
 import { Button } from "@/components/ui/button";
 import { confirmOrder } from "@/service/order";
-import { pagingShipperOrder } from "@/service/shipper";
+import { pagingShipper } from "@/service/shipper";
 import { SearchShipperOrder } from "@/types/shipper.interface";
 import { formatInTimeZone } from "date-fns-tz";
 import React, { useEffect, useState } from "react";
 import OrderSelectShipper from "./OrderSelectShipper";
 import { cn } from "@/lib/utils";
 import OrderCancelConfirm from "./OrderCancelConfirm";
+import { toast } from "sonner";
 
 const OrderInforAddress = ({ data, getOrderById }: any) => {
-	console.log(data);
-	// const dateString = data.createdAt;
-	// const formattedDate = format(new Date(data.createdAt), "dd/MM/yyyy HH:mm:ss");
 	const [pageIndex, setPageIndex] = useState(1);
 	const handleChangeOrder = async (id: string) => {
 		try {
 			const data = await confirmOrder(id);
 			getOrderById();
 			return data;
-		} catch (error) {
+		} catch (error: any) {
+			toast.error(error?.response?.data?.message);
 			console.log(error);
 		}
 	};
@@ -36,7 +35,7 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 	useEffect(() => {
 		(async () => {
 			try {
-				const { data } = await pagingShipperOrder(searchObjecOrder);
+				const { data } = await pagingShipper(searchObjecOrder);
 				setDataShipper(data);
 			} catch (error) {
 				console.log(error);
@@ -66,9 +65,9 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 					</div>
 
 					<div className="flex justify-between">
-						<p className="font-medium text-sm text-black">Tổng tiền</p>
+						<p className="font-medium text-sm text-black">Tổng tiền đơn hàng</p>
 						<p className="font-medium text-sm text-red-500">
-							{formatCurrency(data.totalMoney)}
+							{formatCurrency(data.totalMoney + data?.shippingCost)}
 						</p>
 					</div>
 				</div>
@@ -144,7 +143,7 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 				<div
 					className={cn(
 						"bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-200 box-shadow p-4",
-						(data.status === 1 || data.status === 6) && "hidden"
+						(data.status === 1 || data.status === 6) && "hidden",
 					)}
 				>
 					<h3 className="font-medium">Lựa chọn giao hàng</h3>
@@ -155,30 +154,39 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 						>
 							Lựa chọn
 						</Button>
-					) : ([2, 3, 4, 5].includes(data.status) && data.shipper !== null) ? (
-						<div className="flex gap-5 items-center">
-							<img
-								src={data?.shipper?.avatar}
-								alt="Shipper Avatar"
-								className="w-20 h-20"
-							/>
-							<div className="flex flex-col gap-1">
-								<span className="text-sm">
-									Họ tên:{" "}
-									<span className="font-semibold">
-										{data?.shipper?.fullName}
+					) : [2, 3, 4, 5].includes(data.status) && data.shipper !== null ? (
+						<div className="flex flex-col gap-4">
+							<div className="flex gap-5 items-center">
+								<img
+									src={data?.shipper?.avatar}
+									alt="Shipper Avatar"
+									className="w-20 h-20"
+								/>
+								<div className="flex flex-col gap-1">
+									<span className="text-sm">
+										Họ tên:{" "}
+										<span className="font-semibold">
+											{data?.shipper?.fullName}
+										</span>
 									</span>
-								</span>
-								<span className="text-sm">
-									Số điện thoại:{" "}
-									<span className="font-semibold">{data?.shipper?.phone}</span>
-								</span>
-								<span className="text-sm">
-									Địa chỉ: {data?.shipper?.city?.name} -{" "}
-									{data?.shipper?.district?.name} -{" "}
-									{data?.shipper?.commune?.name}
-								</span>
+									<span className="text-sm">
+										Số điện thoại:{" "}
+										<span className="font-semibold">
+											{data?.shipper?.phone}
+										</span>
+									</span>
+									<span className="text-sm">
+										Địa chỉ: {data?.shipper?.city?.name} -{" "}
+										{data?.shipper?.district?.name} -{" "}
+										{data?.shipper?.commune?.name}
+									</span>
+								</div>
 							</div>
+							{data?.status === 2 && (
+								<Button onClick={() => setOpen(true)} className="bg-custom-300 hover:bg-custom-400">
+									Thay đổi giao hàng
+								</Button>
+							)}
 						</div>
 					) : (
 						"Lỗi giá trị"

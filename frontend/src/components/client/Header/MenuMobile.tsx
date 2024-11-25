@@ -1,20 +1,23 @@
-import {
-	Accordion,
-	AccordionContent,
-	AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
-	Sheet,
-	SheetContent,
-	SheetHeader,
-	SheetTrigger,
-} from "@/components/ui/sheet";
-import { AccordionItem } from "@radix-ui/react-accordion";
+import { optimizeCloudinaryUrl } from "@/common/localFunction";
+import { removeItemLocal } from "@/common/localStorage";
+import { Sheet, SheetContent, SheetHeader } from "@/components/ui/sheet";
+import app from "@/config/initializeFirebase";
+import instance from "@/config/instance";
+import { useAuth } from "@/hooks/auth";
+import { cn } from "@/lib/utils";
+import { logOut } from "@/service/account";
+import useCart from "@/store/cart.store";
+import { AxiosError } from "axios";
+import { getAuth, signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { IoMenu } from "react-icons/io5";
+import { IoMenu, IoSearch } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
+import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
+import SearchMobile from "./SearchMobile";
 const MenuMobile = () => {
+	const { isLoggedIn, authUser, setAuthUser, setIsLoggedIn } = useAuth();
+	const { clearStateCart } = useCart();
 	const matches = useMediaQuery("(min-width: 768px)");
 	const [isOpen, setClose] = useState(false);
 	useEffect(() => {
@@ -22,6 +25,21 @@ const MenuMobile = () => {
 			setClose(false);
 		}
 	}, [matches]);
+	const handleLogout = async () => {
+		try {
+			await logOut();
+			delete instance.defaults.headers.common.Authorization;
+			setAuthUser?.(undefined);
+			setIsLoggedIn?.(false);
+			removeItemLocal("token");
+			signOut(getAuth(app));
+			clearStateCart();
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				toast.error(error.response?.data?.message);
+			}
+		}
+	};
 	return (
 		<Sheet open={isOpen} onOpenChange={() => setClose(false)}>
 			{/* <SheetTrigger asChild> */}
@@ -31,50 +49,50 @@ const MenuMobile = () => {
 			/>
 			{/* </SheetTrigger> */}
 			<SheetContent side={"left"} className="flex flex-col gap-y-5">
-				<SheetHeader>
+				<SheetHeader className={cn("hidden", isLoggedIn && "block")}>
 					<div className="flex items-center gap-3">
-						<div className="size-14 ">
+						<div className="size-10 min-w-10 min-h-10 max-w-10 max-h-10">
 							<img
-								className="w-full h-full object-cover rounded-full"
-								src="https://i.pinimg.com/564x/06/25/9f/06259fed99c906d43f691b1d1d4956cc.jpg"
+								className="object-cover w-full h-full rounded-full"
+								src={
+									authUser?.avatarUrl &&
+									(optimizeCloudinaryUrl(authUser?.avatarUrl) ||
+										"https://i.pinimg.com/564x/06/25/9f/06259fed99c906d43f691b1d1d4956cc.jpg")
+								}
 								alt=""
 							/>
 						</div>
-						<div className="">
-							<p className="text-sm">Huy Tới</p>
-							<span className="w-32 line-clamp-1 text-xs font-normal text-[#757575] ">
-								eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NGM3ZDkxY2FiYTE5NTM1NDIyZjBiMyIsImlhdCI6MTcxNzc2NzAzNSwiZXhwIjoxNzIyOTUxMDM1fQ.lj3LCrMDAQ3GAgMIWhe-zukjgT1RXHmQMt3C-XQoLV0
+						<div className="flex-1 text-start">
+							<p className="text-sm">{authUser?.full_name}</p>
+							<span className=" line-clamp-1 text-xs font-normal text-[#757575] ">
+								{authUser?.email}-{authUser?.email}-{authUser?.email}
 							</span>
 						</div>
 					</div>
 				</SheetHeader>
-				<div className=" ">
-					<ul className="text-black font-medium flex flex-col items-start justify-center  *:py-4 *:px-1 *:rounded *:cursor-pointer  transition-all *:w-full ">
+				<div className="">
+					<SearchMobile handleCloseSidebar={() => setClose(false)} />
+					<ul className="mt-2 text-black font-medium flex flex-col gap-1 items-start justify-center  *:py-2.5 *:px-1 *:rounded *:cursor-pointer  transition-all *:w-full ">
 						<li className=" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14]">
 							<NavLink to={"/"} className="block">
 								Trang chủ
 							</NavLink>
 						</li>
-						<li className="py-0 !px-0">
-							<Accordion type="single" collapsible className="w-full">
-								<AccordionItem value="item-1">
-									<AccordionTrigger className="py-4 px-1 hover:bg-[#919eab14] rounded has-[.active]:bg-[#919eab14]">
-										<NavLink to={"/shop"} className="block">
-											Sản phẩm
-										</NavLink>
-									</AccordionTrigger>
-									<AccordionContent className="py-0">
-										<ul className=" w-full   bg-white   *:cursor-pointer  *:px-5 *:py-2 *:text-nowrap  ">
-											<li className="hover:bg-[#919eab14]">Áo nike</li>
-											<li className="hover:bg-[#919eab14]">Áo nike</li>
-											<li className="hover:bg-[#919eab14]">Áo nike</li>
-											<li className="hover:bg-[#919eab14]">Áo nike</li>
-										</ul>
-									</AccordionContent>
-								</AccordionItem>
-							</Accordion>
+						<li className=" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14]">
+							<NavLink to={"/shop"} className="block">
+								Sản phẩm
+							</NavLink>
 						</li>
-
+						<li
+							className={cn(
+								" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14] hidden",
+								isLoggedIn && "block",
+							)}
+						>
+							<NavLink to={"/cart"} className="block">
+								Giỏ hàng
+							</NavLink>
+						</li>
 						<li className=" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14]">
 							<NavLink to={"/blogs"} className="block">
 								Bài viết
@@ -90,15 +108,35 @@ const MenuMobile = () => {
 								Giới thiệu
 							</NavLink>
 						</li>
-						<li className=" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14]">
+						<li
+							className={cn(
+								" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14] block",
+								isLoggedIn && "hidden",
+							)}
+						>
 							<NavLink to={"/auth/register"} className="block">
 								Đăng ký{" "}
 							</NavLink>
 						</li>
-						<li className=" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14]">
+						<li
+							className={cn(
+								" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14] block",
+								isLoggedIn && "hidden",
+							)}
+						>
 							<NavLink to={"/auth/login"} className="block">
 								Đăng nhập
 							</NavLink>
+						</li>
+
+						<li
+							onClick={handleLogout}
+							className={cn(
+								" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14] hidden",
+								isLoggedIn && "block",
+							)}
+						>
+							Đăng xuất
 						</li>
 					</ul>
 				</div>

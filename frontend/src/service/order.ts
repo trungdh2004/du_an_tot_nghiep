@@ -69,12 +69,31 @@ export const selectShipper = async ({
 
 export const cancelOrder = async (
 	id: string,
-	note: string,
+	note: string | null,
 	cancelBy?: number,
 ) => {
 	const data = await instance.post(`/order/cancelOrder/${id}`, {
 		note: note,
 		cancelBy: cancelBy,
 	});
+	return data;
+};
+export const createStateUrlCart = (payload: {
+	listId: string[];
+	voucher: string | null;
+}) => {
+	return instance.post(`/order/createStateUrlCart`, payload);
+};
+export const fetchOrder = async (obj: { status: null | number }) => {
+	const data = await instance.post(`/order/pagingOrderClient`, obj);
+	return data;
+};
+
+export const fetchOrderDetail = async (id: string) => {
+	const data = await instance.get(`/order/getDetailOrder/${id}`);
+	return data;
+};
+export const receivedClientOrder = async (id: string) => {
+	const data = await instance.get(`/order/receivedClientOrder/${id}`);
 	return data;
 };

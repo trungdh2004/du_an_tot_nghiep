@@ -22,7 +22,7 @@ const OrderCancelConfirm = ({
 	}, 300);
 	const handleCancelOrder = async (textnote: string) => {
 		try {
-			const data = await cancelOrder(dataOrderId._id, textnote,1);
+			const data = await cancelOrder(dataOrderId._id, textnote, 2);
 			getOrderById();
 			closeOpen(false);
 			return data;

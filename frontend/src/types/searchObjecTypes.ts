@@ -2,9 +2,10 @@ export interface SearchObjectType {
 	pageIndex: number;
 	pageSize: number;
 	keyword: string | null;
-	fieldSort: string | null;
-	sort: 1 | -1;
+	fieldSort?: string | null;
+	sort?: 1 | -1;
 	tab?: number;
+	provider?: string;
 }
 
 export interface SearchObjectTypeSize extends SearchObjectType {
@@ -38,10 +39,14 @@ export interface SearchObjectTypeProduct extends SearchObjectType {
 	category?: string | null;
 	color?: string[];
 	size?: string[];
+	rating?: number | null;
 }
 export interface SearchObjectBlog extends SearchObjectType {
 	tab?: number;
 	tags?: string;
 }
 
-
+export interface ISearchObjectPayment {
+	pageIndex: number;
+	pageSize: number;
+}

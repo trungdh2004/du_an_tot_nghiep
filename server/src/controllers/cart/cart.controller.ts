@@ -7,13 +7,21 @@ import CartItemModel from "../../models/cart/CartItem.schema";
 import { formatDataPaging } from "../../common/pagingData";
 import ProductModel from "../../models/products/Product.schema";
 import mongoose from "mongoose";
-import { IAttribute, IColor, ISize } from "../../interface/product";
-
+import { IAttribute, IColor, IProduct, ISize } from "../../interface/product";
+import AttributeModel from "../../models/products/Attribute.schema";
+import {
+  IndexCartItem,
+  IndexResAcc,
+  ListColor,
+  ListSize,
+  ProductFindCart,
+} from "../../interface/cart";
+import { accessSync } from "fs";
 
 interface RowIColor {
   colorId: string;
   colorName: string;
-  colorCode:string;
+  colorCode: string;
   list: IAttribute[];
   quantity: number;
 }
@@ -23,6 +31,7 @@ interface RowISize {
   list: IAttribute[];
   quantity: number;
 }
+
 class CartController {
   async pagingCart(req: RequestModel, res: Response) {
     try {
@@ -42,9 +51,9 @@ class CartController {
 
       const listProduct = await CartItemModel.aggregate([
         {
-          $match:{
-            cart:existingCart?._id
-          }
+          $match: {
+            cart: existingCart?._id,
+          },
         },
         {
           $lookup: {
@@ -67,9 +76,9 @@ class CartController {
         },
         {
           $unwind: {
-            path: '$productAttributes',
-            preserveNullAndEmptyArrays: true
-          } // Chuyển đổi mảng customer thành tài liệu riêng lẻ
+            path: "$productAttributes",
+            preserveNullAndEmptyArrays: true,
+          }, // Chuyển đổi mảng customer thành tài liệu riêng lẻ
         },
         {
           $lookup: {
@@ -80,7 +89,7 @@ class CartController {
           },
         },
         {
-          $unwind: '$productAttributes.color'
+          $unwind: "$productAttributes.color",
         },
         {
           $lookup: {
@@ -91,7 +100,7 @@ class CartController {
           },
         },
         {
-          $unwind: '$productAttributes.size'
+          $unwind: "$productAttributes.size",
         },
         {
           $lookup: {
@@ -105,7 +114,7 @@ class CartController {
           $unwind: {
             path: "$attribute",
             preserveNullAndEmptyArrays: true, // Bảo toàn giá trị null
-          }
+          },
         },
         {
           $lookup: {
@@ -119,7 +128,7 @@ class CartController {
           $unwind: {
             path: "$attribute.color",
             preserveNullAndEmptyArrays: true, // Bảo toàn giá trị null
-          }
+          },
         },
         {
           $lookup: {
@@ -133,7 +142,7 @@ class CartController {
           $unwind: {
             path: "$attribute.size",
             preserveNullAndEmptyArrays: true, // Bảo toàn giá trị null
-          }
+          },
         },
         {
           $group: {
@@ -161,8 +170,8 @@ class CartController {
                 quantity: "$productAttributes.quantity",
                 discount: "$productAttributes.discount",
                 price: "$productAttributes.price",
-              }
-            }
+              },
+            },
           },
         },
         {
@@ -176,7 +185,7 @@ class CartController {
             product: "$_id",
             createdAt: 1,
             items: 1,
-            attributes: 1
+            attributes: 1,
           },
         },
         {
@@ -191,9 +200,10 @@ class CartController {
         const listColor = (cartItem?.attributes as IAttribute[])?.reduce(
           (acc: RowIColor[], item) => {
             let group = acc.find(
-              (g) => g.colorId === (item.color as IColor)?._id
+              (g) =>
+                g.colorId.toString() ===
+                ((item.color as IColor)._id?.toString() as string)
             );
-  
             // Nếu nhóm không tồn tại, tạo nhóm mới
             if (!group) {
               group = {
@@ -201,12 +211,12 @@ class CartController {
                 colorName: (item.color as IColor).name as string,
                 list: [item],
                 quantity: item.quantity,
-                colorCode:(item.color as IColor).code
+                colorCode: (item.color as IColor).code,
               };
               acc.push(group);
               return acc;
             }
-  
+
             // Thêm đối tượng vào nhóm tương ứng
             group.list.push(item);
             group.quantity = group.quantity + item.quantity;
@@ -214,11 +224,13 @@ class CartController {
           },
           []
         );
-  
+
         const listSize = (cartItem?.attributes as IAttribute[])?.reduce(
           (acc: RowISize[], item) => {
             let group = acc.find(
-              (g) => g.sizeId === (item.size as ISize)?._id
+              (g) =>
+                g.sizeId.toString() ===
+                ((item.size as ISize)._id?.toString() as string)
             );
             // Nếu nhóm không tồn tại, tạo nhóm mới
             if (!group) {
@@ -231,7 +243,7 @@ class CartController {
               acc.push(group);
               return acc;
             }
-  
+
             // Thêm đối tượng vào nhóm tương ứng
             group.list.push(item);
             group.quantity = group.quantity + item.quantity;
@@ -243,13 +255,9 @@ class CartController {
         return {
           ...cartItem,
           listColor,
-          listSize
-        }
-      })
-
-      // const dataList = await CartItemModel.find({
-      //   cart:existingCart._id
-      // }).populate(["product","attribute"])
+          listSize,
+        };
+      });
 
       const countProduct = await CartItemModel.countDocuments({
         cart: existingCart._id,
@@ -264,6 +272,191 @@ class CartController {
       return res.status(STATUS.OK).json({
         message: "Lấy thành công ",
         data: data,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async pagingCartV2(req: RequestModel, res: Response) {
+    try {
+      const user = req.user
+      let existingCart = await CartModel.findOne({
+        user: user?.id,
+      });
+
+      if (!existingCart) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Lỗi hệ thống"
+        })
+      }
+
+      const listCartItem = await CartItemModel.find<IndexCartItem>({
+        cart:existingCart?._id
+      })
+        .populate([
+          {
+            path: "product",
+            populate: {
+              path: "attributes",
+              populate: [
+                {
+                  path: "color",
+                },
+                {
+                  path: "size",
+                },
+              ],
+            },
+            select: {
+              _id: 1,
+              name: 1,
+              discount: 1,
+              price: 1,
+              thumbnail: 1,
+              attributes: 1,
+              quantity: 1,
+              is_hot: 1,
+              is_simple: 1,
+              createdAt: 1,
+              slug: 1,
+            },
+          },
+          {
+            path: "attribute",
+            // match: { $ne: null },
+            populate: [
+              {
+                path: "color",
+              },
+              {
+                path: "size",
+              },
+            ],
+          },
+        ])
+        .sort({ createdAt: -1 });
+
+      const listData = listCartItem?.reduce(
+        (acc: IndexResAcc[], item: IndexCartItem) => {
+          const findCart = acc.find(
+            (sub) => sub?.product._id === item.product._id
+          );
+
+          if (findCart) {
+            const data = {
+              quantity: item.quantity,
+              _id: item._id,
+              thumbnail: item.product.thumbnail,
+              name: item.product.name,
+              discount: item.is_simple
+                ? item.product.discount
+                : item.attribute?.discount || 0,
+              price: item.is_simple ? item.product.price : item.attribute?.price  || 0,
+              attribute: item.attribute,
+              is_simple: item.is_simple,
+              createdAt: item.createdAt,
+              productId: item.product._id,
+              slug: item.product.slug,
+              totalQuantity:item.is_simple ? item.product.quantity : item.attribute?.quantity
+            };
+            findCart.items.push(data);
+            return acc;
+          }
+
+          const listAttribute = item.product.attributes || [];
+
+          let listColor: ListColor[] = [];
+          let listSize: ListSize[] = [];
+
+          if (!item?.is_simple) {
+            listColor = listAttribute?.reduce((acc: ListColor[], item) => {
+              let group = acc.find(
+                (g) =>
+                  g.colorId.toString() ===
+                  ((item.color as IColor)._id?.toString() as string)
+              );
+              // Nếu nhóm không tồn tại, tạo nhóm mới
+              if (!group) {
+                group = {
+                  colorId: (item.color as IColor)._id as string,
+                  colorName: (item.color as IColor).name as string,
+                  list: [item],
+                  quantity: item.quantity,
+                  colorCode: (item.color as IColor).code,
+                };
+                acc.push(group);
+                return acc;
+              }
+
+              // Thêm đối tượng vào nhóm tương ứng
+              group.list.push(item);
+              group.quantity = group.quantity + item.quantity;
+              return acc;
+            }, []);
+
+            listSize = listAttribute?.reduce((acc: ListSize[], item) => {
+              let group = acc.find(
+                (g) =>
+                  g.sizeId.toString() ===
+                  ((item.size as ISize)._id?.toString() as string)
+              );
+              // Nếu nhóm không tồn tại, tạo nhóm mới
+              if (!group) {
+                group = {
+                  sizeId: (item.size as ISize)._id as string,
+                  sizeName: (item.size as ISize).name as string,
+                  list: [item],
+                  quantity: item.quantity,
+                };
+                acc.push(group);
+                return acc;
+              }
+
+              // Thêm đối tượng vào nhóm tương ứng
+              group.list.push(item);
+              group.quantity = group.quantity + item.quantity;
+              return acc;
+            }, []);
+          }
+          const data: IndexResAcc = {
+            product: item.product,
+            createdAt: item.createdAt,
+            attributes: item.product.attributes,
+            listColor: listColor,
+            listSize: listSize,
+            items: [
+              {
+                quantity: item.quantity,
+                _id: item._id,
+                thumbnail: item.product.thumbnail,
+                name: item.product.name,
+                discount: item.is_simple
+                  ? item.product.discount
+                  : item.attribute?.discount || 0,
+                price: item.is_simple
+                  ? item.product.price
+                  : item.attribute?.price || 0,
+                attribute: item.attribute,
+                is_simple: item.is_simple,
+                createdAt: item.createdAt,
+                productId: item.product._id,
+                slug: item.product.slug,
+                totalQuantity:item.is_simple ? item.product.quantity : item.attribute?.quantity
+              },
+              
+            ],
+            is_simple: item.is_simple,
+          };
+          return [...acc, data];
+        },
+        []
+      );
+
+      return res.status(STATUS.OK).json({
+        listData,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
@@ -296,9 +489,9 @@ class CartController {
       });
 
       if (!existingCart) {
-        existingCart = await CartModel.create({
-          user: user.id,
-        });
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Lỗi hệ thống"
+        })
       }
 
       const existingProductCart = await CartItemModel.findOne({
@@ -308,13 +501,10 @@ class CartController {
       });
 
       if (existingProductCart) {
-        const data = await CartItemModel.findOneAndUpdate(
+        const data = await CartItemModel.findByIdAndUpdate(
+          existingProductCart?._id,
           {
-            product: productId,
-            attribute: attribute,
-          },
-          {
-            quantity: existingProductCart.quantity + quantity,
+            quantity: existingProductCart.quantity + +quantity,
           },
           {
             new: true,
@@ -343,11 +533,19 @@ class CartController {
         });
       }
 
+      if (existingProduct.quantity < quantity) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Số lượng vượt quá",
+          toast: true,
+        });
+      }
+
       const newCartItem = await CartItemModel.create({
         product: productId,
-        quantity,
+        quantity: +quantity,
         attribute,
         cart: existingCart._id,
+        is_simple: existingProduct.is_simple,
       });
 
       if (!newCartItem) {
@@ -389,21 +587,97 @@ class CartController {
           message: "Bạn chưa chọn",
         });
 
-      const existingCartItem = await CartItemModel.findById(id);
+      const existingCartItem = await CartItemModel.findById(id).populate(
+        "attribute product"
+      );
 
       if (!existingCartItem) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có giá trị thỏa mãn",
         });
       }
+
+      let quantityDefauld = quantity || existingCartItem?.quantity;
+
+      if (quantity) {
+        if (!(existingCartItem?.product as any)?.is_simple && !(existingCartItem?.attribute as IAttribute)?._id ) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Sản phẩm không còn loại này",
+          });
+        }
+        if ((existingCartItem?.product as any)?.is_simple && quantity > (existingCartItem?.product as any)?.quantity) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: `Chỉ còn ${
+              (existingCartItem.attribute as IAttribute).quantity
+            } sản phẩm loại hàng này`,
+          });
+        }
+        if (!(existingCartItem?.product as any)?.is_simple && quantity > (existingCartItem.attribute as IAttribute)?.quantity ) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: `Chỉ còn ${
+              (existingCartItem.attribute as IAttribute).quantity
+            } sản phẩm loại hàng này`,
+          });
+        }
+      }
+
+      if (attribute) {
+        const checkCartItem = await CartItemModel.findOne({
+          attribute: attribute,
+        });
+
+        if (checkCartItem) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Loại hàng này đã có ở giỏ hàng",
+          });
+        }
+
+        const checkAttribute = await AttributeModel.findById(attribute);
+
+        if (!checkAttribute) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Sản phẩm không còn loại hàng này nữa",
+          });
+        }
+
+        if (checkAttribute.quantity < quantityDefauld) {
+          quantityDefauld = checkAttribute.quantity;
+        }
+      }      
       const updatedProduct = await CartItemModel.findByIdAndUpdate(
         id,
         {
           quantity: quantity ? quantity : existingCartItem.quantity,
           attribute: attribute ? attribute : existingCartItem.attribute,
         },
-        { new: true, populate: ["product", "attribute"] }
-      );
+        {
+          new: true,
+          populate: [
+            {
+              path: "product",
+              select: {
+                name: 1,
+                _id: 1,
+                thumbnail: 1,
+                quantitySold: 1,
+                price: 1,
+                discount: 1,
+              },
+            },
+            {
+              path: "attribute",
+              populate: [
+                {
+                  path: "color",
+                },
+                {
+                  path: "size",
+                },
+              ],
+            },
+          ],
+        }
+      ).lean();
 
       if (!updatedProduct) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -411,11 +685,24 @@ class CartController {
         });
       }
 
+      const result = {
+        quantity: updatedProduct.quantity,
+        createdAt: updatedProduct.createdAt,
+        _id: updatedProduct._id,
+        price: (updatedProduct.product as IProduct).price,
+        name: (updatedProduct.product as IProduct).name,
+        productId: (updatedProduct.product as IProduct)._id,
+        quantitySold: (updatedProduct.product as IProduct).quantitySold,
+        discount: (updatedProduct.product as IProduct).discount,
+        thumbnail: (updatedProduct.product as IProduct).thumbnail,
+        attribute: updatedProduct.attribute,
+      };
+
       return res.status(STATUS.OK).json({
         message: "Thay đổi thành công",
-        data: updatedProduct,
+        data: result,
       });
-    } catch (error: any) {
+    } catch (error: any) {      
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
       });
@@ -433,9 +720,9 @@ class CartController {
       }
 
       await CartItemModel.deleteMany({
-        _id:{
-          $in:listId
-        }
+        _id: {
+          $in: listId,
+        },
       });
 
       return res.status(STATUS.OK).json({
@@ -448,44 +735,168 @@ class CartController {
     }
   }
 
-  async getCountProductCart(req:RequestModel,res:Response) {
+  async getCountProductCart(req: RequestModel, res: Response) {
     try {
       const user = req.user;
 
-      let existingCart = await CartModel.findOne({
-        user:user?.id
-      })
+      const existingCart = await CartModel.findOne({
+        user: user?.id,
+      });
 
-      if(!existingCart) {
-        existingCart = await CartModel.create({
-          user:user?.id
+      if (!existingCart) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Lỗi hệ thống"
         })
       }
 
       const countProductCart = await CartItemModel.find({
-        cart: existingCart._id
-      })
+        cart: existingCart._id,
+      });
 
-      if(countProductCart?.length === 0) {
+      if (countProductCart?.length === 0) {
         return res.status(STATUS.OK).json({
-          message:"Lấy thành công",
-          count: 0
+          message: "Lấy thành công",
+          count: 0,
+        });
+      }
+
+      const count = countProductCart?.reduce((acc, product) => {
+        return acc + product.quantity;
+      }, 0);
+
+      return res.status(STATUS.OK).json({
+        message: "Lấy thành công",
+        count: count || 0,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async getPagingNewCartItem(req: RequestModel, res: Response) {
+    try {
+      const user = req.user;
+      const { pageIndex, pageSize } = req.body;
+
+      let limit = pageSize || 10;
+      let skip = (pageIndex - 1) * limit || 0;
+
+      let existingCart = await CartModel.findOne({
+        user: user?.id,
+      });
+
+      if (!existingCart) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message:"Lỗi hệ thống"
         })
       }
 
-      const count = countProductCart?.reduce((acc,product) => {
-        return acc + product.quantity
-      },0)
+      const listCartItem = await CartItemModel.find({
+        cart: existingCart._id,
+      })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate([
+          {
+            path: "product",
+            select: {
+              _id: 1,
+              price: 1,
+              thumbnail: 1,
+              name: 1,
+            },
+          },
+          {
+            path: "attribute",
+            match: { _id: { $ne: null } }, // Chỉ populate nếu attribute không bị xóa
+            populate: [{ path: "color" }, { path: "size" }],
+          },
+        ]);
 
       return res.status(STATUS.OK).json({
-        message:"Lấy thành công",
-        count:count || 0
-      })
+        message: "Lấy giá trị nè",
+        content: listCartItem,
+      });
+    } catch (error) {}
+  }
 
-    } catch (error:any) {
+  async productToOrder(req: RequestModel, res: Response) {
+    try {
+      const user = req.user;
+
+      const { error } = cartItemValidation.validate(req.body);
+
+      if (error) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: error.details[0].message,
+        });
+      }
+
+      const { productId, quantity, attribute } = req.body;
+
+      if (!user)
+        return res.status(STATUS.AUTHORIZED).json({
+          message: "Bạn chưa đăng nhập",
+        });
+
+      let existingCart = await CartModel.findOne({
+        user: user?.id,
+      });
+
+      if (!existingCart) {
+        existingCart = await CartModel.create({
+          user: user.id,
+        });
+      }
+
+      const existingProduct = await ProductModel.findById(productId);
+
+      if (!existingProduct) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có sản phẩm thỏa mãn",
+          toast: true,
+        });
+      }
+      if (existingProduct.is_deleted) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Sản phẩm đã bị xóa",
+          toast: true,
+        });
+      }
+
+      const existingProductCart = await CartItemModel.deleteMany({
+        product: productId,
+        attribute: attribute,
+        cart: existingCart._id,
+      });
+
+      const newCartItem = await CartItemModel.create({
+        product: productId,
+        quantity: +quantity,
+        attribute,
+        cart: existingCart._id,
+        is_simple: existingProduct.is_simple,
+      });
+
+      const stateValue = {
+        listId: [newCartItem?._id],
+        voucher: null,
+      };
+
+      const stateJson = JSON.stringify(stateValue);
+
+      const stateDeCodeUrl = encodeURIComponent(stateJson);
+
+      return res.status(STATUS.OK).json({
+        url: stateDeCodeUrl,
+      });
+    } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
-        message:error.message
-      })
+        message: error.message,
+      });
     }
   }
 }

@@ -8,25 +8,34 @@ import {
 } from "@/components/ui/breadcrumb";
 import { IProductDetail } from "@/types/product";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { getProductBySlug } from "../../../service/product";
 import Ablum from "./Ablum";
 import InfoProduct from "./InfoProduct";
 import ProductDetailsAndReviews from "./ProductDetailsAndReviews";
+import ProductRelated from "./ProductRelated";
+import { useState } from "react";
+import NotFound from "@/pages/NotFound";
 
 const DetailProduct = () => {
 	const { slug } = useParams();
+	const [productRelated, setProductRelated] = useState([]);
 	const { data, isLoading } = useQuery<IProductDetail>({
-		queryKey: ["GET_PRODUCT_BY_SLUG"],
+		queryKey: ["GET_PRODUCT_BY_SLUG", slug],
 		queryFn: async () => {
 			const { data } = await getProductBySlug(
 				encodeURIComponent(slug as string),
 			);
+			setProductRelated(data?.listProductOther);
 			return data?.data;
 		},
 	});
+
+  if(!isLoading && Object.keys(data || {})?.length <= 0 ){
+    return <NotFound/>
+  }
 	return (
-		<div className="bg-[#f9fafb]">
+		<div className="">
 			<div className="padding ">
 				<Breadcrumb className="py-3">
 					<BreadcrumbList>
@@ -41,11 +50,11 @@ const DetailProduct = () => {
 							<>
 								<BreadcrumbSeparator />
 								<BreadcrumbItem>
-									<BreadcrumbLink
-										href={`/shop?category=${data?.category?._id}`}
-									>
-										{data?.category?.name}
-									</BreadcrumbLink>
+									<div>
+										<Link to={`/shop?category=${data?.category?._id}`}>
+											<BreadcrumbLink>{data?.category?.name}</BreadcrumbLink>
+										</Link>
+									</div>
 								</BreadcrumbItem>
 							</>
 						)}
@@ -53,14 +62,16 @@ const DetailProduct = () => {
 							<>
 								<BreadcrumbSeparator />
 								<BreadcrumbItem>
-									<BreadcrumbPage>{data?.name}</BreadcrumbPage>
+									<BreadcrumbPage className="truncate max-w-52">
+										{data?.name}
+									</BreadcrumbPage>
 								</BreadcrumbItem>
 							</>
 						)}
 					</BreadcrumbList>
 				</Breadcrumb>
-				<div className="flex max-md:flex-col items-start bg-white">
-					<div className="max-md:w-full w-2/5">
+				<div className="flex items-start bg-white max-md:flex-col md:gap-4 lg:gap-8 box-shadow">
+					<div className="w-2/5 max-md:w-full">
 						<Ablum images={data?.images} isLoading={isLoading} />
 					</div>
 					<div className="w-full md:flex-1">
@@ -69,6 +80,9 @@ const DetailProduct = () => {
 				</div>
 				<div className="">
 					<ProductDetailsAndReviews product={data} />
+				</div>
+				<div className="">
+					<ProductRelated product={productRelated} />
 				</div>
 			</div>
 		</div>

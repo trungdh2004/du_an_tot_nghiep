@@ -1,15 +1,16 @@
 import OverlayViolet from "@/components/OverlayViolet";
 import instance from "@/config/instance";
 import { useAuth } from "@/hooks/auth";
-import { useRouterHistory } from "@/hooks/router";
 import { loginAccount } from "@/service/account";
+import { getCountMyShoppingCart, pagingCartV2 } from "@/service/cart";
+import useCart from "@/store/cart.store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { IoIosArrowRoundBack } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "../../components/ui/button";
@@ -24,7 +25,9 @@ import {
 import { Input } from "../../components/ui/input";
 import SignInWithFacebookOrGoogle from "./SignInWithFacebookOrGoogle";
 const Login = () => {
-	const routerHistory = useRouterHistory();
+	const [searchParams, SetURLSearchParams] = useSearchParams();
+	const router = useNavigate();
+	const { setCarts, setTotalCart } = useCart();
 	const { setAuthUser, setIsLoggedIn } = useAuth();
 	const formSchema = z.object({
 		email: z
@@ -46,37 +49,55 @@ const Login = () => {
 	const onSubmit = async (payload: z.infer<typeof formSchema>) => {
 		try {
 			const { data } = await loginAccount(payload);
-			console.log(data);
-			setAuthUser?.(data?.user);
+			const { user, accessToken, message } = data;
+
+			// Cập nhật trạng thái đăng nhập và token Authorization
+			setAuthUser?.(user);
 			setIsLoggedIn?.(true);
-			instance.defaults.headers.common.Authorization = `Bearer ${data?.accessToken}`;
-			toast.success(data?.message);
-			routerHistory();
+			instance.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+			const [cartsResponse, totalCountResponse] = await Promise.all([
+				pagingCartV2(),
+				getCountMyShoppingCart(),
+			]);
+
+			setCarts(cartsResponse?.data?.listData || []);
+			setTotalCart(totalCountResponse?.data?.count || 0);
+			toast.success(message);
+			const historyUrl = searchParams.get("url");
+
+			if (historyUrl) {
+				const url = decodeURIComponent(historyUrl);
+				window.location.href = url;
+			} else {
+				router("/");
+			}
 		} catch (error) {
 			setAuthUser?.(undefined);
 			setIsLoggedIn?.(false);
+			setCarts([]);
+			setTotalCart(0);
 			if (error instanceof AxiosError) {
 				toast.error(error.response?.data?.message);
 			}
 		}
 	};
 	return (
-		<div className="">
+		<div className="h-full">
 			<OverlayViolet />
 
-			<div className="absolute left-3 top-3  flex justify-between items-center pr-5">
+			<div className="absolute flex items-center justify-between pr-5 left-3 top-3">
 				<Link
 					to={"/"}
-					className="dark:bg-slate-600 relative flex items-center justify-center max-w-36 p-3 bg-white rounded-lg shadow-lg"
+					className="relative flex items-center justify-center p-3 bg-white rounded-lg shadow-lg dark:bg-slate-600 max-w-36"
 				>
 					<IoIosArrowRoundBack size={20} className="mr-4" /> Trang chủ
 				</Link>
 			</div>
-			<div className="dark:bg-slate-800 w-full max-w-xs md:max-w-sm mx-auto mt-12  px-8 py-9 bg-white shadow-md border border-gray-200 rounded-2xl">
+			<div className="w-full max-w-xs px-8 mx-auto my-auto mt-24 bg-white border border-gray-200 shadow-md dark:bg-slate-800 md:max-w-sm md:mt-12 py-9 rounded-2xl">
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)}>
-						<div className=" space-y-5 ">
-							<h2 className="text-center text-xl font-bold mb-10">Đăng nhập</h2>
+						<div className="space-y-5 ">
+							<h2 className="mb-10 text-xl font-bold text-center">Đăng nhập</h2>
 							<SignInWithFacebookOrGoogle />
 							{/* end line */}
 							<div className="space-y-1">
@@ -114,13 +135,13 @@ const Login = () => {
 														<FaRegEyeSlash
 															onClick={() => setIsPassword((prev) => !prev)}
 															size={18}
-															className="absolute top-1/2 right-5 -translate-y-1/2 cursor-pointer "
+															className="absolute -translate-y-1/2 cursor-pointer top-1/2 right-5 "
 														/>
 													) : (
 														<FaRegEye
 															onClick={() => setIsPassword((prev) => !prev)}
 															size={18}
-															className="absolute top-1/2 right-5 -translate-y-1/2 cursor-pointer"
+															className="absolute -translate-y-1/2 cursor-pointer top-1/2 right-5"
 														/>
 													)}
 												</div>
@@ -134,19 +155,19 @@ const Login = () => {
 
 						<Link
 							to={"/auth/forgot-password"}
-							className="float-end text-blue-500 mt-2 "
+							className="mt-2 text-custom float-end "
 						>
 							Quên mật khẩu ?
 						</Link>
 						<Button
 							type="submit"
-							className="w-full mt-3 mb-6 text-white text-base font-bold bg-blue-500 hover:bg-blue-400"
+							className="w-full mt-3 mb-6 text-base font-bold text-white bg-custom hover:bg-custom-500"
 						>
 							Đăng nhập
 						</Button>
 						<p className="text-center">
 							Bạn chưa có tài khoản ?{" "}
-							<Link to={"/auth/register"} className="text-blue-500">
+							<Link to={"/auth/register"} className="text-custom">
 								Đăng ký
 							</Link>
 						</p>

@@ -1,17 +1,13 @@
 import { Request, Response } from "express";
-import STATUS from "../../utils/status";
-import ProductModel from "../../models/products/Product.schema";
-import CategoryModel from "../../models/products/Category.schema";
-import { productValidations } from "../../validation/product.validation";
-import { IAttribute, IColor, ISize } from "../../interface/product";
-import AttributeModel from "../../models/products/Attribute.schema";
-import { RequestModel } from "../../interface/models";
-import { generateSlugs } from "../../middlewares/generateSlug";
-import { Types } from "mongoose";
 import { formatDataPaging } from "../../common/pagingData";
+import { RequestModel } from "../../interface/models";
+import { IAttribute, IColor, ISize } from "../../interface/product";
+import { generateSlugs } from "../../middlewares/generateSlug";
 import CartItemModel from "../../models/cart/CartItem.schema";
-
-const ObjectId = require("mongoose").Types.ObjectId;
+import AttributeModel from "../../models/products/Attribute.schema";
+import ProductModel from "../../models/products/Product.schema";
+import STATUS from "../../utils/status";
+import { productValidations } from "../../validation/product.validation";
 
 interface RowIColor {
   colorId: string;
@@ -25,6 +21,15 @@ interface RowISize {
   sizeName: string;
   list: IAttribute[];
   quantity: number;
+}
+
+function randomThreeConsecutiveNumbers(a: number) {
+  if (a < 4) {
+    return 0;
+  }
+  const start = Math.floor(Math.random() * (a - 4));
+
+  return start;
 }
 
 class ProductController {
@@ -49,16 +54,40 @@ class ProductController {
         images,
         featured,
         attributes = [],
+        is_hot,
+        is_simple,
+        quantity,
       } = req.body;
+
+      if (is_simple) {
+        const product = await ProductModel.create({
+          name,
+          price,
+          discount,
+          description,
+          thumbnail,
+          category,
+          quantitySold,
+          images,
+          featured,
+          quantity,
+          is_hot,
+          is_simple,
+        });
+
+        return res.status(STATUS.OK).json({
+          message: "Tạo thành công",
+          data: product,
+        });
+      }
 
       const dataAttributes = await AttributeModel.create<IAttribute[]>(
         attributes
       );
 
-
-      const quantity = dataAttributes.reduce((acc, item) => {
-        return acc + item.quantity
-      },0)
+      const quantityAttribute = dataAttributes.reduce((acc, item) => {
+        return acc + item.quantity;
+      }, 0);
 
       const product = await ProductModel.create({
         name,
@@ -70,8 +99,9 @@ class ProductController {
         quantitySold,
         images,
         featured,
-        quantity,
+        quantity: quantityAttribute,
         attributes: dataAttributes?.map((item) => item._id),
+        is_hot,
       });
 
       return res.status(STATUS.OK).json({
@@ -95,7 +125,7 @@ class ProductController {
         });
 
       const product = await ProductModel.findOne({
-        slug:slug
+        slug: slug,
       })
         .populate([
           {
@@ -136,7 +166,7 @@ class ProductController {
               colorName: (item.color as IColor).name as string,
               list: [item],
               quantity: item.quantity,
-              colorCode:(item.color as IColor).code as string,
+              colorCode: (item.color as IColor).code as string,
             };
             acc.push(group);
             return acc;
@@ -152,9 +182,7 @@ class ProductController {
 
       const listSize = (product?.attributes as IAttribute[])?.reduce(
         (acc: RowISize[], item) => {
-          let group = acc.find(
-            (g) => g.sizeId === (item.size as ISize)?._id
-          );
+          let group = acc.find((g) => g.sizeId === (item.size as ISize)?._id);
           // Nếu nhóm không tồn tại, tạo nhóm mới
           if (!group) {
             group = {
@@ -175,12 +203,48 @@ class ProductController {
         []
       );
 
+      const countProduct = await ProductModel.countDocuments({
+        is_deleted: false,
+        slug: {
+          $ne: slug,
+        },
+      });
+
+      const random = randomThreeConsecutiveNumbers(countProduct);
+
+      const listProductOther = await ProductModel.find({
+        is_deleted: false,
+        slug: {
+          $ne: slug,
+        },
+      })
+        .skip(random)
+        .limit(6)
+        .populate([
+          {
+            path: "attributes",
+            populate: [
+              {
+                path: "color",
+                model: "Color",
+              },
+              {
+                path: "size",
+                model: "Size",
+              },
+            ],
+          },
+          "category",
+        ])
+        .exec();
+
       return res.status(STATUS.OK).json({
         data: {
           ...product,
           listColor,
           listSize,
         },
+        listProductOther,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
@@ -213,21 +277,57 @@ class ProductController {
         quantitySold,
         images,
         attributes = [],
+        is_simple,
+        is_hot,
+        quantity,
       } = req.body;
 
-
       const existingProduct = await ProductModel.findById(id);
-
 
       if (!existingProduct)
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có sản phẩm thỏa mãn",
         });
 
-      let slugProduct = existingProduct.slug
+      let slugProduct = existingProduct.slug;
 
-      if(existingProduct.name.toLocaleLowerCase() !== name.toLocaleLowerCase()) {
-        slugProduct = generateSlugs(name)
+      if (
+        existingProduct.name.toLocaleLowerCase() !== name.toLocaleLowerCase()
+      ) {
+        slugProduct = generateSlugs(name);
+      }
+
+      if (is_simple) {
+        const listAttributeId = existingProduct?.attributes;
+
+        await AttributeModel.deleteMany({
+          _id: {
+            $in: listAttributeId,
+          },
+        });
+
+        const product = await ProductModel.findByIdAndUpdate(
+          existingProduct._id,
+          {
+            name,
+            price,
+            discount,
+            description,
+            thumbnail,
+            category,
+            quantitySold,
+            images,
+            quantity,
+            is_hot,
+            is_simple,
+            attributes,
+          }
+        );
+
+        return res.status(STATUS.OK).json({
+          message: "Tạo thành công",
+          data: product,
+        });
       }
 
       const listNew = attributes.filter((item: IAttribute) => !item._id);
@@ -265,9 +365,9 @@ class ProductController {
 
       if (listNew.length > 0) {
         const listNewAttributes = await AttributeModel.create<IAttribute[]>(
-          listNew.map((item:IAttribute) => {
-            const {_id,...value} = item;
-            return value
+          listNew.map((item: IAttribute) => {
+            const { _id, ...value } = item;
+            return value;
           })
         );
         dataAttributes = [
@@ -282,10 +382,13 @@ class ProductController {
         });
       }
 
-      const quantity = attributes.reduce((acc:number, item:IAttribute) => {
-        return acc + item.quantity
-      },0)
-      
+      const quantityAttribute = attributes.reduce(
+        (acc: number, item: IAttribute) => {
+          return acc + item.quantity;
+        },
+        0
+      );
+
       const newProduct = await ProductModel.findByIdAndUpdate(
         existingProduct?._id,
         {
@@ -296,10 +399,12 @@ class ProductController {
           thumbnail,
           category,
           quantitySold,
-          quantity,
+          quantity: is_simple ? quantity : quantityAttribute,
           images,
           attributes: dataAttributes,
           slug: slugProduct,
+          is_hot,
+          is_simple,
         },
         { new: true }
       ).populate([
@@ -408,8 +513,8 @@ class ProductController {
       });
 
       await CartItemModel.deleteOne({
-        product:existingProduct._id,
-      })
+        product: existingProduct._id,
+      });
 
       return res.status(STATUS.OK).json({
         message: "Ẩn sản phẩm thành công",
@@ -470,10 +575,10 @@ class ProductController {
       );
 
       await CartItemModel.deleteMany({
-        product:{
-          $in: listId
-        }
-      })
+        product: {
+          $in: listId,
+        },
+      });
 
       return res.status(STATUS.OK).json({
         message: "Xóa thành công",
@@ -527,24 +632,24 @@ class ProductController {
         keyword,
         color = [],
         size = [],
-        sort = 1,
+        sort = -1,
         fieldSort,
         category,
         min,
         max,
         tab,
-        rating
+        rating,
       } = req.body;
 
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
       let queryKeyword = keyword
         ? {
-          name: {
-            $regex: keyword,
-            $options: "i",
-          },
-        }
+            name: {
+              $regex: keyword,
+              $options: "i",
+            },
+          }
         : {};
       let queryAttribute = {};
       let querySort = {};
@@ -586,7 +691,7 @@ class ProductController {
           conditions = { color: color };
         } else if (size.length > 0) {
           conditions = { size: size };
-        }       
+        }
         const listAttributeColor = await AttributeModel.find(conditions);
         const colorAttributeIds = listAttributeColor?.map((attr) => attr._id);
         queryAttribute = {
@@ -594,7 +699,6 @@ class ProductController {
             $in: colorAttributeIds,
           },
         };
-        
       }
 
       // sắp xếp
@@ -645,8 +749,52 @@ class ProductController {
         }
       }
 
-      if(rating) {
+      if (rating) {
+        switch (rating) {
+          case 5:
+            queryRating = {
+              rating: {
+                $lte: 5,
+                $gt:4
+              },
+            };
+            break;
+          case 4:
+            queryRating = {
+              rating: {
+                $lte: 4,
+                $gt:3
+              },
+            };
+            break;
+          case 3:
+            queryRating = {
+              rating: {
+                $lte: 3,
+                $gt:2
+              },
+            };
+            break;
+          case 2:
+            queryRating = {
+              rating: {
+                $lte: 2,
+                $gt:1
+              },
+            };
+            break;
+          case 1:
+            queryRating = {
+              rating: {
+                $lte: 1,
+                $gte:0
+              },
+            };
+            break;
 
+          default:
+            queryRating = {};
+        }
       }
 
       const listProduct = await ProductModel.find({
@@ -655,6 +803,7 @@ class ProductController {
         ...queryCategory,
         ...queryPrice,
         ...queryTab,
+        ...queryRating,
       })
         .sort(querySort)
         .skip(skip)
@@ -675,6 +824,7 @@ class ProductController {
           },
           "category",
         ])
+        .select("-description -category")
         .exec();
 
       const countProduct = await ProductModel.countDocuments({
@@ -683,6 +833,7 @@ class ProductController {
         ...queryCategory,
         ...queryPrice,
         ...queryTab,
+        ...queryRating,
       });
 
       const result = formatDataPaging({
@@ -692,6 +843,97 @@ class ProductController {
         count: countProduct,
       });
       return res.status(STATUS.OK).json(result);
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async pagingProductOfVoucher(req: RequestModel, res: Response) {
+    try {
+      const { pageIndex, keyword } = req.body;
+      let limit = 5;
+      let skip = (pageIndex - 1) * limit || 0;
+      let queryKeyword = keyword
+        ? {
+            name: {
+              $regex: keyword,
+              $options: "i",
+            },
+          }
+        : {};
+
+      const listProduct = await ProductModel.find({
+        ...queryKeyword,
+        is_deleted: false,
+      })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .select({
+          _id: 1,
+          name: 1,
+          thumbnail: 1,
+        })
+        .exec();
+
+      const countProduct = await ProductModel.countDocuments({
+        ...queryKeyword,
+        is_deleted: false,
+      });
+      const result = formatDataPaging({
+        limit,
+        pageIndex,
+        data: listProduct,
+        count: countProduct,
+      });
+      return res.status(STATUS.OK).json(result);
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async listProductHot(req: Request, res: Response) {
+    try {
+      const limit = 10;
+
+      const listProduct = await ProductModel.find({
+        is_hot: true,
+      })
+        .populate([
+          {
+            path: "category",
+            select: {
+              _id: 1,
+              name: 1,
+            },
+          },
+          {
+            path: "attributes",
+            populate: [
+              {
+                path: "color",
+                model: "Color",
+              },
+              {
+                path: "size",
+                model: "Size",
+              },
+            ],
+          },
+        ])
+        .sort({
+          createdAt: -1,
+        })
+        .skip(0)
+        .limit(limit);
+
+      return res.status(STATUS.OK).json({
+        listProduct,
+      });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,

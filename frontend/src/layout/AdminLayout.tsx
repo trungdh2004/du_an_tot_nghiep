@@ -2,7 +2,7 @@ import HeaderAdmin from "@/components/admin/header/HeaderAdmin";
 import Sidebar from "@/components/admin/sidebar/Sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import React, { useEffect } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, ScrollRestoration } from "react-router-dom";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useOpenSidebar } from "@/store/useSidebarAdmin";
 import { useMediaQuery } from "usehooks-ts";
@@ -29,10 +29,12 @@ const AdminLayout = () => {
 			<div className="lg:pl-[280px] w-full">
 				{/* header */}
 				<HeaderAdmin />
-				<div className="py-[80px] px-4 md:px-8">
+				<div className="pb-4 pt-[80px] md:pb-10 px-4 md:px-8">
 					<Outlet />
 				</div>
 			</div>
+			<ScrollRestoration />
+
 		</div>
 	);
 };

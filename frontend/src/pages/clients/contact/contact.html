@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white">
+
+    <div class="bg-pink-100 py-12">
+        <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+            <div class="flex flex-col lg:flex-row items-center lg:items-start gap-8">
+
+                <img src="https://via.placeholder.com/200" alt="Profile Image" class="rounded-full object-cover w-64 h-64 lg:w-80 lg:h-80">
+                
+
+                <div class="w-full">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Bạn cần hỗ trợ?</h2>
+                    <p class="text-gray-600 mb-6">Celah rất hân hạnh được hỗ trợ bạn, hãy để lại thông tin cho chúng tôi nhé. Yêu cầu của bạn sẽ được xử lý và phản hồi trong thời gian sớm nhất.</p>
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Họ tên*</label>
+                            <input type="text" class="w-full p-2 border border-gray-300 rounded" placeholder="Tên đầy đủ" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Email*</label>
+                            <input type="email" class="w-full p-2 border border-gray-300 rounded" placeholder="Địa chỉ email" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Tin nhắn</label>
+                            <textarea class="w-full p-2 border border-gray-300 rounded" rows="4" placeholder="Đừng ngại hỏi về đơn hàng của bạn"></textarea>
+                        </div>
+                        <button type="submit" class="bg-black text-white px-4 py-2 rounded">Gửi</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="bg-white py-8">
+        <div class="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div>
+                <h3 class="text-lg font-bold text-gray-800">CÔNG TY TNHH SOCIAL BELLA VIỆT NAM</h3>
+                <p class="text-gray-600 mt-2">Celah beauty là kênh ưa mua sắm mỹ phẩm, làm đẹp hàng đầu Việt Nam</p>
+                <p class="text-gray-600 mt-4">Hồ Chí Minh: Lầu 10, Tòa nhà HD Bank, 25Bis Nguyễn Thị Minh Khai, P. Bến Nghé, Q.1, TP.HCM</p>
+                <p class="text-gray-600">Hà Nội: Tầng 12, Tòa nhà Ladeco, 266 Đội Cấn, Phường Liễu Giai, Quận Ba Đình, TP. Hà Nội</p>
+                <p class="text-gray-600 mt-4">Giấy chứng nhận đăng ký doanh nghiệp số: 0316375266</p>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold text-gray-800">LIÊN HỆ VỚI CHÚNG TÔI</h3>
+                <p class="text-gray-600 mt-2">Email: support@sapovn</p>
+                <p class="text-gray-600">CSKH: 19006750</p>
+                <p class="text-gray-600">Thời gian làm việc: 8h - 21h (Thứ 2 - Thứ 7)</p>
+                <p class="text-gray-600">Fanpage: <a href="https://www.facebook.com/sapo.vn" class="text-custom">https://www.facebook.com/sapo.vn</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-orange-200 py-6">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <p class="text-gray-800">NHẬN THÔNG TIN KHUYẾN MÃI TỪ CHÚNG TÔI</p>
+            <form class="flex gap-2">
+                <input type="email" placeholder="Nhập địa chỉ email" class="p-2 border border-gray-300 rounded w-full lg:w-64">
+                <button type="submit" class="bg-black text-white px-4 py-2 rounded">Gửi</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

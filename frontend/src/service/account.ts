@@ -1,4 +1,5 @@
 import instance from "@/config/instance";
+import { IPassword } from "@/types/auth";
 import axios from "axios";
 
 export const createAccount = (data: any) => {
@@ -34,4 +35,8 @@ export const socialUser = (data: any) => {
 export const logOut = () => {
 	const uri = "/auth/logout";
 	return instance.post(uri);
+};
+export const changePassword = (data: IPassword) => {
+	const uri = "/auth/changePassword";
+	return instance.put(uri, data);
 };

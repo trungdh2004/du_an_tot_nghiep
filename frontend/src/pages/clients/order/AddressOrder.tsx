@@ -22,7 +22,7 @@ const AddressOrder = ({ data, handleChangeAddress }: any) => {
 		placeholderData: keepPreviousData,
 	});
 	return (
-		<div className="lg:py-4 py-2 ">
+		<div className="">
 			{isPending && (
 				<div className="flex flex-col space-y-3">
 					<Skeleton className="h-[125px] w-full rounded-xl" />
@@ -33,14 +33,14 @@ const AddressOrder = ({ data, handleChangeAddress }: any) => {
 					<Skeleton className="h-[125px] w-full rounded-xl" />
 				</div>
 			)}
-			<div className="flex flex-col gap-3 bg-white py-4 lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow">
+			<div className="flex flex-col gap-3 py-4 bg-white border border-gray-200 rounded-none lg:rounded-md md:rounded-md box-shadow">
 				<div className="flex gap-3 pl-3">
 					<FiMapPin size={25} className="text-[#f78138]" />
 					<p className="lg:text-lg md:text-base text-sm text-[#f78138]">
 						Địa chỉ nhận hàng
 					</p>
 				</div>
-				<div className="flex lg:flex-row md:flex-row flex-col pl-4 justify-between lg:items-center md:items-center items-start gap-3">
+				<div className="flex flex-col items-start justify-between gap-3 pl-4">
 					{data?.address === null ? (
 						<div className="flex gap-3">
 							<p>Bạn chưa chọn địa chỉ nào</p>
@@ -53,11 +53,23 @@ const AddressOrder = ({ data, handleChangeAddress }: any) => {
 							</button>
 						</div>
 					) : (
-						<div className="flex lg:flex-row md:flex-row flex-col gap-3">
-							<span className="lg:text-base text-sm font-bold tracking-normal">
-								{data?.address?.username} {data?.address?.phone}
+						<div className="flex flex-col gap-3">
+							<span className="text-sm tracking-normal pr-3">
+								<span>
+									<strong>Họ tên : </strong>
+								</span>
+								{data?.address?.username}
 							</span>
-							<p className="lg:text-base text-sm font-medium tracking-normal">
+							<span className="text-sm tracking-normal pr-3">
+								<span>
+									<strong>Số điện thoại : </strong>
+								</span>
+								{data?.address?.phone}
+							</span>
+							<p className="text-sm tracking-normal pr-3">
+								<span>
+									<strong>Địa chỉ : </strong>
+								</span>
 								{data?.address?.detailAddress} , {data?.address?.address}
 							</p>
 							{data?.address?.is_main && (
@@ -71,7 +83,7 @@ const AddressOrder = ({ data, handleChangeAddress }: any) => {
 					)}
 					{address?.content?.length != 0 && (
 						<button
-							className="lg:text-sm text-xs text-blue-400 font-medium mr-4"
+							className="mr-4 text-xs font-medium text-blue-400 lg:text-sm"
 							onClick={() => setOpenListAddress(true)}
 						>
 							Thay đổi

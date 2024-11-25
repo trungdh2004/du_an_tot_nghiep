@@ -19,5 +19,9 @@ export interface IVoucher {
     modifiedBy: string | IUser,
     user: string | IUser,
     createdBy:Date,
-    updatedBy:Date
+    updatedBy:Date,
+    type:"1" | "2",
+    listUseProduct:string[],
+    maxAmount:number,
+    isHome:boolean
 }

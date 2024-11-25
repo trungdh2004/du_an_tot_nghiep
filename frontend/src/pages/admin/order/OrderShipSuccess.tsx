@@ -22,6 +22,7 @@ const OrderShipSuccess = () => {
 		};
 		paymentMethod: number;
 		orderItems: any;
+		orderDate: string;
 	}
 
 	const [orderNeed, setOrderNeed] = useState<any>({});
@@ -30,7 +31,7 @@ const OrderShipSuccess = () => {
 			status: 4,
 			pageIndex: 1,
 			pageSize: 5,
-			sort: 1,
+			sort: -1,
 			method: null,
 			startDate: null,
 			endDate: null,
@@ -140,10 +141,10 @@ const OrderShipSuccess = () => {
 			},
 		},
 		{
-			accessorKey: "createdAt",
+			accessorKey: "orderDate",
 			header: "Ngày đặt hàng",
 			cell: ({ row }) => {
-				const parsedDate = parseISO(row.original.createdAt);
+				const parsedDate = parseISO(row.original.orderDate);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
 				return <div className="font-medium">{formattedDate}</div>;
 			},

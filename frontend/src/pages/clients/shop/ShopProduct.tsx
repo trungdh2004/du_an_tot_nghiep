@@ -46,8 +46,10 @@ const ShopProduct = () => {
 				min: 0,
 				max: 5000000,
 				tab: 1,
+				rating: null,
 			};
 		});
+
 	const {
 		data: productShop,
 		isLoading,
@@ -62,12 +64,10 @@ const ShopProduct = () => {
 		staleTime: 1000 * 60 * 15,
 		refetchInterval: 1000 * 60 * 15,
 		retry: 2,
-  });
-  
-
+	});
 	return (
 		<div className="padding pt-[40px]">
-			<div className="grid lg:grid-cols-12 gap-9 relative">
+			<div className="relative grid lg:grid-cols-12 gap-9">
 				<div className="col-span-2 lg:col-span-2 lg:block hidden h-[88vh] sticky top-[100px]">
 					<ScrollArea className="h-[88vh] rounded-md pb-5 pr-4">
 						<Category setSearchParamsObject={setSearchParamsObject} />
@@ -84,9 +84,9 @@ const ShopProduct = () => {
 					</ScrollArea>
 				</div>
 
-				<div className="lg:col-span-10 md:col-span-12 items-center">
+				<div className="items-center lg:col-span-10 md:col-span-12">
 					<div className="flex justify-between">
-						<div className="lg:block hidden"></div>
+						<div className="hidden lg:block"></div>
 						<SelectSort setSearchParamsObject={setSearchParamsObject} />
 						<div className="lg:hidden">
 							<SearchProductMobile
@@ -103,22 +103,23 @@ const ShopProduct = () => {
 						<ProductEmpty />
 					)}
 					{/* <Product /> */}
-					<div className="flex justify-center items-center pb-4">
-						<Paginations
-							pageCount={productShop?.totalPage}
-							handlePageClick={(event: any) => {
-								setPageIndex(event.selected + 1);
-								setSearchParamsObject((prev) => ({
-									...prev,
-									pageIndex: event.selected + 1,
-								}));
-								searchParams.set("pageIndex", event.selected + 1);
-								setSearchParams(searchParams);
-								query.invalidateQueries({ queryKey: ["productShop"] });
-							}}
-							forcePage={0}
-						/>
-					</div>
+					{productShop?.content?.length > 0 && (
+						<div className="flex items-center justify-center py-4">
+							<Paginations
+								pageCount={productShop?.totalPage}
+								handlePageClick={(event: any) => {
+									setPageIndex(event.selected + 1);
+									setSearchParamsObject((prev) => ({
+										...prev,
+										pageIndex: event.selected + 1,
+									}));
+									searchParams.set("pageIndex", event.selected + 1);
+									setSearchParams(searchParams);
+								}}
+								forcePage={searchParamsObject.pageIndex - 1}
+							/>
+						</div>
+					)}
 				</div>
 			</div>
 		</div>

@@ -15,16 +15,20 @@ const CartItemSchema = new mongoose.Schema(
       required: true,
       default: 1,
     },
-    cart:{
-        type: mongoose.Types.ObjectId,
-        ref: "Cart",
-        required: true,
+    cart: {
+      type: mongoose.Types.ObjectId,
+      ref: "Cart",
+      required: true,
     },
-    attribute:{
+    attribute: {
       type: mongoose.Types.ObjectId,
       ref: "Attribute",
+      default: null
+    },
+    is_simple: {
+      type: Boolean,
       required: true,
-      unique: true,
+      default: false,
     },
   },
   {
@@ -32,6 +36,6 @@ const CartItemSchema = new mongoose.Schema(
   }
 );
 
-const CartItemModel = mongoose.model<IProductCart>("CartItem", CartItemSchema);
+const CartItemModel = mongoose.model("CartItem", CartItemSchema);
 
 export default CartItemModel;

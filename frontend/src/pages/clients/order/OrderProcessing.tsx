@@ -13,8 +13,6 @@ const OrderProcessing = () => {
 		const fetchData = async () => {
 			try {
 				const data = await returnUrlVnPay(searchParams.toString());
-				console.log("data", data);
-
 				if (data?.data?.type === 3) {
 					navigate("/order/success");
 					return data;
@@ -34,7 +32,7 @@ const OrderProcessing = () => {
 	}, [paramsObject]);
 	return (
 		<div className="flex flex-col justify-center items-center gap-5 py-[280px]">
-			<FaSpinner size={80} className="animate-spin text-blue-400" />
+			<FaSpinner size={80} className="text-blue-400 animate-spin" />
 			<p className="font-semibold">
 				Đơn hàng của bạn đang được xử lý . Vui lòng chờ trong giây lát
 			</p>

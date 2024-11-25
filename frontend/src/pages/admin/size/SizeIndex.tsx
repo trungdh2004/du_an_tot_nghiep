@@ -2,7 +2,7 @@ import TableComponent from "@/components/common/TableComponent";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { paddingCate } from "@/service/category-admin";
-import {  SearchObjectTypeSize } from "@/types/searchObjecTypes";
+import { SearchObjectTypeSize } from "@/types/searchObjecTypes";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import React, { useEffect, useState } from "react";
 import { parseISO, format } from "date-fns";
@@ -226,7 +226,7 @@ const SizeIndex = () => {
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.createdAt);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
-				return <div className="font-medium">{formattedDate}</div>;
+				return <div className="">{formattedDate}</div>;
 			},
 		},
 		{

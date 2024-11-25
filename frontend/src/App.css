@@ -11,6 +11,16 @@ header .sub-menu::after {
 	height: 40px;
 }
 
+.link-mention {
+	display: inline-block;
+	border-radius: 16px;
+	color: rgb(0, 147, 252);
+	font-weight: 600;
+	font-size: 14px;
+	text-align: center;
+	cursor: pointer;
+}
+
 .box-shadow {
 	box-shadow:
 		rgba(191, 197, 203, 0.22) 0px 0px 2px 0px,
@@ -88,6 +98,19 @@ header .sub-menu::after {
 	100% {
 		transform: translateX(100%) scaleX(0.5);
 	}
+}
+
+.react-select__menu-list::-webkit-scrollbar {
+	width: 4px; /* Độ rộng của thanh cuộn */
+}
+
+.react-select__menu-list::-webkit-scrollbar-track {
+	background-color: transparent;
+}
+
+.react-select__menu-list::-webkit-scrollbar-thumb {
+	background-color: rgba(137, 137, 137, 0.266);
+	border-radius: 8px;
 }
 
 /* CSS React Select */
@@ -180,19 +203,176 @@ header .sub-menu::after {
 
 .mapboxgl-control-container {
 	display: none;
-
 }
 .selection-box-tick::before {
-	border: 30px solid transparent;
-	border-bottom: 30px solid #3b82f6;
+	border: 38px solid transparent;
+	border-bottom: 23px solid #ff5b2c;
 	bottom: 0;
 	content: "";
 	position: absolute;
-	right: -40px;
+	right: -44px;
 }
 [contenteditable="true"]:empty:before {
 	content: attr(data-placeholder);
 	pointer-events: none;
 	display: block; /* For Firefox */
 	color: #aaa;
+}
+
+.fr-body .fr-second-toolbar {
+	display: none;
+}
+.fr-body .fr-newline {
+	display: none !important;
+}
+.fr-body .fr-element.fr-view {
+	padding: 2px 8px !important;
+	/* border:1px solid #ccc; */
+}
+.fr-body .fr-toolbar {
+	padding: 4px 0;
+	border: none !important;
+}
+.fr-body .fr-command.fr-btn {
+	margin: 0 !important;
+	padding: 4px !important;
+	height: auto !important;
+}
+.fr-body .fr-wrapper {
+	border: none !important;
+	border-radius: 0 0 10px 10px !important;
+}
+
+.fr-body .fr-box {
+	border: 1px solid #ccc !important;
+	border-radius: 10px;
+}
+
+.fr-body .fr-command.fr-btn > svg {
+	width: 18px !important;
+	height: 18px !important;
+	margin: 0 !important;
+}
+
+.fr-body .fr-box.fr-basic.fr-top {
+	width: 100%;
+}
+
+.link {
+	color: #0093fc;
+	text-decoration: underline;
+}
+
+.bg-magic {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 0;
+}
+
+.bg-magic::after {
+	content: "";
+	position: absolute;
+	z-index: -2;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: #fff;
+}
+.bg-magic::before {
+	content: "";
+	position: absolute;
+	z-index: -1;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	opacity: 0.08;
+	background-image: radial-gradient(#ffffff40, #fff0 40%),
+		radial-gradient(
+			hsl(44, 100%, 66%) 30%,
+			hsl(338, 68%, 65%),
+			hsla(338, 68%, 65%, 0.4) 41%,
+			transparent 52%
+		),
+		radial-gradient(hsl(272, 100%, 60%) 37%, transparent 46%),
+		linear-gradient(155deg, transparent 65%, hsl(142, 70%, 49%) 95%),
+		linear-gradient(45deg, #0065e0, #0f8bff);
+	background-size:
+		200% 200%,
+		285% 500%,
+		285% 500%,
+		cover,
+		cover;
+	background-position:
+		bottom left,
+		109% 68%,
+		109% 68%,
+		center,
+		center;
+}
+
+.bg-magic-img {
+	background-image: radial-gradient(#ffffff40, #fff0 40%),
+		radial-gradient(
+			hsl(44, 100%, 66%) 30%,
+			hsl(338, 68%, 65%),
+			hsla(338, 68%, 65%, 0.4) 41%,
+			transparent 52%
+		),
+		radial-gradient(hsl(272, 100%, 60%) 37%, transparent 46%),
+		linear-gradient(155deg, transparent 65%, hsl(142, 70%, 49%) 95%),
+		linear-gradient(45deg, #0065e0, #0f8bff);
+	background-size:
+		200% 200%,
+		285% 500%,
+		285% 500%,
+		cover,
+		cover;
+	background-position:
+		bottom left,
+		109% 68%,
+		109% 68%,
+		center,
+		center;
+}
+
+.run-text {
+	position: absolute;
+	overflow: hidden;
+	white-space: nowrap;
+	box-sizing: border-box;
+	animation: chaychu 18s linear infinite;
+	width: 100%;
+	transform: translateX(100%);
+	/* width: calc(100%/3); */
+	/* width: 100%; */
+}
+
+.run-text.text-1 {
+	animation-delay: 0;
+}
+.run-text.text-2 {
+	animation-delay: 6s;
+}
+.run-text.text-3 {
+	animation-delay: 12s;
+}
+
+@keyframes chaychu {
+	0% {
+		transform: translateX(100%);
+	}
+	100% {
+		transform: translateX(-200%);
+	}
+}
+
+
+.rdp-vhidden {
+	display: none;
+	width: 100%;
 }

@@ -1,18 +1,23 @@
 import { formatCurrency } from "@/common/func";
-import StarRatings from "react-star-ratings";
-import ListColor from "./ListColor";
-import ListSize from "./ListSize";
+import ButtonLoading from "@/components/common/ButtonLoading";
 import InputQuantity from "@/components/common/InputQuantity";
 import { Button } from "@/components/ui/button";
-import { MdOutlineAddShoppingCart } from "react-icons/md";
-import { useEffect, useState, useCallback, useMemo } from "react";
-import { IProductDetail } from "@/types/product";
-import ButtonLoading from "@/components/common/ButtonLoading";
-import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-import { addProductToCart } from "@/service/cart";
-import { AxiosError } from "axios";
+import { useAuth } from "@/hooks/auth";
+import { useFetchNewProductsInTheCart } from "@/hooks/cart";
+import { useCurrentRouteAndNavigation } from "@/hooks/router";
 import useCartAnimation from "@/hooks/useCartAnimation";
+import { cn } from "@/lib/utils";
+import { addProductToCart, buyNowSevices, pagingCartV2 } from "@/service/cart";
+import useCart from "@/store/cart.store";
+import { IProductDetail } from "@/types/product";
+import { AxiosError } from "axios";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { MdOutlineAddShoppingCart } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import StarRatings from "react-star-ratings";
+import { toast } from "sonner";
+import ListColor from "./ListColor";
+import ListSize from "./ListSize";
 
 type Props = {
 	product?: IProductDetail;
@@ -34,7 +39,11 @@ interface IStateInfoProduct {
 }
 
 const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
+	const { isLoggedIn } = useAuth();
+	const navigate = useNavigate();
 	const { startAnimation, RenderAnimation } = useCartAnimation();
+	const navigateIsLogin = useCurrentRouteAndNavigation();
+	const { updateTotalCart, setCarts } = useCart();
 	const [stateInfoProduct, setStateInfoProduct] = useState<IStateInfoProduct>({
 		listColorExist: [],
 		listSizeExist: [],
@@ -42,6 +51,10 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 	const [exitsListSize, setExitsListSize] = useState<string[]>([]);
 	const [exitsListColor, setExitsListColor] = useState<string[]>([]);
 	const [totalQuantity, setTotalQuantity] = useState(0);
+	const [price, setPrice] = useState({
+		origin: product?.price,
+		discount: product?.discount,
+	});
 	const [chooseColorId, setChooseColorId] = useState("");
 	const [chooseSizeId, setChooseSizeId] = useState("");
 	const [attributeId, setAttributeId] = useState("");
@@ -51,6 +64,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 		isLoadingBynow: false,
 	});
 	const [isErrorAttribute, setIsErrorAttribute] = useState<boolean>(false);
+	const { fetchNewProductsInTheCart } = useFetchNewProductsInTheCart();
 	useMemo(() => {
 		const updateQuantityAndAttribute = () => {
 			if (chooseColorId && chooseSizeId) {
@@ -59,23 +73,39 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						attribute?.color?._id === chooseColorId &&
 						attribute?.size?._id === chooseSizeId,
 				);
+				setPrice({
+					origin: currentAttribute?.price as number,
+					discount: currentAttribute?.discount as number,
+				});
 				setIsErrorAttribute(false);
-				setAttributeId(currentAttribute?._id || "");
-				setTotalQuantity(currentAttribute?.quantity || product?.quantity || 0);
+				setAttributeId(currentAttribute?._id || "");        
+				setTotalQuantity(currentAttribute?.quantity as number);
 			} else if (chooseSizeId) {
 				const quantity = product?.listSize?.find(
 					(size) => size?.sizeId === chooseSizeId,
 				)?.quantity;
+				setPrice({
+					origin: product?.price as number,
+					discount: product?.discount as number,
+				});
 				setAttributeId("");
-				setTotalQuantity(quantity || product?.quantity || 0);
+				setTotalQuantity(quantity as number);
 			} else if (chooseColorId) {
 				const quantity = product?.listColor?.find(
 					(color) => color?.colorId === chooseColorId,
 				)?.quantity;
-				setTotalQuantity(quantity || product?.quantity || 0);
+				setPrice({
+					origin: product?.price as number,
+					discount: product?.discount as number,
+				});
+				setTotalQuantity(quantity as number);
 				setAttributeId("");
 			} else {
-				setTotalQuantity(product?.quantity || 0);
+				setPrice({
+					origin: product?.price as number,
+					discount: product?.discount as number,
+				});
+				setTotalQuantity(product?.quantity as number);
 				setAttributeId("");
 			}
 		};
@@ -112,8 +142,25 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 		setTotalQuantity(product?.quantity || 0);
 	}, [product, handleStateInfoProduct]);
 	const handleOrderProduct = async (action: "add-to-cart" | "buy-now") => {
-		if (!attributeId) {
+		if (!isLoggedIn) {
+			return navigateIsLogin();
+		}
+		if (!attributeId && !product?.is_simple) {
 			setIsErrorAttribute(true);
+			return;
+		}
+		const isOutOfStock = (quantity: number) => quantity <= 0;
+		const isSimpleProductOutOfStock =
+			product?.is_simple && isOutOfStock(product.quantity);
+		const currentProductAttribute = product?.attributes?.find(
+			(attribute) => attribute._id === attributeId,
+		);
+
+		if (
+			isSimpleProductOutOfStock ||
+			(attributeId && isOutOfStock(currentProductAttribute?.quantity as number))
+		) {
+			toast.error("Sản phẩm này tạm thời hết hàng");
 			return;
 		}
 		switch (action) {
@@ -123,22 +170,23 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						isLoadingBynow: false,
 						isLoadingShopping: true,
 					});
-					const { data } = await addProductToCart({
-						attribute: attributeId,
+					await addProductToCart({
+						attribute: attributeId || null,
 						productId: product?._id as string,
 						quantity: purchaseQuantity,
 					});
+					const { data: dataCarts } = await pagingCartV2();
 					setIsLoadingButton({
 						isLoadingBynow: false,
 						isLoadingShopping: false,
 					});
-					document.querySelector(".ablum-detail-product");
+					setCarts(dataCarts?.listData);
 					const itemElement = document.querySelector(
-						".ablum-detail-product",
+						".album-detail-product",
 					) as HTMLDivElement;
 					startAnimation(itemElement, product?.thumbnail as string);
-					toast.message(data?.message);
-					console.log("Add to cart");
+					updateTotalCart(purchaseQuantity);
+					fetchNewProductsInTheCart();
 				} catch (error) {
 					if (error instanceof AxiosError) {
 						toast.error(error?.response?.data?.message);
@@ -147,7 +195,18 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 
 				break;
 			case "buy-now":
-				console.log("Buy now");
+				try {
+					const { data } = await buyNowSevices({
+						attribute: attributeId || null,
+						productId: product?._id as string,
+						quantity: Number(purchaseQuantity),
+					});
+					navigate(`/order?state=${data?.url}`);
+				} catch (error) {
+					if (error instanceof AxiosError) {
+						toast.error(error?.response?.data?.message);
+					}
+				}
 				break;
 			default:
 				toast.error("Hành động không hợp lệ vui lòng thử lại!");
@@ -158,22 +217,22 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 		<>
 			{RenderAnimation()}
 			<div className="w-full pt-10">
-				<div className="space-y-3 md:space-y-5 w-full">
+				<div className="w-full space-y-3 md:space-y-5">
 					<div className="space-y-0.5 p-1.5 w-full">
-						<p className="uppercase text-xs">
+						<p className="text-xs uppercase">
 							Danh mục: <span>{product?.category?.name}</span>
 						</p>
-						<h2 className="uppercase text-xl  text-wrap w-full">
+						<h2 className="w-full text-xl font-medium uppercase text-wrap">
 							{product?.name}
 						</h2>
 						<div className="flex items-center capitalize text-sm text-[#767676] [&>p]:px-4  [&>*]:border-r [&>*]:border-[#00000024]">
 							<div className="flex items-end gap-1 pr-4">
-								<span className="border-b border-blue-500 text-blue-500 font-medium">
-									3.5
+								<span className="font-medium border-b text-custom border-custom">
+									{product?.rating}
 								</span>
 								<div className="pb-0.5 flex w-max">
 									<StarRatings
-										rating={3.5}
+										rating={product?.rating}
 										numberOfStars={5}
 										starDimension="14px"
 										starSpacing="0.5px"
@@ -182,55 +241,80 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 								</div>
 							</div>
 							<p className="flex items-center gap-1 text-nowrap max-md:border-none">
-								<span className="text-black font-medium">7</span>
+								<span className="font-medium text-black">
+									{product?.ratingCount}
+								</span>
 								Đánh giá
 							</p>
-							<p className="hidden md:flex items-center gap-1 text-nowrap">
-								<span className="text-black font-medium">
+							<p className="items-center hidden gap-1 md:flex text-nowrap">
+								<span className="font-medium text-black">
 									{product?.quantitySold}
 								</span>
 								Đã bán
 							</p>
-							<p className="hidden md:flex items-center gap-1 border-none text-nowrap">
-								<span className="text-black font-medium">7</span>
+							<p className="items-center hidden gap-1 border-none md:flex text-nowrap">
+								<span className="font-medium text-black">
+									{product?.viewCount}
+								</span>
 								Lượt xem
 							</p>
 						</div>
 					</div>
 					<div className="flex items-end gap-5 bg-[#fafafa] py-4 px-5 w-full">
-						<span className="text-gray-500 text-base line-through">
-							{formatCurrency(900000)}
+						<span
+							className={cn(
+								"text-base text-gray-500 line-through",
+								price?.origin == price?.discount && "hidden",
+							)}
+						>
+							{formatCurrency(price?.origin || 0)}
 						</span>
-						<p className="text-2xl font-medium text-blue-500">
-							{formatCurrency(product?.price || 0)}
+						<p className="text-2xl font-medium text-custom">
+							{formatCurrency(price?.discount || 0)}
 						</p>
-						<span className="capitalize text-sm text-white font-medium bg-blue-500 px-1 py-0.5 rounded">
+						<span className=" hidden capitalize text-sm text-white font-medium bg-custom-500 px-1 py-0.5 rounded">
 							34% giảm
 						</span>
 					</div>
 					<div className="w-full space-y-3 md:space-y-5">
+						<p
+							className={cn(
+								" p-1.5 text-red-500 hidden text-xs",
+								product?.is_simple && "block",
+							)}
+						>
+							*Lưu ý: Đây là Sản phẩm tiêu chuẩn, không có tùy chọn màu và kích
+							thước sản phẩm
+						</p>
 						<div
 							className={cn(
 								"space-y-5 p-1.5 w-full",
-								isErrorAttribute && "bg-red-50",
+								isErrorAttribute && "bg-custom-50",
 							)}
 						>
-							<ListColor
-								listColorExist={stateInfoProduct?.listColorExist}
-								onChoose={setChooseColorId}
-								setExitsListSize={setExitsListSize}
-								exitsListColor={exitsListColor}
-								setTotalQuantity={setTotalQuantity}
-							/>
-							<ListSize
-								listSizeExist={stateInfoProduct?.listSizeExist}
-								onChoose={setChooseSizeId}
-								exitsListSize={exitsListSize}
-								setExitsListColor={setExitsListColor}
-								setTotalQuantity={setTotalQuantity}
-							/>
-							<div className="flex max-md:flex-col max-md:gap-3 items-start md:items-center">
-								<h3 className="font-normal text-base text-gray-500 min-w-28 max-w-28">
+							<div
+								className={cn(
+									"w-full block space-y-3 md:space-y-5",
+									product?.is_simple && "hidden",
+								)}
+							>
+								<ListColor
+									listColorExist={stateInfoProduct?.listColorExist}
+									onChoose={setChooseColorId}
+									setExitsListSize={setExitsListSize}
+									exitsListColor={exitsListColor}
+									setTotalQuantity={setTotalQuantity}
+								/>
+								<ListSize
+									listSizeExist={stateInfoProduct?.listSizeExist}
+									onChoose={setChooseSizeId}
+									exitsListSize={exitsListSize}
+									setExitsListColor={setExitsListColor}
+									setTotalQuantity={setTotalQuantity}
+								/>
+							</div>
+							<div className="flex items-start max-md:flex-col max-md:gap-3 md:items-center">
+								<h3 className="text-base font-normal text-gray-500 min-w-28 max-w-28">
 									Số lượng
 								</h3>
 								<div className="flex items-center gap-3">
@@ -242,9 +326,15 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 										className="bg-white"
 										size="responsive"
 									/>
-									<span className="text-gray-600 text-sm md:text-base">
-										{totalQuantity} sản phẩm có sẵn
-									</span>
+									{totalQuantity > 0 ? (
+										<span className="text-sm text-gray-600 md:text-base">
+											{totalQuantity} sản phẩm có sẵn
+										</span>
+									) : (
+										<span className="text-sm text-red-500 md:text-base">
+											*Hết hàng
+										</span>
+									)}
 								</div>
 							</div>
 							<span
@@ -258,8 +348,12 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						</div>
 						<div className="flex items-center gap-3 p-1.5 w-full">
 							<Button
-								className="bg-blue-500 hover:bg-blue-700 px-5"
+								className={cn(
+									"px-5 bg-custom-500 hover:bg-custom-700",
+									totalQuantity <= 0 && "opacity-30",
+								)}
 								onClick={() => handleOrderProduct("buy-now")}
+								disabled={totalQuantity <= 0}
 							>
 								{isLoadingButton.isLoadingBynow ? (
 									<ButtonLoading type="white" />
@@ -268,7 +362,11 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 								)}
 							</Button>
 							<Button
-								className="bg-blue-100 hover:bg-blue-50 flex items-center gap-1.5 text-blue-500"
+								disabled={totalQuantity <= 0}
+								className={cn(
+									"bg-custom-50 hover:bg-custom-100 flex items-center gap-1.5 text-custom",
+									totalQuantity <= 0 && "opacity-30",
+								)}
 								onClick={() => handleOrderProduct("add-to-cart")}
 							>
 								{isLoadingButton.isLoadingShopping ? (

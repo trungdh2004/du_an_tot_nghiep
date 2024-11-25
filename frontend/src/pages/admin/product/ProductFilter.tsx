@@ -12,22 +12,21 @@ import { getAllColor } from "@/service/color";
 import { getAllSize } from "@/service/size-admin";
 import { ICategory } from "@/types/category";
 import { IColor, ISize } from "@/types/variants";
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { IoFilter } from "react-icons/io5";
-import numeral from 'numeral';
+import numeral from "numeral";
 import { IFilterProduct } from "@/types/product";
 import { GrPowerReset } from "react-icons/gr";
 import { TooltipComponent } from "@/components/common/TooltipComponent";
-import { FaSortAmountDownAlt, FaSortAmountUp  } from "react-icons/fa";
-
+import { FaSortAmountDownAlt, FaSortAmountUp } from "react-icons/fa";
 
 interface IProps {
 	onSubmit: (obj: IFilterProduct) => void;
 }
 
-interface IListName  {
+interface IListName {
 	value: string;
-	label:string
+	label: string;
 }
 
 interface IData {
@@ -35,32 +34,32 @@ interface IData {
 		_id: string;
 		name: string;
 	};
-	min: string ;
-	max: string ;
+	min: string;
+	max: string;
 	color: IColor[] | [];
 	size: ISize[] | [];
 	sort: -1 | 1;
-	fieldSort: IListName
+	fieldSort: IListName;
 }
 
-const listField:IListName[]= [
+const listField: IListName[] = [
 	{
-		value:"price",
-		label:"Giá"
+		value: "price",
+		label: "Giá",
 	},
 	{
-		value:"discount",
-		label:"Giá KM"
+		value: "discount",
+		label: "Giá KM",
 	},
 	{
-		value:"quantity",
-		label:"Số lượng"
+		value: "quantity",
+		label: "Số lượng",
 	},
 	{
-		value:"quantitySold",
-		label:"Số lượng bán"
+		value: "quantitySold",
+		label: "Số lượng bán",
 	},
-]
+];
 
 const ProductFilter = ({ onSubmit }: IProps) => {
 	const [categorys, setCategorys] = useState<ICategory[]>([]);
@@ -75,11 +74,11 @@ const ProductFilter = ({ onSubmit }: IProps) => {
 		max: "",
 		color: [],
 		size: [],
-		sort:-1,
-		fieldSort:{
-			value:"",
-			label:""
-		}
+		sort: -1,
+		fieldSort: {
+			value: "",
+			label: "",
+		},
 	});
 
 	useEffect(() => {
@@ -101,18 +100,18 @@ const ProductFilter = ({ onSubmit }: IProps) => {
 		})();
 	}, []);
 
-	const handleSubmit =() => {
-		const value= {
-			category:data.category?._id || null,
-			min:data.min ? +data.min.replace(/,/g, '') : null,
-			max:data.max ? +data.max.replace(/,/g, '') : null,
-			color:data.color?.map(item => item._id),
-			size:data.size?.map(item => item._id),
-			fieldSort:data.fieldSort.value,
-			sort:data.sort
-		}
-		onSubmit(value as IFilterProduct)
-	}
+	const handleSubmit = () => {
+		const value = {
+			category: data.category?._id || null,
+			min: data.min ? +data.min.replace(/,/g, "") : null,
+			max: data.max ? +data.max.replace(/,/g, "") : null,
+			color: data.color?.map((item) => item._id),
+			size: data.size?.map((item) => item._id),
+			fieldSort: data.fieldSort.value,
+			sort: data.sort,
+		};
+		onSubmit(value as IFilterProduct);
+	};
 
 	return (
 		<Popover>
@@ -121,7 +120,11 @@ const ProductFilter = ({ onSubmit }: IProps) => {
 					<IoFilter size={20} className="cursor-pointer" />
 				</div>
 			</PopoverTrigger>
-			<PopoverContent align="end" side="bottom" className="md:min-w-[400px] max-w-[80wh] p-2 overflow-y-auto">
+			<PopoverContent
+				align="end"
+				side="bottom"
+				className="md:min-w-[400px] max-w-[80wh] p-2 "
+			>
 				<div className="grid grid-cols-2 gap-2">
 					<SelectComponent<ICategory>
 						value={data.category}
@@ -153,25 +156,33 @@ const ProductFilter = ({ onSubmit }: IProps) => {
 					<div className="">
 						<Label htmlFor="category">Giá tiền</Label>
 						<div className="grid grid-cols-5 ">
-							<Input  className="col-span-2 p-1 rounded" value={data.min} onChange={e => {
-								const numericValue = e.target.value.replace(/[^0-9]/g, '');
-								const rawValue = numericValue.replace(/,/g, '');
-								setData(prev => ({
-									...prev,
-									min:numeral(rawValue).format('0,0'),
-								}))
-							}}/>
+							<Input
+								className="col-span-2 p-1 rounded"
+								value={data.min}
+								onChange={(e) => {
+									const numericValue = e.target.value.replace(/[^0-9]/g, "");
+									const rawValue = numericValue.replace(/,/g, "");
+									setData((prev) => ({
+										...prev,
+										min: numeral(rawValue).format("0,0"),
+									}));
+								}}
+							/>
 							<div className="col-span-1 flex items-center justify-center">
 								-&gt;
 							</div>
-							<Input  className="col-span-2 p-1 rounded" value={data.max} onChange={e => {
-								const numericValue = e.target.value.replace(/[^0-9]/g, '');
-								const rawValue = numericValue.replace(/,/g, '');
-								setData(prev => ({
-									...prev,
-									max:numeral(rawValue).format('0,0'),
-								}))
-							}}/>
+							<Input
+								className="col-span-2 p-1 rounded"
+								value={data.max}
+								onChange={(e) => {
+									const numericValue = e.target.value.replace(/[^0-9]/g, "");
+									const rawValue = numericValue.replace(/,/g, "");
+									setData((prev) => ({
+										...prev,
+										max: numeral(rawValue).format("0,0"),
+									}));
+								}}
+							/>
 						</div>
 					</div>
 					<div className="col-span-2">
@@ -190,7 +201,7 @@ const ProductFilter = ({ onSubmit }: IProps) => {
 							getOptionLabel={(option) => {
 								return (
 									<div className="w-full flex items-center justify-between">
-										{option.name} {" "}
+										{option.name}{" "}
 										<p
 											className="w-2 h-2 rounded-full ml-1"
 											style={{
@@ -221,74 +232,94 @@ const ProductFilter = ({ onSubmit }: IProps) => {
 						/>
 					</div>
 					<div className="col-span-1">
-					<SelectComponent<IListName>
-						value={data.fieldSort}
-						label="Sắp xếp theo"
-						onChange={(newValue: IListName | null, action) => {
-							if (action.action === "select-option") {
-								setData((prev) => ({
-									...prev,
-									fieldSort:{
-										value:newValue?.value as string,
-										label:newValue?.label as string
-									}
-								}));
-							}
-							if (action.action === "clear") {
-								setData((prev) => ({
-									...prev,
-									fieldSort:{
-										value:"",
-										label:""
-									}
-								}));
-							}
-						}}
-						options={listField}
-					/>
+						<SelectComponent<IListName>
+							value={data.fieldSort}
+							label="Sắp xếp theo"
+							onChange={(newValue: IListName | null, action) => {
+								if (action.action === "select-option") {
+									setData((prev) => ({
+										...prev,
+										fieldSort: {
+											value: newValue?.value as string,
+											label: newValue?.label as string,
+										},
+									}));
+								}
+								if (action.action === "clear") {
+									setData((prev) => ({
+										...prev,
+										fieldSort: {
+											value: "",
+											label: "",
+										},
+									}));
+								}
+							}}
+							options={listField}
+						/>
 					</div>
 					<div className="col-span-1">
 						<Label>Sắp xếp</Label>
-						<Button variant={"ghost"} className="w-full space-x-1 h-[38px] border" onClick={() => {
-							setData(prev => ({
-								...prev,
-								sort:prev.sort === 1 ? -1 : 1
-							}))
-						}}>
-							{data.sort === -1 ? <FaSortAmountDownAlt  size={20}/> : <FaSortAmountUp size={20}/>}
-							<span className="">{data.sort === -1 ? "Giảm dần" : "Tăng dần"}</span>
+						<Button
+							variant={"ghost"}
+							className="w-full space-x-1 h-[38px] border"
+							onClick={() => {
+								setData((prev) => ({
+									...prev,
+									sort: prev.sort === 1 ? -1 : 1,
+								}));
+							}}
+						>
+							{data.sort === -1 ? (
+								<FaSortAmountDownAlt size={20} />
+							) : (
+								<FaSortAmountUp size={20} />
+							)}
+							<span className="">
+								{data.sort === -1 ? "Giảm dần" : "Tăng dần"}
+							</span>
 						</Button>
 					</div>
 					<div className="col-span-2 flex justify-end gap-2">
 						<TooltipComponent label="Mặc định">
-							<Button variant={"destructive"} onClick={() => {
-								setData({
-									category: {
-										_id: "",
-										name: "",
-									},
-									min: "",
-									max: "",
-									color: [],
-									size: [],
-									fieldSort:{
-										label:"",
-										value:""
-									},
-									sort:data.sort
-								})
-								onSubmit({
-									category:"",
-									min:null,
-									max:null,
-									size:[],
-									color: [],
-									fieldSort:"",
-									sort:data.sort
-								})
-							}}><GrPowerReset className="" size={20}/></Button>
+							<Button
+								variant={"destructive"}
+								onClick={() => {
+									setData({
+										category: {
+											_id: "",
+											name: "",
+										},
+										min: "",
+										max: "",
+										color: [],
+										size: [],
+										fieldSort: {
+											label: "",
+											value: "",
+										},
+										sort: data.sort,
+									});
+									onSubmit({
+										category: "",
+										min: null,
+										max: null,
+										size: [],
+										color: [],
+										fieldSort: "",
+										sort: data.sort,
+									});
+								}}
+							>
+								<GrPowerReset className="" size={20} />
+							</Button>
 						</TooltipComponent>
-						<Button className="bg-blue-500 text-white hover:bg-blue-600" onClick={handleSubmit}>Tìm kiếm</Button>
+						<Button
+							className="bg-blue-500 text-white hover:bg-blue-600"
+							onClick={handleSubmit}
+						>
+							Tìm kiếm
+						</Button>
 					</div>
 				</div>
 			</PopoverContent>

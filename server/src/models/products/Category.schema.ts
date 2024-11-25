@@ -10,16 +10,23 @@ const CategorySchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
     },
     slug: {
       type: String,
       unique: true,
       index: true,
     },
+    thumbnail:{
+      type: String,
+      required: true,
+    },
     deleted: {
       type: Boolean,
       default: false,
+    },
+    active:{
+      type: Boolean,
+      default:false
     }
     // products: [
     //   {

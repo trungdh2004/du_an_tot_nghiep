@@ -14,7 +14,7 @@ interface LabelCheckedProps {
 	fontSize?: number;
 	children?: React.ReactNode;
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-	size?: "small" | "medium" | "large" | "responsive";
+	size?: "small" | "medium" | "large" | "responsive" | "mobile";
 }
 
 const LabelChecked: React.FC<LabelCheckedProps> = memo(
@@ -53,15 +53,16 @@ const LabelChecked: React.FC<LabelCheckedProps> = memo(
 			small: "h-10 text-sm",
 			medium: "h-12 text-base",
 			large: "h-14 text-lg",
-			responsive: "h-9 text-sm sm:h-12 sm:text-base md:h-12 md:text-lg",
+			responsive: "h-8 text-sm sm:h-10 sm:text-base md:h-10 md:text-base",
+			mobile: "h-8 text-xs !max-w-20",
 		};
 
 		const labelClasses = cn(
 			"relative overflow-hidden flex items-center justify-start border border-solid border-[#ccc] cursor-pointer rounded bg-white",
-			"hover:text-blue-500 hover:border-blue-500",
-			"has-[:checked]:text-blue-500 has-[:checked]:border-blue-500",
+			"hover:text-custom hover:border-custom",
+			"has-[:checked]:text-custom has-[:checked]:border-custom",
+			"lg:w-full min-w-16 md:max-w-28 lg:w-20",
 			sizeClasses[size],
-			"w-full max-w-28 lg:w-28",
 			disabled && "pointer-events-none opacity-70 bg-black/5",
 			className,
 		);
@@ -70,6 +71,7 @@ const LabelChecked: React.FC<LabelCheckedProps> = memo(
 			"color shadow-md rounded-full flex-shrink-0",
 			size === "small" ? "w-5 h-5" : "w-6 h-6",
 			size === "responsive" && "w-5 h-5 sm:w-5 sm:h-5 md:w-6 md:h-6",
+			size === "mobile" && "w-3.5 h-3.5",
 		);
 
 		const textClasses = cn(
@@ -95,16 +97,16 @@ const LabelChecked: React.FC<LabelCheckedProps> = memo(
 					value={value}
 					{...props}
 				/>
-				<div className="flex items-center justify-center w-full h-full px-3 gap-2">
+				<div className="flex items-center justify-center w-full h-full gap-2 px-3">
 					{haxColor && (
 						<span
 							style={{ backgroundColor: haxColor }}
 							className={colorSpanClasses}
 						/>
 					)}
-					<span className={textClasses}>{children}</span>
+					{children && <span className={textClasses}>{children}</span>}
 				</div>
-				<span className="selection-box-tick hidden absolute bottom-0 right-0 peer-checked:block">
+				<span className="absolute bottom-0 right-0 hidden selection-box-tick peer-checked:block">
 					<IoIosCheckmark
 						size={16}
 						color="#fff"
