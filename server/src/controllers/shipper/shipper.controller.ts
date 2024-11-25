@@ -715,7 +715,7 @@ class ShipperController {
         .limit(limit);
 
       const count = await OrderModel.countDocuments({
-        status: status,
+        ...queryStatus,
         shipper: id,
       });
 
