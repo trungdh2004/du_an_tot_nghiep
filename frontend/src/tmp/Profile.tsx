@@ -15,12 +15,12 @@ function ProfilePage() {
   const [isSaving, setIsSaving] = useState(false);
 
   const handleEditClick = () => {
-    setOriginalInfo({ ...userInfo });
+
     setIsEditing(true);
   };
 
   const handleCancelClick = () => {
-    setUserInfo(originalInfo || userInfo); // Phòng trường hợp `originalInfo` null
+    setUserInfo(originalInfo || userInfo);
     setErrors({});
     setIsEditing(false);
   };
@@ -48,7 +48,7 @@ function ProfilePage() {
     if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = () => {
-        setProfileImage(reader.result);
+
       };
       reader.onerror = () => {
         alert("Không thể tải ảnh. Vui lòng thử lại.");
@@ -72,9 +72,9 @@ function ProfilePage() {
 
   const saveToServer = async () => {
     try {
-      // Mock API
+
       console.log("Thông tin đang được lưu:", userInfo);
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Delay để giả lập API
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       alert("Thông tin đã được lưu thành công!");
     } catch (error) {
       alert("Có lỗi xảy ra khi lưu thông tin. Vui lòng thử lại.");
