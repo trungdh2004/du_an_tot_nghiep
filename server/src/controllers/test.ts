@@ -143,7 +143,7 @@ export const testVnPay = async (req: Request, res: Response) => {
 
 export const toolOrder = async (req: RequestModel, res: Response) => {
   try {
-    const { month, year, cartId, min, max } = req.body;
+    const { month, year, cartId, min, max, cancel, shipper } = req.body;
     const user = req.user;
 
     if (!month || !year || !cartId || cartId.length === 0) {
@@ -171,16 +171,35 @@ export const toolOrder = async (req: RequestModel, res: Response) => {
       });
     }
 
-    const existingShipper = await ShipperModel.findOne({
-      is_block: false,
-      active: true,
-    });
+    let shipperMain = null;
 
-    if (!existingShipper) {
+    if (shipper) {
+      shipperMain = await ShipperModel.findOne({
+        _id: shipper,
+        is_block: false,
+        active: true,
+      });
+    } else {
+      shipperMain = await ShipperModel.findOne({
+        is_block: false,
+        active: true,
+      });
+    }
+
+    if (!shipperMain) {
       return res.status(STATUS.BAD_REQUEST).json({
         message: "Đề nghị em tuyên tạo shipper",
       });
     }
+
+    let statusList = [0, 1];
+
+    if (cancel) {
+      statusList = [0, 1, 2, 3, 6];
+    } else {
+      statusList = [0, 1, 2, 3, 4, 5];
+    }
+
     const findLocationShop = await LocationModel.findOne();
 
     const longShop = findLocationShop?.long || long;
@@ -273,7 +292,7 @@ export const toolOrder = async (req: RequestModel, res: Response) => {
         : item.attribute.discount;
       return {
         product: item.product?._id,
-        status: 5,
+        status: cancel ? 6 : 5,
         variant: variant,
         price: price,
         quantity: item.quantity,
@@ -322,14 +341,14 @@ export const toolOrder = async (req: RequestModel, res: Response) => {
             note: "",
             code,
             orderItems: listIdOrderItem,
-            status: 5,
-            statusList: [0, 1, 2, 3, 4, 5],
+            status: cancel ? 6 : 5,
+            statusList: statusList,
             orderDate: dataListDate[i],
             confirmedDate: dataListDate[i],
             shippingDate: dataListDate[i],
             shippedDate: dataListDate[i],
             deliveredDate: dataListDate[i],
-            shipper: existingShipper._id || null,
+            shipper: shipperMain._id || null,
           });
 
           countOrder++;

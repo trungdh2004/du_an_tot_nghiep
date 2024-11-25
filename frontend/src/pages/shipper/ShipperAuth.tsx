@@ -38,6 +38,7 @@ import { registerShipper } from "@/service/shipper";
 import { IShipper } from "@/types/shipper.interface";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import CalendarYear from "@/components/common/CalendarYear";
 
 interface ICity {
 	idProvince: string;
@@ -333,7 +334,7 @@ const ShipperAuth = () => {
 																className="w-auto p-0"
 																align="start"
 															>
-																<Calendar
+																{/* <Calendar
 																	mode="single"
 																	selected={field.value}
 																	onSelect={field.onChange}
@@ -343,6 +344,16 @@ const ShipperAuth = () => {
 																	}
 																	initialFocus
 																	locale={vi}
+																/> */}
+																<CalendarYear
+																	value={field.value}
+																	onSelect={field.onChange}
+																	disabled={(date) =>
+																		date > new Date() ||
+																		date < new Date("1900-01-01")
+																	}
+																	initialFocus
+																	lengthYear={40}
 																/>
 															</PopoverContent>
 														</Popover>

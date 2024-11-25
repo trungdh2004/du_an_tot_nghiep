@@ -1,19 +1,18 @@
 import {
-	Bar,
-	BarChart,
-	LabelList,
-	ResponsiveContainer,
-	Tooltip,
-	TooltipProps,
-	XAxis,
-	YAxis,
+  Bar,
+  BarChart,
+  LabelList,
+  ResponsiveContainer,
+  Tooltip,
+  TooltipProps,
+  XAxis,
+  YAxis,
 } from "recharts";
 
 import { formatQuantity } from "@/common/localFunction";
 import { ChartConfig } from "@/components/ui/chart";
 import { getCountCategory } from "@/service/dashboard.service";
 import { useQuery } from "@tanstack/react-query";
-import CustomLabel from "@/components/common/CustomLabel";
 
 export const description = "A bar chart with a custom label";
 
@@ -116,6 +115,7 @@ export default function CategoryDashboard() {
 							layout="horizontal"
 							fill="#008cff"
 							radius={4}
+              
 						>
 							<LabelList
 								dataKey="categoryName"
@@ -139,7 +139,7 @@ export default function CategoryDashboard() {
 								}}
 							/>
 							<LabelList
-								dataKey="totalMoney"
+                dataKey="totalMoney"
 								position="insideRight"
 								content={(props) => {
 									const { x, y, value } = props;

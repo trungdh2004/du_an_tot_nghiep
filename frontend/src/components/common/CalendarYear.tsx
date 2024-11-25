@@ -12,11 +12,12 @@ import {
 } from "@/components/ui/select";
 
 interface Props {
-	value?: Date;
+	value?: Date ;
 	lengthYear?: number;
 	minYear?: number;
 	onSelect: (value?: Date) => void;
-	initialFocus: boolean;
+	initialFocus?: boolean;
+	disabled?: (date: Date) => boolean;
 }
 
 declare function DayPicker(props: Props): JSX.Element;
@@ -28,7 +29,7 @@ const CalendarYear = ({
 	lengthYear,
 	minYear,
 	onSelect,
-	...props
+	disabled,
 }: CalendarProps) => {
 	const [currentMonth, setCurrentMonth] = React.useState<Date | undefined>(
 		value,
@@ -117,7 +118,7 @@ const CalendarYear = ({
 					);
 				},
 			}}
-			{...props}
+			disabled={disabled}
 		/>
 	);
 };

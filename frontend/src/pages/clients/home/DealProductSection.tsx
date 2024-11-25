@@ -64,7 +64,7 @@ const DealProductSection: React.FC = () => {
 								</span>
 							</div>
 
-							<button className="px-8 py-3 text-white transition-colors rounded bg-custom hover:bg-custom-600">
+							<button className="px-2 py-1 text-white transition-colors rounded md:px-8 md:py-3 bg-custom hover:bg-custom-600">
 								Mua ngay
 							</button>
 						</div>

@@ -110,7 +110,7 @@ const Notification = ({
 									<DropdownMenuItem
 										className={cn(
 											" group mb-1 pr-5",
-											!item.isRead && "bg-custom-100/40",
+											!item.isRead && "bg-blue-100/40",
 										)}
 										onClick={async () => {
 											if (item.directType === TYPE_NOTIFICATION.ORDER) {
