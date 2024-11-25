@@ -39,10 +39,12 @@ const OrderSuccessIndex = () => {
 		try {
 			const pageNext = resultOrder.pageIndex + 1 || 2;
 			const { data } = await pagingOrderShipper(pageNext, 4);
-			setResultOrder({
-				content: data.content,
-				pageIndex: data.pageIndex,
-				totalPage: data.totalPage,
+			setResultOrder((prev: any) => {
+				return {
+					...prev,
+					content: [...prev.content, ...data.content],
+					pageIndex: data.pageIndex,
+				};
 			});
 		} catch (error) {}
 	};
@@ -77,7 +79,7 @@ const OrderSuccessIndex = () => {
 			<InfiniteScroll
 				dataLength={resultOrder.content.length} //This is important field to render the next resultOrder
 				next={handleNextPage}
-				hasMore={hasMore}
+				hasMore={resultOrder?.pageIndex !== resultOrder?.totalPage}
 				loader={<p className="text-center text-sm text-gray-400">Loading...</p>}
 				endMessage={<p style={{ textAlign: "center" }}></p>}
 				refreshFunction={() => {
