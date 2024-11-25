@@ -58,10 +58,10 @@ const Home = () => {
 					<span className="text-2xl font-bold">NC</span>
 				</div>
 				<div className="flex gap-4 mt-4 sm:mt-0">
-					<button className="bg-blue-500 text-white px-4 py-2 rounded-lg">
+					<button className="bg-custom-500 text-white px-4 py-2 rounded-lg">
 						Profile
 					</button>
-					<button className="bg-red-500 text-white px-4 py-2 rounded-lg">
+					<button className="bg-custom-500 text-white px-4 py-2 rounded-lg">
 						Logout
 					</button>
 				</div>

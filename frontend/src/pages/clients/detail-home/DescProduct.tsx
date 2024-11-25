@@ -16,8 +16,8 @@ const DescProduct = ({ description, isLoading }: Props) => {
 	const htmlContent = md.render(markdownContent as any);
 
 	return (
-		<div className="break-all bg-white p-4 rounded-md box-shadow">
-			<h3 className="text-xl py-4 font-medium border-b">Chi tiết sản phẩm :</h3>
+		<div className="p-4 break-all bg-white rounded-md box-shadow">
+			<h3 className="py-4 text-base font-medium border-b  md:text-xl">Chi tiết sản phẩm :</h3>
 			<div dangerouslySetInnerHTML={{ __html: htmlContent }} className="p-2"/>
 		</div>
 	);

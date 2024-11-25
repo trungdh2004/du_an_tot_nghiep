@@ -56,7 +56,7 @@ const CartGroup = ({
 						onCheckedChange={() =>
 							onGroupCheckedChange(cart.product._id as string)
 						}
-						className="data-[state=checked]:bg-red-500 border-gray-300 data-[state=checked]:border-red-500"
+						className="data-[state=checked]:bg-custom-500 border-gray-300 data-[state=checked]:border-red-500"
 					/>
 				</div>
 				<div className="flex items-center justify-between w-full min-w-0">
@@ -68,7 +68,7 @@ const CartGroup = ({
 					</Link>
 					<button
 						onClick={() => toggleEdit(cart?.product?._id as string)}
-						className="text-sm text-blue-500 md:hidden"
+						className="text-sm text-custom md:hidden"
 					>
 						{editingItemId == cart?.product?._id ? "Xong" : "Sửa"}
 					</button>
@@ -108,7 +108,7 @@ const CartGroup = ({
 						>
 							<div
 								onClick={() => setItemCart(item)}
-								className="absolute inset-y-0 top-[1.5px] bottom-[1.5px] right-0 w-20 bg-red-500 flex items-center justify-center"
+								className="absolute inset-y-0 top-[1.5px] bottom-[1.5px] right-0 w-20 bg-custom-500 flex items-center justify-center"
 							>
 								<button className="w-full h-full text-white">Xoá</button>
 							</div>

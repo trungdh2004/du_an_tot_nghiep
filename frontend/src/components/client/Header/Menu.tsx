@@ -8,7 +8,7 @@ const Menu = () => {
 					<NavLink
 						to="/"
 						className={({ isActive }) =>
-							`before:content-[''] before:absolute before:-bottom-1 before:left-0 before:h-[4px] before:bg-[#e46969] before:rounded-full before:transition-all before:duration-300 ${isActive ? "before:w-full" : "before:w-0 hover:before:w-full"}`
+							`before:content-[''] hover:text-custom before:absolute before:-bottom-1 before:left-0 before:h-[4px] before:bg-custom before:rounded-full before:transition-all before:duration-300 ${isActive ? "before:w-full text-custom" : "before:w-0 hover:before:w-full"}`
 						}
 					>
 						TRANG CHỦ
@@ -18,7 +18,7 @@ const Menu = () => {
 					<NavLink
 						to="/shop"
 						className={({ isActive }) =>
-							`before:content-[''] before:absolute before:-bottom-1 before:left-0 before:h-[4px] before:bg-[#e46969] before:rounded-full before:transition-all before:duration-300 ${isActive ? "before:w-full" : "before:w-0 hover:before:w-full"}`
+							`before:content-[''] hover:text-custom before:absolute before:-bottom-1 before:left-0 before:h-[4px]  before:bg-custom before:rounded-full before:transition-all before:duration-300 ${isActive ? "before:w-full text-custom" : "before:w-0 hover:before:w-full"}`
 						}
 					>
 						SẢN PHẨM
@@ -28,7 +28,7 @@ const Menu = () => {
 					<NavLink
 						to="/blogs"
 						className={({ isActive }) =>
-							`before:content-[''] before:absolute before:-bottom-1 before:left-0 before:h-[4px] before:bg-[#e46969] before:rounded-full before:transition-all before:duration-300 ${isActive ? "before:w-full" : "before:w-0 hover:before:w-full"}`
+							`before:content-[''] hover:text-custom before:absolute before:-bottom-1 before:left-0 before:h-[4px] before:bg-custom before:rounded-full before:transition-all before:duration-300 ${isActive ? "before:w-full text-custom" : "before:w-0 hover:before:w-full"}`
 						}
 					>
 						TIN TỨC
@@ -38,7 +38,7 @@ const Menu = () => {
 					<NavLink
 						to="/contacts"
 						className={({ isActive }) =>
-							`before:content-[''] before:absolute before:-bottom-1 before:left-0 before:h-[4px] before:bg-[#e46969] before:rounded-full before:transition-all before:duration-300 ${isActive ? "before:w-full" : "before:w-0 hover:before:w-full"}`
+							`before:content-[''] hover:text-custom before:absolute before:-bottom-1 before:left-0 before:h-[4px] before:bg-custom before:rounded-full before:transition-all before:duration-300 ${isActive ? "before:w-full text-custom" : "before:w-0 hover:before:w-full"}`
 						}
 					>
 						LIÊN HỆ
@@ -48,7 +48,7 @@ const Menu = () => {
 					<NavLink
 						to="/introduce"
 						className={({ isActive }) =>
-							`before:content-[''] before:absolute before:-bottom-1 before:left-0 before:h-[4px] before:bg-[#e46969] before:rounded-full before:transition-all before:duration-300 ${isActive ? "before:w-full" : "before:w-0 hover:before:w-full"}`
+							`before:content-[''] hover:text-custom before:absolute before:-bottom-1 before:left-0 before:h-[4px] before:bg-custom before:rounded-full before:transition-all before:duration-300 ${isActive ? "before:w-full text-custom" : "before:w-0 hover:before:w-full"}`
 						}
 					>
 						GIỚI THIỆU
@@ -61,4 +61,4 @@ const Menu = () => {
 
 export default Menu;
 
-// hover:border-blue-500 hover:text-blue-500 has-[.active]:border-blue-500 has-[.active]:text-blue-500 cursor-pointer
+// hover:border-custom hover:text-custom has-[.active]:border-custom has-[.active]:text-custom cursor-pointer

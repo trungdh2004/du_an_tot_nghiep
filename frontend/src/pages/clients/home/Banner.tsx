@@ -21,20 +21,26 @@ const Banner = () => {
 				</div>
 			</div>
 			<div className="w-full ">
-				<img src="/banner.webp" alt="" className="object-cover min-h-[240px] sm:min-h-[300px] object-right" />
+				<img
+					src="/banner.webp"
+					alt=""
+					className="object-cover min-h-[240px] sm:min-h-[300px] object-right"
+				/>
 			</div>
 			<div className=" lg:h-[120px] w-full  grid-cols-4 gap-4 padding hidden lg:grid border-b">
-				<div className="w-full flex items-center gap-2">
+				<div className="w-full flex items-center justify-center gap-2">
 					<div className="size-10 ">
 						{" "}
-						<img src="./runShipper.webp" alt="" />
+						<img src="./limited.webp" alt="" />
 					</div>
 					<div>
-						<h4 className="text-base font-semibold ">Miễn phí vận chuyển đơn từ 499K</h4>
-						<span className="text-xs md:text-sm">Nhận hàng trong 2-5 ngày</span>
+						<h4 className="text-base font-semibold ">
+							Sản phẩm được đồng kiểm
+						</h4>
+						<span className="text-xs md:text-sm">Uy tín chất lượng</span>
 					</div>
 				</div>
-				<div className="w-full flex items-center gap-2">
+				<div className="w-full flex items-center justify-center gap-2">
 					<div className="size-10 ">
 						{" "}
 						<img src="./runShipper.webp" alt="" />
@@ -44,24 +50,24 @@ const Banner = () => {
 						<span className="text-sm">Nhận hàng trong 2-5 ngày</span>
 					</div>
 				</div>
-				<div className="w-full flex items-center gap-2">
-					<div className="size-10 ">
+				<div className="w-full flex items-center justify-center gap-2">
+					<div className="size-12 ">
 						{" "}
-						<img src="./runShipper.webp" alt="" />
+						<img src="./COD.png" alt="" />
 					</div>
 					<div>
-						<h4 className="font-semibold ">Miễn phí vận chuyển đơn từ 499K</h4>
-						<span className="text-sm">Nhận hàng trong 2-5 ngày</span>
+						<h4 className="font-semibold ">Thanh toán khi nhận hàng (COD)</h4>
+						<span className="text-sm">Giao hàng toàn quốc</span>
 					</div>
 				</div>
-				<div className="w-full flex items-center gap-2">
+				<div className="w-full flex items-center justify-center gap-2">
 					<div className="size-10 ">
 						{" "}
-						<img src="./runShipper.webp" alt="" />
+						<img src="./back.webp" alt="" />
 					</div>
 					<div>
-						<h4 className="font-semibold ">Miễn phí vận chuyển đơn từ 499K</h4>
-						<span className="text-sm">Nhận hàng trong 2-5 ngày</span>
+						<h4 className="font-semibold ">Đăng kí tại NUCSHOP</h4>
+						<span className="text-sm">Nhận quà liền tay</span>
 					</div>
 				</div>
 			</div>

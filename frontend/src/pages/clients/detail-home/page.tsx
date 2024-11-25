@@ -15,6 +15,7 @@ import InfoProduct from "./InfoProduct";
 import ProductDetailsAndReviews from "./ProductDetailsAndReviews";
 import ProductRelated from "./ProductRelated";
 import { useState } from "react";
+import NotFound from "@/pages/NotFound";
 
 const DetailProduct = () => {
 	const { slug } = useParams();
@@ -29,8 +30,10 @@ const DetailProduct = () => {
 			return data?.data;
 		},
 	});
-	console.log(data);
 
+  if(!isLoading && Object.keys(data || {})?.length <= 0 ){
+    return <NotFound/>
+  }
 	return (
 		<div className="">
 			<div className="padding ">

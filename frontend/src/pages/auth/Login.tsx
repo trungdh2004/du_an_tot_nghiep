@@ -155,19 +155,19 @@ const Login = () => {
 
 						<Link
 							to={"/auth/forgot-password"}
-							className="mt-2 text-blue-500 float-end "
+							className="mt-2 text-custom float-end "
 						>
 							Quên mật khẩu ?
 						</Link>
 						<Button
 							type="submit"
-							className="w-full mt-3 mb-6 text-base font-bold text-white bg-blue-500 hover:bg-blue-400"
+							className="w-full mt-3 mb-6 text-base font-bold text-white bg-custom hover:bg-custom-500"
 						>
 							Đăng nhập
 						</Button>
 						<p className="text-center">
 							Bạn chưa có tài khoản ?{" "}
-							<Link to={"/auth/register"} className="text-blue-500">
+							<Link to={"/auth/register"} className="text-custom">
 								Đăng ký
 							</Link>
 						</p>

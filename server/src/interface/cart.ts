@@ -67,6 +67,7 @@ export interface Size {
 export interface ProductFindCart {
   is_simple: boolean;
   is_hot: boolean;
+  is_deleted:boolean;
   _id: string;
   name: string;
   price: number;

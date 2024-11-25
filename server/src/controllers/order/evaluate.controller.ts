@@ -38,9 +38,9 @@ class EvaluateController {
         });
       }
       const check = listOrderProduct?.some((orderItem: IOrderItem) => {
-        return orderItem.status !== 5 || orderItem?.is_evaluate;
+        return orderItem.status === 5 || orderItem?.is_evaluate;
       });
-      if (check) {
+      if (!check) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Đã đánh giá",
         });
@@ -72,7 +72,8 @@ class EvaluateController {
           $in: [...listId]
         }
       }, {
-        is_evaluate: true
+        is_evaluate: true,
+        status:5
       }, { new: true })
       const ratingCount = findProduct.ratingCount + rating
       const ratingQuantity = findProduct.ratingQuantity + 1

@@ -242,6 +242,7 @@ function ProfilePage() {
               <strong>Giới thiệu:</strong> {userInfo.bio}
             </p>
           </div>
+
         )}
       </div>
     </div>
