@@ -38,7 +38,10 @@ export const getDetailShipperById = (id: string) =>
 	instance.get(`/shipper/getDetailShipper/${id}`);
 export const pagingOrderShipperById = (
 	id: string,
-	{ pageIndex = 0, status = 1 },
+	{ pageIndex = 0, status = 1, pageSize = 10 },
 ) =>
-	instance.post(`/shipper/getDetailShipperAdmin/${id}`, { pageIndex, status });
-
+	instance.post(`/shipper/getDetailShipperAdmin/${id}`, {
+		pageIndex,
+		status,
+		pageSize,
+	});
