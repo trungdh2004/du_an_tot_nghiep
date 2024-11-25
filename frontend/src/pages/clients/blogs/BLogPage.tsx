@@ -4,11 +4,7 @@ import { cn } from "@/lib/utils";
 import { pagingBlogs } from "@/service/blog";
 import { getAllTags } from "@/service/tags-admin";
 import { SearchObjectBlog } from "@/types/searchObjecTypes";
-import {
-	keepPreviousData,
-	useQuery,
-	useQueryClient,
-} from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { FaCommentDots, FaEye, FaRegHeart } from "react-icons/fa";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
@@ -49,7 +45,6 @@ const BlogPage = () => {
 		tab: 1,
 		tags: searchParams.get("tags") || "",
 	});
-	const queryClient = useQueryClient();
 	const {
 		data: blogs,
 		isLoading,
