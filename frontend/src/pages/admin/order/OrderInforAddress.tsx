@@ -45,7 +45,7 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 	return (
 		<div className="col-span-1">
 			<div className="flex flex-col gap-5">
-				<div className="bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-100 box-shadow p-4">
+				<div className="bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-200 box-shadow p-4">
 					<h3 className="font-medium">Chi tiết</h3>
 					<div className="flex justify-between">
 						<p className="font-medium text-sm text-black">Mã đơn hàng</p>
@@ -71,11 +71,11 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 						</p>
 					</div>
 				</div>
-				<div className="bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-100 box-shadow p-4">
+				<div className="bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-200 box-shadow p-4">
 					<h3 className="font-medium">Ghi chú</h3>
 					<p className="text-sm w-40 break-words">{data.note}</p>
 				</div>
-				<div className="bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-100 box-shadow p-4">
+				<div className="bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-200 box-shadow p-4">
 					<h3 className="font-medium">Địa chỉ đặt hàng</h3>
 					<div className="flex justify-between">
 						<p className="font-medium text-sm text-black">Họ và tên</p>
@@ -90,7 +90,7 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 						<p className="text-sm w-44 break-words">{data?.address?.address}</p>
 					</div>
 				</div>
-				<div className="bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-100 box-shadow p-4">
+				<div className="bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-200 box-shadow p-4">
 					<h3 className="font-medium">Phương thức thanh toán</h3>
 					<div className="flex justify-between">
 						<p className="font-medium text-sm text-black">Phương thức</p>
@@ -129,7 +129,7 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 					)}
 				</div>
 				{data.status === 1 && (
-					<div className="bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-100 box-shadow p-4">
+					<div className="bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-200 box-shadow p-4">
 						<h3 className="font-medium">Xác nhận</h3>
 						<Button
 							className="bg-[#369de7] hover:bg-[#5eb3f0]"
@@ -142,20 +142,20 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 
 				<div
 					className={cn(
-						"bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-100 box-shadow p-4",
-						data.status !== 2 && "hidden",
+						"bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-200 box-shadow p-4",
+						(data.status === 1 || data.status === 6) && "hidden",
 					)}
 				>
 					<h3 className="font-medium">Lựa chọn giao hàng</h3>
-					{data.status === 2 &&
-						(data.shipper === null ? (
-							<Button
-								className="bg-[#369de7] hover:bg-[#5eb3f0]"
-								onClick={() => setOpen(true)}
-							>
-								Lựa chọn
-							</Button>
-						) : (
+					{data.status === 2 && data.shipper === null ? (
+						<Button
+							className="bg-[#369de7] hover:bg-[#5eb3f0]"
+							onClick={() => setOpen(true)}
+						>
+							Lựa chọn
+						</Button>
+					) : [2, 3, 4, 5].includes(data.status) && data.shipper !== null ? (
+						<div className="flex flex-col gap-4">
 							<div className="flex gap-5 items-center">
 								<img
 									src={data?.shipper?.avatar}
@@ -182,11 +182,19 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 									</span>
 								</div>
 							</div>
-						))}
+							{data?.status === 2 && (
+								<Button onClick={() => setOpen(true)} className="bg-custom-300 hover:bg-custom-400">
+									Thay đổi giao hàng
+								</Button>
+							)}
+						</div>
+					) : (
+						"Lỗi giá trị"
+					)}
 				</div>
 				<div
 					className={cn(
-						"bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-100 box-shadow p-4",
+						"bg-main rounded-md border flex gap-4 flex-col border-1 border-gray-200 box-shadow p-4",
 						data.status !== 1 && "hidden",
 					)}
 				>

@@ -26,7 +26,7 @@ const OrderInformation = ({ data, getOrderById }: any) => {
 		<div className="grid lg:grid-cols-3 md:grid-cols-3 grid-cols-1 gap-4">
 			<div className="lg:col-span-2 md:col-span-2 col-span-1 ">
 				<div className="flex flex-col gap-5">
-					<div className="bg-main rounded-md border border-1 border-gray-100 box-shadow p-4">
+					<div className="bg-main rounded-md border border-1 border-gray-200 box-shadow p-4">
 						<h3 className="font-medium">Sản phẩm đơn hàng</h3>
 						<Table>
 							<TableHeader>
@@ -71,7 +71,7 @@ const OrderInformation = ({ data, getOrderById }: any) => {
 							</TableFooter>
 						</Table>
 					</div>
-					<div className="bg-main rounded-md border border-1 border-gray-100 box-shadow p-4">
+					<div className="bg-main rounded-md border border-1 border-gray-200 box-shadow p-4">
 						<h3 className="pb-5 font-medium">Thông tin thanh toán</h3>
 						<hr />
 						<div className="flex flex-col gap-4">

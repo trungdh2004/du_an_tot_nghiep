@@ -10,7 +10,7 @@ const OrderTracking = ({ data }: any) => {
 
 	return (
 		<div className="bg-main rounded-lg  box-shadow p-5 border border-1 border-gray-200">
-			<h3 className="my-5">Chi tiết theo dõi đơn hàng</h3>
+			<h3 className="mb-5">Chi tiết theo dõi đơn hàng</h3>
 			<div className="lg:flex md:flex sm:flex hidden items-center justify-between w-full">
 				<div className="relative flex flex-col items-center">
 					<div className="w-10 h-10 flex items-center justify-center">

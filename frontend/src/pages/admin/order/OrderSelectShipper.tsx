@@ -25,7 +25,11 @@ const OrderSelectShipper = ({
 	pageIndex,
 	setPageIndex,
 }: Props) => {
-	const [shipper, setShipper] = useState<string | undefined>(undefined);
+	console.log(dataOrderId);
+
+	const [shipper, setShipper] = useState<string | undefined>(
+		dataOrderId?.shipper?._id,
+	);
 	const id = dataOrderId._id;
 	const handleSelectShipper = async () => {
 		try {
