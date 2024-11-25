@@ -230,7 +230,7 @@ class DashboardController {
         // Sắp xếp theo tổng doanh thu giảm dần
         { $sort: { totalMoney: -1 } },
         // Giới hạn kết quả trả về, có thể thay đổi tùy thuộc vào số lượng danh mục
-        { $limit: 10 },
+        { $limit: 5 },
         // Kết hợp với thông tin chi tiết của category từ collection Category
         {
           $lookup: {

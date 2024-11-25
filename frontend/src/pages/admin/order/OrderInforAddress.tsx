@@ -9,6 +9,8 @@ import OrderSelectShipper from "./OrderSelectShipper";
 import { cn } from "@/lib/utils";
 import OrderCancelConfirm from "./OrderCancelConfirm";
 import { toast } from "sonner";
+import { FaUserEdit } from "react-icons/fa";
+import { TooltipComponent } from "@/components/common/TooltipComponent";
 
 const OrderInforAddress = ({ data, getOrderById }: any) => {
 	const [pageIndex, setPageIndex] = useState(1);
@@ -146,7 +148,19 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 						(data.status === 1 || data.status === 6) && "hidden",
 					)}
 				>
-					<h3 className="font-medium">Lựa chọn giao hàng</h3>
+					<div className="flex justify-between items-center">
+						<h3 className="font-medium">Lựa chọn giao hàng</h3>
+						{data?.status === 2 && data.shipper !== null && (
+							<TooltipComponent label="Đổi shipper">
+								<div onClick={() => setOpen(true)}>
+									<FaUserEdit
+										size={20}
+										className="text-blue-500 cursor-pointer"
+									/>
+								</div>
+							</TooltipComponent>
+						)}
+					</div>
 					{data.status === 2 && data.shipper === null ? (
 						<Button
 							className="bg-[#369de7] hover:bg-[#5eb3f0]"
@@ -182,11 +196,6 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 									</span>
 								</div>
 							</div>
-							{data?.status === 2 && (
-								<Button onClick={() => setOpen(true)} className="bg-custom-300 hover:bg-custom-400">
-									Thay đổi giao hàng
-								</Button>
-							)}
 						</div>
 					) : (
 						"Lỗi giá trị"
