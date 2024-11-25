@@ -181,7 +181,10 @@ const ChatAction = () => {
 				>
 					<div className="flex flex-col w-full h-full bg-white rounded-md">
 						<div className="bg-custom-300 rounded-t-md flex justify-between items-center">
-							<h3 className="p-2 font-semibold text-white">NUCSHOP</h3>
+							<div className="flex items-center p-2 gap-1">
+								<img src="/NUC.svg" alt="" className="size-8" />
+								<h3 className="font-semibold text-white">NUCSHOP</h3>
+							</div>
 							<IoCloseSharp
 								size={25}
 								className="pr-2"
