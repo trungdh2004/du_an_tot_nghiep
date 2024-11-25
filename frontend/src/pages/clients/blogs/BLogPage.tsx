@@ -38,7 +38,7 @@ const BlogPage = () => {
 	// const paramsObject = Object.fromEntries(searchParams.entries())
 	const [searchObject, setSearchObject] = useState<SearchObjectBlog>({
 		pageIndex: 1,
-		pageSize: 6,
+		pageSize: 8,
 		keyword: "",
 		fieldSort: "",
 		sort: 1,
@@ -208,13 +208,15 @@ const BlogPage = () => {
 						</div>
 					)}
 				</div>
-				<div className="flex justify-center mt-5">
-					<Paginations
-						forcePage={searchObject.pageIndex - 1}
-						pageCount={blogs?.totalPage}
-						handlePageClick={handleChangePag}
-					/>
-				</div>
+				{blogs?.totalPage > 1 && (
+					<div className="flex justify-center mt-5">
+						<Paginations
+							forcePage={searchObject.pageIndex - 1}
+							pageCount={blogs?.totalPage}
+							handlePageClick={handleChangePag}
+						/>
+					</div>
+				)}
 			</div>
 			{/* tags-;íst */}
 		</>

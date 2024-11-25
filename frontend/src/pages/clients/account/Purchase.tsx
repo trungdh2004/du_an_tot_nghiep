@@ -89,6 +89,10 @@ const OrderManagements = () => {
 	const handleMenuClick = (item: any) => {
 		setActive(item.index);
 		setStatus(item.index === 7 ? null : item.index);
+		setSearchObject((prev) => ({
+			...prev,
+			pageIndex: 1,
+		}));
 	};
 	const handleFetchOrder = async () => {
 		const { data } = await fetchOrder({ ...searchObject, status: status });
@@ -131,9 +135,7 @@ const OrderManagements = () => {
 			});
 		},
 	});
-	console.log("searchOH", searchObject);
 	const handleChangePag = async (value: any) => {
-		// console.log("value", value);
 		setSearchObject((prev) => ({
 			...prev,
 			pageIndex: value.selected + 1,
@@ -370,7 +372,7 @@ const OrderManagements = () => {
 								</>
 							);
 						})}
-					{orderData?.content.length === searchObject.pageSize && (
+					{orderData?.totalPage > 1 && (
 						<div className="w-full flex justify-center pt-5">
 							<Paginations
 								forcePage={searchObject.pageIndex - 1}
@@ -379,8 +381,7 @@ const OrderManagements = () => {
 							/>
 						</div>
 					)}
-
-					{orderData?.length === 0 && (
+					{orderData?.content.length === 0 && (
 						<div className="w-full h-[300px] box-shadow rounded-sm flex flex-col justify-center items-center bg-white my-5">
 							<div className="w-20">
 								<img
