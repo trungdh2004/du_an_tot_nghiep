@@ -233,18 +233,17 @@ class ShipperController {
         status: {
           $in: [2, 3],
         },
-      })
-        .select({
-          code: 1,
-          address: 1,
-          _id: 1,
-          status: 1,
-          totalMoney: 1,
-          amountToPay: 1,
-          shippingCost: 1,
-          orderItems: 1,
-          note: 1,
-        });
+      }).select({
+        code: 1,
+        address: 1,
+        _id: 1,
+        status: 1,
+        totalMoney: 1,
+        amountToPay: 1,
+        shippingCost: 1,
+        orderItems: 1,
+        note: 1,
+      });
 
       return res.status(STATUS.OK).json(listOrder);
     } catch (error: any) {
@@ -447,7 +446,7 @@ class ShipperController {
 
       if (existingOrder.shipper.toString() !== shipper?.id.toString()) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message: "Bạn không có quyền đơn hàng này",
+          message: "Đơn hàng này không phải của bạn",
         });
       }
 
@@ -654,11 +653,11 @@ class ShipperController {
       })
         .sort({ confirmedDate: -1 })
         .skip(skip)
-        .limit(limit)
+        .limit(limit);
 
       const count = await OrderModel.countDocuments({
-        status: status,
         shipper: shipper?.id,
+        ...queryStatus,
       });
 
       const result = formatDataPaging({
@@ -713,7 +712,7 @@ class ShipperController {
       })
         .sort({ confirmedDate: -1 })
         .skip(skip)
-        .limit(limit)
+        .limit(limit);
 
       const count = await OrderModel.countDocuments({
         status: status,
@@ -781,7 +780,7 @@ class ShipperController {
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
-        message:error?.message,
+        message: error?.message,
       });
     }
   }

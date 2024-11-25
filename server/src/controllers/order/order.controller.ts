@@ -2341,6 +2341,12 @@ class OrderController {
         });
       }
 
+      if (existingOrder.status > 2) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đơn hàng không được sửa shipper",
+        });
+      }
+
       const existingShipper = await ShipperModel.findById(shipper);
 
       if (!existingShipper) {
@@ -2355,7 +2361,7 @@ class OrderController {
           shipper: existingShipper._id,
         },
         { new: true }
-      ).populate("address");
+      );
 
       socketNewOrderShipperClient(updateOrder, `${existingShipper.user}`);
 

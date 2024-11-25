@@ -4,6 +4,7 @@ import { TooltipComponent } from "@/components/common/TooltipComponent";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { FaCartPlus, FaShoppingCart, FaRegChartBar } from "react-icons/fa";
 import { FaUser } from "react-icons/fa6";
+import { FaArrowLeft } from "react-icons/fa";
 
 const ShipperLayout = () => {
 	return (
@@ -24,12 +25,13 @@ const ShipperLayout = () => {
 							</div>
 						</TooltipComponent>
 					</Link>
-					<TooltipComponent label="Đơn hàng đã giao">
-						<div className="w-full h-full hover:bg-blue-100 cursor-pointer flex items-center justify-center">
-							<FaShoppingCart size={20} className="text-blue" />
-						</div>
-					</TooltipComponent>
-
+					<Link to={"/shipper/orderSuccess"}>
+						<TooltipComponent label="Đơn hàng đã giao">
+							<div className="w-full h-full hover:bg-blue-100 cursor-pointer flex items-center justify-center">
+								<FaShoppingCart size={20} className="text-blue" />
+							</div>
+						</TooltipComponent>
+					</Link>
 					<Link to={"/shipper"}>
 						<div className="w-full h-full relative flex bottom-4 justify-center">
 							<TooltipComponent label="Bản đồ">
@@ -39,21 +41,24 @@ const ShipperLayout = () => {
 							</TooltipComponent>
 						</div>
 					</Link>
-					<TooltipComponent label="Thống kê">
-						<div className="w-full h-full hover:bg-blue-100 cursor-pointer flex items-center justify-center">
-							<FaRegChartBar size={20} className="text-blue" />
-						</div>
-					</TooltipComponent>
-					<TooltipComponent label="trang chủ">
-						<div className="w-full h-full hover:bg-blue-100 cursor-pointer flex items-center justify-center">
-							<FaUser size={20} className="text-blue" />
-						</div>
-					</TooltipComponent>
+					<Link to={"/shipper/account"}>
+						<TooltipComponent label="Tài khoản">
+							<div className="w-full h-full hover:bg-blue-100 cursor-pointer flex items-center justify-center">
+								<FaUser size={20} className="text-blue" />
+							</div>
+						</TooltipComponent>
+					</Link>
+					<Link to={"/"}>
+						<TooltipComponent label="Trở về trang chủ">
+							<div className="w-full h-full hover:bg-blue-100 cursor-pointer flex items-center justify-center">
+								<FaArrowLeft size={20} className="text-blue" />
+							</div>
+						</TooltipComponent>
+					</Link>
 				</div>
 			</div>
 
 			<ScrollRestoration />
-
 		</div>
 	);
 };
