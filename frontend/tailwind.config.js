@@ -68,28 +68,28 @@ module.exports = {
 					DEFAULT: "hsl(var(--card))",
 					foreground: "hsl(var(--card-foreground))",
 				},
-        custom: {
-          50: '#ffe0d1',  // Lightest shade
-          100: '#ffb198', // Lighter shade
-          200: '#ff8a66',
-          300: '#ff7333',
-          400: '#ff5b2c', // Base color
-          500: '#ff4616', // Darker shade
-          600: '#e6410d',
-          700: '#cc3b0a', // Darkest shade
-          800: '#b33607',
-          900: '#992f05', // Darkest shade
-          DEFAULT: '#ff5b2c',
-        },
+				custom: {
+					50: "#FDA481", // Lightest shade
+					100: "#ffb198", // Lighter shade
+					200: "#ff8a66",
+					300: "#37415C", // Login
+					400: "#B4182D", // Base color
+					500: "#B4182D", // Darker shade
+					600: "#e6410d",
+					700: "#cc3b0a", // Darkest shade
+					800: "#242E49",
+					900: "#54162B", // Darkest shade
+					DEFAULT: "#B4182D",
+				},
 			},
 			borderRadius: {
 				lg: "var(--radius)",
 				md: "calc(var(--radius) - 2px)",
 				sm: "calc(var(--radius) - 4px)",
 			},
-      boxShadow: {
-        'fullShadow': '0px 5px 15px rgba(0, 0, 0, 0.35)',  // Tạo box-shadow tùy chỉnh
-      },
+			boxShadow: {
+				fullShadow: "0px 5px 15px rgba(0, 0, 0, 0.35)", // Tạo box-shadow tùy chỉnh
+			},
 			keyframes: {
 				"accordion-down": {
 					from: { height: "0" },

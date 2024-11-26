@@ -42,9 +42,9 @@ const ListProductHot = () => {
 			{/* {!isLoading &&
 					} */}
 
-			<div className="relative w-full pt-10 pb-6 group/parrent [&>.swiper-button-disabled]:opacity-50 [&>.swiper-button-disabled]:pointer-events-none">
+			<div className="relative w-full pt-6 pb-6 group/parrent [&>.swiper-button-disabled]:opacity-50 [&>.swiper-button-disabled]:pointer-events-none">
 				<Swiper
-          className="[&>.swiper-wrapper]:py-1.5"
+					className="[&>.swiper-wrapper]:py-1.5"
 					modules={[Navigation]}
 					loop={false}
 					spaceBetween={20}
@@ -73,11 +73,12 @@ const ListProductHot = () => {
 						},
 					}}
 				>
-					{!isLoading && data?.map((product: IProduct) => (
-						<SwiperSlide className="lg:w-[260px] w-[240px] group">
+					{!isLoading &&
+						data?.map((product: IProduct) => (
+							<SwiperSlide className="lg:w-[260px] w-[240px] group">
 								<ProductV2 product={product} key={product?._id} />
-						</SwiperSlide>
-					))}
+							</SwiperSlide>
+						))}
 				</Swiper>
 
 				<button

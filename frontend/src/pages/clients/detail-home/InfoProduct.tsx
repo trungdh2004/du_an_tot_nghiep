@@ -78,7 +78,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 					discount: currentAttribute?.discount as number,
 				});
 				setIsErrorAttribute(false);
-				setAttributeId(currentAttribute?._id || "");        
+				setAttributeId(currentAttribute?._id || "");
 				setTotalQuantity(currentAttribute?.quantity as number);
 			} else if (chooseSizeId) {
 				const quantity = product?.listSize?.find(
@@ -287,10 +287,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 							thước sản phẩm
 						</p>
 						<div
-							className={cn(
-								"space-y-5 p-1.5 w-full",
-								isErrorAttribute && "bg-custom-50",
-							)}
+							className={cn("space-y-5 p-1.5 w-full", isErrorAttribute && "")}
 						>
 							<div
 								className={cn(

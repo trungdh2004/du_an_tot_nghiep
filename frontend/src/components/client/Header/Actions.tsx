@@ -1,4 +1,3 @@
-
 import { useAuth } from "@/hooks/auth";
 import { LucideShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -188,7 +187,9 @@ const Actions = () => {
 				</div>
 			) : (
 				<Link to={`/auth/login`}>
-					<Button className="hidden h-8 py-1 text-sm lg:block md:block bg-custom-300 hover:bg-custom">Đăng nhập</Button>
+					<Button className="hidden h-8 px-3 py-1 text-sm lg:block md:block bg-custom-300 hover:bg-custom-800">
+						Đăng nhập
+					</Button>
 				</Link>
 			)}
 		</div>
