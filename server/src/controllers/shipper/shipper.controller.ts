@@ -678,10 +678,9 @@ class ShipperController {
   async pagingOrderShipperAdmin(req: RequestModel, res: Response) {
     try {
       const { id } = req.params;
-      const pageIndex = Number(req.query.page) || 1;
-      const { status = 2 } = req.body;
+      const { status = 2, pageIndex, pageSize } = req.body;
 
-      let limit = 10;
+      let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
 
       let queryStatus = {};

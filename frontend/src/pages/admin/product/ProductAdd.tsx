@@ -337,7 +337,7 @@ const ProductAddPage = () => {
 				...values,
 				images,
 				category: values.category?._id,
-				attributes: attribute,
+				attributes:values.is_simple ? [] : attribute,
 				price: +values.price,
 				discount: +values.discount,
 			};
@@ -783,8 +783,6 @@ const ProductAddPage = () => {
 																									},
 																								];
 
-																								console.log("list", list);
-
 																								setImages(list);
 																								field.onChange(list);
 																								if (list.length > 0) {
@@ -824,17 +822,19 @@ const ProductAddPage = () => {
 																field.onChange(e);
 																console.log({ e });
 																if (e) {
-																	form.setValue("attributes", []);
+																	// form.setValue("attributes", []);
 																} else {
-																	form.setValue("attributes", [
-																		{
-																			size: null,
-																			color: null,
-																			price: 0,
-																			quantity: 0,
-																			discount: 0,
-																		},
-																	]);
+																	if (form.watch("attributes").length === 0) {
+																		form.setValue("attributes", [
+																			{
+																				size: null,
+																				color: null,
+																				price: 0,
+																				quantity: 0,
+																				discount: 0,
+																			},
+																		]);
+																	}
 																	form.setValue("quantity", 0);
 																}
 															}}

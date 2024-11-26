@@ -5,11 +5,13 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import EditAddress from "../address/EditAddress";
 import Paginations from "@/components/common/Pagination";
 import AddAddressOrder from "./AddAddressOrder";
+import EditAddressOrder from "./EditAddressOrder";
+import { IAddress } from "@/types/address";
 
 interface Props {
 	open: boolean;
 	closeOpen: (isOpen: boolean) => void;
-	dataAddress: any;
+	dataAddress: IAddress;
 	handleChangeAddress: (id: string) => void;
 	address: any;
 	pageIndex: number;
@@ -128,14 +130,21 @@ const ListAddressOrderDetail = ({
 			</Dialog>
 
 			{!!openEditById && (
-				<EditAddress
+				<EditAddressOrder
 					open={!!openEditById}
 					handleClose={handleClose}
 					id={openEditById}
+					dataAddress={dataAddress}
+					handleChangeAddress={handleChangeAddress}
 				/>
 			)}
 			{!!openAdd && (
-				<AddAddressOrder open={openAdd} closeOpen={() => setOpenAdd(false)} />
+				<AddAddressOrder
+					open={openAdd}
+					closeOpen={() => setOpenAdd(false)}
+					handleChangeAddress={handleChangeAddress}
+					address={address}
+				/>
 			)}
 		</div>
 	);

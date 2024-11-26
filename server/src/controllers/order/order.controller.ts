@@ -461,12 +461,12 @@ class OrderController {
       }
 
       const listDateNew = listCartItem.map((item) => {
-        const variant = item?.is_simple
+        const variant = item?.product?.is_simple
           ? "Sản phẩm đơn giản"
           : `${item?.attribute?.size?.name || "Size"} - ${
               item?.attribute?.color?.name || "Màu"
             }`;
-        const price = item.is_simple
+        const price = item?.product.is_simple
           ? item.product.discount
           : item.attribute.discount;
         return {
@@ -477,17 +477,17 @@ class OrderController {
           quantity: item.quantity,
           totalMoney: +item.quantity * +price,
           attribute: item?.attribute?._id || null,
-          is_simple: item.is_simple || false,
+          is_simple: item?.product.is_simple || false,
         };
       });
 
       const listDataMail = listCartItem.map((item) => {
-        const variant = item?.is_simple
+        const variant = item?.product?.is_simple
           ? "Sản phẩm đơn giản"
           : `${item?.attribute?.size?.name || "Size"} - ${
               item?.attribute?.color?.name || "Màu"
             }`;
-        const price = item.is_simple
+        const price = item?.product.is_simple
           ? item.product.discount
           : item.attribute.discount;
         return {
@@ -508,7 +508,7 @@ class OrderController {
         const productId = item.product._id;
         let totalMoney = 0;
 
-        if (item.is_simple) {
+        if (item?.product.is_simple) {
           totalMoney = item.product.discount * item.quantity;
         } else {
           totalMoney = item.attribute.discount * item.quantity;
@@ -522,7 +522,7 @@ class OrderController {
 
       const totalMoney = listCartItem.reduce((sum, item) => {
         let total = 0;
-        if (item.is_simple) {
+        if (item?.product.is_simple) {
           total = item.product.discount * item.quantity;
         } else {
           total = item.attribute.discount * item.quantity;
@@ -1065,6 +1065,19 @@ class OrderController {
         ])
         .sort({ createdAt: -1 });
 
+      const check = listCartItem.find((item) => {
+        if (!item.product.is_simple && !item.attribute) {
+          return true;
+        }
+
+        return false;
+      });
+
+      if (check) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: `Sản phẩm "${check.product.name}" xảy ra lỗi mời bạn quay lại giỏ hàng`,
+        });
+      }
       const listData = listCartItem.reduce((acc: IListCart[], item) => {
         const findCart = acc.find((sub) => sub.productId === item.product._id);
 
@@ -1225,7 +1238,7 @@ class OrderController {
         });
       }
       const checkAttribute = listCartItem.find(
-        (item) => !item.attribute && !item.is_simple
+        (item) => !item.attribute && !item?.product?.is_simple
       );
 
       if (checkAttribute) {
@@ -1237,7 +1250,7 @@ class OrderController {
 
       const checkQuantity = listCartItem.find((item) => {
         const quantity = item.quantity;
-        const quantityAttribute = item.is_simple
+        const quantityAttribute = item?.product?.is_simple
           ? item.product.quantity
           : item.attribute.quantity;
 
@@ -1258,7 +1271,7 @@ class OrderController {
         const productId = item.product._id;
         let totalMoney = 0;
 
-        if (item.is_simple) {
+        if (item?.product?.is_simple) {
           totalMoney = item.product.discount * item.quantity;
         } else {
           totalMoney = item.attribute.discount * item.quantity;
@@ -1272,7 +1285,7 @@ class OrderController {
 
       const totalMoney = listCartItem.reduce((sum, item) => {
         let total = 0;
-        if (item.is_simple) {
+        if (item?.product?.is_simple) {
           total = item.product.discount * item.quantity;
         } else {
           total = item.attribute.discount * item.quantity;

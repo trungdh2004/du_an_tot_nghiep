@@ -233,6 +233,7 @@ const ChatAction = () => {
 								{data?.content?.map((item: any) => (
 									<div
 										className={`flex ${item.sender === "USER" ? "justify-end" : "justify-start"} mb-1`}
+										key={item?._id}
 									>
 										{item?.sender === "ADMIN" && (
 											<Avatar className="w-8 h-8 mr-2">

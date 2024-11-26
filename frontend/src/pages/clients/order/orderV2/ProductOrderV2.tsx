@@ -7,14 +7,25 @@ import AddressOrder from "../AddressOrder";
 import ProductOrderSkeleton from "./ProductOrderSkeleton";
 import ProductItemOrder from "./ProductItemOrder";
 
-const ProductOrderV2 = ({ data, handleChangeAddress, isLoading }: any) => {
+const ProductOrderV2 = ({
+	data,
+	handleChangeAddress,
+	isLoading,
+	setOrder,
+}: any) => {
+	console.log(typeof setOrder);
+
 	return (
 		<div className="w-full">
 			<h4 className="font-bold text-xl pb-5 lg:pb-7  lg:text-left text-center ">
 				Đơn hàng của tôi
 			</h4>
 			<div className="pb-5">
-				<AddressOrder data={data} handleChangeAddress={handleChangeAddress} />
+				<AddressOrder
+					data={data}
+					handleChangeAddress={handleChangeAddress}
+					setOrder={setOrder}
+				/>
 			</div>
 			<div className="flex-col hidden gap-3 py-2 mb-5 bg-white border border-gray-200 rounded-none lg:flex lg:rounded-md md:rounded-md box-shadow">
 				<div className="hidden lg:grid lg:grid-cols-6 md:grid md:grid-cols-6 lg:px-4 md:px-3">

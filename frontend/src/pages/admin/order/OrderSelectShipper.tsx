@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Paginations from "@/components/common/Pagination";
 import { selectShipper } from "@/service/order";
+import { toast } from "sonner";
 interface Props {
 	open: boolean;
 	closeOpen: (isOpen: boolean) => void;
@@ -25,15 +26,20 @@ const OrderSelectShipper = ({
 	pageIndex,
 	setPageIndex,
 }: Props) => {
-	const [shipper, setShipper] = useState<string | undefined>(undefined);
+	console.log(dataOrderId);
+
+	const [shipper, setShipper] = useState<string | undefined>(
+		dataOrderId?.shipper?._id,
+	);
 	const id = dataOrderId._id;
 	const handleSelectShipper = async () => {
 		try {
 			const data = await selectShipper({ id, shipper });
 			getOrderById();
 			return data;
-		} catch (error) {
+		} catch (error: any) {
 			console.log(error);
+			toast.error(error.message);
 		}
 	};
 	return (
