@@ -3,23 +3,25 @@ import React from "react";
 function AboutPage() {
   return (
     <div className="bg-gray-50 min-h-screen">
-
-      <div className="relative bg-blue-600 text-white py-12 px-6 lg:px-12">
-        <h1 className="text-4xl lg:text-5xl font-bold text-center mb-4">
+      {/* Header Section */}
+      <div className="relative bg-blue-600 text-white py-8 sm:py-12 px-4 sm:px-6 lg:px-12">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-4">
           Về Chúng Tôi
         </h1>
-        <p className="text-lg lg:text-xl text-center max-w-3xl mx-auto">
+        <p className="text-base sm:text-lg lg:text-xl text-center max-w-3xl mx-auto">
           Chúng tôi là một nhóm đam mê công nghệ và sáng tạo, cam kết mang đến
           những sản phẩm và dịch vụ tốt nhất cho khách hàng.
         </p>
       </div>
 
-
-      <div className="container mx-auto py-12 px-6 lg:px-12">
-
+      {/* Main Content */}
+      <div className="container mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-12">
+        {/* Sứ Mệnh */}
         <div className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">Sứ Mệnh</h2>
-          <p className="text-gray-600 text-lg leading-relaxed">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
+            Sứ Mệnh
+          </h2>
+          <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
             Sứ mệnh của chúng tôi là giúp mọi người tiếp cận công nghệ một cách
             dễ dàng, tối ưu hóa các giải pháp kinh doanh và nâng cao trải nghiệm
             người dùng. Chúng tôi tin rằng công nghệ không chỉ là công cụ, mà
@@ -27,57 +29,78 @@ function AboutPage() {
           </p>
         </div>
 
-
+        {/* Đội Ngũ */}
         <div className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">Đội Ngũ</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
+            Đội Ngũ
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
+            {/* Team Member 1 */}
             <div className="bg-white rounded-lg shadow-lg p-6 text-center">
               <img
                 src="https://via.placeholder.com/150"
                 alt="Team Member"
-                className="w-24 h-24 mx-auto rounded-full mb-4"
+                className="w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-full mb-4"
               />
-              <h3 className="text-xl font-semibold text-gray-800">Nguyen Van A</h3>
-              <p className="text-gray-500">Nhà sáng lập</p>
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
+                Nguyen Van A
+              </h3>
+              <p className="text-sm sm:text-base text-gray-500">Nhà sáng lập</p>
             </div>
 
+            {/* Team Member 2 */}
             <div className="bg-white rounded-lg shadow-lg p-6 text-center">
               <img
                 src="https://via.placeholder.com/150"
                 alt="Team Member"
-                className="w-24 h-24 mx-auto rounded-full mb-4"
+                className="w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-full mb-4"
               />
-              <h3 className="text-xl font-semibold text-gray-800">Tran Thi B</h3>
-              <p className="text-gray-500">Quản lý dự án</p>
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
+                Tran Thi B
+              </h3>
+              <p className="text-sm sm:text-base text-gray-500">
+                Quản lý dự án
+              </p>
             </div>
 
+            {/* Team Member 3 */}
             <div className="bg-white rounded-lg shadow-lg p-6 text-center">
               <img
                 src="https://via.placeholder.com/150"
                 alt="Team Member"
-                className="w-24 h-24 mx-auto rounded-full mb-4"
+                className="w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-full mb-4"
               />
-              <h3 className="text-xl font-semibold text-gray-800">Le Van C</h3>
-              <p className="text-gray-500">Kỹ sư phần mềm</p>
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
+                Le Van C
+              </h3>
+              <p className="text-sm sm:text-base text-gray-500">
+                Kỹ sư phần mềm
+              </p>
             </div>
 
+            {/* Team Member 4 */}
             <div className="bg-white rounded-lg shadow-lg p-6 text-center">
               <img
                 src="https://via.placeholder.com/150"
                 alt="Team Member"
-                className="w-24 h-24 mx-auto rounded-full mb-4"
+                className="w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-full mb-4"
               />
-              <h3 className="text-xl font-semibold text-gray-800">Pham Thi D</h3>
-              <p className="text-gray-500">Thiết kế UI/UX</p>
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
+                Pham Thi D
+              </h3>
+              <p className="text-sm sm:text-base text-gray-500">
+                Thiết kế UI/UX
+              </p>
             </div>
           </div>
         </div>
 
-
+        {/* Giá Trị */}
         <div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">Giá Trị</h2>
-          <ul className="list-disc pl-6 text-gray-600 text-lg">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
+            Giá Trị
+          </h2>
+          <ul className="list-disc pl-4 sm:pl-6 text-gray-600 text-base sm:text-lg">
             <li className="mb-2">
               <strong>Đổi mới:</strong> Luôn sáng tạo và tìm kiếm những giải pháp
               mới.
@@ -91,23 +114,23 @@ function AboutPage() {
               mọi hoạt động.
             </li>
             <li>
-              <strong>Hợp tác:</strong> Xây dựng mối quan hệ vững chắc và lâu dài
-              với đối tác.
+              <strong>Hợp tác:</strong> Xây dựng mối quan hệ vững chắc và lâu
+              dài với đối tác.
             </li>
           </ul>
         </div>
       </div>
 
-
-      <div className="bg-blue-600 text-white py-12 px-6 lg:px-12 text-center">
-        <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+      {/* CTA Section */}
+      <div className="bg-blue-600 text-white py-8 sm:py-12 px-4 sm:px-6 lg:px-12 text-center">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
           Hãy cùng hợp tác với chúng tôi!
         </h2>
-        <p className="text-lg lg:text-xl mb-6">
+        <p className="text-base sm:text-lg lg:text-xl mb-6">
           Nếu bạn có ý tưởng hoặc cần hỗ trợ, đừng ngần ngại liên hệ với chúng
           tôi.
         </p>
-        <button className="bg-white text-blue-600 font-semibold px-6 py-3 rounded-lg shadow hover:bg-gray-100 transition-colors">
+        <button className="w-full sm:w-auto bg-white text-blue-600 font-semibold px-6 py-3 rounded-lg shadow hover:bg-gray-100 transition-colors">
           Liên Hệ Ngay
         </button>
       </div>
