@@ -132,6 +132,7 @@ const OrderPage = () => {
 						data={order}
 						handleChangeAddress={handleChangeAddress}
 						isLoading={isLoading}
+						setOrder={setOrder}
 					/>
 				</div>
 				<div className="col-span-12 lg:col-span-4">
