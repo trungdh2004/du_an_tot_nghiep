@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { toast } from "sonner";
+import DialogConfirm from "@/components/common/DialogConfirm";
 
 interface Search {
 	pageIndex: number;
@@ -55,6 +56,7 @@ const ProductComing = () => {
 		totalElement: 0,
 		totalOptionPage: 0,
 	});
+	const [confirm, setConfirm] = useState<boolean | string>(false);
 
 	useEffect(() => {
 		handleCustomer();
@@ -102,6 +104,7 @@ const ProductComing = () => {
 			await deleteProductComing(id);
 			toast.success("Bạn xóa thành công");
 			handleCustomer();
+			setConfirm(false);
 		} catch (error) {
 			console.error("Error updating product", error);
 		}
@@ -218,7 +221,7 @@ const ProductComing = () => {
 						<DropdownMenuContent align="end">
 							<DropdownMenuItem
 								className="text-red-400 cursor-pointer"
-								onClick={() => handleDelete(row?.original?._id)}
+								onClick={() => setConfirm(row?.original?._id)}
 							>
 								Xóa
 							</DropdownMenuItem>
@@ -279,6 +282,16 @@ const ProductComing = () => {
 						setOpen(false);
 					}}
 					handleCustomer={handleCustomer}
+				/>
+			)}
+			{!!confirm && (
+				<DialogConfirm
+					open={!!confirm}
+					title="Xác nhận xóa bỏ sản phẩm chờ"
+					handleClose={() => setConfirm(false)}
+					handleSubmit={() => handleDelete(confirm as string)}
+					content="Bạn có chắc muốn xóa sản phẩm chờ này?"
+					labelConfirm="Xóa"
 				/>
 			)}
 		</div>
