@@ -123,7 +123,15 @@ const OrderPage = () => {
 			}
 		}
 	};
-
+	useEffect(() => {
+		if (order?.data?.length === 0) {
+			toast.error("Vui lòng mua thêm hàng");
+			const timeout = setTimeout(() => {
+				navigate("/");
+			}, 3000);
+			return () => clearTimeout(timeout);
+		}
+	}, [order, navigate]);
 	return (
 		<>
 			<div className="grid grid-cols-12 gap-5 lg:px-[100px] md:px-[65px] px-0 py-8">

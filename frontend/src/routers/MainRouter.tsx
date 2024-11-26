@@ -22,6 +22,7 @@ import TestComponent from "@/pages/clients/Test";
 import VoucherIndex from "@/pages/clients/vouchers/VoucherIndex";
 import NotFound from "@/pages/NotFound";
 import { Navigate } from "react-router-dom";
+import ProtectedRouter from "./ProtectedRouter";
 
 const MainRouter = [
 	{
@@ -50,7 +51,11 @@ const MainRouter = [
 
 			{
 				path: "/account",
-				element: <AccountLayout />,
+				element: (
+					<ProtectedRouter>
+						<AccountLayout />
+					</ProtectedRouter>
+				),
 				children: [
 					{
 						path: "",
