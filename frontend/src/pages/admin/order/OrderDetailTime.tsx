@@ -11,14 +11,11 @@ import {
 } from "@/components/ui/table";
 import { formatInTimeZone } from "date-fns-tz";
 const OrderDetailTime = ({ data }: any) => {
-	console.log(data);
 	const sortedData = data.sort((a: any, b: any) => {
 		if (a === null) return 1;
 		if (b === null) return -1;
 		return a.status - b.status;
 	});
-
-	console.log(sortedData);
 	const getOrderStatusMessage = (status: number) => {
 		if (status === 1) {
 			return "Đặt hàng thành công";
@@ -30,6 +27,8 @@ const OrderDetailTime = ({ data }: any) => {
 			return "Giao hàng thành công";
 		} else if (status === 5) {
 			return "Đã nhận hàng";
+		} else if (status === 6) {
+			return "Đã hủy hàng";
 		} else {
 			return "Trạng thái không xác định";
 		}
@@ -45,8 +44,8 @@ const OrderDetailTime = ({ data }: any) => {
 	console.log(checkStatus);
 
 	return (
-		<div className="bg-main rounded-md border border-1 border-gray-100 box-shadow p-4">
-			<h3 className="font-medium pl-3 py-3">Theo dõi đơn hàng</h3>
+		<div className="bg-main rounded-md border border-1 border-gray-200 box-shadow p-4">
+			<h3 className="font-medium pl-3 pb-3">Theo dõi đơn hàng</h3>
 			<Table>
 				<TableHeader>
 					<TableRow>
@@ -59,10 +58,10 @@ const OrderDetailTime = ({ data }: any) => {
 				<TableBody>
 					{checkStatus?.map((data: any) => (
 						<TableRow key={data?.status}>
-							<TableCell className="font-medium">
+							<TableCell className="font-medium text-nowrap">
 								{data?.informationStatus}
 							</TableCell>
-							<TableCell>
+							<TableCell className="text-nowrap">
 								{data?.date &&
 									formatInTimeZone(
 										new Date(data?.date),
@@ -70,8 +69,8 @@ const OrderDetailTime = ({ data }: any) => {
 										"yyyy-MM-dd HH:mm:ss",
 									)}
 							</TableCell>
-							<TableCell>{data?.message}</TableCell>
-							<TableCell>{data?.sub}</TableCell>
+							<TableCell className="text-nowrap">{data?.message}</TableCell>
+							<TableCell className="text-nowrap">{data?.sub}</TableCell>
 						</TableRow>
 					))}
 				</TableBody>

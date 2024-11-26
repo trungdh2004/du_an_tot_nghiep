@@ -282,19 +282,19 @@ class CartController {
 
   async pagingCartV2(req: RequestModel, res: Response) {
     try {
-      const user = req.user
+      const user = req.user;
       let existingCart = await CartModel.findOne({
         user: user?.id,
       });
 
       if (!existingCart) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Lỗi hệ thống"
-        })
+          message: "Lỗi hệ thống",
+        });
       }
 
       const listCartItem = await CartItemModel.find<IndexCartItem>({
-        cart:existingCart?._id
+        cart: existingCart?._id,
       })
         .populate([
           {
@@ -351,16 +351,20 @@ class CartController {
               _id: item._id,
               thumbnail: item.product.thumbnail,
               name: item.product.name,
-              discount: item.is_simple
+              discount: item.product.is_simple
                 ? item.product.discount
                 : item.attribute?.discount || 0,
-              price: item.is_simple ? item.product.price : item.attribute?.price  || 0,
+              price: item.product.is_simple
+                ? item.product.price
+                : item.attribute?.price || 0,
               attribute: item.attribute,
-              is_simple: item.is_simple,
+              is_simple: item.product.is_simple,
               createdAt: item.createdAt,
               productId: item.product._id,
               slug: item.product.slug,
-              totalQuantity:item.is_simple ? item.product.quantity : item.attribute?.quantity
+              totalQuantity: item.product.is_simple
+                ? item.product.quantity
+                : item.attribute?.quantity,
             };
             findCart.items.push(data);
             return acc;
@@ -371,7 +375,7 @@ class CartController {
           let listColor: ListColor[] = [];
           let listSize: ListSize[] = [];
 
-          if (!item?.is_simple) {
+          if (!item?.product?.is_simple) {
             listColor = listAttribute?.reduce((acc: ListColor[], item) => {
               let group = acc.find(
                 (g) =>
@@ -433,22 +437,23 @@ class CartController {
                 _id: item._id,
                 thumbnail: item.product.thumbnail,
                 name: item.product.name,
-                discount: item.is_simple
+                discount: item.product.is_simple
                   ? item.product.discount
                   : item.attribute?.discount || 0,
-                price: item.is_simple
+                price: item.product.is_simple
                   ? item.product.price
                   : item.attribute?.price || 0,
                 attribute: item.attribute,
-                is_simple: item.is_simple,
+                is_simple: item.product.is_simple,
                 createdAt: item.createdAt,
                 productId: item.product._id,
                 slug: item.product.slug,
-                totalQuantity:item.is_simple ? item.product.quantity : item.attribute?.quantity
+                totalQuantity: item.product.is_simple
+                  ? item.product.quantity
+                  : item.attribute?.quantity,
               },
-              
             ],
-            is_simple: item.is_simple,
+            is_simple: item.product.is_simple,
           };
           return [...acc, data];
         },
@@ -490,8 +495,8 @@ class CartController {
 
       if (!existingCart) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Lỗi hệ thống"
-        })
+          message: "Lỗi hệ thống",
+        });
       }
 
       const existingProductCart = await CartItemModel.findOne({
@@ -600,19 +605,28 @@ class CartController {
       let quantityDefauld = quantity || existingCartItem?.quantity;
 
       if (quantity) {
-        if (!(existingCartItem?.product as any)?.is_simple && !(existingCartItem?.attribute as IAttribute)?._id ) {
+        if (
+          !(existingCartItem?.product as any)?.is_simple &&
+          !(existingCartItem?.attribute as IAttribute)?._id
+        ) {
           return res.status(STATUS.BAD_REQUEST).json({
             message: "Sản phẩm không còn loại này",
           });
         }
-        if ((existingCartItem?.product as any)?.is_simple && quantity > (existingCartItem?.product as any)?.quantity) {
+        if (
+          (existingCartItem?.product as any)?.is_simple &&
+          quantity > (existingCartItem?.product as any)?.quantity
+        ) {
           return res.status(STATUS.BAD_REQUEST).json({
             message: `Chỉ còn ${
               (existingCartItem.attribute as IAttribute).quantity
             } sản phẩm loại hàng này`,
           });
         }
-        if (!(existingCartItem?.product as any)?.is_simple && quantity > (existingCartItem.attribute as IAttribute)?.quantity ) {
+        if (
+          !(existingCartItem?.product as any)?.is_simple &&
+          quantity > (existingCartItem.attribute as IAttribute)?.quantity
+        ) {
           return res.status(STATUS.BAD_REQUEST).json({
             message: `Chỉ còn ${
               (existingCartItem.attribute as IAttribute).quantity
@@ -643,7 +657,7 @@ class CartController {
         if (checkAttribute.quantity < quantityDefauld) {
           quantityDefauld = checkAttribute.quantity;
         }
-      }      
+      }
       const updatedProduct = await CartItemModel.findByIdAndUpdate(
         id,
         {
@@ -702,7 +716,7 @@ class CartController {
         message: "Thay đổi thành công",
         data: result,
       });
-    } catch (error: any) {      
+    } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
       });
@@ -745,8 +759,8 @@ class CartController {
 
       if (!existingCart) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Lỗi hệ thống"
-        })
+          message: "Lỗi hệ thống",
+        });
       }
 
       const countProductCart = await CartItemModel.find({
@@ -789,8 +803,8 @@ class CartController {
 
       if (!existingCart) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message:"Lỗi hệ thống"
-        })
+          message: "Lỗi hệ thống",
+        });
       }
 
       const listCartItem = await CartItemModel.find({
