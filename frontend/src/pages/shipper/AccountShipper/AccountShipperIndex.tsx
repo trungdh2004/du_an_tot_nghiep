@@ -35,6 +35,7 @@ import { AxiosError } from "axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import useStoreShipper from "@/store/useCurrentShipper";
 import AddressLocation from "@/pages/clients/address/AddressLocation";
+import CalendarYear from "@/components/common/CalendarYear";
 
 const formSchema = z.object({
 	fullName: z.string({ required_error: "Bạn chưa  nhập tên" }),
@@ -298,16 +299,20 @@ const AccountShipperIndex = () => {
 															className="w-auto p-0"
 															align="start"
 														>
-															<Calendar
-																locale={vi}
-																mode="single"
-																selected={field.value as any}
-																onSelect={(e) => {
-																	field.onChange(e?.toISOString());
+															<CalendarYear
+																value={
+																	field.value
+																		? new Date(field.value)
+																		: undefined
+																}
+																onSelect={(value) => {
+																	field.onChange(value?.toISOString());
 																}}
 																disabled={(date) =>
+																	date > new Date() ||
 																	date < new Date("1900-01-01")
 																}
+																lengthYear={40}
 																initialFocus
 															/>
 														</PopoverContent>

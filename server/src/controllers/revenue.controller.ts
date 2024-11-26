@@ -26,8 +26,8 @@ const getAllDaysInMonth = (year: number, month: number) => {
       countOrderSuccess: 0,
       countOrderCancel: 0,
     });
-    date.setDate(date.getDate() + 1);
     i++;
+    date.setDate(date.getDate() + 1);
   }
 
   return days;
@@ -108,14 +108,23 @@ class RevenueController {
         orderItems: 1,
       });
 
-      const totalMoney = listOrder?.reduce(
-        (sum, item) => sum + item.totalMoney,
-        0
-      );
+      let countSuccess = 0;
+      let countCancel = 0;
+
+      const totalMoney = listOrder?.reduce((sum, item) => {
+        if (item.status === 6) {
+          countCancel += 1;
+        }
+
+        if (item.status === 4 || item.status === 5) countSuccess += 1;
+        return sum + item.totalMoney;
+      }, 0);
 
       return res.status(STATUS.OK).json({
         totalMoney,
         count: listOrder.length,
+        countSuccess,
+        countCancel,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({

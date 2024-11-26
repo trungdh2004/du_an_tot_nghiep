@@ -77,7 +77,7 @@ function ProductPage() {
                   key={size}
                   onClick={() => handleSizeChange(size)}
                   className={`px-3 py-1 rounded-lg border ${
-                    selectedSize === size ? 'bg-blue-500 text-white' : 'bg-gray-200'
+                    selectedSize === size ? 'bg-custom-500 text-white' : 'bg-gray-200'
                   } hover:bg-gray-300 transition-all`}
                 >
                   {size}
@@ -94,7 +94,7 @@ function ProductPage() {
                   key={color}
                   onClick={() => handleColorChange(color)}
                   className={`px-3 py-1 rounded-lg border ${
-                    selectedColor === color ? 'bg-blue-500 text-white' : 'bg-gray-200'
+                    selectedColor === color ? 'bg-custom-500 text-white' : 'bg-gray-200'
                   } hover:bg-gray-300 transition-all`}
                 >
                   {color}
@@ -124,7 +124,7 @@ function ProductPage() {
 
           <button
             onClick={handleAddToCart}
-            className="w-full sm:w-auto bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors"
+            className="w-full sm:w-auto bg-custom-500 text-white px-4 py-2 rounded-lg hover:bg-custom-600 active:bg-custom-700 transition-colors"
           >
             Add to Cart
           </button>

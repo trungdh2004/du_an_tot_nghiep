@@ -5,9 +5,9 @@ import { pagingBlogs } from "@/service/blog";
 import { getAllTags } from "@/service/tags-admin";
 import { SearchObjectBlog } from "@/types/searchObjecTypes";
 import {
-  keepPreviousData,
-  useQuery,
-  useQueryClient,
+	keepPreviousData,
+	useQuery,
+	useQueryClient,
 } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { FaCommentDots, FaEye, FaRegHeart } from "react-icons/fa";
@@ -108,7 +108,7 @@ const BlogPage = () => {
 	return (
 		<>
 			{/* {isLoading && (
-                <div className='absolute w-screen h-screen z-[1000] bg-red-400/20'></div>
+                <div className='absolute w-screen h-screen z-[1000] bg-custom-400/20'></div>
             )} */}
 			<div className="padding pt-12 pb-10 text-[#1A1E26]">
 				<div className="flex items-center gap-3 mb-3">
@@ -126,7 +126,7 @@ const BlogPage = () => {
 										className={cn(
 											"rounded-lg border border-slate-300 pr-3",
 											newTags === tag.slug
-												? "border-blue-500 text-blue-500"
+												? "border-custom text-custom"
 												: "border-slate-300",
 										)}
 									>
@@ -146,61 +146,64 @@ const BlogPage = () => {
 									key={index}
 									className="col-span-12 min-[600px]:col-span-6 min-[900px]:col-span-3 h-[360px] "
 								>
-									<div className="h-[350px] grid grid-rows-2 border rounded-xl overflow-hidden relative">
-										{/* card-head */}
+									{" "}
+									<Link to={`/blogDetail/${item?._id}`}>
+										<div className="h-[350px] grid grid-rows-2 border rounded-xl overflow-hidden relative">
+											{/* card-head */}
 
-										<div className="bg-gray-200 border-b border-gray-300 ">
-											<img
-												src={item.thumbnail_url || "/no-image.png"}
-												className="object-cover w-full h-full"
-												alt=""
-											/>
-										</div>
-										{/* card-content */}
-										<div className="px-4 pt-2 bg-white">
-											<div className="flex items-center gap-1 pb-2">
+											<div className="bg-gray-200 border-b border-gray-300 ">
 												<img
-													src={item.user_id.avatarUrl || "/avatar_25.jpg"}
-													className="w-[40px] h-[40px] border-[3px] border-white rounded-full"
+													src={item.thumbnail_url || "/no-image.png"}
+													className="object-cover w-full h-full"
 													alt=""
 												/>
-												<div className="">
-													<h3 className="text-sm font-medium">
-														{item.user_id.full_name}
-													</h3>
-													{/* <p className="text-xs text-[#212B36] opacity-50 ">{format(item.published_at || item.createdAt || "", "dd-MM-yyyy")}</p> */}
+											</div>
+											{/* card-content */}
+											<div className="px-4 pt-2 bg-white">
+												<div className="flex items-center gap-1 pb-2">
+													<img
+														src={item.user_id.avatarUrl || "/avatar_25.jpg"}
+														className="w-[40px] h-[40px] border-[3px] border-white rounded-full"
+														alt=""
+													/>
+													<div className="">
+														<h3 className="text-sm font-medium">
+															{item.user_id.full_name}
+														</h3>
+														{/* <p className="text-xs text-[#212B36] opacity-50 ">{format(item.published_at || item.createdAt || "", "dd-MM-yyyy")}</p> */}
+													</div>
 												</div>
-											</div>
-											<div className="flex items-center justify-between ">
-												<Link
-													to={`/blogDetail/${item._id}`}
-													className="line-clamp-1 text-[#212B36] text-[18px] font-semibold hover:underline transition-all duration-300"
-												>
-													{item.title || "Bài viết chưa có tiêu đề"}
-												</Link>
-											</div>
-											<p className="pt-1 text-xs text-gray-400 line-clamp-2">
-												{item.meta_description}
-											</p>
-											<div className="flex space-x-4 min-[900px]:space-x-1 xl:space-x-4 absolute bottom-4 right-4">
-												<div className="flex gap-3">
-													<span className="text-[#212B36] text-xs flex items-center gap-1">
-														<FaRegHeart size={16} />
-														{item.countLike}
-													</span>
-													<span className="text-[#212B36] text-xs flex items-center gap-1">
-														<FaCommentDots size={16} />
-														{item.comments_count}
-													</span>
-													<span className="text-[#212B36] text-xs flex items-center gap-1">
-														{" "}
-														<FaEye size={16} />
-														{item.views_count}
-													</span>
+												<div className="flex items-center justify-between ">
+													<Link
+														to={`/blogDetail/${item._id}`}
+														className="line-clamp-1 text-[#212B36] text-[18px] font-semibold hover:underline transition-all duration-300"
+													>
+														{item.title || "Bài viết chưa có tiêu đề"}
+													</Link>
+												</div>
+												<p className="pt-1 text-xs text-gray-400 line-clamp-2">
+													{item.meta_description}
+												</p>
+												<div className="flex space-x-4 min-[900px]:space-x-1 xl:space-x-4 absolute bottom-4 right-4">
+													<div className="flex gap-3">
+														<span className="text-[#212B36] text-xs flex items-center gap-1">
+															<FaRegHeart size={16} />
+															{item.countLike}
+														</span>
+														<span className="text-[#212B36] text-xs flex items-center gap-1">
+															<FaCommentDots size={16} />
+															{item.comments_count}
+														</span>
+														<span className="text-[#212B36] text-xs flex items-center gap-1">
+															{" "}
+															<FaEye size={16} />
+															{item.views_count}
+														</span>
+													</div>
 												</div>
 											</div>
 										</div>
-									</div>
+									</Link>
 								</div>
 							</>
 						))

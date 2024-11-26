@@ -337,7 +337,7 @@ const ProductAddPage = () => {
 				...values,
 				images,
 				category: values.category?._id,
-				attributes: attribute,
+				attributes:values.is_simple ? [] : attribute,
 				price: +values.price,
 				discount: +values.discount,
 			};
@@ -562,7 +562,7 @@ const ProductAddPage = () => {
 																}
 															}}
 														>
-															<div className="relative w-full bg-white  ">
+															<div className="relative w-full bg-white ">
 																<div
 																	className={cn(
 																		"w-full h-[160px] flex justify-center items-center flex-col",
@@ -608,9 +608,9 @@ const ProductAddPage = () => {
 															</div>
 														</label>
 
-														<div className="px-2 mb-2 h-6 flex justify-center">
+														<div className="flex justify-center h-6 px-2 mb-2">
 															<div
-																className="w-40 text-center text-sm bg-blue-100 rounded-sm text-blue-500 cursor-pointer hover:bg-blue-200"
+																className="w-40 text-sm text-center text-blue-500 bg-blue-100 rounded-sm cursor-pointer hover:bg-blue-200"
 																onPaste={(event) => {
 																	console.log("paste dc nè");
 																	const items = event.clipboardData.items;
@@ -679,7 +679,7 @@ const ProductAddPage = () => {
 											<FormItem>
 												<FormLabel>Ảnh khác</FormLabel>
 												<FormControl>
-													<div className="w-full bg-white rounded-sm border">
+													<div className="w-full bg-white border rounded-sm">
 														<ImageUploading
 															multiple
 															value={images}
@@ -760,9 +760,9 @@ const ProductAddPage = () => {
 																				/>
 																			</button>
 																		</div>
-																		<div className="px-2 mb-2 h-6 flex justify-center">
+																		<div className="flex justify-center h-6 px-2 mb-2">
 																			<div
-																				className="w-40 text-center text-sm bg-blue-100 rounded-sm text-blue-500 cursor-pointer hover:bg-blue-200"
+																				className="w-40 text-sm text-center text-blue-500 bg-blue-100 rounded-sm cursor-pointer hover:bg-blue-200"
 																				onPaste={(event) => {
 																					const items =
 																						event.clipboardData.items;
@@ -782,8 +782,6 @@ const ProductAddPage = () => {
 																										file,
 																									},
 																								];
-
-																								console.log("list", list);
 
 																								setImages(list);
 																								field.onChange(list);
@@ -824,17 +822,19 @@ const ProductAddPage = () => {
 																field.onChange(e);
 																console.log({ e });
 																if (e) {
-																	form.setValue("attributes", []);
+																	// form.setValue("attributes", []);
 																} else {
-																	form.setValue("attributes", [
-																		{
-																			size: null,
-																			color: null,
-																			price: 0,
-																			quantity: 0,
-																			discount: 0,
-																		},
-																	]);
+																	if (form.watch("attributes").length === 0) {
+																		form.setValue("attributes", [
+																			{
+																				size: null,
+																				color: null,
+																				price: 0,
+																				quantity: 0,
+																				discount: 0,
+																			},
+																		]);
+																	}
 																	form.setValue("quantity", 0);
 																}
 															}}
@@ -1109,12 +1109,12 @@ const ProductAddPage = () => {
 										control={control}
 										render={({ field }) => (
 											<FormItem className="flex flex-col w-full">
-												<div className="flex justify-between items-center">
+												<div className="flex items-center justify-between">
 													<FormLabel>Mô tả</FormLabel>
 
 													<TooltipComponent label="Tự tạo mô tả theo tên">
 														<div
-															className=" flex items-center justify-center  rounded-full cursor-pointer size-7  group hover:bg-gray-50"
+															className="flex items-center justify-center rounded-full cursor-pointer  size-7 group hover:bg-gray-50"
 															onClick={handleDescription}
 														>
 															<BsStars
@@ -1148,7 +1148,7 @@ const ProductAddPage = () => {
 					</form>
 				</Form>
 				<div className="hidden p-4 lg:block lg:col-span-3 ">
-					{/* <div className="w-full border rounded relative">
+					{/* <div className="relative w-full border rounded">
 						{form.watch("is_hot") && (
 							<div className="absolute py-[2px] font-semibold text-white rounded-r-md pr-2 pl-1 left-0 top-2 bg-red-500">
 								HOT

@@ -22,6 +22,7 @@ const OrderShip = () => {
 		};
 		paymentMethod: number;
 		orderItems: any;
+		orderDate: string;
 	}
 
 	const [orderNeed, setOrderNeed] = useState<any>({});
@@ -143,7 +144,7 @@ const OrderShip = () => {
 			accessorKey: "createdAt",
 			header: "Ngày đặt hàng",
 			cell: ({ row }) => {
-				const parsedDate = parseISO(row.original.createdAt);
+				const parsedDate = parseISO(row.original.orderDate);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
 				return <div className="font-medium">{formattedDate}</div>;
 			},

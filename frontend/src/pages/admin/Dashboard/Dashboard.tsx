@@ -10,12 +10,13 @@ import ProductDashboard from "./Product.dashboad";
 const Dashboard = () => {
 	return (
 		<div>
-			<div className="w-full min-h-screen grid grid-cols-12 gap-2 md:gap-4 lg:gap-6">
+			<div className="grid w-full min-h-screen grid-cols-12 gap-2 md:gap-4 lg:gap-6">
 				<CountTotal />
-				<div className="col-span-12 md:col-span-4 rounded-xl">
+				<div className="col-span-12 md:col-span-4 ">
 					<OrderToDayDashBoard />
 				</div>
-				<div className="col-span-12 md:col-span-8 bg-white box-shadow rounded-xl">
+
+				<div className="col-span-12 bg-white md:col-span-8 box-shadow rounded-xl">
 					<ComponentChart />
 				</div>
 
@@ -23,14 +24,14 @@ const Dashboard = () => {
 					<ListOrderNew />
 				</div>
 
-				<div className="col-span-12 md:col-span-8 bg-white box-shadow rounded-xl">
+				<div className="col-span-12 bg-white md:col-span-8 box-shadow rounded-xl">
 					<ProductDashboard />
 				</div>
-				<div className="col-span-12 md:col-span-4 bg-white box-shadow  rounded-xl">
-					{/* <OrderToDayDashBoard /> */}
+				<div className="col-span-12 bg-white md:col-span-4 box-shadow rounded-xl">
 					<CategoryDashboard />
 				</div>
-				<div className="col-span-12 md:col-span-4 bg-white box-shadow rounded-xl">
+
+				<div className="col-span-12 bg-white md:col-span-4 box-shadow rounded-xl">
 					<ComponentChartType />
 				</div>
 				<div className="col-span-12 md:col-span-8 ">

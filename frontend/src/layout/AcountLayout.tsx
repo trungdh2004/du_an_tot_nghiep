@@ -75,7 +75,7 @@ const AccountLayout = () => {
 										onClick={() => setIsOpen(!isOpen)}
 										transition={{ duration: 0.2 }}
 										style={{ originY: 0.55 }}
-										className="p-2 text-blue-500 rounded-full hover:bg-gray-50/50 lg:hidden "
+										className="p-2 text-custom rounded-full hover:bg-gray-50/50 lg:hidden "
 									>
 										<svg
 											width="15"
@@ -111,7 +111,7 @@ const AccountLayout = () => {
 										},
 									}}
 									className={cn(
-										"hidden mt-2 absolute z-10 max-lg:backdrop-blur-lg bg-blue-500/10 lg:bg-transparent w-full",
+										"hidden mt-2 absolute z-10 max-lg:backdrop-blur-lg bg-custom-500/10 lg:bg-transparent w-full",
 										isOpen && "block",
 									)}
 								>
@@ -121,8 +121,8 @@ const AccountLayout = () => {
 											<motion.li
 												variants={itemVariants}
 												className={cn(
-													"w-full px-2 py-1 h-10 hover:bg-slate-50/40 cursor-pointer lg:rounded-md flex items-center hover:text-blue-500",
-													isCheck && "text-blue-500 bg-slate-50/40",
+													"w-full px-2 py-1 h-10 hover:bg-slate-50/40 cursor-pointer lg:rounded-md flex items-center hover:text-custom",
+													isCheck && "text-custom bg-slate-50/40",
 												)}
 												onClick={() => {
 													if (isMobile) {

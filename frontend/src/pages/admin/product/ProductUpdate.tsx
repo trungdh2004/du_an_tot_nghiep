@@ -114,6 +114,7 @@ const formSchema = z
 				price: z.number().min(1, "Phải lớn hơn 0"),
 				quantity: z.number().min(1, "Phải lớn hơn 0"),
 				discount: z.number().min(1, "Phải lớn hơn 0"),
+				_id: z.string().optional(),
 			}),
 		),
 		featured: z.boolean(),
@@ -151,8 +152,6 @@ const formSchema = z
 		},
 	)
 	.superRefine((data, ctx) => {
-		console.log({ data, ctx });
-
 		if (!data.is_simple && (!data.attributes || data.attributes.length === 0)) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
@@ -316,8 +315,8 @@ const ProductUpdate = () => {
 				form.reset({
 					category: data.data.category,
 					name: data.data.name,
-					price: data.data.price.toString(),
-					discount: data.data.discount.toString(),
+					price: data.data.price,
+					discount: data.data.discount,
 					thumbnail: data.data.thumbnail,
 					images: data.data.images,
 					attributes: data.data.attributes,
@@ -351,37 +350,35 @@ const ProductUpdate = () => {
 			const listImageNotFile = values.images?.filter((image) => !image?.file);
 			const listImageFile = values.images?.filter((image) => image?.file);
 			let listImage = [];
-
 			if (listImageFile?.length > 0) {
 				const formData = new FormData();
 				for (let i = 0; i < listImageFile?.length; i++) {
 					formData.append("images", listImageFile[i]?.file as any);
 				}
-
 				const { data } = await uploadMultipleFileService(formData);
-
 				listImage = data?.map((item: any) => ({
 					url: item.path,
 				}));
 			}
 			const images = [...listImageNotFile, ...listImage];
+
 			const attribute = values.attributes?.map((attribute) => ({
 				...attribute,
 				color: attribute.color?._id as string,
 				size: attribute.size?._id as string,
 			}));
+
 			const data = {
 				...values,
 				images,
 				category: values.category?._id,
-				attributes: attribute,
+				attributes: values.is_simple ? [] : attribute,
 				price: +values.price,
 				discount: +values.discount,
 			};
 			mutate(data as IProduct);
 		} catch (error) {
 			console.log("error", error);
-
 			toast.error("Chỉnh sửa sản phẩm xảy ra lỗi");
 		}
 	};
@@ -601,7 +598,7 @@ const ProductUpdate = () => {
 																}
 															}}
 														>
-															<div className="relative w-full bg-white  ">
+															<div className="relative w-full bg-white ">
 																<div
 																	className={cn(
 																		"w-full h-[160px] flex justify-center items-center flex-col",
@@ -647,9 +644,9 @@ const ProductUpdate = () => {
 															</div>
 														</label>
 
-														<div className="px-2 mb-2 h-6 flex justify-center">
+														<div className="flex justify-center h-6 px-2 mb-2">
 															<div
-																className="w-40 text-center text-sm bg-blue-100 rounded-sm text-blue-500 cursor-pointer hover:bg-blue-200"
+																className="w-40 text-sm text-center text-blue-500 bg-blue-100 rounded-sm cursor-pointer hover:bg-blue-200"
 																onPaste={(event) => {
 																	console.log("paste dc nè");
 																	const items = event.clipboardData.items;
@@ -718,7 +715,7 @@ const ProductUpdate = () => {
 											<FormItem>
 												<FormLabel>Ảnh khác</FormLabel>
 												<FormControl>
-													<div className="w-full bg-white rounded-sm border">
+													<div className="w-full bg-white border rounded-sm">
 														<ImageUploading
 															multiple
 															value={images}
@@ -799,9 +796,9 @@ const ProductUpdate = () => {
 																				/>
 																			</button>
 																		</div>
-																		<div className="px-2 mb-2 h-6 flex justify-center">
+																		<div className="flex justify-center h-6 px-2 mb-2">
 																			<div
-																				className="w-40 text-center text-sm bg-blue-100 rounded-sm text-blue-500 cursor-pointer hover:bg-blue-200"
+																				className="w-40 text-sm text-center text-blue-500 bg-blue-100 rounded-sm cursor-pointer hover:bg-blue-200"
 																				onPaste={(event) => {
 																					const items =
 																						event.clipboardData.items;
@@ -863,17 +860,19 @@ const ProductUpdate = () => {
 																field.onChange(e);
 																console.log({ e });
 																if (e) {
-																	form.setValue("attributes", []);
+																	// form.setValue("attributes", []);
 																} else {
-																	form.setValue("attributes", [
-																		{
-																			size: null,
-																			color: null,
-																			price: 0,
-																			quantity: 0,
-																			discount: 0,
-																		},
-																	]);
+																	if (form.watch("attributes").length === 0) {
+																		form.setValue("attributes", [
+																			{
+																				size: null,
+																				color: null,
+																				price: 0,
+																				quantity: 0,
+																				discount: 0,
+																			},
+																		]);
+																	}
 																	form.setValue("quantity", 0);
 																}
 															}}
@@ -1148,12 +1147,12 @@ const ProductUpdate = () => {
 										control={control}
 										render={({ field }) => (
 											<FormItem className="flex flex-col w-full">
-												<div className="flex justify-between items-center">
+												<div className="flex items-center justify-between">
 													<FormLabel>Mô tả</FormLabel>
 
 													<TooltipComponent label="Tự tạo mô tả theo tên">
 														<div
-															className=" flex items-center justify-center  rounded-full cursor-pointer size-7  group hover:bg-gray-50"
+															className="flex items-center justify-center rounded-full cursor-pointer size-7 group hover:bg-gray-50"
 															onClick={handleDescription}
 														>
 															<BsStars
@@ -1187,42 +1186,6 @@ const ProductUpdate = () => {
 					</form>
 				</Form>
 				<div className="hidden p-4 lg:block lg:col-span-3 ">
-					{/* <div className="w-full border rounded relative">
-						{form.watch("is_hot") && (
-							<div className="absolute py-[2px] font-semibold text-white rounded-r-md pr-2 pl-1 left-0 top-2 bg-red-500">
-								HOT
-							</div>
-						)}
-						<img
-							src={
-								form.watch("thumbnail") ||
-								"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTixbrVNY9XIHQBZ1iehMIV0Z9AtHB9dp46lg&s"
-							}
-							alt=""
-							className="w-full object-cover max-h-[200px] border-b"
-						/>
-
-						<div className="p-3 bg-white">
-							<p className="font-medium line-clamp-1">
-								{form.watch("name") || "Chưa có tên"}
-							</p>
-							<div className="flex items-center justify-start -space-x-1 *:size-3 *:inline-block  *:rounded-full my-1.5">
-								{listColor?.map((item) => (
-									<span
-										style={{ background: item.code }}
-										className="border box-shadow border-black/40"
-									></span>
-								))}
-							</div>
-							<div className="flex items-center justify-between">
-								<span className="text-sm font-medium text-red-500">
-									{form.watch("price") || 0} đ
-								</span>
-								<span className="text-xs">Đã bán : 0</span>
-							</div>
-						</div>
-					</div> */}
-
 					<div className="relative flex flex-col overflow-hidden transition-all duration-300 bg-white border border-gray-200 rounded-xl group hover:shadow-lg">
 						<div className="relative overflow-hidden border bg-[#fff] flex justify-center items-center max-w-full min-w-full box-shadow">
 							<div className="relative inline-block w-full group aspect-square">
@@ -1236,27 +1199,6 @@ const ProductUpdate = () => {
 										alt="Image 1"
 									/>
 								</div>
-								{/* <div className="absolute top-0 left-0 transition duration-500 bg-white opacity-0 group-hover:opacity-100">
-									<img
-										className="object-cover w-full h-full aspect-square"
-										src={optimizeCloudinaryUrl(
-											product?.images[0]?.url || "",
-											350,
-											370,
-										)}
-										alt="Image 2"
-									/>
-								</div> */}
-
-								{/* {product?.quantity <= 0 && (
-									<div className="absolute top-0 left-0 w-full h-full flex items-center justify-center transition duration-500 bg-[#f0dddd] bg-opacity-0 opacity-0 group-hover:opacity-100 group-hover:bg-opacity-50">
-										<img
-											src={optimizeCloudinaryUrl(OutOfStock)}
-											alt=""
-											className="lg:w-[140px] lg:h-[140px] md:w-[110px] md:h-[110px] w-[80px] h-[80px] aspect-square"
-										/>
-									</div>
-								)} */}
 							</div>
 							<div className="absolute flex items-center justify-center w-full transition-all duration-300 ease-in-out rounded -bottom-10 group-hover:bottom-8">
 								<div className="flex justify-center gap-1 items-center lg:w-[200px] w-[150px] lg:text-base text-sm lg:py-2 py-1 bg-opacity-30 border text-white bg-[#232323] text-center leading-[40px] border-none transition-transform hover:scale-90 hover:bg-[#f5f5f5] hover:text-[#262626] duration-300">

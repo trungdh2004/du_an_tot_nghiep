@@ -205,12 +205,12 @@ header .sub-menu::after {
 	display: none;
 }
 .selection-box-tick::before {
-	border: 30px solid transparent;
-	border-bottom: 30px solid #3b82f6;
+	border: 38px solid transparent;
+	border-bottom: 23px solid #ff5b2c;
 	bottom: 0;
 	content: "";
 	position: absolute;
-	right: -40px;
+	right: -44px;
 }
 [contenteditable="true"]:empty:before {
 	content: attr(data-placeholder);
@@ -369,4 +369,10 @@ header .sub-menu::after {
 	100% {
 		transform: translateX(-200%);
 	}
+}
+
+
+.rdp-vhidden {
+	display: none;
+	width: 100%;
 }

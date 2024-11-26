@@ -9,6 +9,7 @@ import { IProduct } from "@/types/typeProduct";
 import { GrLinkNext, GrLinkPrevious } from "react-icons/gr";
 import "swiper/css";
 import "swiper/css/navigation";
+import { cn } from "@/lib/utils";
 interface Props {
 	product: IProduct[];
 }
@@ -37,8 +38,9 @@ const ProductRelated = ({ product }: Props) => {
 					</p>
 				</div>
 			) : (
-				<div className="relative pb-6">
+				<div className="relative pb-6 group/parrent">
 					<Swiper
+						className="[&>.swiper-wrapper]:py-1.5"
 						modules={[Navigation]}
 						loop={false}
 						spaceBetween={20}
@@ -75,16 +77,21 @@ const ProductRelated = ({ product }: Props) => {
 							);
 						})}
 					</Swiper>
-
 					<button
-						className={`btn-next ${!isBlock && "hidden"} absolute z-20 top-[39%] right-4 text-black w-[50px] h-[50px] border flex justify-center items-center rounded-full p-3 hover:text-white hover:bg-[#585858] duration-300 cursor-pointer`}
+						className={cn(
+							`btn-next    absolute z-10 top-[39%] right-0 translate-x-1/2 group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`,
+							!isBlock && "hidden",
+						)}
 					>
-						<GrLinkNext />
+						<GrLinkNext className="text-sm group-hover/parrent:text-base" />
 					</button>
 					<button
-						className={`btn-prev ${!isBlock && "hidden"} absolute z-20 top-[39%] left-4 text-black w-[50px] h-[50px] border flex justify-center items-center rounded-full p-3 hover:text-white hover:bg-[#585858] duration-300 cursor-pointer`}
+						className={cn(
+							`btn-prev  absolute z-10 top-[39%] left-0 -translate-x-1/2 group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`,
+							!isBlock && "hidden",
+						)}
 					>
-						<GrLinkPrevious />
+						<GrLinkPrevious className="text-sm group-hover/parrent:text-base" />
 					</button>
 				</div>
 			)}

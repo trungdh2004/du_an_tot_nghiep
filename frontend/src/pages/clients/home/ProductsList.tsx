@@ -25,20 +25,17 @@ const ProductsList = () => {
 
 	return (
 		<div className="padding">
-			<div className="relative pb-6 w-full pt-10">
+			<div className="relative w-full pt-10 pb-6 group/parrent [&>.swiper-button-disabled]:opacity-50 [&>.swiper-button-disabled]:pointer-events-none">
 				<Swiper
+					className="[&>.swiper-wrapper]:p-1.5"
 					modules={[Navigation]}
-					// loop={true}
+					loop={false}
 					spaceBetween={20}
 					slidesPerView={4}
-					// autoplay={{
-					// 	delay: 2000,
-					// 	disableOnInteraction: false,
-					// }}
 					pagination={{ clickable: true }}
 					navigation={{
-						nextEl: ".btn-next-product",
-						prevEl: ".btn-prev-product",
+						nextEl: ".btn-next",
+						prevEl: ".btn-prev",
 					}}
 					breakpoints={{
 						0: {
@@ -62,37 +59,21 @@ const ProductsList = () => {
 					{!isLoading &&
 						data?.map((product: IProduct) => (
 							<SwiperSlide className="lg:w-[260px] w-[240px] group">
-								<Link
-									key={product?._id}
-									to={`/shop/detail/${encodeURIComponent(product?.slug || "")}`}
-									className="relative flex flex-col overflow-hidden transition-all duration-300 bg-white border border-gray-200 rounded-xl group hover:shadow-lg"
-								>
-									<ProductV2 product={product} />
-								</Link>
+								<ProductV2 product={product} key={product?._id} />
 							</SwiperSlide>
 						))}
 				</Swiper>
 
 				<button
-					className={`btn-next-product  absolute z-20 top-[39%] right-4 text-black w-[50px] h-[50px] border flex justify-center items-center rounded-full p-3 hover:text-white hover:bg-[#585858] duration-300 cursor-pointer`}
+					className={`btn-next    absolute z-10 top-[39%] right-0 translate-x-1/2 group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`}
 				>
-					<GrLinkNext />
+					<GrLinkNext className="text-sm group-hover/parrent:text-base" />
 				</button>
 				<button
-					className={`btn-prev-product  absolute z-20 top-[39%] left-4 text-black w-[50px] h-[50px] border flex justify-center items-center rounded-full p-3 hover:text-white hover:bg-[#585858] duration-300 cursor-pointer`}
+					className={`btn-prev  absolute z-10 top-[39%] left-0 -translate-x-1/2 group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`}
 				>
-					<GrLinkPrevious />
+					<GrLinkPrevious className="text-sm group-hover/parrent:text-base" />
 				</button>
-			</div>
-
-			<div className="text-center  ">
-				<Link to={"/shop"} className="inline-flex items-center justify-center gap-2 group">
-					<span className="font-medium text-gray-500">Xem tất cả</span>
-
-					<span className="group-hover:translate-x-4 duration-200">
-						<FaAnglesRight size={16} className="text-gray-300" />
-					</span>
-				</Link>
 			</div>
 		</div>
 	);

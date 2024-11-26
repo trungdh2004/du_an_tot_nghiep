@@ -227,7 +227,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						</h2>
 						<div className="flex items-center capitalize text-sm text-[#767676] [&>p]:px-4  [&>*]:border-r [&>*]:border-[#00000024]">
 							<div className="flex items-end gap-1 pr-4">
-								<span className="font-medium text-blue-500 border-b border-blue-500">
+								<span className="font-medium border-b text-custom border-custom">
 									{product?.rating}
 								</span>
 								<div className="pb-0.5 flex w-max">
@@ -269,10 +269,10 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						>
 							{formatCurrency(price?.origin || 0)}
 						</span>
-						<p className="text-2xl font-medium text-blue-500">
+						<p className="text-2xl font-medium text-custom">
 							{formatCurrency(price?.discount || 0)}
 						</p>
-						<span className=" hidden capitalize text-sm text-white font-medium bg-blue-500 px-1 py-0.5 rounded">
+						<span className=" hidden capitalize text-sm text-white font-medium bg-custom-500 px-1 py-0.5 rounded">
 							34% giảm
 						</span>
 					</div>
@@ -289,7 +289,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						<div
 							className={cn(
 								"space-y-5 p-1.5 w-full",
-								isErrorAttribute && "bg-red-50",
+								isErrorAttribute && "bg-custom-50",
 							)}
 						>
 							<div
@@ -349,7 +349,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 						<div className="flex items-center gap-3 p-1.5 w-full">
 							<Button
 								className={cn(
-									"px-5 bg-blue-500 hover:bg-blue-700",
+									"px-5 bg-custom-500 hover:bg-custom-700",
 									totalQuantity <= 0 && "opacity-30",
 								)}
 								onClick={() => handleOrderProduct("buy-now")}
@@ -364,7 +364,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 							<Button
 								disabled={totalQuantity <= 0}
 								className={cn(
-									"bg-blue-100 hover:bg-blue-50 flex items-center gap-1.5 text-blue-500",
+									"bg-custom-50 hover:bg-custom-100 flex items-center gap-1.5 text-custom",
 									totalQuantity <= 0 && "opacity-30",
 								)}
 								onClick={() => handleOrderProduct("add-to-cart")}

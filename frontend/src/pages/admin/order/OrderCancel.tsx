@@ -16,6 +16,7 @@ const OrderCancel = () => {
 		code: string;
 		createdAt: string;
 		totalMoney: number;
+		orderDate: string;
 		user: {
 			full_name: string;
 		};
@@ -139,10 +140,10 @@ const OrderCancel = () => {
 			},
 		},
 		{
-			accessorKey: "createdAt",
+			accessorKey: "orderDate",
 			header: "Ngày đặt hàng",
 			cell: ({ row }) => {
-				const parsedDate = parseISO(row.original.createdAt);
+				const parsedDate = parseISO(row.original.orderDate);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
 				return <div className="font-medium">{formattedDate}</div>;
 			},
