@@ -20,20 +20,14 @@ const PaymentMethod = ({
 	orderCheckout,
 	moneyVoucher,
 }: Props) => {
-	console.log(moneyVoucher);
-
 	const [paymentMethod, setPaymentMethod] = useState<string>("1");
 	const arrayTotal = data?.data?.map((product: any) => {
 		return product.totalAmount;
 	});
-	console.log(data?.data);
-
 	const totalCost = arrayTotal?.reduce(
 		(acc: number, value: number) => acc + value,
 		0,
 	);
-	console.log(orderCheckout);
-
 	return (
 		<div className="py-2 pb-6">
 			<div className="lg:flex flex-col gap-3 bg-white lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow">
@@ -159,7 +153,10 @@ const PaymentMethod = ({
 						Nhấn "Đặt hàng" đồng nghĩa với việc bạn đồng ý tuân theo Điều khoản
 						NUCSHOP
 					</p>
-					<Button className="px-9 w-full py-1" onClick={() => handleCheckout()}>
+					<Button
+						className="px-9 w-full py-1 bg-custom-400 hover:bg-custom-500"
+						onClick={() => handleCheckout()}
+					>
 						Đặt hàng
 					</Button>
 				</div>
@@ -184,7 +181,7 @@ const PaymentMethod = ({
 						</span>
 					</div>
 					<Button
-						className="px-9 h-full rounded-none"
+						className="px-9 h-full rounded-none bg-custom-400 hover:bg-custom-500"
 						onClick={() => handleCheckout()}
 					>
 						Đặt hàng
