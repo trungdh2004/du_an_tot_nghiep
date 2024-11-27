@@ -135,7 +135,7 @@ const ProductV2 = ({ product }: Props) => {
           </div>
         </div>
         {product?.is_simple && (
-          <div className="flex items-center justify-center h-5 gap-1 text-xs text-gray-500 border border-gray-500 rounded">
+          <div className="flex items-center justify-center h-5 gap-1 p-1 text-xs text-gray-500 border border-gray-500 rounded max-w-max">
             Đơn giản
           </div>
         )}
