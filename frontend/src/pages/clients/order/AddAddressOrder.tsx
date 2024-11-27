@@ -26,6 +26,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import MapSearchLocation from "@/components/map/MapSearchLocation";
 import AddressLocation from "../address/AddressLocation";
 import AddressInformation from "../address/AddressInformation";
+import { useSearchParams } from "react-router-dom";
+import { pagingOrder } from "@/service/order";
 
 const formSchema = z.object({
 	username: z
@@ -86,8 +88,18 @@ interface ICommune {
 interface Props {
 	open: boolean;
 	closeOpen: (isOpen: boolean) => void;
+	handleChangeAddress: (id: string) => void;
+	address: any;
 }
-const AddAddressOrder = ({ open, closeOpen }: Props) => {
+const AddAddressOrder = ({
+	open,
+	closeOpen,
+	handleChangeAddress,
+	address,
+}: Props) => {
+	const [searchParams, setSearchParams] = useSearchParams();
+	const paramsObject = Object.fromEntries(searchParams.entries());
+	const stateOrder = JSON.parse(paramsObject.state);
 	const { data: citys, isLoading } = useQuery<ICity[]>({
 		queryKey: ["city"],
 		queryFn: async () => {
@@ -96,18 +108,20 @@ const AddAddressOrder = ({ open, closeOpen }: Props) => {
 		},
 		staleTime: Infinity,
 	});
+
 	const { mutate } = useMutation({
 		mutationFn: async (dataNew: any) => addAddress(dataNew),
-		onSuccess: () => {
-			form.reset();
-
+    onSuccess: ({ data }) => {
 			queryClient.invalidateQueries({
 				queryKey: ["address"],
 			});
 			toast.success("Bạn thêm địa chỉ thành công");
+			if (address?.content?.length === 0) {
+				handleChangeAddress(data?.data?._id);
+			}
 			closeOpen(false);
 		},
-		onError: () => {
+		onError: (error) => {
 			toast.error("Bạn thêm địa chỉ thất bại");
 		},
 	});

@@ -35,7 +35,7 @@ const ShopProduct = () => {
 					.map((c: string) => c.trim())
 					.filter(Boolean) ?? [];
 			return {
-				pageIndex: pageIndex,
+				pageIndex: paramsObject?.pageIndex,
 				pageSize: 12,
 				keyword: "",
 				color: colorCheck,
@@ -43,8 +43,8 @@ const ShopProduct = () => {
 				sort: 1,
 				fieldSort: "",
 				category: paramsObject?.category,
-				min: 0,
-				max: 5000000,
+				min: parseInt(paramsObject?.min),
+				max: parseInt(paramsObject?.max),
 				tab: 1,
 				rating: null,
 			};

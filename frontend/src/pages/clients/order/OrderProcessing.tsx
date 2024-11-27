@@ -1,5 +1,4 @@
 import { returnUrlVnPay } from "@/service/order";
-import { error } from "console";
 import React, { useEffect } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";

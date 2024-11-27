@@ -46,21 +46,25 @@ const SelectSort = ({ setSearchParamsObject }: Props) => {
 				handleReset();
 				break;
 			case "1":
-				searchParams.set("sort", "1");
+        searchParams.set("sort", "1");
+        searchParams.set("pageIndex", "1");
 				setSearchParams(searchParams);
 				setSearchParamsObject((prev) => ({
 					...prev,
 					sort: 1,
 					fieldSort: "discount",
+					pageIndex: 1,
 				}));
 				break;
 			case "-1":
-				searchParams.set("sort", "-1");
+        searchParams.set("sort", "-1");
+        searchParams.set("pageIndex", "1");
 				setSearchParams(searchParams);
 				setSearchParamsObject((prev) => ({
 					...prev,
 					sort: -1,
-					fieldSort: "discount",
+          fieldSort: "discount",
+          pageIndex:1
 				}));
 				break;
 			default:

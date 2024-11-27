@@ -6,7 +6,7 @@ import { FaPlus } from "react-icons/fa";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { fetchAddress } from "@/service/address";
 import { Skeleton } from "@/components/ui/skeleton";
-const AddressOrder = ({ data, handleChangeAddress }: any) => {
+const AddressOrder = ({ data, handleChangeAddress, setOrder }: any) => {
 	const [openListAddress, setOpenListAddress] = useState(false);
 	const [openAdd, setOpenAdd] = useState(false);
 	const [pageIndex, setPageIndex] = useState(1);
@@ -21,6 +21,7 @@ const AddressOrder = ({ data, handleChangeAddress }: any) => {
 		queryFn: () => fetchAddress(pageIndex),
 		placeholderData: keepPreviousData,
 	});
+
 	return (
 		<div className="">
 			{isPending && (
@@ -103,7 +104,12 @@ const AddressOrder = ({ data, handleChangeAddress }: any) => {
 				/>
 			)}
 			{!!openAdd && (
-				<AddAddressOrder open={openAdd} closeOpen={() => setOpenAdd(false)} />
+				<AddAddressOrder
+					open={openAdd}
+					closeOpen={() => setOpenAdd(false)}
+					handleChangeAddress={handleChangeAddress}
+					address={address}
+				/>
 			)}
 		</div>
 	);
