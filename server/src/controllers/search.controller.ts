@@ -166,6 +166,7 @@ class SearchController {
           quantitySold: 1,
           quantity: 1,
           rating: 1,
+          images:1,
         });
       const countProduct = await ProductModel.countDocuments({
         ...query,
