@@ -127,7 +127,7 @@ const OrderPage = () => {
 				(async () => {
 					const { data } = await createOrderVNPayPayment({
 						...orderCheckout,
-						returnUrl: `${window.location.origin}/orderprocessing`,
+						returnUrl: `${window.location.origin}/orderprocessingv2`,
 					});
 					window.location.href = data.paymentUrl;
 					return data;

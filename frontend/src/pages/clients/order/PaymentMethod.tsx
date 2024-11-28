@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { ObjectCheckoutOrder } from "@/types/ObjectCheckoutOrder";
 import { IOrderMoneyValue } from "@/types/order";
 import React, { useState } from "react";
+import { FaSpinner } from "react-icons/fa";
 import { MdOutlineEventNote } from "react-icons/md";
 interface Props {
 	data: any;
@@ -28,6 +29,7 @@ const PaymentMethod = ({
 		(acc: number, value: number) => acc + value,
 		0,
 	);
+	const [isLoading, setIsLoading] = useState(false);
 	return (
 		<div className="py-2 pb-6">
 			<div className="lg:flex flex-col gap-3 bg-white lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow">
@@ -39,11 +41,15 @@ const PaymentMethod = ({
 						<Label
 							htmlFor={"paymentMethod1"}
 							className={cn(
-								`relative max-w-full max-h-[50px] overflow-hidden flex justify-between items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-2 md:px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
+								`relative max-w-full max-h-[50px] overflow-hidden flex justify-between items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
+								isLoading ? "cursor-not-allowed opacity-75" : "",
 							)}
 						>
 							<input
-								className="peer"
+								className={cn(
+									"peer",
+									isLoading ? "cursor-not-allowed opacity-75" : "",
+								)}
 								onChange={(e) => {
 									setPaymentMethod(e.target.value);
 									setOrderCheckout((prev: any) => {
@@ -61,17 +67,21 @@ const PaymentMethod = ({
 								Thanh toán khi nhận hàng
 							</span>
 							<span>
-								<img src="./COD.png" alt="" className="size-7" />
+								<img src="/COD.png" alt="" className="size-7" />
 							</span>
 						</Label>
 						<Label
 							htmlFor={"paymentMethod2"}
 							className={cn(
 								`relative max-w-full max-h-[50px] overflow-hidden flex justify-between items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
+								isLoading ? "cursor-not-allowed opacity-75" : "",
 							)}
 						>
 							<input
-								className="peer"
+								className={cn(
+									"peer",
+									isLoading ? "cursor-not-allowed opacity-75" : "",
+								)}
 								hidden
 								type="radio"
 								name="paymentMethod"
@@ -89,17 +99,21 @@ const PaymentMethod = ({
 								Thanh toán VNPAY
 							</span>
 							<span>
-								<img src="./vnpay.png" alt="" className="size-7" />
+								<img src="/vnpay.png" alt="" className="size-7" />
 							</span>
 						</Label>
 						<Label
 							htmlFor={"paymentMethod3"}
 							className={cn(
 								`relative max-w-full max-h-[50px] overflow-hidden flex justify-between items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
+								isLoading ? "cursor-not-allowed opacity-75" : "",
 							)}
 						>
 							<input
-								className="peer"
+								className={cn(
+									"peer",
+									isLoading ? "cursor-not-allowed opacity-75" : "",
+								)}
 								hidden
 								type="radio"
 								name="paymentMethod"
@@ -117,17 +131,21 @@ const PaymentMethod = ({
 								Thanh toán MoMo
 							</span>
 							<span>
-								<img src="./momo.png" alt="" className="size-7" />
+								<img src="/momo.png" alt="" className="size-7" />
 							</span>
 						</Label>
 						<Label
 							htmlFor={"paymentMethod4"}
 							className={cn(
 								`relative max-w-full max-h-[50px] overflow-hidden flex justify-between items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
+								isLoading ? "cursor-not-allowed opacity-75" : "",
 							)}
 						>
 							<input
-								className="peer"
+								className={cn(
+									"peer",
+									isLoading ? "cursor-not-allowed opacity-75" : "",
+								)}
 								hidden
 								type="radio"
 								name="paymentMethod"
@@ -145,7 +163,7 @@ const PaymentMethod = ({
 								Thanh toán ZaloPay
 							</span>
 							<span>
-								<img src="./zalopay.png" alt="" className="size-7" />
+								<img src="/zalopay.png" alt="" className="size-7" />
 							</span>
 						</Label>
 					</div>
@@ -216,9 +234,16 @@ const PaymentMethod = ({
 						NUCSHOP
 					</p>
 					<Button
-						className="px-9 w-full py-1 bg-custom-400 hover:bg-custom-500"
-						onClick={() => handleCheckout()}
+						className={`px-9 w-full py-1 bg-custom-400 hover:bg-custom-500 flex gap-1 items-center justify-center ${
+							isLoading ? "cursor-not-allowed opacity-75" : ""
+						}`}
+						onClick={() => {
+							handleCheckout();
+							setIsLoading(true);
+						}}
+						disabled={isLoading}
 					>
+						{isLoading && <FaSpinner className="animate-spin mr-2" />}
 						Đặt hàng
 					</Button>
 				</div>
