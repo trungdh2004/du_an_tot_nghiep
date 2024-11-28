@@ -1620,7 +1620,7 @@ class OrderController {
 
       const stateDeCodeUrl = encodeURIComponent(stateJson);
 
-      if (paymentMethod === 2) {
+      if (paymentMethod === 3) {
         const secretKey = process.env.SECRETKEY_MOMO!;
         const accessKey = process.env.ACCESSKEY_MOMO!;
         const partnerCode = process.env.PARTNERCODE_MOMO!;
