@@ -39,7 +39,7 @@ const PaymentMethod = ({
 						<Label
 							htmlFor={"paymentMethod1"}
 							className={cn(
-								`relative max-w-full max-h-[50px] overflow-hidden flex items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-2 md:px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
+								`relative max-w-full max-h-[50px] overflow-hidden flex justify-between items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-2 md:px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
 							)}
 						>
 							<input
@@ -60,11 +60,14 @@ const PaymentMethod = ({
 							<span className="capitalize lg:text-base md:text-base text-sm">
 								Thanh toán khi nhận hàng
 							</span>
+							<span>
+								<img src="./COD.png" alt="" className="size-7" />
+							</span>
 						</Label>
 						<Label
 							htmlFor={"paymentMethod2"}
 							className={cn(
-								`relative max-w-full max-h-[50px] overflow-hidden flex items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
+								`relative max-w-full max-h-[50px] overflow-hidden flex justify-between items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
 							)}
 						>
 							<input
@@ -84,6 +87,65 @@ const PaymentMethod = ({
 							/>
 							<span className="capitalize lg:text-base md:text-base text-sm">
 								Thanh toán VNPAY
+							</span>
+							<span>
+								<img src="./vnpay.png" alt="" className="size-7" />
+							</span>
+						</Label>
+						<Label
+							htmlFor={"paymentMethod3"}
+							className={cn(
+								`relative max-w-full max-h-[50px] overflow-hidden flex justify-between items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
+							)}
+						>
+							<input
+								className="peer"
+								hidden
+								type="radio"
+								name="paymentMethod"
+								id="paymentMethod3"
+								value="3"
+								checked={paymentMethod === "3"}
+								onChange={(e) => {
+									setPaymentMethod(e.target.value);
+									setOrderCheckout((prev: any) => {
+										return { ...prev, paymentMethod: parseInt(e.target.value) };
+									});
+								}}
+							/>
+							<span className="capitalize lg:text-base md:text-base text-sm">
+								Thanh toán MoMo
+							</span>
+							<span>
+								<img src="./momo.png" alt="" className="size-7" />
+							</span>
+						</Label>
+						<Label
+							htmlFor={"paymentMethod4"}
+							className={cn(
+								`relative max-w-full max-h-[50px] overflow-hidden flex justify-between items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
+							)}
+						>
+							<input
+								className="peer"
+								hidden
+								type="radio"
+								name="paymentMethod"
+								id="paymentMethod4"
+								value="4"
+								checked={paymentMethod === "4"}
+								onChange={(e) => {
+									setPaymentMethod(e.target.value);
+									setOrderCheckout((prev: any) => {
+										return { ...prev, paymentMethod: parseInt(e.target.value) };
+									});
+								}}
+							/>
+							<span className="capitalize lg:text-base md:text-base text-sm">
+								Thanh toán ZaloPay
+							</span>
+							<span>
+								<img src="./zalopay.png" alt="" className="size-7" />
 							</span>
 						</Label>
 					</div>

@@ -121,6 +121,20 @@ const OrderPage = () => {
 			} catch (error) {
 				console.log("Error:", error);
 			}
+    }
+    if (orderCheckout.paymentMethod === 3) {
+			try {
+				(async () => {
+					const { data } = await createOrderVNPayPayment({
+						...orderCheckout,
+						returnUrl: `${window.location.origin}/orderprocessing`,
+					});
+					window.location.href = data.paymentUrl;
+					return data;
+				})();
+			} catch (error) {
+				console.log("Error:", error);
+			}
 		}
 	};
 	useEffect(() => {
