@@ -19,13 +19,8 @@ export const createOrderPayUponReceipt = async (
 	return data;
 };
 
-export const createOrderVNPayPayment = async (
-	orderCheckout: ObjectCheckoutOrder,
-) => {
-	const data = await instance.post(
-		`/order/createOrderVNPayPayment`,
-		orderCheckout,
-	);
+export const createOrderVNPayPayment = (orderCheckout: ObjectCheckoutOrder) => {
+	const data = instance.post(`/order/createOrderVNPayPayment`, orderCheckout);
 	return data;
 };
 

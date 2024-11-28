@@ -22,6 +22,7 @@ const OrderPage = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const paramsObject = Object.fromEntries(searchParams.entries());
+	const [spin, setSpin] = useState(false);
 	const stateOrder = JSON.parse(paramsObject.state);
 	const [orderParams, setOrderParams] = useState<any | {}>(stateOrder || {});
 	const [order, setOrder] = useState<any>({});
@@ -85,7 +86,7 @@ const OrderPage = () => {
 	}, [order]);
 
 	const navigate = useNavigate();
-	const handleCheckout = () => {
+	const handleCheckout = async () => {
 		if (order.data.length === 0) {
 			toast.error("Vui lòng mua thêm hàng");
 			return;
@@ -94,47 +95,35 @@ const OrderPage = () => {
 			toast.error("Vui lòng chọn địa chỉ giao hàng");
 			return;
 		}
-		if (orderCheckout.paymentMethod === 1) {
-			try {
-				(async () => {
-					const { data } = await createOrderPayUponReceipt(orderCheckout);
-					toast.success("Thanh toán thành công");
-					navigate("/order/success");
-					return data;
-				})();
-			} catch (error) {
-				console.log("Error:", error);
-				toast.error("Thanh toán thất bại");
+		try {
+			if (orderCheckout.paymentMethod === 1) {
+				const { data } = await createOrderPayUponReceipt(orderCheckout);
+				toast.success("Thanh toán thành công");
+				navigate("/order/success");
+				return data;
 			}
-		}
 
-		if (orderCheckout.paymentMethod === 2) {
-			try {
-				(async () => {
-					const { data } = await createOrderVNPayPayment({
-						...orderCheckout,
-						returnUrl: `${window.location.origin}/orderprocessing`,
-					});
-					window.location.href = data.paymentUrl;
-					return data;
-				})();
-			} catch (error) {
-				console.log("Error:", error);
+			if (orderCheckout.paymentMethod === 2) {
+				const { data } = await createOrderVNPayPayment({
+					...orderCheckout,
+					returnUrl: `${window.location.origin}/orderprocessing`,
+				});
+				window.location.href = data.paymentUrl;
+				return data;
 			}
-    }
-    if (orderCheckout.paymentMethod === 3) {
-			try {
-				(async () => {
-					const { data } = await createOrderVNPayPayment({
-						...orderCheckout,
-						returnUrl: `${window.location.origin}/orderprocessingv2`,
-					});
-					window.location.href = data.paymentUrl;
-					return data;
-				})();
-			} catch (error) {
-				console.log("Error:", error);
+			if (orderCheckout.paymentMethod === 3) {
+				const { data } = await createOrderVNPayPayment({
+					...orderCheckout,
+					returnUrl: `${window.location.origin}/orderprocessingv2`,
+				});
+				window.location.href = data.paymentUrl;
+				return data;
 			}
+		} catch (error: any) {
+			console.error("Error creating order:", error?.message);
+			toast.error("Đã xảy ra lỗi trong quá trình đặt hàng");
+		} finally {
+			setSpin(false);
 		}
 	};
 	useEffect(() => {
@@ -188,6 +177,8 @@ const OrderPage = () => {
 							setOrderCheckout={setOrderCheckout}
 							orderCheckout={orderCheckout}
 							moneyVoucher={moneyVoucher}
+							spin={spin}
+							setSpin={setSpin}
 						/>
 					</div>
 				</div>

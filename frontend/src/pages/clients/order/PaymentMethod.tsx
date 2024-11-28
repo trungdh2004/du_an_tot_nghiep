@@ -13,6 +13,8 @@ interface Props {
 	setOrderCheckout: (order: any) => void;
 	orderCheckout: ObjectCheckoutOrder;
 	moneyVoucher: IOrderMoneyValue | null;
+	spin: boolean;
+	setSpin: (spin: boolean) => void;
 }
 const PaymentMethod = ({
 	data,
@@ -20,6 +22,8 @@ const PaymentMethod = ({
 	setOrderCheckout,
 	orderCheckout,
 	moneyVoucher,
+	spin,
+	setSpin,
 }: Props) => {
 	const [paymentMethod, setPaymentMethod] = useState<string>("1");
 	const arrayTotal = data?.data?.map((product: any) => {
@@ -29,7 +33,7 @@ const PaymentMethod = ({
 		(acc: number, value: number) => acc + value,
 		0,
 	);
-	const [isLoading, setIsLoading] = useState(false);
+
 	return (
 		<div className="py-2 pb-6">
 			<div className="lg:flex flex-col gap-3 bg-white lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow">
@@ -42,13 +46,13 @@ const PaymentMethod = ({
 							htmlFor={"paymentMethod1"}
 							className={cn(
 								`relative max-w-full max-h-[50px] overflow-hidden flex justify-between items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
-								isLoading ? "cursor-not-allowed opacity-75" : "",
+								spin ? "cursor-not-allowed opacity-75" : "",
 							)}
 						>
 							<input
 								className={cn(
 									"peer",
-									isLoading ? "cursor-not-allowed opacity-75" : "",
+									spin ? "cursor-not-allowed opacity-75" : "",
 								)}
 								onChange={(e) => {
 									setPaymentMethod(e.target.value);
@@ -74,13 +78,13 @@ const PaymentMethod = ({
 							htmlFor={"paymentMethod2"}
 							className={cn(
 								`relative max-w-full max-h-[50px] overflow-hidden flex justify-between items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
-								isLoading ? "cursor-not-allowed opacity-75" : "",
+								spin ? "cursor-not-allowed opacity-75" : "",
 							)}
 						>
 							<input
 								className={cn(
 									"peer",
-									isLoading ? "cursor-not-allowed opacity-75" : "",
+									spin ? "cursor-not-allowed opacity-75" : "",
 								)}
 								hidden
 								type="radio"
@@ -106,13 +110,13 @@ const PaymentMethod = ({
 							htmlFor={"paymentMethod3"}
 							className={cn(
 								`relative max-w-full max-h-[50px] overflow-hidden flex justify-between items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
-								isLoading ? "cursor-not-allowed opacity-75" : "",
+								spin ? "cursor-not-allowed opacity-75" : "",
 							)}
 						>
 							<input
 								className={cn(
 									"peer",
-									isLoading ? "cursor-not-allowed opacity-75" : "",
+									spin ? "cursor-not-allowed opacity-75" : "",
 								)}
 								hidden
 								type="radio"
@@ -138,13 +142,13 @@ const PaymentMethod = ({
 							htmlFor={"paymentMethod4"}
 							className={cn(
 								`relative max-w-full max-h-[50px] overflow-hidden flex justify-between items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
-								isLoading ? "cursor-not-allowed opacity-75" : "",
+								spin ? "cursor-not-allowed opacity-75" : "",
 							)}
 						>
 							<input
 								className={cn(
 									"peer",
-									isLoading ? "cursor-not-allowed opacity-75" : "",
+									spin ? "cursor-not-allowed opacity-75" : "",
 								)}
 								hidden
 								type="radio"
@@ -235,15 +239,15 @@ const PaymentMethod = ({
 					</p>
 					<Button
 						className={`px-9 w-full py-1 bg-custom-400 hover:bg-custom-500 flex gap-1 items-center justify-center ${
-							isLoading ? "cursor-not-allowed opacity-75" : ""
+							spin ? "cursor-not-allowed opacity-75" : ""
 						}`}
 						onClick={() => {
 							handleCheckout();
-							setIsLoading(true);
+							setSpin(true);
 						}}
-						disabled={isLoading}
+						disabled={spin}
 					>
-						{isLoading && <FaSpinner className="animate-spin mr-2" />}
+						{spin && <FaSpinner className="animate-spin mr-2" />}
 						Đặt hàng
 					</Button>
 				</div>
