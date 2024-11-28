@@ -116,7 +116,7 @@ const Vorcher = ({
 					) : (
 						<Coupon
 							voucher={voucher}
-							className="w-1/2 px-6 lg:w-full lg:max-w-full h-1/3 lg:h-2/3 "
+							className="w-1/2 px-6 lg:w-full lg:max-w-full h-1/3 lg:h-2/3 py-3 "
 						/>
 					))}
 			</div>
