@@ -4,11 +4,7 @@ import { cn } from "@/lib/utils";
 import { pagingBlogs } from "@/service/blog";
 import { getAllTags } from "@/service/tags-admin";
 import { SearchObjectBlog } from "@/types/searchObjecTypes";
-import {
-	keepPreviousData,
-	useQuery,
-	useQueryClient,
-} from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { FaCommentDots, FaEye, FaRegHeart } from "react-icons/fa";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
@@ -42,14 +38,13 @@ const BlogPage = () => {
 	// const paramsObject = Object.fromEntries(searchParams.entries())
 	const [searchObject, setSearchObject] = useState<SearchObjectBlog>({
 		pageIndex: 1,
-		pageSize: 6,
+		pageSize: 8,
 		keyword: "",
 		fieldSort: "",
 		sort: 1,
 		tab: 1,
 		tags: searchParams.get("tags") || "",
 	});
-	const queryClient = useQueryClient();
 	const {
 		data: blogs,
 		isLoading,
@@ -213,13 +208,15 @@ const BlogPage = () => {
 						</div>
 					)}
 				</div>
-				<div className="flex justify-center mt-5">
-					<Paginations
-						forcePage={searchObject.pageIndex - 1}
-						pageCount={blogs?.totalPage}
-						handlePageClick={handleChangePag}
-					/>
-				</div>
+				{blogs?.totalPage > 1 && (
+					<div className="flex justify-center mt-5">
+						<Paginations
+							forcePage={searchObject.pageIndex - 1}
+							pageCount={blogs?.totalPage}
+							handlePageClick={handleChangePag}
+						/>
+					</div>
+				)}
 			</div>
 			{/* tags-;íst */}
 		</>

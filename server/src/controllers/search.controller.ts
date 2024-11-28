@@ -75,7 +75,11 @@ class SearchController {
         listProduct: listProduct,
         listBlog: listBlog,
       });
-    } catch (error) {}
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
   }
 
   async searchClientDetail(req: Request, res: Response) {
@@ -166,7 +170,7 @@ class SearchController {
           quantitySold: 1,
           quantity: 1,
           rating: 1,
-          images:1,
+          images: 1,
         });
       const countProduct = await ProductModel.countDocuments({
         ...query,
@@ -181,7 +185,54 @@ class SearchController {
       });
 
       return res.status(STATUS.OK).json(data);
-    } catch (error) {}
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async contactForm(req: Request, res: Response) {
+    try {
+      const { name, email, content } = req.body;
+
+      console.log({
+        name,
+        email,
+        content,
+      });
+
+      if (!name || !email || !content) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn truyền thiếu dữ liệu",
+        });
+      }
+
+      const formData = new URLSearchParams({
+        "entry.1499165544": name, // Thay bằng entry ID thực tế
+        "entry.1584898917": email,
+        "entry.1002049118": content,
+      });
+
+      await fetch(
+        `https://docs.google.com/forms/u/0/d/e/1FAIpQLSej6HJ20CXKB2_sD7wAOI5_k5HC0artC6re2CKaq9Od4sJ4hw/formResponse`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: formData.toString(),
+        }
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Gửi thành công",
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
   }
 }
 

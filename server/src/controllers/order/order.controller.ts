@@ -1359,11 +1359,11 @@ class OrderController {
       const { listId, addressId, voucher, paymentMethod, note, returnUrl } =
         req.body;
 
-      // if (paymentMethod !== 2) {
-      //   return res.status(STATUS.BAD_REQUEST).json({
-      //     message: "Phương thức thanh toán lỗi",
-      //   });
-      // }
+      if (paymentMethod !== 2 || paymentMethod !== 3 || paymentMethod !== 4) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Phương thức thanh toán lỗi",
+        });
+      }
 
       if (!listId || listId.length === 0) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -1701,6 +1701,10 @@ class OrderController {
 
         const data = await responsive.json();
         if (!responsive.ok) {
+          return res.status(STATUS.BAD_REQUEST).json(data);
+        }
+
+        if (data?.resultCode !== 0) {
           return res.status(STATUS.BAD_REQUEST).json(data);
         }
         return res.status(STATUS.OK).json({ paymentUrl: data?.payUrl });

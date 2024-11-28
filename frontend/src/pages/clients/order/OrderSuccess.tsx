@@ -16,7 +16,10 @@ const OrderSuccess = () => {
 			setCartsPreview(carts?.data?.content);
 			setTotalCart(totalCountCart?.data?.count);
 		})();
-		
+		const timeout = setTimeout(() => {
+			navigate("/");
+		}, 5000);
+		return () => clearTimeout(timeout);
 	}, [navigate]);
 	return (
 		<div className="container">
