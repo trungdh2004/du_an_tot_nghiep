@@ -1,5 +1,28 @@
 import React from "react";
 
+const teamMembers = [
+  {
+    name: "Nguyen Van A",
+    role: "Nhà sáng lập",
+    image: "https://via.placeholder.com/150",
+  },
+  {
+    name: "Tran Thi B",
+    role: "Quản lý dự án",
+    image: "https://via.placeholder.com/150",
+  },
+  {
+    name: "Le Van C",
+    role: "Kỹ sư phần mềm",
+    image: "https://via.placeholder.com/150",
+  },
+  {
+    name: "Pham Thi D",
+    role: "Thiết kế UI/UX",
+    image: "https://via.placeholder.com/150",
+  },
+];
+
 function AboutPage() {
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -35,63 +58,22 @@ function AboutPage() {
             Đội Ngũ
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Team Member 1 */}
-            <div className="bg-white rounded-lg shadow-lg p-6 text-center">
-              <img
-                src="https://via.placeholder.com/150"
-                alt="Team Member"
-                className="w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-full mb-4"
-              />
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
-                Nguyen Van A
-              </h3>
-              <p className="text-sm sm:text-base text-gray-500">Nhà sáng lập</p>
-            </div>
-
-            {/* Team Member 2 */}
-            <div className="bg-white rounded-lg shadow-lg p-6 text-center">
-              <img
-                src="https://via.placeholder.com/150"
-                alt="Team Member"
-                className="w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-full mb-4"
-              />
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
-                Tran Thi B
-              </h3>
-              <p className="text-sm sm:text-base text-gray-500">
-                Quản lý dự án
-              </p>
-            </div>
-
-            {/* Team Member 3 */}
-            <div className="bg-white rounded-lg shadow-lg p-6 text-center">
-              <img
-                src="https://via.placeholder.com/150"
-                alt="Team Member"
-                className="w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-full mb-4"
-              />
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
-                Le Van C
-              </h3>
-              <p className="text-sm sm:text-base text-gray-500">
-                Kỹ sư phần mềm
-              </p>
-            </div>
-
-            {/* Team Member 4 */}
-            <div className="bg-white rounded-lg shadow-lg p-6 text-center">
-              <img
-                src="https://via.placeholder.com/150"
-                alt="Team Member"
-                className="w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-full mb-4"
-              />
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
-                Pham Thi D
-              </h3>
-              <p className="text-sm sm:text-base text-gray-500">
-                Thiết kế UI/UX
-              </p>
-            </div>
+            {teamMembers.map((member, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-lg shadow-lg p-6 text-center"
+              >
+                <img
+                  src={member.image}
+                  alt={member.name}
+                  className="w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-full mb-4"
+                />
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
+                  {member.name}
+                </h3>
+                <p className="text-sm sm:text-base text-gray-500">{member.role}</p>
+              </div>
+            ))}
           </div>
         </div>
 
