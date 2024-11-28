@@ -4,7 +4,7 @@ import { fetchOrder, receivedClientOrder } from "@/service/order";
 import { IItemOrder, IItemOrderList, IOrderList } from "@/types/order";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { Link, ScrollRestoration } from "react-router-dom";
 import CancelConfirm from "./CancelConfirm";
@@ -34,6 +34,7 @@ const OrderManagements = () => {
 		fieldSort: "",
 		sort: 1,
 	});
+	const refBottom = useRef<HTMLDivElement>(null);
 	const menuList = [
 		{
 			index: 7,
@@ -140,7 +141,13 @@ const OrderManagements = () => {
 			...prev,
 			pageIndex: value.selected + 1,
 		}));
+		scrollBottom();
 	};
+
+	const scrollBottom = async () => {
+		refBottom.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+	};
+
 	return (
 		<>
 			<div className="">
@@ -169,6 +176,7 @@ const OrderManagements = () => {
 							</div>
 						</div>
 					)}
+					<div className="" ref={refBottom}></div>
 					{!isLoading &&
 						orderData?.content &&
 						orderData?.content.map((item: IOrderList) => {

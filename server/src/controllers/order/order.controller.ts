@@ -1703,6 +1703,10 @@ class OrderController {
         if (!responsive.ok) {
           return res.status(STATUS.BAD_REQUEST).json(data);
         }
+
+        if (data?.resultCode !== 0) {
+          return res.status(STATUS.BAD_REQUEST).json(data);
+        }
         return res.status(STATUS.OK).json({ paymentUrl: data?.payUrl });
       } else {
         const ipAddress = String(
