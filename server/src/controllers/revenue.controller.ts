@@ -101,22 +101,29 @@ class RevenueController {
     try {
       const listOrder = await OrderModel.find({
         status: {
-          $in: [4, 5],
+          $in: [4, 5, 6],
         },
       }).select({
         totalMoney: 1,
         orderItems: 1,
+        status: 1,
       });
 
       let countSuccess = 0;
+      let totalOrderSuccess = 0;
       let countCancel = 0;
+      let totalOrderCancel = 0;
 
       const totalMoney = listOrder?.reduce((sum, item) => {
         if (item.status === 6) {
           countCancel += 1;
+          totalOrderCancel += item.totalMoney;
         }
 
-        if (item.status === 4 || item.status === 5) countSuccess += 1;
+        if (item.status === 4 || item.status === 5) {
+          countSuccess += 1;
+          totalOrderSuccess += item.totalMoney;
+        }
         return sum + item.totalMoney;
       }, 0);
 
@@ -125,6 +132,8 @@ class RevenueController {
         count: listOrder.length,
         countSuccess,
         countCancel,
+        totalOrderSuccess,
+        totalOrderCancel,
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
@@ -178,7 +187,7 @@ class RevenueController {
       const listOrder = await OrderModel.find<IOrderArrayMonth>({
         ...queryOrder,
         status: {
-          $in: [4, 5],
+          $in: [4, 5, 6],
         },
       }).select({
         totalMoney: 1,
