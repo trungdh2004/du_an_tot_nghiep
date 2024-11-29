@@ -22,8 +22,6 @@ const MoneyOrder = ({
 	const arrayTotal = data?.data?.map((product: any) => {
 		return product.totalAmount;
 	});
-	console.log(data?.data);
-
 	const totalCost = arrayTotal?.reduce(
 		(acc: number, value: number) => acc + value,
 		0,

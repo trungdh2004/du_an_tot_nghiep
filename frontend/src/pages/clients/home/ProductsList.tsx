@@ -26,6 +26,7 @@ const ProductsList = () => {
 	return (
 		<div className="padding">
 			<div className="relative w-full pt-10 pb-6 group/parrent [&>.swiper-button-disabled]:opacity-50 [&>.swiper-button-disabled]:pointer-events-none">
+				<div className="flex-1 text-header pb-10">Tháng vàng nhận nhiều ưu đãi</div>
 				<Swiper
 					className="[&>.swiper-wrapper]:p-1.5"
 					modules={[Navigation]}

@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { ObjectCheckoutOrder } from "@/types/ObjectCheckoutOrder";
 import { IOrderMoneyValue } from "@/types/order";
 import React, { useState } from "react";
+import { FaSpinner } from "react-icons/fa";
 import { MdOutlineEventNote } from "react-icons/md";
 interface Props {
 	data: any;
@@ -12,6 +13,8 @@ interface Props {
 	setOrderCheckout: (order: any) => void;
 	orderCheckout: ObjectCheckoutOrder;
 	moneyVoucher: IOrderMoneyValue | null;
+	spin: boolean;
+	setSpin: (spin: boolean) => void;
 }
 const PaymentMethod = ({
 	data,
@@ -19,20 +22,17 @@ const PaymentMethod = ({
 	setOrderCheckout,
 	orderCheckout,
 	moneyVoucher,
+	spin,
+	setSpin,
 }: Props) => {
-	console.log(moneyVoucher);
-
 	const [paymentMethod, setPaymentMethod] = useState<string>("1");
 	const arrayTotal = data?.data?.map((product: any) => {
 		return product.totalAmount;
 	});
-	console.log(data?.data);
-
 	const totalCost = arrayTotal?.reduce(
 		(acc: number, value: number) => acc + value,
 		0,
 	);
-	console.log(orderCheckout);
 
 	return (
 		<div className="py-2 pb-6">
@@ -45,11 +45,15 @@ const PaymentMethod = ({
 						<Label
 							htmlFor={"paymentMethod1"}
 							className={cn(
-								`relative max-w-full max-h-[50px] overflow-hidden flex items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-2 md:px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
+								`relative max-w-full max-h-[50px] overflow-hidden flex justify-between items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
+								spin ? "cursor-not-allowed opacity-75" : "",
 							)}
 						>
 							<input
-								className="peer"
+								className={cn(
+									"peer",
+									spin ? "cursor-not-allowed opacity-75" : "",
+								)}
 								onChange={(e) => {
 									setPaymentMethod(e.target.value);
 									setOrderCheckout((prev: any) => {
@@ -66,15 +70,22 @@ const PaymentMethod = ({
 							<span className="capitalize lg:text-base md:text-base text-sm">
 								Thanh toán khi nhận hàng
 							</span>
+							<span>
+								<img src="/COD.png" alt="" className="size-7" />
+							</span>
 						</Label>
 						<Label
 							htmlFor={"paymentMethod2"}
 							className={cn(
-								`relative max-w-full max-h-[50px] overflow-hidden flex items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
+								`relative max-w-full max-h-[50px] overflow-hidden flex justify-between items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
+								spin ? "cursor-not-allowed opacity-75" : "",
 							)}
 						>
 							<input
-								className="peer"
+								className={cn(
+									"peer",
+									spin ? "cursor-not-allowed opacity-75" : "",
+								)}
 								hidden
 								type="radio"
 								name="paymentMethod"
@@ -90,6 +101,73 @@ const PaymentMethod = ({
 							/>
 							<span className="capitalize lg:text-base md:text-base text-sm">
 								Thanh toán VNPAY
+							</span>
+							<span>
+								<img src="/vnpay.png" alt="" className="size-7" />
+							</span>
+						</Label>
+						<Label
+							htmlFor={"paymentMethod3"}
+							className={cn(
+								`relative max-w-full max-h-[50px] overflow-hidden flex justify-between items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
+								spin ? "cursor-not-allowed opacity-75" : "",
+							)}
+						>
+							<input
+								className={cn(
+									"peer",
+									spin ? "cursor-not-allowed opacity-75" : "",
+								)}
+								hidden
+								type="radio"
+								name="paymentMethod"
+								id="paymentMethod3"
+								value="3"
+								checked={paymentMethod === "3"}
+								onChange={(e) => {
+									setPaymentMethod(e.target.value);
+									setOrderCheckout((prev: any) => {
+										return { ...prev, paymentMethod: parseInt(e.target.value) };
+									});
+								}}
+							/>
+							<span className="capitalize lg:text-base md:text-base text-sm">
+								Thanh toán MoMo
+							</span>
+							<span>
+								<img src="/momo.png" alt="" className="size-7" />
+							</span>
+						</Label>
+						<Label
+							htmlFor={"paymentMethod4"}
+							className={cn(
+								`relative max-w-full max-h-[50px] overflow-hidden flex justify-between items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
+								spin ? "cursor-not-allowed opacity-75" : "",
+							)}
+						>
+							<input
+								className={cn(
+									"peer",
+									spin ? "cursor-not-allowed opacity-75" : "",
+								)}
+								hidden
+								type="radio"
+								name="paymentMethod"
+								id="paymentMethod4"
+								value="4"
+								checked={paymentMethod === "4"}
+								onChange={(e) => {
+									setPaymentMethod(e.target.value);
+									setOrderCheckout((prev: any) => {
+										return { ...prev, paymentMethod: parseInt(e.target.value) };
+									});
+								}}
+							/>
+							<span className="capitalize lg:text-base md:text-base text-sm">
+								Thanh toán ZaloPay
+							</span>
+							<span>
+								<img src="/zalopay.png" alt="" className="size-7" />
 							</span>
 						</Label>
 					</div>
@@ -159,7 +237,17 @@ const PaymentMethod = ({
 						Nhấn "Đặt hàng" đồng nghĩa với việc bạn đồng ý tuân theo Điều khoản
 						NUCSHOP
 					</p>
-					<Button className="px-9 w-full py-1" onClick={() => handleCheckout()}>
+					<Button
+						className={`px-9 w-full py-1 bg-custom-400 hover:bg-custom-500 flex gap-1 items-center justify-center ${
+							spin ? "cursor-not-allowed opacity-75" : ""
+						}`}
+						onClick={() => {
+							handleCheckout();
+							setSpin(true);
+						}}
+						disabled={spin}
+					>
+						{spin && <FaSpinner className="animate-spin mr-2" />}
 						Đặt hàng
 					</Button>
 				</div>
@@ -184,9 +272,16 @@ const PaymentMethod = ({
 						</span>
 					</div>
 					<Button
-						className="px-9 h-full rounded-none"
-						onClick={() => handleCheckout()}
+						className={cn(
+							"px-9 h-full rounded-none bg-custom-400 hover:bg-custom-500 flex gap-1 items-center",
+							spin ? "cursor-not-allowed opacity-75" : "",
+						)}
+						onClick={() => {
+							handleCheckout();
+							setSpin(true);
+						}}
 					>
+						{spin && <FaSpinner className="animate-spin mr-2" />}
 						Đặt hàng
 					</Button>
 				</div>

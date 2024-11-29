@@ -10,6 +10,8 @@ import { Outlet, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import SearchProductPage from "./SearchProductPage";
 import SearchPostsPage from "./SearchPostsPage";
+import ProductV2 from "@/components/common/ProductV2";
+import { IProduct } from "@/types/typeProduct";
 
 interface IDataSearchDetailPage {
 	pageIndex: number;
@@ -91,7 +93,7 @@ const WrapperSearch = () => {
 		<div className="mb-10 padding">
 			<h1 className="mb-4 text-xl font-bold">Tìm kiếm</h1>
 
-			<div className="mb-8">Tìm kiếm khóa học, bài viết và các video...</div>
+			<div className="mb-8">Tìm kiếm sản phẩm và bài viết...</div>
 
 			<div className="w-full border-b border-gray-300">
 				<input
@@ -124,35 +126,49 @@ const WrapperSearch = () => {
 			</div>
 
 			<div>
-				<InfiniteScroll
-					dataLength={dataSearch?.content?.length}
-					next={handleNextPage}
-					hasMore={dataSearch.pageIndex < dataSearch.totalPage}
-					loader={
-						<p className="text-sm text-center text-gray-400">Loading...</p>
-					}
-					endMessage={<p style={{ textAlign: "center" }}></p>}
-				>
-					<div
-						className={cn(
-							"grid gap-5",
-							topic === "product"
-								? "grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
-								: "grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4",
-						)}
-					>
-						{dataSearch.content.map((item) =>
-							topic === "product" ? (
-								<SearchProductPage
-									product={item as IProductSearch}
-									key={item?._id}
-								/>
-							) : (
-								<SearchPostsPage key={item?._id} blog={item as IBlogSearch} />
-							),
-						)}
+				{dataSearch?.content?.length <= 0 ? (
+					<div className="flex flex-col items-center justify-center py-8">
+						<img
+							src="/no-data-search.png"
+							alt=""
+							className="lg:w-[300px] lg:h-[300px] md:w-[250px] md:h-[250px] w-[200px] h-[200px] object-cover"
+						/>
+						<h3 className="text-sm lg:text-base md:text-sm">
+							Không tìm thấy {topic === "product" ? "sản phẩm" : "bài viết"} nào
+							theo yêu cầu
+						</h3>
+						<h3 className="text-sm lg:text-base md:text-sm">
+							Hãy thử sử dụng các từ khóa chung chung hơn
+						</h3>
 					</div>
-				</InfiniteScroll>
+				) : (
+					<InfiniteScroll
+						dataLength={dataSearch?.content?.length}
+						next={handleNextPage}
+						hasMore={dataSearch.pageIndex < dataSearch.totalPage}
+						loader={
+							<p className="text-sm text-center text-gray-400">Loading...</p>
+						}
+						endMessage={<p style={{ textAlign: "center" }}></p>}
+					>
+						<div
+							className={cn(
+								"grid gap-5",
+								topic === "product"
+									? "grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
+									: "grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4",
+							)}
+						>
+							{dataSearch.content.map((item) =>
+								topic === "product" ? (
+									<ProductV2 product={item as IProduct} key={item?._id} />
+								) : (
+									<SearchPostsPage key={item?._id} blog={item as IBlogSearch} />
+								),
+							)}
+						</div>
+					</InfiniteScroll>
+				)}
 			</div>
 		</div>
 	);

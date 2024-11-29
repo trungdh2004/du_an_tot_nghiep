@@ -37,6 +37,7 @@ import { formatCurrency } from "../../config/func";
 import LocationModel from "../../models/Location.schema";
 import CustomerModel from "../../models/Customer.schema";
 import sendToMail from "../../mail/mailConfig";
+import * as crypto from "crypto";
 
 const long = +process.env.LONGSHOP! || 105.62573250208116;
 const lat = +process.env.LATSHOP! || 21.045193948892585;
@@ -1300,6 +1301,8 @@ class OrderController {
           _id: voucher,
         });
 
+        console.log(">>existingVoucher", existingVoucher);
+
         if (!existingVoucher) {
           voucherMain = null;
         } else {
@@ -1310,6 +1313,7 @@ class OrderController {
               $ne: 0,
             },
           });
+          console.log(">>check", check);
           if (!check) {
             const data = checkVoucher(existingVoucher);
 
@@ -1355,7 +1359,7 @@ class OrderController {
       const { listId, addressId, voucher, paymentMethod, note, returnUrl } =
         req.body;
 
-      if (paymentMethod !== 2) {
+      if (paymentMethod !== 2 && paymentMethod !== 3 && paymentMethod !== 4) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Phương thức thanh toán lỗi",
         });
@@ -1616,24 +1620,112 @@ class OrderController {
 
       const stateDeCodeUrl = encodeURIComponent(stateJson);
 
-      const ipAddress = String(
-        req.headers["x-forwarded-for"] ||
-          req.connection.remoteAddress ||
-          req.socket.remoteAddress ||
-          req.ip
-      );
+      if (paymentMethod === 3) {
+        const secretKey = process.env.SECRETKEY_MOMO!;
+        const accessKey = process.env.ACCESSKEY_MOMO!;
+        const partnerCode = process.env.PARTNERCODE_MOMO!;
 
-      const paymentUrl = vnpay.buildPaymentUrl({
-        vnp_Amount: newOrder?.amountToPay,
-        vnp_IpAddr: ipAddress,
-        vnp_TxnRef: `${newOrder._id}`,
-        vnp_OrderInfo: "Thanh toan cho ma GD:" + newOrder._id,
-        vnp_OrderType: ProductCode.Other,
-        vnp_ReturnUrl: `${returnUrl}?state=${stateDeCodeUrl}`, // Đường dẫn nên là của frontend
-        vnp_Locale: VnpLocale.VN,
-      });
+        const orderInfo = "Thanh toan MoMo";
+        const redirectUrl = `${returnUrl}?state=${stateDeCodeUrl}`;
+        const ipnUrl =
+          "https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b";
+        const requestType = "payWithMethod";
+        const amount = newOrder?.amountToPay;
+        const orderId = newOrder?._id;
+        const requestId = orderId;
+        const extraData = "";
+        const orderGroupId = "";
+        const autoCapture = true;
+        const lang = "vi";
 
-      return res.status(STATUS.OK).json({ paymentUrl });
+        console.log({
+          orderId,
+          requestId,
+          amount,
+        });
+
+        const rawSignature =
+          "accessKey=" +
+          accessKey +
+          "&amount=" +
+          amount +
+          "&extraData=" +
+          extraData +
+          "&ipnUrl=" +
+          ipnUrl +
+          "&orderId=" +
+          orderId +
+          "&orderInfo=" +
+          orderInfo +
+          "&partnerCode=" +
+          partnerCode +
+          "&redirectUrl=" +
+          redirectUrl +
+          "&requestId=" +
+          requestId +
+          "&requestType=" +
+          requestType;
+
+        var signature = crypto
+          .createHmac("sha256", secretKey)
+          .update(rawSignature)
+          .digest("hex");
+
+        const requestBody = JSON.stringify({
+          partnerCode: partnerCode,
+          partnerName: "Test",
+          storeId: "MomoTestStore",
+          requestId: requestId,
+          amount: amount,
+          orderId: orderId,
+          orderInfo: orderInfo,
+          redirectUrl: redirectUrl,
+          ipnUrl: ipnUrl,
+          lang: lang,
+          requestType: requestType,
+          autoCapture: autoCapture,
+          extraData: extraData,
+          orderGroupId: orderGroupId,
+          signature: signature,
+        });
+        const responsive = await fetch(
+          "https://test-payment.momo.vn/v2/gateway/api/create",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: requestBody,
+          }
+        );
+
+        const data = await responsive.json();
+        if (!responsive.ok) {
+          return res.status(STATUS.BAD_REQUEST).json(data);
+        }
+
+        if (data?.resultCode !== 0) {
+          return res.status(STATUS.BAD_REQUEST).json(data);
+        }
+        return res.status(STATUS.OK).json({ paymentUrl: data?.payUrl });
+      } else {
+        const ipAddress = String(
+          req.headers["x-forwarded-for"] ||
+            req.connection.remoteAddress ||
+            req.socket.remoteAddress ||
+            req.ip
+        );
+        const paymentUrl = vnpay.buildPaymentUrl({
+          vnp_Amount: newOrder?.amountToPay,
+          vnp_IpAddr: ipAddress,
+          vnp_TxnRef: `${newOrder._id}`,
+          vnp_OrderInfo: "Thanh toan cho ma GD:" + newOrder._id,
+          vnp_OrderType: ProductCode.Other,
+          vnp_ReturnUrl: `${returnUrl}?state=${stateDeCodeUrl}`, // Đường dẫn nên là của frontend
+          vnp_Locale: VnpLocale.VN,
+        });
+        return res.status(STATUS.OK).json({ paymentUrl });
+      }
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
@@ -1876,6 +1968,240 @@ class OrderController {
         note: existingOrder.note,
         voucher: formatCurrency(existingOrder.voucherAmount),
         payment: formatCurrency(+verify.vnp_Amount),
+      };
+
+      sendToMail(
+        user?.email as string,
+        "Thông báo đặt hàng thành công tại NUCSHOP",
+        dataSendMail,
+        process.env.EMAIL!,
+        "/order.ejs"
+      );
+
+      if (state) {
+        const data = JSON.parse(state as string);
+
+        await CartItemModel.deleteMany({
+          _id: {
+            $in: data.listId,
+          },
+        });
+      }
+
+      return res.status(STATUS.OK).json({
+        message: "Đơn hàng giao dịch thành công",
+        type: 3,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  // momo
+  async returnUrlMomo(req: RequestModel, res: Response) {
+    try {
+      const user = req.user;
+      const {
+        state,
+        orderId,
+        amount,
+        transId,
+        resultCode,
+        payType,
+        responseTime,
+        requestId,
+      } = req.query;
+
+      if (!orderId || !amount || !requestId) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Giao dịch bất ổn xin mời về trang chủ",
+          url: "/",
+          type: 1,
+        });
+      }
+
+      const existingOrder = await OrderModel.findById(orderId).populate({
+        path: "orderItems",
+        populate: {
+          path: "product",
+          select: {
+            name: 1,
+            thumbnail: 1,
+          },
+        },
+      });
+
+      if (!existingOrder) {
+        if (state) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Không có đơn hàng nào",
+            type: 2,
+            url: `?state=${encodeURIComponent(state as string)}`,
+          });
+        } else {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Không có đơn hàng nào",
+            url: "/",
+            type: 1,
+          });
+        }
+      }
+
+      const secretKey = process.env.SECRETKEY_MOMO!;
+      const accessKey = process.env.ACCESSKEY_MOMO!;
+      const partnerCode = process.env.PARTNERCODE_MOMO!;
+
+      const rawSignature = `accessKey=${accessKey}&orderId=${orderId}&partnerCode=${partnerCode}&requestId=${requestId}`;
+
+      const signature = crypto
+        .createHmac("sha256", secretKey)
+        .update(rawSignature)
+        .digest("hex");
+
+      const requestBody = JSON.stringify({
+        partnerCode,
+        requestId: orderId,
+        orderId,
+        signature,
+        lang: "vi",
+      });
+
+      const responsive = await fetch(
+        "https://test-payment.momo.vn/v2/gateway/api/query",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: requestBody,
+        }
+      );
+      const data = await responsive.json();
+
+      if (!responsive.ok) {
+        await OrderModel.findByIdAndDelete(existingOrder._id);
+
+        await OrderItemsModel.deleteMany({
+          _id: {
+            $in: existingOrder.orderItems,
+          },
+        });
+
+        if (state) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Giao dịch xảy ra lỗi",
+            type: 2,
+            url: `?state=${encodeURIComponent(state as string)}`,
+          });
+        } else {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Giao dịch xảy ra lỗi",
+            url: "/",
+            type: 1,
+          });
+        }
+      }
+
+      if (data?.resultCode !== 0) {
+        await OrderModel.findByIdAndDelete(existingOrder._id);
+
+        await OrderItemsModel.deleteMany({
+          _id: {
+            $in: existingOrder.orderItems,
+          },
+        });
+
+        if (state) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Giao dịch xảy ra lỗi",
+            type: 2,
+            url: `?state=${encodeURIComponent(state as string)}`,
+          });
+        } else {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Giao dịch xảy ra lỗi",
+            url: "/",
+            type: 1,
+          });
+        }
+      }
+
+      const payment = await PaymentModel.create({
+        user: user?.id,
+        method: 1,
+        codeOrder: existingOrder.code,
+        transactionId: transId,
+        amount: amount,
+        paymentDate: responseTime,
+        cardType: payType,
+        bankCode: "MoMo",
+      });
+
+      const updateOder = await OrderModel.findByIdAndUpdate(
+        existingOrder._id,
+        {
+          payment: payment._id,
+          status: 1,
+          $push: {
+            statusList: 1,
+          },
+          amountToPay: 0,
+          paymentStatus: true,
+          paymentAmount: +amount,
+        },
+        { new: true }
+      );
+
+      if (!updateOder) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Xử lí đơn hàng lỗi chúng tôi sẽ hoàn trả tiền sau",
+          url: "/",
+          type: 1,
+        });
+      }
+
+      await OrderItemsModel.updateMany(
+        {
+          _id: {
+            $in: existingOrder.orderItems,
+          },
+        },
+        {
+          status: 1,
+        }
+      );
+
+      socketNotificationAdmin(
+        `<p>Đơn hàng <span style="color:blue;font-weight:500;">${updateOder?.code}</span> vừa được đặt, vui lòng kiểm tra thông tin</p>`,
+        TYPE_NOTIFICATION_ADMIN.ORDER,
+        updateOder?._id
+      );
+      socketNotificationAdmin(
+        `<p>Có giao dịch thanh toán online với số tiền : <span style="color:red;font-weight:500;">${formatCurrency(
+          payment?.amount
+        )}</span>, vui lòng kiểm tra thông tin</p>`,
+        TYPE_NOTIFICATION_ADMIN.PAYMENT,
+        `${payment?._id}`
+      );
+
+      const totalMoney = existingOrder?.orderItems?.reduce(
+        (sum, item) => sum + (item as IOrderItem).totalMoney,
+        0
+      );
+
+      const dataSendMail = {
+        orderItems: existingOrder?.orderItems,
+        code: existingOrder.code,
+        createdAt: new Date(existingOrder.createdAt).toLocaleString(),
+        address: existingOrder.address,
+        amountToPay: formatCurrency(0),
+        totalMoney: formatCurrency(totalMoney),
+        shippingCost: formatCurrency(existingOrder.shippingCost),
+        note: existingOrder.note,
+        voucher: formatCurrency(existingOrder.voucherAmount),
+        payment: formatCurrency(+amount),
       };
 
       sendToMail(

@@ -31,8 +31,6 @@ const Vorcher = ({
 				code: data.voucherCode,
 				listId: stateOrder.listId,
 			});
-			console.log(check);
-
 			setVoucher(check.data.voucher);
 			setShow(true);
 			if (check.data !== null) {
@@ -56,7 +54,6 @@ const Vorcher = ({
 
 	useEffect(() => {
 		if (data?.voucherMain) {
-			console.log("data:", data?.voucherMain);
 			setOrderCheckout((prev: any) => {
 				return { ...prev, voucher: data?.voucherMain?.voucher?._id };
 			});
@@ -74,43 +71,41 @@ const Vorcher = ({
 							<img src={voucher1} alt="" className="w-8 h-8" />
 						</div>
 					</div>
-					<div className="flex items-center gap-2 pr-4 text-center ">
-						<form
-							action=""
-							onSubmit={handleSubmit(onSubmit)}
-							className="flex items-center w-full gap-2 md:w-min md:justify-end"
-						>
-							<div className="relative sm:w-3/4 md:w-52">
-								<input
-									placeholder="Nhập mã giảm giá"
-									type="text"
-									className="w-full outline-none border border-gray-200 bg-gray-100 h-8 md:h-10 p-1.5"
-									{...register("voucherCode")}
-								/>
-								<div
-									className="absolute top-1/2 -translate-y-1/2 right-1.5 size-5 bg-black/30 rounded-full flex items-center justify-center cursor-pointer"
-									onClick={() => {
-										setVoucher(null);
-										setShow(true);
-										setOrderCheckout((prev: any) => {
-											return { ...prev, voucher: null };
-										});
-										setMoneyVoucher(null);
-										reset();
-									}}
-								>
-									<IoClose className="text-white" />
-								</div>
-							</div>
-							<Button
-								className={cn(
-									"h-8 md:h-10 w-1/3 max-w-lg bg-custom-500 hover:bg-custom-600 text-white px-5",
-								)}
+					<form
+						action=""
+						onSubmit={handleSubmit(onSubmit)}
+						className="flex lg:flex-wrap md:flex-nowrap flex-nowrap  items-center w-full gap-2 px-3"
+					>
+						<div className="relative flex-1 min-w-[180px] sm:w-3/4 md:w-52">
+							<input
+								placeholder="Nhập mã giảm giá"
+								type="text"
+								className="w-full outline-none border border-gray-200 bg-gray-100 h-8 md:h-10 p-1.5"
+								{...register("voucherCode")}
+							/>
+							<div
+								className="absolute top-1/2 -translate-y-1/2 right-1.5 size-5 bg-black/30 rounded-full flex items-center justify-center cursor-pointer"
+								onClick={() => {
+									setVoucher(null);
+									setShow(true);
+									setOrderCheckout((prev: any) => {
+										return { ...prev, voucher: null };
+									});
+									setMoneyVoucher(null);
+									reset();
+								}}
 							>
-								Áp dụng
-							</Button>
-						</form>
-					</div>
+								<IoClose className="text-white" />
+							</div>
+						</div>
+						<Button
+							className={cn(
+								"h-8 md:h-10 w-full sm:w-auto bg-custom-500 hover:bg-custom-600 text-white px-5",
+							)}
+						>
+							Áp dụng
+						</Button>
+					</form>
 				</div>
 
 				{show &&
@@ -121,7 +116,7 @@ const Vorcher = ({
 					) : (
 						<Coupon
 							voucher={voucher}
-							className="w-1/2 px-6 lg:w-full lg:max-w-full h-1/3 lg:h-2/3 "
+							className="w-full px-6 lg:w-full lg:max-w-full h-1/3 lg:h-2/3 py-3 "
 						/>
 					))}
 			</div>

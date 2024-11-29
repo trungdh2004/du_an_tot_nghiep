@@ -6,15 +6,13 @@ import { IoColorFillOutline } from "react-icons/io5";
 import AddressOrder from "../AddressOrder";
 import ProductOrderSkeleton from "./ProductOrderSkeleton";
 import ProductItemOrder from "./ProductItemOrder";
-
+import productNotFound from "@/assets/productnotfound.jpg";
 const ProductOrderV2 = ({
 	data,
 	handleChangeAddress,
 	isLoading,
 	setOrder,
 }: any) => {
-	console.log(typeof setOrder);
-
 	return (
 		<div className="w-full">
 			<h4 className="font-bold text-xl pb-5 lg:pb-7  lg:text-left text-center ">
@@ -48,34 +46,47 @@ const ProductOrderV2 = ({
 					<ProductOrderSkeleton />
 				) : (
 					<>
-						{data?.data?.map((product: ProductOrder, index: number) => {
-							return (
-								<div
-									className="rounded-md border border-gray-200 px-7 py-6 flex flex-col gap-4"
-									key={index}
-								>
-									{product?.items?.map(
-										(productItem: ProductOrderItem, index: number) => {
-											return (
-												<ProductItemOrder
-													productItem={productItem}
-													key={index}
-												/>
-											);
-										},
-									)}
+						{data?.data?.length > 0 ? (
+							data?.data?.map((product: ProductOrder, index: number) => {
+								return (
+									<div
+										className="rounded-md border border-gray-200 px-7 py-6 flex flex-col gap-4"
+										key={index}
+									>
+										{product?.items?.map(
+											(productItem: ProductOrderItem, index: number) => {
+												return (
+													<ProductItemOrder
+														productItem={productItem}
+														key={index}
+													/>
+												);
+											},
+										)}
 
-									<div className="flex items-center justify-between gap-4 md:pt-3 lg:self-end md:self-end">
-										<p className="text-xs lg:text-sm md:text-sm ">
-											Tổng số tiền ({product.items.length} sản phẩm) :
-										</p>
-										<span className="lg:text-lg md:text-lg text-base font-normal text-[#f78138]">
-											{formatCurrency(product.totalAmount)}
-										</span>
+										<div className="flex items-center justify-between gap-4 md:pt-3 lg:self-end md:self-end">
+											<p className="text-xs lg:text-sm md:text-sm ">
+												Tổng số tiền ({product.items.length} sản phẩm) :
+											</p>
+											<span className="lg:text-lg md:text-lg text-base font-normal text-[#f78138]">
+												{formatCurrency(product.totalAmount)}
+											</span>
+										</div>
 									</div>
-								</div>
-							);
-						})}
+								);
+							})
+						) : (
+							<div className="flex flex-col items-center justify-center gap-3 py-2 my-2 bg-white border border-gray-200 rounded-none lg:rounded-md md:rounded-md box-shadow">
+								<img
+									src={productNotFound}
+									alt=""
+									className="object-cover w-[200px] h-[200px]"
+								/>
+								<span className="font-semibold">
+									Bạn chưa chọn sản phẩm nào
+								</span>
+							</div>
+						)}
 					</>
 				)}
 			</div>

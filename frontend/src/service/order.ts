@@ -19,18 +19,28 @@ export const createOrderPayUponReceipt = async (
 	return data;
 };
 
-export const createOrderVNPayPayment = async (
-	orderCheckout: ObjectCheckoutOrder,
-) => {
-	const data = await instance.post(
-		`/order/createOrderVNPayPayment`,
-		orderCheckout,
-	);
+export const createOrderVNPayPayment = (orderCheckout: ObjectCheckoutOrder) => {
+	const data = instance.post(`/order/createOrderVNPayPayment`, orderCheckout);
 	return data;
 };
 
+// export const createOrderMoMo = async (
+// 	orderCheckout: ObjectCheckoutOrder,
+// ) => {
+// 	const data = await instance.post(
+// 		`/order/createOrderVNPayPayment`,
+// 		orderCheckout,
+// 	);
+// 	return data;
+// };
+
 export const returnUrlVnPay = async (dataUrl: any) => {
 	const data = await instance.get(`/order/returnVnPay?${dataUrl}`);
+	return data;
+};
+
+export const returnUrlMoMo = async (dataUrl: any) => {
+	const data = await instance.get(`/order/returnUrlMoMo?${dataUrl}`);
 	return data;
 };
 

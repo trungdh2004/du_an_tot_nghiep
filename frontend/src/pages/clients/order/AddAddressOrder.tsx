@@ -122,7 +122,6 @@ const AddAddressOrder = ({
 			closeOpen(false);
 		},
 		onError: (error) => {
-			console.log(error);
 			toast.error("Bạn thêm địa chỉ thất bại");
 		},
 	});

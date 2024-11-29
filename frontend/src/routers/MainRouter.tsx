@@ -22,6 +22,8 @@ import TestComponent from "@/pages/clients/Test";
 import VoucherIndex from "@/pages/clients/vouchers/VoucherIndex";
 import NotFound from "@/pages/NotFound";
 import { Navigate } from "react-router-dom";
+import ProtectedRouter from "./ProtectedRouter";
+import OrderProcessingV2 from "@/pages/clients/order/OrderProcessingV2";
 
 const MainRouter = [
 	{
@@ -50,7 +52,11 @@ const MainRouter = [
 
 			{
 				path: "/account",
-				element: <AccountLayout />,
+				element: (
+					<ProtectedRouter>
+						<AccountLayout />
+					</ProtectedRouter>
+				),
 				children: [
 					{
 						path: "",
@@ -82,6 +88,8 @@ const MainRouter = [
 		],
 	},
 	{ path: "/orderprocessing", element: <OrderProcessing /> },
+	{ path: "/orderprocessingv2", element: <OrderProcessingV2 /> },
+	{ path: "/orderprocessingv3", element: <OrderProcessing /> },
 	{ path: "/testComponent", element: <TestComponent /> },
 	{ path: "*", element: <NotFound /> },
 ];

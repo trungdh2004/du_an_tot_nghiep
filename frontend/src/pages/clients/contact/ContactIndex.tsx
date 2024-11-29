@@ -16,6 +16,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import { GoMail } from "react-icons/go";
 import { MdOutlinePhoneAndroid } from "react-icons/md";
 import { toast } from "sonner";
+import { contactFormService } from "@/service/system";
 const formSchema = z.object({
 	name: z.string({ required_error: "Bạn chưa nhập tên" }),
 	email: z
@@ -30,25 +31,21 @@ const ContactIndex = () => {
 	});
 
 	const onSubmit = async (payload: z.infer<typeof formSchema>) => {
-		const formData = new FormData();
-		formData.append("entry.1499165544", payload?.name);
-		formData.append("entry.1584898917", payload?.email);
-		formData.append("entry.1002049118", payload?.content);
-		const response = fetch(
-			`https://docs.google.com/forms/u/0/d/e/1FAIpQLSej6HJ20CXKB2_sD7wAOI5_k5HC0artC6re2CKaq9Od4sJ4hw/formResponse`,
-			{
-				method: "POST",
-				headers: { "Content-Type": "application/x-www-form-urlencoded" },
-				body: formData,
-			},
-		);
-		console.log("response: ", response);
-		form.reset({
-			name: "",
-			email: "",
-			content: "",
-		});
-		toast.success("Đã gửi liên hệ thành công");
+		try {
+			const { data } = await contactFormService(
+				payload.name,
+				payload.email,
+				payload.content,
+			);
+			form.reset({
+				name: "",
+				email: "",
+				content: "",
+			});
+			toast.success("Đã gửi liên hệ thành công");
+		} catch (error) {
+			toast.success("Gửi liên hệ thất bại");
+		}
 	};
 	return (
 		<>

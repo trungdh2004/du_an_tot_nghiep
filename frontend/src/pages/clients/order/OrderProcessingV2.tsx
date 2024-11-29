@@ -1,17 +1,17 @@
-import { returnUrlVnPay } from "@/service/order";
+import { returnUrlMoMo, returnUrlVnPay } from "@/service/order";
 import React, { useEffect } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
-const OrderProcessing = () => {
+const OrderProcessingV2 = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const paramsObject = Object.fromEntries(searchParams.entries());
 	const navigate = useNavigate();
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const data = await returnUrlVnPay(searchParams.toString());
+				const data = await returnUrlMoMo(searchParams.toString());
 				if (data?.data?.type === 3) {
 					navigate("/order/success");
 					return data;
@@ -39,4 +39,4 @@ const OrderProcessing = () => {
 	);
 };
 
-export default OrderProcessing;
+export default OrderProcessingV2;
