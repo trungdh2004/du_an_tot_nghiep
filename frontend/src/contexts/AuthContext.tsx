@@ -95,11 +95,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 		};
 	}, []);
 
-	useEffect(() => {
-		if (authUser) {
-			console.log("re render lại nè:", authUser);
-		}
-	}, [authUser]);
 	if (isLoading) {
 		return <LoadingFixed />;
 	}
