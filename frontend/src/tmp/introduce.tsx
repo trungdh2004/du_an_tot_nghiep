@@ -26,7 +26,7 @@ const teamMembers = [
 function AboutPage() {
   return (
     <div className="bg-gray-50 min-h-screen">
-      {/* Header Section */}
+
       <div className="relative bg-blue-600 text-white py-8 sm:py-12 px-4 sm:px-6 lg:px-12">
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-4">
           Về Chúng Tôi
@@ -37,9 +37,9 @@ function AboutPage() {
         </p>
       </div>
 
-      {/* Main Content */}
+
       <div className="container mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-12">
-        {/* Sứ Mệnh */}
+
         <div className="mb-12">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
             Sứ Mệnh
@@ -52,7 +52,7 @@ function AboutPage() {
           </p>
         </div>
 
-        {/* Đội Ngũ */}
+
         <div className="mb-12">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
             Đội Ngũ
@@ -77,7 +77,7 @@ function AboutPage() {
           </div>
         </div>
 
-        {/* Giá Trị */}
+
         <div>
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
             Giá Trị
@@ -103,7 +103,7 @@ function AboutPage() {
         </div>
       </div>
 
-      {/* CTA Section */}
+
       <div className="bg-blue-600 text-white py-8 sm:py-12 px-4 sm:px-6 lg:px-12 text-center">
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
           Hãy cùng hợp tác với chúng tôi!
