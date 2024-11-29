@@ -35,7 +35,7 @@ const ShopProduct = () => {
 					.map((c: string) => c.trim())
 					.filter(Boolean) ?? [];
 			return {
-				pageIndex: paramsObject?.pageIndex,
+				pageIndex: paramsObject?.pageIndex | 1,
 				pageSize: 12,
 				keyword: "",
 				color: colorCheck,
@@ -61,10 +61,8 @@ const ShopProduct = () => {
 			const { data } = await pagingProduct(searchParamsObject);
 			return data;
 		},
-		staleTime: 1000 * 60 * 15,
-		refetchInterval: 1000 * 60 * 15,
-		retry: 2,
 	});
+	if (isError) return <p>Error occurred!</p>;
 	return (
 		<div className="padding pt-[40px]">
 			<div className="relative grid lg:grid-cols-12 gap-9">

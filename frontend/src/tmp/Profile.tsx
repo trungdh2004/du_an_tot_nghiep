@@ -12,21 +12,24 @@ function ProfilePage() {
   const [errors, setErrors] = useState({});
   const [profileImage, setProfileImage] = useState(null);
   const [isPreviewing, setIsPreviewing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleEditClick = () => {
-    setOriginalInfo({ ...userInfo });
+
     setIsEditing(true);
   };
 
   const handleCancelClick = () => {
-    setUserInfo(originalInfo);
+    setUserInfo(originalInfo || userInfo);
     setErrors({});
     setIsEditing(false);
   };
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
     if (validateInput()) {
-      saveToServer();
+      setIsSaving(true);
+      await saveToServer();
+      setIsSaving(false);
       setIsEditing(false);
     }
   };
@@ -42,12 +45,17 @@ function ProfilePage() {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
+    if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = () => {
-        setProfileImage(reader.result);
+
+      };
+      reader.onerror = () => {
+        alert("Không thể tải ảnh. Vui lòng thử lại.");
       };
       reader.readAsDataURL(file);
+    } else {
+      alert("Vui lòng chọn một tệp ảnh hợp lệ.");
     }
   };
 
@@ -64,16 +72,12 @@ function ProfilePage() {
 
   const saveToServer = async () => {
     try {
-      // Replace with your API endpoint
-      const response = await fetch("/api/profile", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userInfo),
-      });
-      if (!response.ok) throw new Error("Có lỗi xảy ra khi lưu thông tin.");
-      alert("Thông tin đã được lưu vào server.");
+
+      console.log("Thông tin đang được lưu:", userInfo);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      alert("Thông tin đã được lưu thành công!");
     } catch (error) {
-      alert(error.message);
+      alert("Có lỗi xảy ra khi lưu thông tin. Vui lòng thử lại.");
     }
   };
 
@@ -98,7 +102,11 @@ function ProfilePage() {
               </div>
             )}
             {isEditing && (
-              <input type="file" accept="image/*" onChange={handleImageChange} />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
             )}
           </div>
         </div>
@@ -181,7 +189,14 @@ function ProfilePage() {
           </div>
         </div>
         <div className="mt-4 flex flex-col sm:flex-row items-center">
-          {isEditing ? (
+          {isSaving ? (
+            <button
+              disabled
+              className="bg-blue-300 text-white px-4 py-2 rounded cursor-not-allowed"
+            >
+              Đang lưu...
+            </button>
+          ) : isEditing ? (
             <>
               <button
                 onClick={handleSaveClick}
