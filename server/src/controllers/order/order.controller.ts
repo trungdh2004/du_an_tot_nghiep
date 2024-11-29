@@ -1359,7 +1359,7 @@ class OrderController {
       const { listId, addressId, voucher, paymentMethod, note, returnUrl } =
         req.body;
 
-      if (paymentMethod !== 2 ) {
+      if (paymentMethod !== 2 && paymentMethod !== 3 && paymentMethod !== 4) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Phương thức thanh toán lỗi",
         });

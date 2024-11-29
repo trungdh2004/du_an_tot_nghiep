@@ -272,9 +272,16 @@ const PaymentMethod = ({
 						</span>
 					</div>
 					<Button
-						className="px-9 h-full rounded-none bg-custom-400 hover:bg-custom-500"
-						onClick={() => handleCheckout()}
+						className={cn(
+							"px-9 h-full rounded-none bg-custom-400 hover:bg-custom-500 flex gap-1 items-center",
+							spin ? "cursor-not-allowed opacity-75" : "",
+						)}
+						onClick={() => {
+							handleCheckout();
+							setSpin(true);
+						}}
 					>
+						{spin && <FaSpinner className="animate-spin mr-2" />}
 						Đặt hàng
 					</Button>
 				</div>

@@ -360,6 +360,9 @@ const PurchaseOrder = () => {
 									<span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted text-sm md:text-base rounded text-[rgba(0,0,0,.68)] leading-[160%]">
 										Voucher
 									</span>
+									<span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted text-sm md:text-base rounded text-[rgba(0,0,0,.68)] leading-[160%]">
+										Đã thanh toán
+									</span>
 									<span className="py-3 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-lg text-[rgba(0,0,0,.68)] leading-[160%]">
 										Thành tiền
 									</span>
@@ -375,6 +378,10 @@ const PurchaseOrder = () => {
 									<span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-base  text-[rgba(0,0,0,.68)] leading-[160%]">
 										{" "}
 										- {formatQuantity(data?.data?.voucherAmount, "₫")}
+									</span>
+									<span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-base  text-[rgba(0,0,0,.68)] leading-[160%]">
+										{" "}
+										- {formatQuantity(data?.data?.paymentAmount, "₫")}
 									</span>
 									<span className="py-3 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-red-500 text-sm md:text-lg leading-[160%]">
 										{formatQuantity(data?.data?.amountToPay, "₫")}
