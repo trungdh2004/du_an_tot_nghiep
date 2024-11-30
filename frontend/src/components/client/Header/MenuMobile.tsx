@@ -10,7 +10,7 @@ import useCart from "@/store/cart.store";
 import { AxiosError } from "axios";
 import { getAuth, signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { IoMenu, IoSearch } from "react-icons/io5";
+import { IoMenu } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";

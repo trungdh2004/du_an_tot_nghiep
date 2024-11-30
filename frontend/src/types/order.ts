@@ -1,6 +1,3 @@
-import { Variants } from "framer-motion";
-import { IColor } from "./typeProduct";
-
 export interface IStatus {
 	index: number | null;
 	name: string | null;

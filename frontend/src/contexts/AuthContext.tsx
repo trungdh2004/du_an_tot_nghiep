@@ -3,16 +3,16 @@ import { currentAccount } from "@/service/account";
 import { getCountMyShoppingCart, pagingNewCart } from "@/service/cart";
 import useCart from "@/store/cart.store";
 import {
-	ClientToServerEvents,
-	ServerToClientEvents,
+  ClientToServerEvents,
+  ServerToClientEvents,
 } from "@/types/socket.interface";
 import {
-	createContext,
-	Dispatch,
-	ReactNode,
-	SetStateAction,
-	useEffect,
-	useState,
+  createContext,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useState,
 } from "react";
 import { io, Socket } from "socket.io-client";
 export interface IUser {
@@ -46,7 +46,7 @@ interface AuthProviderProps {
 }
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
-	const { setCarts, setCartsPreview, setTotalCart, clearStateCart } = useCart();
+	const { setCartsPreview, setTotalCart, clearStateCart } = useCart();
 	const [authUser, setAuthUser] = useState<IUser | undefined>(undefined);
 	const [socket, setSocket] =
 		useState<Socket<ServerToClientEvents, ClientToServerEvents>>();

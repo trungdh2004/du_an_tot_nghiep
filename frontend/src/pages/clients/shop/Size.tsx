@@ -5,12 +5,12 @@ import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
 import { ISize } from "@/types/variants";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { useQueryClient } from "@tanstack/react-query";
-import React, {
-	Dispatch,
-	SetStateAction,
-	useCallback,
-	useEffect,
-	useState,
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
 } from "react";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";

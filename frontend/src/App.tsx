@@ -1,8 +1,4 @@
-import {
-	createBrowserRouter,
-	RouterProvider,
-	ScrollRestoration,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 
 import AdminRouter from "./routers/AdminRouter";

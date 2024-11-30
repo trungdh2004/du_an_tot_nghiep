@@ -5,18 +5,57 @@ import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { getCountRevenue } from "@/service/revenue";
 import { FcMoneyTransfer, FcShipped } from "react-icons/fc";
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 interface StatisticsData {
 	totalMoney: number;
 	count: number;
+	countSuccess: number;
+	countCancel: number;
+	totalOrderSuccess: number;
+	totalOrderCancel: number;
 }
+
+const COLORS = ["#00C49F", "#ef4444", "#FFBB28", "#FF8042"];
+const RADIAN = Math.PI / 180;
+
+// Render label cho biểu đồ Pie
+const renderCustomizedLabel = ({
+	cx,
+	cy,
+	midAngle,
+	innerRadius,
+	outerRadius,
+	percent,
+}: any) => {
+	const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+	const x = cx + radius * Math.cos(-midAngle * RADIAN);
+	const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+	return (
+		<text
+			x={x}
+			y={y}
+			fill="white"
+			textAnchor={x > cx ? "start" : "end"}
+			dominantBaseline="central"
+		>
+			{`${(percent * 100).toFixed(0)}%`}
+		</text>
+	);
+};
 
 const StatisticsCard = () => {
 	const [data, setData] = useState<StatisticsData>({
 		totalMoney: 0,
 		count: 0,
+		countCancel: 0,
+		countSuccess: 0,
+		totalOrderCancel: 0,
+		totalOrderSuccess: 0,
 	});
 	const [isLoading, setIsLoading] = useState(true);
+
 	const fetchData = async () => {
 		setIsLoading(true);
 		try {
@@ -30,6 +69,7 @@ const StatisticsCard = () => {
 			setIsLoading(false);
 		}
 	};
+
 	useEffect(() => {
 		fetchData();
 	}, []);
@@ -48,6 +88,16 @@ const StatisticsCard = () => {
 			</div>
 		);
 	}
+
+	const orderData = [
+		{ name: "Thành công", value: data.countSuccess },
+		{ name: "Hủy", value: data.countCancel },
+	];
+
+	const moneyData = [
+		{ name: "Thành công", value: data.totalOrderSuccess },
+		{ name: "Thất bại", value: data.totalOrderCancel },
+	];
 
 	return (
 		<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -94,22 +144,79 @@ const StatisticsCard = () => {
 								Giá trị trung bình mỗi đơn
 							</p>
 							<p className="text-2xl font-bold text-red-500">
-								{formatCurrency(data.totalMoney / data.count)}
+								{data.count > 0
+									? formatCurrency(data.totalMoney / data.count)
+									: "Không có dữ liệu"}
 							</p>
 						</div>
-						<div className="w-32 h-32">
-							<div className="relative w-full h-full border-8 rounded-full border-primary/10">
-								<div
-									className="absolute inset-0 border-8 border-blue-500 rounded-full"
-									style={{
-										clipPath: `inset(0 ${100 - (data.count / 100) * 100}% 0 0)`,
-									}}
-								></div>
-								<div className="absolute inset-0 flex items-center justify-center">
-									<p className="text-lg font-bold">{data.count}%</p>
-								</div>
-							</div>
+						<ResponsiveContainer width={120} height={120}>
+							<PieChart>
+								<Tooltip />
+								<Pie
+									data={orderData}
+									cx="50%"
+									cy="50%"
+									labelLine={false}
+									label={renderCustomizedLabel}
+									outerRadius={80}
+									fill="#8884d8"
+									dataKey="value"
+								>
+									{orderData.map((_, index) => (
+										<Cell
+											key={`cell-${index}`}
+											fill={COLORS[index % COLORS.length]}
+										/>
+									))}
+								</Pie>
+							</PieChart>
+						</ResponsiveContainer>
+					</div>
+				</CardContent>
+			</Card>
+
+			<Card className="w-full col-span-1 md:col-span-2">
+				<CardContent className="p-6">
+					<div className="flex flex-col items-center gap-4 md:flex-row">
+						<div className="flex-1 space-y-1">
+							<p className="text-sm font-medium text-muted-foreground">
+								Tổng tiền đơn hàng
+							</p>
+							<p className="text-base font-bold">
+								Thành công:{" "}
+								<span className="text-green-500">
+									{formatCurrency(data.totalOrderSuccess)}
+								</span>
+							</p>
+							<p className="text-base font-bold">
+								Thất bại:{" "}
+								<span className="text-red-500">
+									{formatCurrency(data.totalOrderCancel)}
+								</span>
+							</p>
 						</div>
+						<ResponsiveContainer width={120} height={120}>
+							<PieChart>
+								<Tooltip />
+								<Pie
+									data={moneyData}
+									cx="50%"
+									cy="50%"
+									labelLine={false}
+									label={renderCustomizedLabel}
+									outerRadius={80}
+									fill="#8884d8"
+									dataKey="value"
+								>
+									{moneyData.map((_, index) => (
+										<Cell
+											key={`cell-${index}`}
+											fill={COLORS[index % COLORS.length]}
+										/>
+									))}
+								</Pie>
+							</PieChart>
+						</ResponsiveContainer>
 					</div>
 				</CardContent>
 			</Card>

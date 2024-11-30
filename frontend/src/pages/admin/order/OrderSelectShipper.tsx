@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import Paginations from "@/components/common/Pagination";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import Paginations from "@/components/common/Pagination";
 import { selectShipper } from "@/service/order";
+import { useState } from "react";
 import { toast } from "sonner";
 interface Props {
 	open: boolean;
@@ -60,11 +60,11 @@ const OrderSelectShipper = ({
 								return (
 									<>
 										<div className="flex justify-between" key={shipper?._id}>
-											<div className="flex gap-3 items-center">
+											<div className="flex items-center gap-3">
 												<RadioGroupItem
 													value={shipper._id}
 													// id={`radio-${address._id}`}
-													className="lg:w-4 lg:h-4 w-3 h-3"
+													className="w-3 h-3 lg:w-4 lg:h-4"
 												/>
 
 												<div className="flex flex-col gap-2">
@@ -75,16 +75,16 @@ const OrderSelectShipper = ({
 															className="w-20 h-20"
 														/>
 														<div className="flex flex-col gap-1">
-															<span className="font-light text-sm">
+															<span className="text-sm font-light">
 																Họ tên : {shipper.fullName}
 															</span>
-															<span className="font-light text-sm">
+															<span className="text-sm font-light">
 																Số điện thoại : {shipper.phone}
 															</span>
-															<span className="font-light text-sm">
+															<span className="text-sm font-light">
 																Căn cước công dân : {shipper.idCitizen}
 															</span>
-															<span className="font-light text-sm">
+															<span className="text-sm font-light">
 																Địa chỉ : {shipper.city.name} -{" "}
 																{shipper.district.name} - {shipper.commune.name}
 															</span>

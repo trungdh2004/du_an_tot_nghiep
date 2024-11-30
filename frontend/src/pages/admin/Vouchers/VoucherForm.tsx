@@ -1,4 +1,3 @@
-import InputNumber from "@/components/common/InputNumber";
 import { TooltipComponent } from "@/components/common/TooltipComponent";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -477,8 +476,8 @@ const VoucherForm = () => {
 													field.onChange(e?.toISOString());
 												}}
 												disabled={(date) => {
-													const newDate = new Date()
-													newDate.setDate(newDate.getDate() - 1)
+													const newDate = new Date();
+													newDate.setDate(newDate.getDate() - 1);
 
 													return (
 														date < newDate || date < new Date("1900-01-01")

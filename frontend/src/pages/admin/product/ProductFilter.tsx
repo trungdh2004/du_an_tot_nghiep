@@ -127,7 +127,7 @@ const ProductFilter = ({ onSubmit }: IProps) => {
 			>
 				<div className="grid grid-cols-2 gap-2">
 					<SelectComponent<ICategory>
-						value={data.category}
+						value={data?.category as any}
 						label="Danh mục"
 						onChange={(newValue: ICategory | null, action) => {
 							if (action.action === "select-option") {
@@ -168,7 +168,7 @@ const ProductFilter = ({ onSubmit }: IProps) => {
 									}));
 								}}
 							/>
-							<div className="col-span-1 flex items-center justify-center">
+							<div className="flex items-center justify-center col-span-1">
 								-&gt;
 							</div>
 							<Input
@@ -190,7 +190,7 @@ const ProductFilter = ({ onSubmit }: IProps) => {
 							value={data.color}
 							label="Màu"
 							isMulti
-							onChange={(newValue: IColor[], action) => {
+							onChange={(newValue: IColor[]) => {
 								setData((prev) => ({
 									...prev,
 									color: newValue,
@@ -200,10 +200,10 @@ const ProductFilter = ({ onSubmit }: IProps) => {
 							options={colors}
 							getOptionLabel={(option) => {
 								return (
-									<div className="w-full flex items-center justify-between">
+									<div className="flex items-center justify-between w-full">
 										{option.name}{" "}
 										<p
-											className="w-2 h-2 rounded-full ml-1"
+											className="w-2 h-2 ml-1 rounded-full"
 											style={{
 												backgroundColor: option.code,
 											}}
@@ -219,7 +219,7 @@ const ProductFilter = ({ onSubmit }: IProps) => {
 							value={data.size}
 							label="Màu"
 							isMulti
-							onChange={(newValue: ISize[], action) => {
+							onChange={(newValue: ISize[]) => {
 								setData((prev) => ({
 									...prev,
 									size: newValue,
@@ -280,7 +280,7 @@ const ProductFilter = ({ onSubmit }: IProps) => {
 							</span>
 						</Button>
 					</div>
-					<div className="col-span-2 flex justify-end gap-2">
+					<div className="flex justify-end col-span-2 gap-2">
 						<TooltipComponent label="Mặc định">
 							<Button
 								variant={"destructive"}
@@ -315,7 +315,7 @@ const ProductFilter = ({ onSubmit }: IProps) => {
 							</Button>
 						</TooltipComponent>
 						<Button
-							className="bg-blue-500 text-white hover:bg-blue-600"
+							className="text-white bg-blue-500 hover:bg-blue-600"
 							onClick={handleSubmit}
 						>
 							Tìm kiếm

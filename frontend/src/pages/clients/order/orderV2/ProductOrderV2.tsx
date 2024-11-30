@@ -1,12 +1,9 @@
+import productNotFound from "@/assets/productnotfound.jpg";
 import { formatCurrency } from "@/common/func";
 import { ProductOrder, ProductOrderItem } from "@/types/order";
-import React from "react";
-import { IoIosResize } from "react-icons/io";
-import { IoColorFillOutline } from "react-icons/io5";
 import AddressOrder from "../AddressOrder";
-import ProductOrderSkeleton from "./ProductOrderSkeleton";
 import ProductItemOrder from "./ProductItemOrder";
-import productNotFound from "@/assets/productnotfound.jpg";
+import ProductOrderSkeleton from "./ProductOrderSkeleton";
 const ProductOrderV2 = ({
 	data,
 	handleChangeAddress,
@@ -15,7 +12,7 @@ const ProductOrderV2 = ({
 }: any) => {
 	return (
 		<div className="w-full">
-			<h4 className="font-bold text-xl pb-5 lg:pb-7  lg:text-left text-center ">
+			<h4 className="pb-5 text-xl font-bold text-center lg:pb-7 lg:text-left ">
 				Đơn hàng của tôi
 			</h4>
 			<div className="pb-5">
@@ -50,7 +47,7 @@ const ProductOrderV2 = ({
 							data?.data?.map((product: ProductOrder, index: number) => {
 								return (
 									<div
-										className="rounded-md border border-gray-200 px-7 py-6 flex flex-col gap-4"
+										className="flex flex-col gap-4 py-6 border border-gray-200 rounded-md px-7"
 										key={index}
 									>
 										{product?.items?.map(

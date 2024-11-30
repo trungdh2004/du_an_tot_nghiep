@@ -1,4 +1,4 @@
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
 const ChartOrderShipper = () => {
 	const data = [
@@ -17,7 +17,6 @@ const ChartOrderShipper = () => {
 		innerRadius,
 		outerRadius,
 		percent,
-		index,
 	}: any) => {
 		const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
 		const x = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -50,7 +49,7 @@ const ChartOrderShipper = () => {
 						fill="#8884d8"
 						dataKey="value"
 					>
-						{data.map((entry, index) => (
+						{data.map((_, index) => (
 							<Cell
 								key={`cell-${index}`}
 								fill={COLORS[index % COLORS.length]}

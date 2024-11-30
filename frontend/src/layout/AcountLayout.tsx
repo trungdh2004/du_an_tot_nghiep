@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Link, Outlet, useNavigate } from "react-router-dom";
-import { MdEdit } from "react-icons/md";
-import { FaRegUser } from "react-icons/fa";
-import { motion, Variants } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { useMediaQuery } from "usehooks-ts";
+import { optimizeCloudinaryUrl } from "@/common/localFunction";
 import sidebarAccount from "@/config/sidebarAccount";
 import { useAuth } from "@/hooks/auth";
-import { optimizeCloudinaryUrl } from "@/common/localFunction";
+import { cn } from "@/lib/utils";
+import { motion, Variants } from "framer-motion";
+import { useEffect, useState } from "react";
+import { MdEdit } from "react-icons/md";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useMediaQuery } from "usehooks-ts";
 
 const itemVariants: Variants = {
 	open: {
@@ -75,7 +74,7 @@ const AccountLayout = () => {
 										onClick={() => setIsOpen(!isOpen)}
 										transition={{ duration: 0.2 }}
 										style={{ originY: 0.55 }}
-										className="p-2 text-custom rounded-full hover:bg-gray-50/50 lg:hidden "
+										className="p-2 rounded-full text-custom hover:bg-gray-50/50 lg:hidden "
 									>
 										<svg
 											width="15"

@@ -1,14 +1,10 @@
 import { formatQuantity } from "@/common/localFunction";
 import Paginations from "@/components/common/Pagination";
-import instance from "@/config/instance";
-import { cn } from "@/lib/utils";
 import { fetchPayments } from "@/types/payment";
 import { ISearchObjectPayment } from "@/types/searchObjecTypes";
-import { typeResponse } from "@/types/typeReponse";
-import { Value } from "@radix-ui/react-select";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type IPayment = {
 	_id: string;
@@ -95,7 +91,6 @@ const PaymentIndex = () => {
 						<h2 className="">Không tìm thấy giao dịch nào nào</h2>
 					</div>
 				)}
-
 			</div>
 		</>
 	);

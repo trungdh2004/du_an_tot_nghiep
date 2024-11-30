@@ -1,6 +1,5 @@
 import CommentEditor from "@/components/common/CommentForm";
 import CommentItem from "./CommentItem";
-import FilterComment from "./FilterComment";
 import { useEffect, useState } from "react";
 import { createComment, getListComments } from "@/service/comment";
 import { IProductDetail } from "@/types/product";
@@ -11,16 +10,15 @@ import {
 	IPageComment,
 } from "@/types/TypeObjectComment";
 import { useAuth } from "@/hooks/auth";
-import { Button } from "@/components/ui/button";
 type Props = {
 	product: IProductDetail | undefined;
 };
 
 const Comments = ({ product }: Props) => {
-	const { authUser, isLoggedIn } = useAuth();
+	const { authUser  } = useAuth();
 	const [content, setContent] = useState("");
 	const [open, setOpen] = useState(false);
-	const [pageIndex, setPageIndex] = useState(1);
+	const [pageIndex ] = useState(1);
 	const [comment, setComment] = useState<Comment[]>([]);
 	const [check, setCheck] = useState<IPageComment | null>(null);
 	const [objectComment, setObjectComment] = useState<IObjectComment>({
@@ -67,7 +65,7 @@ const Comments = ({ product }: Props) => {
 		setOpen(false);
 	};
 	return (
-		<div className="bg-white p-2 md:p-4 box-shadow rounded-md">
+		<div className="p-2 bg-white rounded-md md:p-4 box-shadow">
 			<div className="flex items-center gap-2 mb-3">
 				<h3 className="text-xl font-bold text-slate-600">
 					{" "}

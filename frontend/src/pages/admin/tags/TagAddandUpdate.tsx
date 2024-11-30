@@ -1,19 +1,11 @@
-import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
-	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import {
 	Form,
 	FormControl,
@@ -22,10 +14,15 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { toast } from "sonner";
 import { addTag, getTag, updateTag } from "@/service/tags-admin";
 import { useProcessBarLoadingEventNone } from "@/store/useSidebarAdmin";
+import { toast } from "sonner";
 
 interface FormDialog {
 	open: boolean | string;
@@ -66,8 +63,7 @@ const TagAdd = ({ title, open, handleClose, handlePaging }: FormDialog) => {
 	const onHandleUpdate = async (dataForm: any) => {
 		try {
 			setOpenProcessLoadingEventNone();
-			const { data } = await updateTag(open, dataForm);
-			console.log("Update tag success");
+			await updateTag(open, dataForm);
 			handleClose();
 			handlePaging();
 			toast.success("Bạn cập nhật tags thành công");
@@ -80,7 +76,7 @@ const TagAdd = ({ title, open, handleClose, handlePaging }: FormDialog) => {
 	const onHandleAdd = async (dataForm: any) => {
 		try {
 			setOpenProcessLoadingEventNone();
-			const { data } = await addTag(dataForm);
+			await addTag(dataForm);
 			form.reset();
 			handleClose();
 			handlePaging();

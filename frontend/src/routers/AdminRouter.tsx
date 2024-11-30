@@ -75,11 +75,11 @@ const AdminRouter = [
 			{
 				path: "users/client",
 				element: <CustomerList />,
-      },
-      {
-        path: "users/staff",
-        element: <StaffIndex />,
-      },
+			},
+			{
+				path: "users/staff",
+				element: <StaffIndex />,
+			},
 			// Quản lý sản phẩm
 			{
 				path: "product/update/:id",
@@ -197,8 +197,8 @@ const AdminRouter = [
 				path: "order/orderconfirmShipper",
 				element: <OrderConfirmShipper />,
 			},
-      // Thống kê
-      {
+			// Thống kê
+			{
 				path: "revenue",
 				element: <RevenueChart />,
 			},

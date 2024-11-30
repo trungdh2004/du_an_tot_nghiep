@@ -1,8 +1,6 @@
 import { FaArrowLeftLong, FaTruckRampBox } from "react-icons/fa6";
-import { FcComboChart } from "react-icons/fc";
 import { FiHome } from "react-icons/fi";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
-import { LuLayoutDashboard } from "react-icons/lu";
 import { RiAccountPinCircleLine } from "react-icons/ri";
 
 const sidebarShipper: any[] = [

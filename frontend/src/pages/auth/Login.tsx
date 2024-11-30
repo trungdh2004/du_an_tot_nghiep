@@ -25,7 +25,7 @@ import {
 import { Input } from "../../components/ui/input";
 import SignInWithFacebookOrGoogle from "./SignInWithFacebookOrGoogle";
 const Login = () => {
-	const [searchParams, SetURLSearchParams] = useSearchParams();
+	const [searchParams] = useSearchParams();
 	const router = useNavigate();
 	const { setCarts, setTotalCart } = useCart();
 	const { setAuthUser, setIsLoggedIn } = useAuth();

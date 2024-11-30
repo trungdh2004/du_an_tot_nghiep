@@ -1,6 +1,4 @@
-import { getAllProductSlide } from "@/service/product-slide";
-import { IProductSlider } from "@/types/product";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { PiArrowLeftThin, PiArrowRightThin } from "react-icons/pi";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -67,7 +65,6 @@ const Carousel = () => {
 	const swiperRef = useRef<SwiperType>();
 	return (
 		<div className="py-8 padding">
-			
 			<div className="flex flex-col items-end justify-between sm:flex-row sm:items-center">
 				<h2 className="text-2xl font-semibold sm:text-4xl sm:font-bold">
 					Sản phẩm mới mẻ

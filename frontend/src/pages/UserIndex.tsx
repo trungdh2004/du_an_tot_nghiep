@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 
-import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
+import TableComponent from "@/components/common/TableComponent";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import TableComponent from "@/components/common/TableComponent";
-import { ArrowUpDown } from "lucide-react";
 import instance from "@/config/instance";
+import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 
 interface IData {

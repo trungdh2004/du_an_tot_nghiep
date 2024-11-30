@@ -1,10 +1,7 @@
 import ChatAction from "@/components/chat/ChatAction";
-import Footer from "@/components/client/Footer";
 import FooterV2 from "@/components/client/FooterV2";
 import Header from "@/components/client/Header";
-import OverlayVioletV2 from "@/components/OverlayVioletV2";
 import { cn } from "@/lib/utils";
-import HeaderAndSlider from "@/pages/clients/home/HeaderAndSlider";
 import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 
 const MainLayout = () => {

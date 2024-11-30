@@ -1,9 +1,9 @@
 import { getOrderById } from "@/service/order";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import OrderTracking from "./OrderTracking";
-import OrderInformation from "./OrderInformation";
 import OrderDetailTime from "./OrderDetailTime";
+import OrderInformation from "./OrderInformation";
+import OrderTracking from "./OrderTracking";
 
 const OrderById = () => {
 	const { id } = useParams();

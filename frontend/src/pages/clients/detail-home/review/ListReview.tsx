@@ -1,8 +1,7 @@
+import NoReview from "@/assets/noreview.png";
 import { Review, SearchRatingState } from "@/types/review";
 import { format } from "date-fns";
-import React from "react";
 import { FaRegStar, FaStar } from "react-icons/fa";
-import NoReview from "@/assets/noreview.png";
 interface Props {
 	dataReview: SearchRatingState | null;
 }
@@ -10,7 +9,7 @@ const ListReview = ({ dataReview }: Props) => {
 	return (
 		<div>
 			{dataReview?.content?.length === 0 ? (
-				<div className="flex flex-col gap-3 py-20 justify-center items-center">
+				<div className="flex flex-col items-center justify-center gap-3 py-20">
 					<img src={NoReview} alt="" className="w-40 h-40" />
 					<p>Chưa có đánh giá</p>
 				</div>
@@ -23,10 +22,10 @@ const ListReview = ({ dataReview }: Props) => {
 									<img
 										src={review?.user?.avatarUrl || "/avatar_25.jpg"}
 										alt=""
-										className="w-11 h-11 rounded-full"
+										className="rounded-full w-11 h-11"
 									/>
 									<div className="flex flex-col gap-2">
-										<h2 className="font-medium text-base text-black">
+										<h2 className="text-base font-medium text-black">
 											{review.user.full_name}
 										</h2>
 
