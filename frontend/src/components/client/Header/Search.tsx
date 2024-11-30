@@ -1,4 +1,4 @@
-import { calculateTimeDistance } from "@/common/func";
+import { calculateTimeDistance, formatCurrency } from "@/common/func";
 import { optimizeCloudinaryUrl } from "@/common/localFunction";
 import {
 	Dialog,
@@ -18,7 +18,6 @@ import { IoSearch } from "react-icons/io5";
 import { MdOutlineSearch } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { formatCurrency } from "../../../../../server/src/config/func";
 const Search = () => {
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const [isLoading, setLoading] = useState<boolean>(false);
