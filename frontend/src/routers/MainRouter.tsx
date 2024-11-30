@@ -89,7 +89,6 @@ const MainRouter = [
 	},
 	{ path: "/orderprocessing", element: <OrderProcessing /> },
 	{ path: "/orderprocessingv2", element: <OrderProcessingV2 /> },
-	{ path: "/orderprocessingv3", element: <OrderProcessing /> },
 	{ path: "/testComponent", element: <TestComponent /> },
 	{ path: "*", element: <NotFound /> },
 ];

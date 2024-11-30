@@ -43,12 +43,32 @@ const ShopProduct = () => {
 				sort: 1,
 				fieldSort: "",
 				category: paramsObject?.category,
-				min: parseInt(paramsObject?.min),
-				max: parseInt(paramsObject?.max),
+				min: parseInt(paramsObject?.min) | 0,
+				max: parseInt(paramsObject?.max) | 5000000,
 				tab: 1,
 				rating: null,
 			};
 		});
+	useEffect(() => {
+		if (!searchParams.toString()) {
+			setSearchParamsObject(() => {
+				return {
+					pageIndex: 1,
+					pageSize: 12,
+					keyword: "",
+					color: [],
+					size: [],
+					sort: 1,
+					fieldSort: "",
+					category: "",
+					min: 0,
+					max: 5000000,
+					tab: 1,
+					rating: null,
+				};
+			});
+		}
+	}, [searchParams]);
 
 	const {
 		data: productShop,
