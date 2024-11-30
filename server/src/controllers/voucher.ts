@@ -773,7 +773,6 @@ class VoucherController {
           $gte: newDate,
         },
       }).limit(limit);
-      console.log(">>>>>> List Voucher", listVoucher);
 
       return res.status(STATUS.OK).json({
         message: "Danh sách voucher",
@@ -793,8 +792,6 @@ class VoucherController {
       const skip = (pageIndex - 1) * limit || 0;
 
       const newDate = new Date();
-
-      console.log("newDate", newDate);
 
       const listVoucher = await VoucherModel.find({
         status: 1,

@@ -196,12 +196,6 @@ class SearchController {
     try {
       const { name, email, content } = req.body;
 
-      console.log({
-        name,
-        email,
-        content,
-      });
-
       if (!name || !email || !content) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn truyền thiếu dữ liệu",
