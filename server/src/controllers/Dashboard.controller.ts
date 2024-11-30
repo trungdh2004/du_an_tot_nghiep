@@ -57,12 +57,21 @@ class DashboardController {
           const { startDay, endDay } = getDateStartAndEnd(i);
           const countNew = await OrderModel.countDocuments({
             orderDate: { $gte: startDay, $lte: endDay },
+            status: {
+              $ne: 0,
+            },
           });
           const countSuccess = await OrderModel.countDocuments({
             shippedDate: { $gte: startDay, $lte: endDay },
+            status: {
+              $ne: 0,
+            },
           });
           const countCancel = await OrderModel.countDocuments({
             cancelOrderDate: { $gte: startDay, $lte: endDay },
+            status: {
+              $ne: 0,
+            },
           });
           listDataOrder.push({
             success: countSuccess,
