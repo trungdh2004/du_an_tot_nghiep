@@ -99,10 +99,14 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 						<p className="text-sm">
 							{data.paymentMethod === 1
 								? "Thanh toán khi nhận hàng"
-								: "Thanh toán bằng VNPAY"}
+								: data.paymentMethod === 2
+									? "Thanh toán bằng VNPAY"
+									: data.paymentMethod === 3
+										? "Thanh toán bằng Momo"
+										: "Phương thức thanh toán không hợp lệ"}
 						</p>
 					</div>
-					{data.paymentMethod === 2 && (
+					{(data.paymentMethod === 2 || data.paymentMethod === 3) && (
 						<div className="flex flex-col gap-3">
 							<div className="flex justify-between">
 								<p className="font-medium text-sm text-black">Ngân hàng</p>
