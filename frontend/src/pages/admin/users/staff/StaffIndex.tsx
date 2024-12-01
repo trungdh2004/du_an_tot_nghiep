@@ -93,6 +93,7 @@ const StaffIndex = () => {
 	};
 	const columns: ColumnDef<IData>[] = [
 		{
+			id: "full_name",
 			accessorKey: "full_name",
 			header: () => {
 				return <div className="md:text-base text-xs">Tên</div>;
@@ -104,6 +105,7 @@ const StaffIndex = () => {
 			},
 		},
 		{
+			id: "email",
 			accessorKey: "email",
 			header: () => {
 				return <div className="md:text-base text-xs">Email</div>;
@@ -115,6 +117,7 @@ const StaffIndex = () => {
 			},
 		},
 		{
+			id: "avatarUrl",
 			accessorKey: "avatarUrl",
 			header: () => {
 				return <div className="md:text-base text-xs">Ảnh</div>;
@@ -129,6 +132,7 @@ const StaffIndex = () => {
 			},
 		},
 		{
+			id: "provider",
 			accessorKey: "provider",
 			header: () => {
 				return <div className="md:text-base text-xs">Phương thức</div>;
@@ -139,6 +143,7 @@ const StaffIndex = () => {
 			},
 		},
 		{
+			id: "createdAt",
 			accessorKey: "createdAt",
 			header: () => {
 				return <div className="md:text-base text-xs">Ngày tạo</div>;
@@ -151,6 +156,7 @@ const StaffIndex = () => {
 		},
 		{
 			id: "status",
+			accessorKey: "status",
 			header: () => {
 				return <div className="md:text-base text-xs">Trạng thái</div>;
 			},
@@ -167,6 +173,7 @@ const StaffIndex = () => {
 		},
 		{
 			id: "actions",
+			accessorKey: "actions",
 			enableHiding: false,
 			cell: ({ row }) => {
 				return (
@@ -223,8 +230,7 @@ const StaffIndex = () => {
 				pageCount={response.pageCount}
 				totalElement={response.totalElement}
 				handleChangePageSize={handleChangePageSize}
-      />
-      
+			/>
 		</div>
 	);
 };

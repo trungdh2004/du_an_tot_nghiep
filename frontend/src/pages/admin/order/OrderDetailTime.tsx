@@ -10,6 +10,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { formatInTimeZone } from "date-fns-tz";
+import { DetailTime } from "@/types/order";
 const OrderDetailTime = ({ data }: any) => {
 	const sortedData = data.sort((a: any, b: any) => {
 		if (a === null) return 1;
@@ -41,8 +42,6 @@ const OrderDetailTime = ({ data }: any) => {
 			};
 		}
 	});
-	console.log(checkStatus);
-
 	return (
 		<div className="bg-main rounded-md border border-1 border-gray-200 box-shadow p-4">
 			<h3 className="font-medium pl-3 pb-3">Theo dõi đơn hàng</h3>
@@ -56,23 +55,25 @@ const OrderDetailTime = ({ data }: any) => {
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					{checkStatus?.map((data: any) => (
-						<TableRow key={data?.status}>
-							<TableCell className="font-medium text-nowrap">
-								{data?.informationStatus}
-							</TableCell>
-							<TableCell className="text-nowrap">
-								{data?.date &&
-									formatInTimeZone(
-										new Date(data?.date),
-										"Asia/Ho_Chi_Minh",
-										"yyyy-MM-dd HH:mm:ss",
-									)}
-							</TableCell>
-							<TableCell className="text-nowrap">{data?.message}</TableCell>
-							<TableCell className="text-nowrap">{data?.sub}</TableCell>
-						</TableRow>
-					))}
+					{checkStatus?.map((data: DetailTime, index: number) => {
+						return (
+							<TableRow key={index}>
+								<TableCell className="font-medium text-nowrap">
+									{data?.informationStatus}
+								</TableCell>
+								<TableCell className="text-nowrap">
+									{data?.date &&
+										formatInTimeZone(
+											new Date(data?.date),
+											"Asia/Ho_Chi_Minh",
+											"yyyy-MM-dd HH:mm:ss",
+										)}
+								</TableCell>
+								<TableCell className="text-nowrap">{data?.message}</TableCell>
+								<TableCell className="text-nowrap">{data?.sub}</TableCell>
+							</TableRow>
+						);
+					})}
 				</TableBody>
 			</Table>
 		</div>
