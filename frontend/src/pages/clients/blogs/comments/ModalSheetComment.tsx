@@ -32,8 +32,26 @@ const ModalSheetComment = () => {
 	const [comments, setComments] = useState<Comment[]>([]);
 
 	useEffect(() => {
-		fetchingDataComments(1);
-	}, []);
+		(async()=>{
+      try {
+        const payload = {
+          commentId: id,
+          commentType: TYPE_COMMENT.BLOGS,
+          pageIndex: 1,
+          pageSize: 7,
+          sort: -1,
+        };
+        const { data } = await getListComments(payload);
+        const { content, ...pagination } = data;
+        setPagination(pagination);  
+        setComments(content);
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          toast.error(error?.response?.data?.message);
+        }
+      }
+    })()
+	}, [id]);
 	const fetchingDataComments = async (pageIndex: number) => {
 		try {
 			const payload = {
@@ -45,8 +63,6 @@ const ModalSheetComment = () => {
 			};
 			const { data } = await getListComments(payload);
 			const { content, ...pagination } = data;
-			console.log(pagination);
-
 			setPagination(pagination);
 			setComments((prevComments) => [...prevComments, ...content]);
 		} catch (error) {

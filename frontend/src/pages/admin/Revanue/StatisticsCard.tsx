@@ -44,7 +44,21 @@ const renderCustomizedLabel = ({
 		</text>
 	);
 };
+const CustomTooltip = ({ active, payload }:any) => {
+  if (active && payload && payload.length) {
 
+    return (
+      <div className="p-4 bg-white border rounded-lg shadow-lg">
+        <p className="text-lg " >
+          {`${payload[0].name} : `}
+          <span className="text-red-500">{formatCurrency(payload[0].value || 0)}</span>
+        </p>
+      </div>
+    );
+  }
+
+  return null;
+};
 const StatisticsCard = () => {
 	const [data, setData] = useState<StatisticsData>({
 		totalMoney: 0,
@@ -139,17 +153,22 @@ const StatisticsCard = () => {
 			<Card className="w-full col-span-1 md:col-span-2">
 				<CardContent className="p-6">
 					<div className="flex flex-col items-center gap-4 md:flex-row">
-						<div className="flex-1 space-y-1">
-							<p className="text-sm font-medium text-muted-foreground">
-								Giá trị trung bình mỗi đơn
+						<div className="flex-1 space-y-1 text-nowrap">
+							<p className="text-sm font-medium text-muted-foreground ">
+								Tổng đơn hàng
 							</p>
-							<p className="text-2xl font-bold text-red-500">
-								{data.count > 0
-									? formatCurrency(data.totalMoney / data.count)
-									: "Không có dữ liệu"}
+							<p className="text-base font-bold">
+								Thành công:{" "}
+								<span className="text-green-500">
+									{data?.countSuccess}
+								</span>
+							</p>
+							<p className="text-base font-bold">
+								Thất bại:{" "}
+								<span className="text-red-500">{data?.countCancel}</span>
 							</p>
 						</div>
-						<ResponsiveContainer width={120} height={120}>
+						<ResponsiveContainer width={"100%"} height={120}>
 							<PieChart>
 								<Tooltip />
 								<Pie
@@ -158,7 +177,7 @@ const StatisticsCard = () => {
 									cy="50%"
 									labelLine={false}
 									label={renderCustomizedLabel}
-									outerRadius={80}
+									outerRadius={60}
 									fill="#8884d8"
 									dataKey="value"
 								>
@@ -195,16 +214,16 @@ const StatisticsCard = () => {
 								</span>
 							</p>
 						</div>
-						<ResponsiveContainer width={120} height={120}>
+						<ResponsiveContainer width={"100%"} height={120}>
 							<PieChart>
-								<Tooltip />
+								<Tooltip content={CustomTooltip}/>
 								<Pie
 									data={moneyData}
 									cx="50%"
 									cy="50%"
 									labelLine={false}
 									label={renderCustomizedLabel}
-									outerRadius={80}
+									outerRadius={60}
 									fill="#8884d8"
 									dataKey="value"
 								>

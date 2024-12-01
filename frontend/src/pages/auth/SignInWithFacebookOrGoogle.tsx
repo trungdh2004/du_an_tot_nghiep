@@ -46,11 +46,9 @@ const SignInWithFacebookOrGoogle = () => {
 							pagingCartV2(),
 							getCountMyShoppingCart(),
 						]);
-
 						setCarts(cartsResponse?.data?.listData || []);
 						setTotalCart(totalCountResponse?.data?.count || 0);
 						setItemLocal("token", data?.accessToken);
-						toast.success(data?.message);
 						routerHistory();
 					})
 					.catch((error) => {
