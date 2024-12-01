@@ -4,7 +4,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { pagingProduct } from "@/service/product";
 import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Category from "./Category";
 import Color from "./Color";
