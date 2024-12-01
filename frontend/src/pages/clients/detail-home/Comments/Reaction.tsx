@@ -1,14 +1,12 @@
-import { Button } from "@/components/ui/button";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { BiLike } from "react-icons/bi";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import Actions from "./Actions";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { Comment } from "@/types/TypeObjectComment";
 import { useAuth } from "@/hooks/auth";
 import { deleteComment } from "@/service/comment";

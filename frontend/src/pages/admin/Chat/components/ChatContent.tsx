@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/auth";
 import { createMessage, findConversation, pagingMessage } from "@/service/chat";
 import { Send } from "lucide-react";
-import { ElementRef, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CiLogout } from "react-icons/ci";
 import { Link, useParams } from "react-router-dom";
 import ChatMessage from "./ChatMessage";
@@ -49,12 +49,11 @@ const ChatContent = () => {
 	});
 	const [messageNew, setMessageNew] = useState("");
 	const [conversation, setConversation] = useState<IConversation>();
-	const [loading, setLoading] = useState(false);
-	const [scroll, setScroll] = useState(false);
+	const [_, setLoading] = useState(false);
+	const [, setScroll] = useState(false);
 	const { socket } = useAuth();
-	const [hidden, setHidden] = useState(false);
-	const [hasRequest, setHasRequest] = useState(true);
-	const [page, setPage] = useState(1);
+
+	const [, setHasRequest] = useState(true);
 	const [openScroll, setOpenScroll] = useState(false);
 	const [before, setBefore] = useState(null);
 
@@ -106,7 +105,7 @@ const ChatContent = () => {
 			const { data } = await createMessage(messageNew, "ADMIN", id as string);
 			setMessage((prev) => ({
 				...prev,
-				content: [data.data,...prev.content],
+				content: [data.data, ...prev.content],
 			}));
 			if (socket) {
 				socket?.emit("newMessage", data?.data, data?.conversation);
@@ -154,7 +153,7 @@ const ChatContent = () => {
 	};
 
 	return (
-		<div className="h-full flex flex-col relative">
+		<div className="relative flex flex-col h-full">
 			<header className="flex items-center justify-between w-full px-3 border-b h-[60px]">
 				<div className="flex items-center gap-3">
 					<div className="overflow-hidden border rounded-full size-10">
@@ -196,7 +195,7 @@ const ChatContent = () => {
 					flexDirection: "column-reverse",
 				}}
 				ref={refBoxChat}
-				className="scroll-custom p-1 relative"
+				className="relative p-1 scroll-custom"
 				// className="flex-1 overflow-y-auto p-2 scroll-custom h-[350px]"
 			>
 				<InfiniteScroll
@@ -210,7 +209,7 @@ const ChatContent = () => {
 					inverse={true} //
 					hasMore={message?.pageIndex !== message?.totalPage}
 					loader={
-						<p className="text-center text-sm text-gray-400">Loading...</p>
+						<p className="text-sm text-center text-gray-400">Loading...</p>
 					}
 					scrollableTarget="scrollableChatDiv"
 					// below props only if you need pull down functionality

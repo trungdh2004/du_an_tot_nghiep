@@ -1,41 +1,37 @@
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
-import { vi } from "date-fns/locale";
-import { uploadFileService } from "@/service/upload";
-import { useState } from "react";
-import { useAuth } from "@/hooks/auth";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { ICity, ICommune, IDistrict } from "@/types/address";
-import { useNavigate } from "react-router-dom";
-import { callCity, callCommune, callDistrict } from "@/service/address";
-import { toast } from "sonner";
-import { changeAccountShipper } from "@/service/shipper";
-import { IShipper } from "@/types/shipper.interface";
-import { AxiosError } from "axios";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import useStoreShipper from "@/store/useCurrentShipper";
-import AddressLocation from "@/pages/clients/address/AddressLocation";
 import CalendarYear from "@/components/common/CalendarYear";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import AddressLocation from "@/pages/clients/address/AddressLocation";
+import { callCity, callCommune, callDistrict } from "@/service/address";
+import { changeAccountShipper } from "@/service/shipper";
+import { uploadFileService } from "@/service/upload";
+import useStoreShipper from "@/store/useCurrentShipper";
+import { ICity, ICommune, IDistrict } from "@/types/address";
+import { IShipper } from "@/types/shipper.interface";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { toast } from "sonner";
+import { z } from "zod";
 
 const formSchema = z.object({
 	fullName: z.string({ required_error: "Bạn chưa  nhập tên" }),
@@ -70,7 +66,6 @@ const formSchema = z.object({
 		.nullable(),
 });
 const AccountShipperIndex = () => {
-	const router = useNavigate();
 	const [districts, setDistricts] = useState<IDistrict[]>([]);
 	const [commune, setCommune] = useState<ICommune[]>([]);
 	const { current, setCurrent } = useStoreShipper();
@@ -150,7 +145,7 @@ const AccountShipperIndex = () => {
 			}
 		}
 	};
-	const { data: citys, isLoading } = useQuery<ICity[]>({
+	const { data: citys } = useQuery<ICity[]>({
 		queryKey: ["city"],
 		queryFn: async () => {
 			const { data } = await callCity();
@@ -174,7 +169,6 @@ const AccountShipperIndex = () => {
 		try {
 			form.setValue("district", value);
 			form.setValue("commune", null);
-			const address = form.getValues("city")?.name;
 			const { data } = await callCommune(value.idDistrict);
 			setCommune(data);
 		} catch (error: any) {
@@ -190,8 +184,8 @@ const AccountShipperIndex = () => {
 
 	return (
 		<div className="padding">
-			<header className="p-2 md:px-4 md:mb-4 sticky top-0 bg-main w-full z-10">
-				<h2 className="font-semibold text-xl sm:text-2xl leading-8">
+			<header className="sticky top-0 z-10 w-full p-2 md:px-4 md:mb-4 bg-main">
+				<h2 className="text-xl font-semibold leading-8 sm:text-2xl">
 					Thông tin cá nhân
 				</h2>
 				<p className="text-base font-normal">
@@ -199,7 +193,7 @@ const AccountShipperIndex = () => {
 				</p>
 			</header>
 
-			<div className="pt-8 pb-12  xl:px-10">
+			<div className="pt-8 pb-12 xl:px-10">
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)}>
 						<div className="flex flex-col md:flex-row">
@@ -208,11 +202,11 @@ const AccountShipperIndex = () => {
 									control={form.control}
 									name="fullName"
 									render={({ field }) => (
-										<FormItem className="flex flex-col md:flex-row md:items-center pb-5 ">
+										<FormItem className="flex flex-col pb-5 md:flex-row md:items-center ">
 											<FormLabel className="w-full md:w-[40%] md:text-right text-sm md:text-base text-[rgba(85,85,85,.8)] pr-4">
 												Tên
 											</FormLabel>
-											<div className=" w-full">
+											<div className="w-full ">
 												<FormControl>
 													<Input
 														placeholder=""
@@ -229,7 +223,7 @@ const AccountShipperIndex = () => {
 									control={form.control}
 									name="idCitizen"
 									render={({ field }) => (
-										<FormItem className="flex flex-col md:flex-row md:items-center pb-5 ">
+										<FormItem className="flex flex-col pb-5 md:flex-row md:items-center ">
 											<FormLabel className="w-full md:w-[40%] md:text-right text-sm md:text-base text-[rgba(85,85,85,.8)] pr-4">
 												Căn cước công dân
 											</FormLabel>
@@ -249,11 +243,11 @@ const AccountShipperIndex = () => {
 									control={form.control}
 									name="phone"
 									render={({ field }) => (
-										<FormItem className="flex flex-col md:flex-row md:items-center pb-5 ">
+										<FormItem className="flex flex-col pb-5 md:flex-row md:items-center ">
 											<FormLabel className="w-full md:w-[40%] md:text-right text-sm md:text-base text-[rgba(85,85,85,.8)] pr-4">
 												Số điện thoại
 											</FormLabel>
-											<div className=" w-full">
+											<div className="w-full ">
 												<FormControl>
 													<Input
 														placeholder=""
@@ -270,7 +264,7 @@ const AccountShipperIndex = () => {
 									control={form.control}
 									name="birthDate"
 									render={({ field }) => (
-										<FormItem className="flex flex-col md:flex-row md:items-center pb-5 ">
+										<FormItem className="flex flex-col pb-5 md:flex-row md:items-center ">
 											<FormLabel className="w-full md:w-[40%] md:text-right text-sm md:text-base text-[rgba(85,85,85,.8)] pr-4">
 												Ngày sinh
 											</FormLabel>
@@ -291,7 +285,7 @@ const AccountShipperIndex = () => {
 																	) : (
 																		<span>Ngày sinh</span>
 																	)}
-																	<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+																	<CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
 																</Button>
 															</FormControl>
 														</PopoverTrigger>
@@ -327,11 +321,11 @@ const AccountShipperIndex = () => {
 									control={form.control}
 									name="address"
 									render={({ field }) => (
-										<FormItem className="flex flex-col md:flex-row md:items-center pb-5 ">
+										<FormItem className="flex flex-col pb-5 md:flex-row md:items-center ">
 											<FormLabel className="w-full md:w-[40%] md:text-right text-sm md:text-base text-[rgba(85,85,85,.8)] pr-4">
 												Địa chỉ thường chú
 											</FormLabel>
-											<div className=" w-full">
+											<div className="w-full ">
 												<AddressLocation
 													field={field}
 													citys={citys || []}
@@ -358,19 +352,19 @@ const AccountShipperIndex = () => {
 									render={({ field }) => (
 										<FormItem className="flex items-center pb-8">
 											<FormControl>
-												<div className="w-full flex flex-col justify-center items-center">
+												<div className="flex flex-col items-center justify-center w-full">
 													<div className="size-[100px]">
 														<img
 															src={previewUrl.url || "/avtUser.png"}
-															className=" w-full h-full object-cover rounded-full "
+															className="object-cover w-full h-full rounded-full "
 															alt=""
 														/>
 														{previewUrl?.isLoading && (
-															<div className="absolute bg-slate-50/50 w-full inset-0 flex items-center justify-center">
+															<div className="absolute inset-0 flex items-center justify-center w-full bg-slate-50/50">
 																<AiOutlineLoading3Quarters
 																	size={20}
 																	strokeWidth="4px"
-																	className="animate-spin w-full "
+																	className="w-full animate-spin "
 																/>
 															</div>
 														)}
@@ -404,7 +398,7 @@ const AccountShipperIndex = () => {
 													/>
 													<label
 														htmlFor="avatarInput"
-														className="text-sm md:text-base border border-gray-300 rounded-sm px-4 py-2 mt-4 mb-3 cursor-pointer"
+														className="px-4 py-2 mt-4 mb-3 text-sm border border-gray-300 rounded-sm cursor-pointer md:text-base"
 													>
 														Chọn Ảnh
 													</label>
@@ -425,7 +419,7 @@ const AccountShipperIndex = () => {
 						<div className="w-full md:w-[40%] flex justify-center my-5">
 							<button
 								type="submit"
-								className="text-white bg-blue-500 px-5 py-2 border rounded-sm"
+								className="px-5 py-2 text-white bg-blue-500 border rounded-sm"
 							>
 								Cập nhật
 							</button>

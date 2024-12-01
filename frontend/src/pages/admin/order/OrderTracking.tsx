@@ -1,7 +1,5 @@
 import { cn } from "@/lib/utils";
 import { formatInTimeZone } from "date-fns-tz";
-import React from "react";
-import { CiCircleCheck } from "react-icons/ci";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import OrderTrackingMobile from "./OrderTrackingMobile";
 
@@ -9,11 +7,11 @@ const OrderTracking = ({ data }: any) => {
 	console.log(data);
 
 	return (
-		<div className="bg-main rounded-lg  box-shadow p-5 border border-1 border-gray-200">
+		<div className="p-5 border border-gray-200 rounded-lg bg-main box-shadow border-1">
 			<h3 className="mb-5">Chi tiết theo dõi đơn hàng</h3>
-			<div className="lg:flex md:flex sm:flex hidden items-center justify-between w-full">
+			<div className="items-center justify-between hidden w-full lg:flex md:flex sm:flex">
 				<div className="relative flex flex-col items-center">
-					<div className="w-10 h-10 flex items-center justify-center">
+					<div className="flex items-center justify-center w-10 h-10">
 						<FaRegCircleCheck
 							size={35}
 							className={cn(
@@ -31,7 +29,7 @@ const OrderTracking = ({ data }: any) => {
 							)}
 						/>
 					</div>
-					<span className="mt-2 text-black text-sm">Đã Đặt Hàng</span>
+					<span className="mt-2 text-sm text-black">Đã Đặt Hàng</span>
 					<span className="text-sm text-gray-500">
 						{data.find(
 							(order: {
@@ -86,7 +84,7 @@ const OrderTracking = ({ data }: any) => {
 				/>
 
 				<div className="relative flex flex-col items-center">
-					<div className="w-10 h-10 flex items-center justify-center">
+					<div className="flex items-center justify-center w-10 h-10">
 						<FaRegCircleCheck
 							size={35}
 							className={cn(
@@ -114,7 +112,7 @@ const OrderTracking = ({ data }: any) => {
 							)}
 						/>
 					</div>
-					<span className="mt-2 text-black text-sm">Xác nhận</span>
+					<span className="mt-2 text-sm text-black">Xác nhận</span>
 					<span className="text-sm text-gray-500">
 						{data.find(
 							(order: {
@@ -169,7 +167,7 @@ const OrderTracking = ({ data }: any) => {
 				/>
 
 				<div className="relative flex flex-col items-center">
-					<div className="w-10 h-10 flex items-center justify-center">
+					<div className="flex items-center justify-center w-10 h-10">
 						<FaRegCircleCheck
 							size={35}
 							className={cn(
@@ -197,7 +195,7 @@ const OrderTracking = ({ data }: any) => {
 							)}
 						/>
 					</div>
-					<span className="mt-2 text-black text-sm">Đang giao hàng</span>
+					<span className="mt-2 text-sm text-black">Đang giao hàng</span>
 					<span className="text-sm text-gray-500">
 						{data.find(
 							(order: {
@@ -252,7 +250,7 @@ const OrderTracking = ({ data }: any) => {
 				/>
 
 				<div className="relative flex flex-col items-center">
-					<div className="w-10 h-10 flex items-center justify-center">
+					<div className="flex items-center justify-center w-10 h-10">
 						<FaRegCircleCheck
 							size={35}
 							className={cn(
@@ -280,7 +278,7 @@ const OrderTracking = ({ data }: any) => {
 							)}
 						/>
 					</div>
-					<span className="mt-2 text-black text-sm">Giao hàng</span>
+					<span className="mt-2 text-sm text-black">Giao hàng</span>
 					<span className="text-sm text-gray-500">
 						{data.find(
 							(order: {
@@ -334,7 +332,7 @@ const OrderTracking = ({ data }: any) => {
 				/>
 
 				<div className="relative flex flex-col items-center">
-					<div className="w-10 h-10 flex items-center justify-center">
+					<div className="flex items-center justify-center w-10 h-10">
 						<FaRegCircleCheck
 							size={35}
 							className={cn(
@@ -362,7 +360,7 @@ const OrderTracking = ({ data }: any) => {
 							)}
 						/>
 					</div>
-					<span className="mt-2 text-black text-sm">
+					<span className="mt-2 text-sm text-black">
 						{data.some(
 							(order: {
 								status: number;

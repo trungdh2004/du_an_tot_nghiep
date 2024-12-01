@@ -50,7 +50,7 @@ const InputQuantity: React.FC<InputQuantityProps> = ({
 		setValue(defaultValue);
 	}, [defaultValue]);
 	useEffect(() => {
-    const minValue = value <= 0 ? 1 : value
+		const minValue = value <= 0 ? 1 : value;
 		setValue(Math.min(minValue, maxTotal));
 	}, [maxTotal]);
 

@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Marker, MarkerDragEvent } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useCallback, useEffect, useState } from "react";
 import { FaMapMarkerAlt } from "react-icons/fa";
+import { Marker, MarkerDragEvent } from "react-map-gl";
 // import SourcePage from "./Source";
-import axios from "axios";
-import MapComponent from "./Map";
 import { getMapSearchLocation } from "@/service/map";
+import MapComponent from "./Map";
 
 interface IProps {
 	query: string;
@@ -94,7 +93,7 @@ function MapSearchLocation({
 		}
 	}, [longitudeInit, latitudeInit]);
 
-	const onMarkerDragStart = useCallback((event: MarkerDragEvent) => {}, []);
+	const onMarkerDragStart = useCallback(() => {}, []);
 
 	const onMarkerDrag = useCallback((event: MarkerDragEvent) => {
 		setMarker({

@@ -1,15 +1,13 @@
 import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectLabel,
-	SelectTrigger,
-	SelectValue,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
-import { useQueryClient } from "@tanstack/react-query";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 interface Props {
 	setSearchParamsObject: Dispatch<SetStateAction<SearchObjectTypeProduct>>;
@@ -17,7 +15,6 @@ interface Props {
 const SelectSort = ({ setSearchParamsObject }: Props) => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [selectValue, setSelectValue] = useState("");
-	const query = useQueryClient();
 	const navigate = useNavigate();
 	const handleReset = () => {
 		const defaultParams: SearchObjectTypeProduct = {
@@ -37,7 +34,6 @@ const SelectSort = ({ setSearchParamsObject }: Props) => {
 		setSearchParamsObject(defaultParams);
 		navigate("/shop", { replace: true });
 		setSelectValue("");
-		
 	};
 	const handleOnChangeSelect = (value: string) => {
 		setSelectValue(value);
@@ -46,8 +42,8 @@ const SelectSort = ({ setSearchParamsObject }: Props) => {
 				handleReset();
 				break;
 			case "1":
-        searchParams.set("sort", "1");
-        searchParams.set("pageIndex", "1");
+				searchParams.set("sort", "1");
+				searchParams.set("pageIndex", "1");
 				setSearchParams(searchParams);
 				setSearchParamsObject((prev) => ({
 					...prev,
@@ -57,14 +53,14 @@ const SelectSort = ({ setSearchParamsObject }: Props) => {
 				}));
 				break;
 			case "-1":
-        searchParams.set("sort", "-1");
-        searchParams.set("pageIndex", "1");
+				searchParams.set("sort", "-1");
+				searchParams.set("pageIndex", "1");
 				setSearchParams(searchParams);
 				setSearchParamsObject((prev) => ({
 					...prev,
 					sort: -1,
-          fieldSort: "discount",
-          pageIndex:1
+					fieldSort: "discount",
+					pageIndex: 1,
 				}));
 				break;
 			default:

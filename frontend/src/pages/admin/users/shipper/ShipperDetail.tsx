@@ -15,10 +15,7 @@ import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { FaTruckFast } from "react-icons/fa6";
 import { TbBasketCancel, TbClipboardPlus } from "react-icons/tb";
-import ChartOrderShipper from "./ChartOrderShipper";
 import ListOrder from "./ListOrder";
-import { string } from "zod";
-import { Badge } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const UserShipperDetail = () => {
@@ -230,12 +227,12 @@ const InfoField = ({
 	</div>
 );
 
-const LegendItem = ({ color, label }: { color: string; label: string }) => (
-	<div className="flex items-center gap-2">
-		<div className={`w-4 h-4 rounded-full ${color}`}></div>
-		<p className="text-sm text-gray-600">{label}</p>
-	</div>
-);
+// const LegendItem = ({ color, label }: { color: string; label: string }) => (
+// 	<div className="flex items-center gap-2">
+// 		<div className={`w-4 h-4 rounded-full ${color}`}></div>
+// 		<p className="text-sm text-gray-600">{label}</p>
+// 	</div>
+// );
 
 const StatCard = ({
 	icon,

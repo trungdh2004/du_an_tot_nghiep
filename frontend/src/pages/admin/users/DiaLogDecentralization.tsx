@@ -1,16 +1,14 @@
-import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Decentralization } from "@/service/user-admin";
+import { useState } from "react";
 import { toast } from "sonner";
 interface Props {
 	open: boolean | string;
@@ -66,12 +64,12 @@ const DiaLogDecentralization = ({
 											<RadioGroupItem
 												value={update.toString()}
 												// id={`radio-${address._id}`}
-												className="lg:w-4 lg:h-4 w-3 h-3"
+												className="w-3 h-3 lg:w-4 lg:h-4"
 											/>
 
 											<div className="flex flex-col gap-2">
 												<div className="flex gap-3">
-													<h3 className="font-medium lg:text-base md:text-base text-sm">
+													<h3 className="text-sm font-medium lg:text-base md:text-base">
 														{update === 1 ? "Khách" : "Nhân viên"}
 													</h3>
 												</div>

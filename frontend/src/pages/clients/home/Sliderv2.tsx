@@ -4,7 +4,6 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { GiIceBolt } from "react-icons/gi";
 
 const Sliderv2 = () => {
 	return (

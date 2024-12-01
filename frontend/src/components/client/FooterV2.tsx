@@ -1,6 +1,4 @@
 import { LogoNucSVG } from "@/assets/svg";
-import React from "react";
-import { FaFacebook, FaInstagram, FaYoutube } from "react-icons/fa";
 import { IoLocationOutline } from "react-icons/io5";
 import { MdOutlineMail, MdOutlinePhoneInTalk } from "react-icons/md";
 import { Link } from "react-router-dom";
@@ -30,7 +28,7 @@ const FooterV2 = () => {
 					</Link>
 				</div>
 				<div className="*:flex *:items-center *:gap-x-3 *:pb-6 ">
-					<Link to={`/introduce`} className="text-xl font-semibold uppercase  ">
+					<Link to={`/introduce`} className="text-xl font-semibold uppercase ">
 						Giới thiệu
 					</Link>
 					<Link to={`/introduce`} className="">
@@ -50,7 +48,7 @@ const FooterV2 = () => {
 					</Link>
 				</div>
 				<div className="*:flex *:items-center *:gap-x-3 *:pb-6 ">
-					<Link to={`/`} className="text-xl font-semibold uppercase  ">
+					<Link to={`/`} className="text-xl font-semibold uppercase ">
 						Hỗ trợ khách hàng
 					</Link>
 					<Link to={`/`} className="">
@@ -73,7 +71,7 @@ const FooterV2 = () => {
 					</Link>
 				</div>
 				<div className="*:flex *:items-center *:gap-x-5 *:pb-6 ">
-					<Link to={`/`} className="text-xl font-semibold uppercase  ">
+					<Link to={`/`} className="text-xl font-semibold uppercase ">
 						Kết nối
 					</Link>
 					<div className="">
@@ -90,7 +88,7 @@ const FooterV2 = () => {
 							<img src="/tik-tok.png" alt="" className="w-10 h-10" />
 						</Link>
 					</div>
-					<Link to={`/`} className="text-xl font-semibold uppercase  ">
+					<Link to={`/`} className="text-xl font-semibold uppercase ">
 						Phương thức thanh toán
 					</Link>
 					<img src="https://canifa.com/assets/images/pay.svg" alt="" />
@@ -98,11 +96,11 @@ const FooterV2 = () => {
 			</div>
 
 			<hr className="hidden md:block" />
-			<div className="flex justify-between items-center">
+			<div className="flex items-center justify-between">
 				<p className="font-semibold text-center text-white md:py-5">
 					© 2024 NUCSHOP
 				</p>
-				<div className="flex items-center lg:flex-row md:flex-row flex-col gap-4">
+				<div className="flex flex-col items-center gap-4 lg:flex-row md:flex-row">
 					<img src="/dmca.png" alt="" />
 					<img src="/bocongthuong.png" alt="" />
 				</div>

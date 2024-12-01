@@ -1,40 +1,39 @@
 import TableComponent from "@/components/common/TableComponent";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { paddingCate } from "@/service/category-admin";
-import { SearchObjectTypeSize } from "@/types/searchObjecTypes";
-import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
-import React, { useEffect, useState } from "react";
-import { parseISO, format } from "date-fns";
-import { IoFilter } from "react-icons/io5";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { HiOutlineDotsVertical } from "react-icons/hi";
 import { Button } from "@/components/ui/button";
-import { typeResponse } from "@/types/typeReponse";
-import SizeAddandUpdate from "./SizeAddandUpdate";
-import { useDebounceCallback } from "usehooks-ts";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { SearchObjectTypeSize } from "@/types/searchObjecTypes";
+import { typeResponse } from "@/types/typeReponse";
+import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
+import { format, parseISO } from "date-fns";
+import { useEffect, useState } from "react";
+import { HiOutlineDotsVertical } from "react-icons/hi";
+import { IoFilter } from "react-icons/io5";
 import { toast } from "sonner";
+import { useDebounceCallback } from "usehooks-ts";
+import SizeAddandUpdate from "./SizeAddandUpdate";
 // import { hiddenListSize, hiddenSize, unhiddenListSize, unhiddenSize } from "@/service/size-admin";
-import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import DialogConfirm from "@/components/common/DialogConfirm";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-	hiddenListSize,
-	hiddenSize,
-	paddingSize,
-	unhiddenListSize,
-	unhiddenSize,
+  hiddenListSize,
+  hiddenSize,
+  paddingSize,
+  unhiddenListSize,
+  unhiddenSize,
 } from "@/service/size-admin";
+import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 
 const SizeIndex = () => {
 	interface IData {
@@ -122,7 +121,7 @@ const SizeIndex = () => {
 	}, 300);
 	const handleHiddenSize = async (id: string | boolean) => {
 		try {
-			const { data } = await hiddenSize(id);
+			 await hiddenSize(id);
 			setOpenHiddenIdSize(false);
 			handleSize();
 			toast.success("Đã ẩn size thành công");
@@ -133,7 +132,7 @@ const SizeIndex = () => {
 
 	const handleUnhiddenSize = async (id: string | boolean) => {
 		try {
-			const { data } = await unhiddenSize(id);
+			 await unhiddenSize(id);
 			setOpenUnHiddenIdSize(false);
 			handleSize();
 			toast.success("Bỏ ẩn size thành công");
@@ -143,7 +142,7 @@ const SizeIndex = () => {
 	};
 	const handleHiddenManySize = async (listId: any) => {
 		try {
-			const { data } = await hiddenListSize(listId);
+			 await hiddenListSize(listId);
 			setOpenHiddenManyIdSize(false);
 			setListRowSelected([]);
 			setRowSelection({});
@@ -156,7 +155,7 @@ const SizeIndex = () => {
 
 	const handleUnhiddenManySize = async (listId: any) => {
 		try {
-			const { data } = await unhiddenListSize(listId);
+			 await unhiddenListSize(listId);
 			setOpenUnHiddenManyIdSize(false);
 			handleSize();
 			setListRowSelected([]);
@@ -236,9 +235,9 @@ const SizeIndex = () => {
 				return (
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-							<Button variant="ghost" className="h-8 w-8 p-0">
+							<Button variant="ghost" className="w-8 h-8 p-0">
 								<span className="sr-only">Open menu</span>
-								<HiOutlineDotsVertical className="h-4 w-4" />
+								<HiOutlineDotsVertical className="w-4 h-4" />
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
@@ -250,14 +249,14 @@ const SizeIndex = () => {
 							</Button>
 							{row?.original?.deleted ? (
 								<DropdownMenuItem
-									className="text-green-400 text-center cursor-pointer"
+									className="text-center text-green-400 cursor-pointer"
 									onClick={() => setOpenUnHiddenIdSize(row?.original?._id)}
 								>
 									Bỏ ẩn
 								</DropdownMenuItem>
 							) : (
 								<DropdownMenuItem
-									className="text-red-400 text-center cursor-pointer"
+									className="text-center text-red-400 cursor-pointer"
 									onClick={() => setOpenHiddenIdSize(row?.original?._id)}
 								>
 									Ẩn
@@ -272,7 +271,7 @@ const SizeIndex = () => {
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex flex-col gap-3">
-				<h4 className="font-medium text-xl">Danh sách kích thước</h4>
+				<h4 className="text-xl font-medium">Danh sách kích thước</h4>
 				<div className="flex justify-between">
 					<Input
 						placeholder="Tìm kiếm kích thước"
@@ -316,26 +315,26 @@ const SizeIndex = () => {
 									<IoFilter size={20} className="cursor-pointer" />
 								</div>
 							</PopoverTrigger>
-							<PopoverContent className="w-70 mr-8">
+							<PopoverContent className="mr-8 w-70">
 								<div className="grid gap-4">
 									<div className="space-y-2">
 										<h4 className="font-medium leading-none">Tìm kiếm</h4>
 									</div>
 									<div className="grid gap-2">
-										<div className="grid grid-cols-3 items-center gap-4">
+										<div className="grid items-center grid-cols-3 gap-4">
 											<Label htmlFor="weight">Chiều cao</Label>
 											<Input
 												id="height"
-												className="col-span-2 h-8"
+												className="h-8 col-span-2"
 												onChange={(e) => setHeightSearch(+e.target.value)}
 												type="number"
 											/>
 										</div>
-										<div className="grid grid-cols-3 items-center gap-4">
+										<div className="grid items-center grid-cols-3 gap-4">
 											<Label htmlFor="height">Cân nặng</Label>
 											<Input
 												id="weight"
-												className="col-span-2 h-8"
+												className="h-8 col-span-2"
 												onChange={(e) => setWeightSearch(+e.target.value)}
 												type="number"
 											/>

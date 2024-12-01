@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 
 import TableComponent from "@/components/common/TableComponent";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { pagingOrderShipper, pagingOrderShipperById } from "@/service/shipper";
+import { pagingOrderShipperById } from "@/service/shipper";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { format, parseISO } from "date-fns";
 import { toast } from "sonner";

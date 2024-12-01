@@ -1,36 +1,20 @@
 import { setItemLocal } from "@/common/localStorage";
 import app from "@/config/initializeFirebase";
+import instance from "@/config/instance";
 import { useAuth } from "@/hooks/auth";
 import { useRouterHistory } from "@/hooks/router";
 import { socialUser } from "@/service/account";
+import { getCountMyShoppingCart, pagingCartV2 } from "@/service/cart";
+import useCart from "@/store/cart.store";
 import { AxiosError } from "axios";
 import {
 	GoogleAuthProvider,
 	getAdditionalUserInfo,
 	getAuth,
-	getRedirectResult,
 	signInWithPopup,
 } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
-import instance from "@/config/instance";
-import { getCountMyShoppingCart, pagingCartV2 } from "@/service/cart";
-import useCart from "@/store/cart.store";
-
-interface AdditionalUserInfo {
-	isNewUser: boolean;
-	providerId: string;
-	profile: {
-		email: string;
-		family_name: string;
-		given_name: string;
-		granted_scopes: string;
-		id: string;
-		name: string;
-		picture: string;
-	};
-}
-
 const SignInWithFacebookOrGoogle = () => {
 	const auth = getAuth(app);
 	const { setAuthUser, setIsLoggedIn } = useAuth();
@@ -62,11 +46,9 @@ const SignInWithFacebookOrGoogle = () => {
 							pagingCartV2(),
 							getCountMyShoppingCart(),
 						]);
-
 						setCarts(cartsResponse?.data?.listData || []);
 						setTotalCart(totalCountResponse?.data?.count || 0);
 						setItemLocal("token", data?.accessToken);
-						toast.success(data?.message);
 						routerHistory();
 					})
 					.catch((error) => {
@@ -76,13 +58,13 @@ const SignInWithFacebookOrGoogle = () => {
 					});
 				// IdP data available using getAdditionalUserInfo(result)
 			})
-			.catch((error) => {
-				const errorCode = error.code;
-				const errorMessage = error.message;
-				// The email of the user's account used.
-				const email = error.customData.email;
-				// The AuthCredential type that was used.
-				const credential = GoogleAuthProvider.credentialFromError(error);
+			.catch(() => {
+				// const errorCode = error.code;
+				// const errorMessage = error.message;
+				// // The email of the user's account used.
+				// const email = error.customData.email;
+				// // The AuthCredential type that was used.
+				// const credential = GoogleAuthProvider.credentialFromError(error);
 				// ...
 			});
 	};

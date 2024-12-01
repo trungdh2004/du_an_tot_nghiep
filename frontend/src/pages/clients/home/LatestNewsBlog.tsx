@@ -1,17 +1,16 @@
-import React from "react";
-import { useQuery } from "@tanstack/react-query";
 import { pagingBlogs } from "@/service/blog";
 import { IBlogs } from "@/types/blogs";
+import { useQuery } from "@tanstack/react-query";
 import { FaCommentDots, FaEye, FaRegHeart } from "react-icons/fa";
 import { FaAnglesRight } from "react-icons/fa6";
+import { GrFormPrevious } from "react-icons/gr";
+import { MdOutlineNavigateNext } from "react-icons/md";
 import { Link } from "react-router-dom";
-import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation } from "swiper/modules";
-import { GrFormPrevious } from "react-icons/gr";
-import { MdOutlineNavigateNext } from "react-icons/md";
+import { Swiper, SwiperSlide } from "swiper/react";
 import { useMediaQuery } from "usehooks-ts";
 
 const LatestNewsBlog = () => {

@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -7,10 +6,6 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import {
 	Form,
 	FormControl,
@@ -19,11 +14,15 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import { toast } from "sonner";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import StarRatings from "react-star-ratings"; // Thư viện react-star-ratings
+import { Textarea } from "@/components/ui/textarea";
 import { evaluate } from "@/service/evaluate";
 import { IEvaluate } from "@/types/evaluate";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import StarRatings from "react-star-ratings"; // Thư viện react-star-ratings
+import { toast } from "sonner";
+import { z } from "zod";
 
 // Schema validation
 const FormSchema = z.object({
@@ -39,7 +38,6 @@ type Props = {
 
 const Evaluate = ({ open, handleClose }: Props) => {
 	const queryClient = useQueryClient();
-	const [rating, setRating] = useState(0); // State để lưu số sao đã chọn
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
 		defaultValues: {
@@ -124,7 +122,7 @@ const Evaluate = ({ open, handleClose }: Props) => {
 								/>
 								<Button
 									type="submit"
-									className="w-full bg-custom-500 py-3 text-sm md:text-base uppercase text-white rounded-sm"
+									className="w-full py-3 text-sm text-white uppercase rounded-sm bg-custom-500 md:text-base"
 								>
 									Đánh giá
 								</Button>

@@ -1,28 +1,26 @@
-import React, { useEffect, useRef, useState } from "react";
-import { TiDeleteOutline } from "react-icons/ti";
+import DialogConfirm from "@/components/common/DialogConfirm";
+import Paginations from "@/components/common/Pagination";
+import { TooltipComponent } from "@/components/common/TooltipComponent";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+	deleteAddress,
+	editAddressMain,
+	fetchAddress,
+} from "@/service/address";
 import {
 	keepPreviousData,
 	useMutation,
 	useQuery,
 	useQueryClient,
 } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { Skeleton } from "@/components/ui/skeleton";
-import Paginations from "@/components/common/Pagination";
-import EditAddress from "./EditAddress";
-import { RiEditCircleLine } from "react-icons/ri";
-import {
-	deleteAddress,
-	editAddressMain,
-	fetchAddress,
-} from "@/service/address";
-import { BsCheck2Circle } from "react-icons/bs";
-import { BsCircle } from "react-icons/bs";
+import { useState } from "react";
+import { BsCheck2Circle, BsCircle } from "react-icons/bs";
 import { CiCircleRemove } from "react-icons/ci";
-import { TooltipComponent } from "@/components/common/TooltipComponent";
-import DialogConfirm from "@/components/common/DialogConfirm";
 import { FaLocationDot } from "react-icons/fa6";
-import { Button } from "@/components/ui/button";
+import { RiEditCircleLine } from "react-icons/ri";
+import { toast } from "sonner";
+import EditAddress from "./EditAddress";
 import NewAddress from "./NewAddress";
 const AddressIndex = () => {
 	const [open, setOpen] = useState<string | boolean>(false);
@@ -78,7 +76,7 @@ const AddressIndex = () => {
 		},
 	});
 
-	const { isPending, isError, data, isFetching, isPlaceholderData } = useQuery({
+	const { isPending, isError, data } = useQuery({
 		queryKey: ["address", pageIndex],
 		queryFn: () => fetchAddress(pageIndex),
 		placeholderData: keepPreviousData,
@@ -99,21 +97,21 @@ const AddressIndex = () => {
 	return (
 		<>
 			<div className="padding">
-				<div className="flex flex-col gap-2  w-full pt-5">
-					<div className="flex justify-between items-center pb-4">
-						<h2 className="text-black font-semibold text-lg">
+				<div className="flex flex-col w-full gap-2 pt-5">
+					<div className="flex items-center justify-between pb-4">
+						<h2 className="text-lg font-semibold text-black">
 							Địa chỉ của bạn
 						</h2>
 						<div className="">
 							<Button
 								onClick={() => handleCreate()}
-								className="rounded-full text-xs px-4 bg-gradient-to-r from-gray-600 to-gray-900 hover:from-gray-500 hover:to-gray-800 transition-all duration-300 ease-in-out"
+								className="px-4 text-xs transition-all duration-300 ease-in-out rounded-full bg-gradient-to-r from-gray-600 to-gray-900 hover:from-gray-500 hover:to-gray-800"
 							>
 								Thêm địa chỉ
 							</Button>
 						</div>
 					</div>
-					<div className="w-full grid grid-cols-12 gap-8">
+					<div className="grid w-full grid-cols-12 gap-8">
 						{data.content.length === 0 ? (
 							<div className="w-full min-h-[100px] col-span-12 flex justify-center items-center gap-2">
 								<FaLocationDot size={25} className="mb-2" />
@@ -122,7 +120,7 @@ const AddressIndex = () => {
 						) : (
 							data.content?.map((address: any, index: number) => {
 								return (
-									<div className="w-full col-span-12  " key={index}>
+									<div className="w-full col-span-12 " key={index}>
 										<div
 											className={`w-full p-2 sm:p-5 lg:px-8 bg-white box-shadow border rounded-xl flex justify-between ${address.is_main === true ? `border-2 border-green-500` : ` `}`}
 										>
@@ -133,7 +131,7 @@ const AddressIndex = () => {
 												<p className="text-[14px]">{address.address}</p>
 												<p className="text-[14px]">{address.detailAddress}</p>
 											</div>
-											<div className="flex justify-center items-center gap-2">
+											<div className="flex items-center justify-center gap-2">
 												<TooltipComponent label="Chọn mặc định">
 													<button onClick={() => mutate1.mutate(address._id)}>
 														{address.is_main === true ? (

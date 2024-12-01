@@ -1,5 +1,5 @@
 import instance from "@/config/instance";
-import { IOrderShipper, IShipper } from "@/types/shipper.interface";
+import { IShipper } from "@/types/shipper.interface";
 
 export const registerShipper = async (obj: IShipper) =>
 	instance.post(`/shipper/registerShipper`, obj);

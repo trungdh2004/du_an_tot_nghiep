@@ -1,4 +1,3 @@
-import { ICategory } from "./category";
 import { IProduct } from "./typeProduct";
 import { IColor, ISize } from "./variants";
 

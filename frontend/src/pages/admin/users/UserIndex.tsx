@@ -1,14 +1,12 @@
-import React, { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 
-import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
+import DialogConfirm from "@/components/common/DialogConfirm";
+import TableComponent from "@/components/common/TableComponent";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import TableComponent from "@/components/common/TableComponent";
-import { useDebounceCallback } from "usehooks-ts";
-import { parseISO, format } from "date-fns";
 import {
 	DropdownMenu,
-	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
@@ -17,10 +15,8 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { HiOutlineDotsVertical } from "react-icons/hi";
-import { Badge } from "@/components/ui/badge";
-import DialogConfirm from "@/components/common/DialogConfirm";
-import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
 	BanManyUser,
 	banUser,
@@ -28,10 +24,13 @@ import {
 	unBanManyUser,
 	unBanUser,
 } from "@/service/user-admin";
-import { Input } from "@/components/ui/input";
-import { IoFilter } from "react-icons/io5";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SearchObjectType } from "@/types/searchObjecTypes";
+import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
+import { format, parseISO } from "date-fns";
+import { HiOutlineDotsVertical } from "react-icons/hi";
+import { IoFilter } from "react-icons/io5";
+import { toast } from "sonner";
+import { useDebounceCallback } from "usehooks-ts";
 import DiaLogDecentralization from "./DiaLogDecentralization";
 interface IData {
 	_id: string;
@@ -54,7 +53,6 @@ const UserIndex = () => {
 		return user._id;
 	});
 	const [openBanId, setopenBanId] = useState<string | null>(null);
-	const [isPending, startTransition] = useTransition();
 	const [openUnbanId, setopenUnbanId] = useState<string | null>(null);
 	const [openBanManyId, setopenBanManyId] = useState<string | boolean | null>(
 		null,
@@ -110,7 +108,7 @@ const UserIndex = () => {
 
 	const handleBlock = async (id: string) => {
 		try {
-			const { data } = await banUser(id);
+			await banUser(id);
 			setopenBanId(null);
 			handlePagingUser();
 			toast.success("Đã cấm người dùng thành công");
@@ -121,7 +119,7 @@ const UserIndex = () => {
 
 	const handleUnBlock = async (id: string) => {
 		try {
-			const { data } = await unBanUser(id);
+			await unBanUser(id);
 			setopenUnbanId(null);
 			handlePagingUser();
 			toast.success("Bỏ cấm người dùng thành công");
@@ -132,7 +130,7 @@ const UserIndex = () => {
 
 	const handleBanMany = async (id: string) => {
 		try {
-			const { data } = await BanManyUser(id);
+			await BanManyUser(id);
 			setopenBanManyId(null);
 			handlePagingUser();
 			setListRowSelected([]);
@@ -145,7 +143,7 @@ const UserIndex = () => {
 
 	const handleUnBanMany = async (id: string) => {
 		try {
-			const { data } = await unBanManyUser(id);
+			await unBanManyUser(id);
 			setopenUnbanManyId(null);
 			setListRowSelected([]);
 			setRowSelection({});
@@ -201,11 +199,11 @@ const UserIndex = () => {
 			id: "full_name",
 			accessorKey: "full_name",
 			header: () => {
-				return <div className="md:text-base text-xs">Tên</div>;
+				return <div className="text-xs md:text-base">Tên</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs">{row?.original?.full_name}</div>
+					<div className="text-xs md:text-base">{row?.original?.full_name}</div>
 				);
 			},
 		},
@@ -213,11 +211,11 @@ const UserIndex = () => {
 			id: "email",
 			accessorKey: "email",
 			header: () => {
-				return <div className="md:text-base text-xs">Email</div>;
+				return <div className="text-xs md:text-base">Email</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs">{row?.original?.email}</div>
+					<div className="text-xs md:text-base">{row?.original?.email}</div>
 				);
 			},
 		},
@@ -225,7 +223,7 @@ const UserIndex = () => {
 			id: "avatarUrl",
 			accessorKey: "avatarUrl",
 			header: () => {
-				return <div className="md:text-base text-xs">Ảnh</div>;
+				return <div className="text-xs md:text-base">Ảnh</div>;
 			},
 			cell: ({ row }) => {
 				return (
@@ -240,30 +238,30 @@ const UserIndex = () => {
 			id: "provider",
 			accessorKey: "provider",
 			header: () => {
-				return <div className="md:text-base text-xs">Phương thức</div>;
+				return <div className="text-xs md:text-base">Phương thức</div>;
 			},
 			cell: ({ row }) => {
 				const value = `${row.getValue("provider") === "google.com" ? "Google" : "Đăng ký"}`;
-				return <div className="font-medium md:text-base text-xs">{value}</div>;
+				return <div className="text-xs font-medium md:text-base">{value}</div>;
 			},
 		},
 		{
 			id: "createdAt",
 			accessorKey: "createdAt",
 			header: () => {
-				return <div className="md:text-base text-xs">Ngày tạo</div>;
+				return <div className="text-xs md:text-base">Ngày tạo</div>;
 			},
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.createdAt);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
-				return <div className="md:text-base text-xs">{formattedDate}</div>;
+				return <div className="text-xs md:text-base">{formattedDate}</div>;
 			},
 		},
 		{
 			id: "quyen",
 			accessorKey: "quyen",
 			header: () => {
-				return <div className="md:text-base text-xs">Quyền</div>;
+				return <div className="text-xs md:text-base">Quyền</div>;
 			},
 			cell: ({ row }) => {
 				let quyen;
@@ -274,14 +272,14 @@ const UserIndex = () => {
 				} else {
 					quyen = "Khách";
 				}
-				return <div className="md:text-base text-xs">{quyen}</div>;
+				return <div className="text-xs md:text-base">{quyen}</div>;
 			},
 		},
 		{
 			id: "status",
 			accessorKey: "status",
 			header: () => {
-				return <div className="md:text-base text-xs">Trạng thái</div>;
+				return <div className="text-xs md:text-base">Trạng thái</div>;
 			},
 			cell: ({ row }) => {
 				const status = row.original.blocked_at ? "Bị cấm" : "Hoạt động";
@@ -304,9 +302,9 @@ const UserIndex = () => {
 						{!row?.original?.is_admin && (
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
-									<Button variant="ghost" className="h-8 w-8 p-0">
+									<Button variant="ghost" className="w-8 h-8 p-0">
 										<span className="sr-only">Open menu</span>
-										<HiOutlineDotsVertical className="h-4 w-4" />
+										<HiOutlineDotsVertical className="w-4 h-4" />
 									</Button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent align="end">
@@ -357,7 +355,7 @@ const UserIndex = () => {
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex flex-col gap-3">
-				<h4 className="font-medium md:text-xl text-base">
+				<h4 className="text-base font-medium md:text-xl">
 					Danh sách người dùng
 				</h4>
 				<div className="flex justify-between">
@@ -366,7 +364,7 @@ const UserIndex = () => {
 						className="w-[40%] md:text-base text-xs"
 						onChange={(event) => debounced(event.target.value)}
 					/>
-					<div className="flex gap-3 justify-center items-center">
+					<div className="flex items-center justify-center gap-3">
 						{listIdUser.length !== 0 && searchObject.tab == 1 ? (
 							<Button
 								onClick={() => {

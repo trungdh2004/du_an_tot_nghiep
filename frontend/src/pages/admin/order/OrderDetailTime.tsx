@@ -1,13 +1,10 @@
-import React from "react";
 import {
-	Table,
-	TableBody,
-	TableCaption,
-	TableCell,
-	TableFooter,
-	TableHead,
-	TableHeader,
-	TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { formatInTimeZone } from "date-fns-tz";
 import { DetailTime } from "@/types/order";
@@ -43,8 +40,8 @@ const OrderDetailTime = ({ data }: any) => {
 		}
 	});
 	return (
-		<div className="bg-main rounded-md border border-1 border-gray-200 box-shadow p-4">
-			<h3 className="font-medium pl-3 pb-3">Theo dõi đơn hàng</h3>
+		<div className="p-4 border border-gray-200 rounded-md bg-main border-1 box-shadow">
+			<h3 className="pb-3 pl-3 font-medium">Theo dõi đơn hàng</h3>
 			<Table>
 				<TableHeader>
 					<TableRow>

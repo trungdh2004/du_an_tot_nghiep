@@ -1,11 +1,10 @@
-import { returnUrlMoMo, returnUrlVnPay } from "@/service/order";
-import React, { useEffect } from "react";
+import { returnUrlMoMo } from "@/service/order";
+import { useEffect } from "react";
 import { FaSpinner } from "react-icons/fa";
-import { IoIosCheckmarkCircleOutline } from "react-icons/io";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const OrderProcessingV2 = () => {
-	const [searchParams, setSearchParams] = useSearchParams();
+	const [searchParams] = useSearchParams();
 	const paramsObject = Object.fromEntries(searchParams.entries());
 	const navigate = useNavigate();
 	useEffect(() => {

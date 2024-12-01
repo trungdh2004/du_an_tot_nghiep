@@ -1,56 +1,54 @@
-import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { array, z } from "zod";
+import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
+import { formatCurrency } from "@/common/func";
+import FroalaEditor from "@/components/common/Froala";
+import InputNumberFormat from "@/components/common/InputNumberFormat";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
+  ListColorComponent,
+  ListSizeComponent,
+} from "@/components/common/Product";
+import SelectComponent from "@/components/common/SelectComponent";
+import { TooltipComponent } from "@/components/common/TooltipComponent";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-	AiOutlineCloudUpload,
-	AiOutlineLoading3Quarters,
-	AiFillCloseCircle,
-} from "react-icons/ai";
 import { cn } from "@/lib/utils";
+import { getAllCategory } from "@/service/category-admin";
+import { getAllColor } from "@/service/color";
+import { getProductById, updateProductById } from "@/service/product";
+import { getAllSize } from "@/service/size-admin";
 import { uploadFileService, uploadMultipleFileService } from "@/service/upload";
 import {
-	useProcessBarLoading,
-	useProcessBarLoadingEventNone,
+  useProcessBarLoading,
+  useProcessBarLoadingEventNone,
 } from "@/store/useSidebarAdmin";
-import ImageUploading, { ImageListType } from "react-images-uploading";
-import { CiCirclePlus } from "react-icons/ci";
-import { getAllCategory } from "@/service/category-admin";
-import { getAllSize } from "@/service/size-admin";
-import { IColor, IItemListColor, IProduct } from "@/types/typeProduct";
-import { MdDeleteForever } from "react-icons/md";
-import FroalaEditor from "@/components/common/Froala";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { getProductById, updateProductById } from "@/service/product";
-import { useNavigate, useParams } from "react-router-dom";
-import SelectComponent from "@/components/common/SelectComponent";
-import Select from "react-select";
-import { getAllColor } from "@/service/color";
+import { IColor, IProduct } from "@/types/typeProduct";
 import { ISize } from "@/types/variants";
-import { ICategory } from "@/types/category";
-import { Checkbox } from "@/components/ui/checkbox";
-import InputNumberFormat from "@/components/common/InputNumberFormat";
-import { IoEyeOutline } from "react-icons/io5";
-import { FaStar } from "react-icons/fa";
-import { formatCurrency } from "@/common/func";
+import { useMutation } from "@tanstack/react-query";
 import {
-	ListColorComponent,
-	ListSizeComponent,
-} from "@/components/common/Product";
-import { TooltipComponent } from "@/components/common/TooltipComponent";
+  AiFillCloseCircle,
+  AiOutlineCloudUpload,
+  AiOutlineLoading3Quarters,
+} from "react-icons/ai";
 import { BsStars } from "react-icons/bs";
+import { CiCirclePlus } from "react-icons/ci";
+import { FaStar } from "react-icons/fa";
+import { IoEyeOutline } from "react-icons/io5";
+import { MdDeleteForever } from "react-icons/md";
+import ImageUploading, { ImageListType } from "react-images-uploading";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const formSchema = z
 	.object({
@@ -164,12 +162,12 @@ const formSchema = z
 			// Nếu is_simple là true, cho phép attributes là mảng rỗng
 			if (data.attributes && data.attributes.length > 0) {
 				// Nếu có attributes, không yêu cầu các trường con
-				data.attributes.forEach((attr, index) => {
-					const colorPath = ["attributes", index, "color"];
-					const sizePath = ["attributes", index, "size"];
-					const pricePath = ["attributes", index, "price"];
-					const quantityPath = ["attributes", index, "quantity"];
-					const discountPath = ["attributes", index, "discount"];
+				data.attributes.forEach((attr) => {
+					// const colorPath = ["attributes", index, "color"];
+					// const sizePath = ["attributes", index, "size"];
+					// const pricePath = ["attributes", index, "price"];
+					// const quantityPath = ["attributes", index, "quantity"];
+					// const discountPath = ["attributes", index, "discount"];
 
 					if (attr.color) {
 						z.object({
@@ -268,7 +266,7 @@ const ProductUpdate = () => {
 			quantity: 0,
 		},
 	});
-	const { isOpen, setOpen, setClose } = useProcessBarLoading();
+	const { setOpen, setClose } = useProcessBarLoading();
 	const [previewUrl, setPreviewUrl] = useState({
 		isLoading: false,
 		url: "",
@@ -278,7 +276,7 @@ const ProductUpdate = () => {
 	const [category, setCategorys] = useState([]);
 	const [size, setSize] = useState([]);
 	const [color, setColor] = useState([]);
-	const [isPending, setIsPending] = useState(false);
+	const [isPending] = useState(false);
 	const { mutate } = useMutation({
 		mutationFn: (value: IProduct) => updateProductById(id as string, value),
 		onSuccess: () => {
@@ -490,7 +488,7 @@ const ProductUpdate = () => {
 												<FormControl>
 													<SelectComponent<ICate>
 														value={field.value}
-														onChange={(newValue: ICate, action) => {
+														onChange={(newValue: ICate) => {
 															field.onChange(newValue);
 															form.clearErrors(`category`);
 														}}
@@ -974,7 +972,7 @@ const ProductUpdate = () => {
 																	<FormLabel>Kích thước</FormLabel>
 																	<SelectComponent<ISize>
 																		value={field.value}
-																		onChange={(newValue: ISize, action) => {
+																		onChange={(newValue: ISize) => {
 																			field.onChange(newValue);
 																			form.clearErrors(
 																				`attributes.${index}.size`,
@@ -1001,7 +999,7 @@ const ProductUpdate = () => {
 																		<FormLabel>Màu</FormLabel>
 																		<SelectComponent<IColor>
 																			value={field.value}
-																			onChange={(newValue: IColor, action) => {
+																			onChange={(newValue: IColor) => {
 																				field.onChange(newValue);
 																				form.clearErrors(
 																					`attributes.${index}.color`,

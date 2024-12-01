@@ -1,7 +1,6 @@
-import { formatCurrency } from "@/common/func";
-import React from "react";
 import productNotFound from "@/assets/productnotfound.jpg";
-import type { ProductOrderItem, ProductOrder } from "@/types/order";
+import { formatCurrency } from "@/common/func";
+import type { ProductOrder, ProductOrderItem } from "@/types/order";
 
 const ProductOrder = ({ data }: any) => {
 	return (
@@ -26,7 +25,7 @@ const ProductOrder = ({ data }: any) => {
 				data?.data?.map((product: ProductOrder, index: number) => {
 					return (
 						<div
-							className="lg:flex flex-col gap-3 bg-white my-2 py-2 lg:rounded-md md:rounded-md rounded-none border border-gray-200 box-shadow"
+							className="flex-col gap-3 py-2 my-2 bg-white border border-gray-200 rounded-none lg:flex lg:rounded-md md:rounded-md box-shadow"
 							key={index}
 						>
 							<div className="flex flex-col gap-3 my-2 md:my-4">
@@ -34,20 +33,20 @@ const ProductOrder = ({ data }: any) => {
 									(productItem: ProductOrderItem, index: number) => {
 										return (
 											<div
-												className="lg:grid lg:grid-cols-6 md:grid md:grid-cols-6 grid grid-cols-1 gap-1  lg:px-4 px-3 items-center"
+												className="grid items-center grid-cols-1 gap-1 px-3 lg:grid lg:grid-cols-6 md:grid md:grid-cols-6 lg:px-4"
 												key={index}
 											>
-												<div className="lg:col-span-3 md:col-span-3 col-span-1">
-													<div className="flex  items-center gap-3">
-														<div className="w-14 h-14 cursor-pointer block">
+												<div className="col-span-1 lg:col-span-3 md:col-span-3">
+													<div className="flex items-center gap-3">
+														<div className="block cursor-pointer w-14 h-14">
 															<img
 																src={productItem.thumbnail}
 																alt="Product3"
 																className="w-full h-full"
 															/>
 														</div>
-														<div className="flex flex-1 md:flex-row flex-col  lg:gap-3 md:gap-3 gap-1">
-															<h3 className="line-clamp-2 w-full lg:text-base text-sm font-medium">
+														<div className="flex flex-col flex-1 gap-1 md:flex-row lg:gap-3 md:gap-3">
+															<h3 className="w-full text-sm font-medium line-clamp-2 lg:text-base">
 																{productItem.name}
 															</h3>
 															{productItem?.is_simple === true ? (
@@ -64,26 +63,26 @@ const ProductOrder = ({ data }: any) => {
 													</div>
 												</div>
 												<div className="col-span-1 lg:text-right md:text-right lg:block md:block flex items-center lg:pl-0 md:pl-0 pl-[68px] gap-2">
-													<span className="lg:hidden md:hidden block lg:text-base md:text-sm text-xs ">
+													<span className="block text-xs lg:hidden md:hidden lg:text-base md:text-sm ">
 														Giá tiền :
 													</span>
-													<h3 className="lg:text-base md:text-sm text-xs">
+													<h3 className="text-xs lg:text-base md:text-sm">
 														{formatCurrency(productItem.discount)}
 													</h3>
 												</div>
 												<div className="col-span-1 lg:text-right md:text-right lg:block md:block flex items-center lg:pl-0 md:pl-0 pl-[68px] gap-2">
-													<span className="lg:hidden md:hidden block lg:text-base md:text-sm text-xs">
+													<span className="block text-xs lg:hidden md:hidden lg:text-base md:text-sm">
 														Số lượng :
 													</span>
-													<h3 className="lg:text-base md:text-sm text-xs">
+													<h3 className="text-xs lg:text-base md:text-sm">
 														{productItem.quantity}
 													</h3>
 												</div>
 												<div className="col-span-1 lg:text-right md:text-right lg:block md:block flex items-center lg:pl-0 md:pl-0 pl-[68px] gap-2">
-													<span className="lg:hidden md:hidden block lg:text-base md:text-sm text-xs">
+													<span className="block text-xs lg:hidden md:hidden lg:text-base md:text-sm">
 														Tổng tiền :
 													</span>
-													<h3 className="lg:text-base md:text-sm text-xs">
+													<h3 className="text-xs lg:text-base md:text-sm">
 														{formatCurrency(
 															productItem.discount * productItem.quantity,
 														)}

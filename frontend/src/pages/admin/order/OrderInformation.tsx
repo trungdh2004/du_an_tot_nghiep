@@ -1,15 +1,13 @@
-import React from "react";
-import {
-	Table,
-	TableBody,
-	TableCaption,
-	TableCell,
-	TableFooter,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table";
 import { formatCurrency } from "@/common/func";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import OrderInforAddress from "./OrderInforAddress";
 
 const OrderInformation = ({ data, getOrderById }: any) => {
@@ -23,10 +21,10 @@ const OrderInformation = ({ data, getOrderById }: any) => {
 	);
 
 	return (
-		<div className="grid lg:grid-cols-3 md:grid-cols-3 grid-cols-1 gap-4">
-			<div className="lg:col-span-2 md:col-span-2 col-span-1 ">
+		<div className="grid grid-cols-1 gap-4 lg:grid-cols-3 md:grid-cols-3">
+			<div className="col-span-1 lg:col-span-2 md:col-span-2 ">
 				<div className="flex flex-col gap-5">
-					<div className="bg-main rounded-md border border-1 border-gray-200 box-shadow p-4">
+					<div className="p-4 border border-gray-200 rounded-md bg-main border-1 box-shadow">
 						<h3 className="font-medium">Sản phẩm đơn hàng</h3>
 						<Table>
 							<TableHeader>
@@ -71,51 +69,51 @@ const OrderInformation = ({ data, getOrderById }: any) => {
 							</TableFooter>
 						</Table>
 					</div>
-					<div className="bg-main rounded-md border border-1 border-gray-200 box-shadow p-4">
+					<div className="p-4 border border-gray-200 rounded-md bg-main border-1 box-shadow">
 						<h3 className="pb-5 font-medium">Thông tin thanh toán</h3>
 						<hr />
 						<div className="flex flex-col gap-4">
 							<div className="flex justify-between pt-4">
-								<p className="font-medium text-sm text-gray-500">Thông tin</p>
-								<p className="font-medium text-sm text-gray-500 pr-3">
+								<p className="text-sm font-medium text-gray-500">Thông tin</p>
+								<p className="pr-3 text-sm font-medium text-gray-500">
 									Giá tiền
 								</p>
 							</div>
 							<hr />
 							<div className="flex justify-between">
-								<p className="font-medium text-sm text-black">Giá tiền</p>
-								<p className="font-normal text-sm text-black pr-3">
+								<p className="text-sm font-medium text-black">Giá tiền</p>
+								<p className="pr-3 text-sm font-normal text-black">
 									{formatCurrency(totalCost)}
 								</p>
 							</div>
 							<hr />
 							<div className="flex justify-between">
-								<p className="font-medium text-sm text-black">Phí vận chuyển</p>
-								<p className="font-normal text-sm text-black pr-3">
+								<p className="text-sm font-medium text-black">Phí vận chuyển</p>
+								<p className="pr-3 text-sm font-normal text-black">
 									{formatCurrency(data.shippingCost)}
 								</p>
 							</div>
 							<hr />
-							
+
 							<div className="flex justify-between">
-								<p className="font-medium text-sm text-black">Voucher</p>
-								<p className="font-normal text-sm text-black pr-3">
+								<p className="text-sm font-medium text-black">Voucher</p>
+								<p className="pr-3 text-sm font-normal text-black">
 									- {formatCurrency(data.voucherAmount)}
 								</p>
 							</div>
 							<hr />
 							<div className="flex justify-between">
-								<p className="font-medium text-sm text-black">Đã thanh toán</p>
-								<p className="font-normal text-sm text-black pr-3">
+								<p className="text-sm font-medium text-black">Đã thanh toán</p>
+								<p className="pr-3 text-sm font-normal text-black">
 									- {formatCurrency(data.paymentAmount)}
 								</p>
 							</div>
 							<hr />
 							<div className="flex justify-between bg-main">
-								<p className="font-medium text-sm text-black">
+								<p className="text-sm font-medium text-black">
 									Thanh toán khi nhận hàng
 								</p>
-								<p className="font-medium text-sm text-red-500 pr-3">
+								<p className="pr-3 text-sm font-medium text-red-500">
 									{formatCurrency(data.amountToPay)}
 								</p>
 							</div>

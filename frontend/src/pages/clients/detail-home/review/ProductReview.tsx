@@ -1,6 +1,6 @@
 import { IProductDetail } from "@/types/product";
 import React from "react";
-import { FaRegStar, FaStar } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
 interface Props {
 	dataReview: SearchRatingState | null;
 	setSearchRating: React.Dispatch<

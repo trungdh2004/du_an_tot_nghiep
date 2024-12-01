@@ -27,13 +27,13 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
 	if (active && payload && payload.length) {
 		return (
 			<div className="p-2 rounded-sm bg-white box-shadow min-w-[120px]">
-				<p className="font-medium mb-1 text-sm ">{`${label}`}</p>
+				<p className="mb-1 text-sm font-medium ">{`${label}`}</p>
 				<table className="w-full text-xs">
 					<tr>
 						<td colSpan={1}>
-							<div className="size-3 bg-blue-500 rounded-sm "></div>
+							<div className="bg-blue-500 rounded-sm size-3 "></div>
 						</td>
-						<td className=" text-left" colSpan={2}>
+						<td className="text-left " colSpan={2}>
 							<div className="">Đơn mới</div>
 						</td>
 						<td className="text-end" colSpan={2}>
@@ -42,9 +42,9 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
 					</tr>
 					<tr>
 						<td colSpan={1}>
-							<div className="size-3 bg-green-500 rounded-sm "></div>
+							<div className="bg-green-500 rounded-sm size-3 "></div>
 						</td>
-						<td className=" text-left" colSpan={2}>
+						<td className="text-left " colSpan={2}>
 							<div className="">Thành công</div>
 						</td>
 						<td className="text-end" colSpan={2}>
@@ -53,9 +53,9 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
 					</tr>
 					<tr>
 						<td colSpan={1}>
-							<div className="size-3 bg-rose-500 rounded-sm "></div>
+							<div className="rounded-sm size-3 bg-rose-500 "></div>
 						</td>
-						<td className=" text-left" colSpan={2}>
+						<td className="text-left " colSpan={2}>
 							<div className="">Hủy</div>
 						</td>
 						<td className="text-end" colSpan={2}>
@@ -72,7 +72,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
 
 export function ComponentChart() {
 	const [status, setStatus] = useState(1);
-	const { data, isLoading } = useQuery({
+	const { data } = useQuery({
 		queryKey: ["chartOrder", status],
 		queryFn: async () => {
 			try {

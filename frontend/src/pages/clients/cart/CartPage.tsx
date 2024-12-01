@@ -9,7 +9,6 @@ import { deleteCartItem, pagingCartV2 } from "@/service/cart";
 import { createStateUrlCart } from "@/service/order";
 import { takeApplyDiscountCode } from "@/service/voucher";
 import useCart from "@/store/cart.store";
-import { IVoucher } from "@/types/voucher";
 import { AxiosError } from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { HiOutlineTrash } from "react-icons/hi";
@@ -82,7 +81,9 @@ const CartPage = () => {
 		if (item?.is_simple && item?.totalQuantity > 0) {
 			return true;
 		}
-		return !item?.is_simple && item?.attribute?._id && item?.attribute?.quantity > 0;
+		return (
+			!item?.is_simple && item?.attribute?._id && item?.attribute?.quantity > 0
+		);
 	}, []);
 	useEffect(() => {
 		(async () => {

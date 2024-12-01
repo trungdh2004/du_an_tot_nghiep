@@ -1,33 +1,30 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
 import {
-	addAddress,
-	callCity,
-	callCommune,
-	callDistrict,
+  addAddress,
+  callCity,
+  callCommune,
+  callDistrict,
 } from "@/service/address";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 // import MapSearchLocation from "@/components/map/MapSearchLocation";
 import MapSearchLocation from "@/components/map/MapSearchLocation";
 import AddressLocation from "../address/AddressLocation";
-import AddressInformation from "../address/AddressInformation";
-import { useSearchParams } from "react-router-dom";
-import { pagingOrder } from "@/service/order";
 
 const formSchema = z.object({
 	username: z
@@ -97,10 +94,7 @@ const AddAddressOrder = ({
 	handleChangeAddress,
 	address,
 }: Props) => {
-	const [searchParams, setSearchParams] = useSearchParams();
-	const paramsObject = Object.fromEntries(searchParams.entries());
-	const stateOrder = JSON.parse(paramsObject.state);
-	const { data: citys, isLoading } = useQuery<ICity[]>({
+	const { data: citys } = useQuery<ICity[]>({
 		queryKey: ["city"],
 		queryFn: async () => {
 			const { data } = await callCity();
@@ -111,7 +105,7 @@ const AddAddressOrder = ({
 
 	const { mutate } = useMutation({
 		mutationFn: async (dataNew: any) => addAddress(dataNew),
-    onSuccess: ({ data }) => {
+		onSuccess: ({ data }) => {
 			queryClient.invalidateQueries({
 				queryKey: ["address"],
 			});
@@ -121,7 +115,7 @@ const AddAddressOrder = ({
 			}
 			closeOpen(false);
 		},
-		onError: (error) => {
+		onError: () => {
 			toast.error("Bạn thêm địa chỉ thất bại");
 		},
 	});
@@ -176,7 +170,7 @@ const AddAddressOrder = ({
 					<h2 className="text-xl font-bold">Thêm địa chỉ</h2>
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-							<div className="flex flex-row gap-3 w-full">
+							<div className="flex flex-row w-full gap-3">
 								<FormField
 									control={form.control}
 									name="username"
@@ -241,7 +235,7 @@ const AddAddressOrder = ({
 							<FormField
 								control={form.control}
 								name="location"
-								render={({ field }) => {
+								render={() => {
 									return (
 										<FormItem className="">
 											<div className="w-full h-[240px] border">
