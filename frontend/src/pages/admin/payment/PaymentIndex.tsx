@@ -75,8 +75,8 @@ const PaymentIndex = () => {
 		} catch (error) {
 			console.error("Error fetching data", error);
 		}
-  };
-  const debounced = useDebounceCallback((inputValue: string) => {
+	};
+	const debounced = useDebounceCallback((inputValue: string) => {
 		setSearchObject((prev) => ({
 			...prev,
 			pageIndex: 1,
@@ -85,7 +85,8 @@ const PaymentIndex = () => {
 	}, 300);
 	const columns: ColumnDef<IData>[] = [
 		{
-			accessorKey: "bankCode",
+			id: "codeOrder",
+			accessorKey: "codeOrder",
 			header: () => {
 				return <div className="md:text-base text-xs">Mã đơn hàng</div>;
 			},
@@ -96,20 +97,20 @@ const PaymentIndex = () => {
 			},
 		},
 		{
-			accessorKey: "avatarUrl",
+			accessorKey: "bankCode",
 			header: () => {
 				return <div className="md:text-base text-xs">Ngân hàng</div>;
 			},
 			cell: ({ row }) => {
 				return (
 					<div className="md:text-base text-xs">
-						Ngân hàng {row?.original?.bankCode}
+						Ngân hàng {row?.original?.bankCode === "NCB" ? "Vnpay" : "Momo"}
 					</div>
 				);
 			},
 		},
 		{
-			accessorKey: "totalOrder",
+			accessorKey: "cardType",
 			header: () => {
 				return <div className="md:text-base text-xs">Thẻ</div>;
 			},
@@ -120,7 +121,7 @@ const PaymentIndex = () => {
 			},
 		},
 		{
-			accessorKey: "totalOrderCancel",
+			accessorKey: "transactionId",
 			header: () => {
 				return <div className="md:text-base text-xs">Mã giao dịch</div>;
 			},
@@ -133,7 +134,7 @@ const PaymentIndex = () => {
 			},
 		},
 		{
-			accessorKey: "totalOrderSuccess",
+			accessorKey: "amount",
 			header: () => {
 				return <div className="md:text-base text-xs">Số tiền thanh toán</div>;
 			},
@@ -146,7 +147,7 @@ const PaymentIndex = () => {
 			},
 		},
 		{
-			accessorKey: "totalOrder",
+			accessorKey: "createdAt",
 			header: () => {
 				return <div className="md:text-base text-xs">Ngày giao dịch</div>;
 			},

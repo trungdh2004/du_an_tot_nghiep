@@ -33,9 +33,9 @@ const SidebarList = () => {
 								</AccordionTrigger>
 								<AccordionContent className="pb-0 pl-4" datatype="open">
 									<div className="space-y-1  mt-2 ">
-										{item.children.map((row: any) => (
+										{item.children.map((row: any, index: number) => (
 											<SidebarItem
-												key={item.path + item.label}
+												key={index}
 												label={row.label}
 												Icon={row.icon}
 												path={`/admin${item.path}${row.path}`}

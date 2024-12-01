@@ -91,6 +91,7 @@ const CustomerList = () => {
 	};
 	const columns: ColumnDef<IData>[] = [
 		{
+			id: "full_name",
 			accessorKey: "full_name",
 			header: () => {
 				return <div className="md:text-base text-xs">Tên</div>;
@@ -104,6 +105,7 @@ const CustomerList = () => {
 			},
 		},
 		{
+			id: "avatarUrl",
 			accessorKey: "avatarUrl",
 			header: () => {
 				return <div className="md:text-base text-xs">Ảnh</div>;
@@ -118,6 +120,7 @@ const CustomerList = () => {
 			},
 		},
 		{
+			id: "totalOrder",
 			accessorKey: "totalOrder",
 			header: () => {
 				return <div className="md:text-base text-xs">Số đơn hàng</div>;
@@ -131,6 +134,7 @@ const CustomerList = () => {
 			},
 		},
 		{
+			id: "totalOrderCancel",
 			accessorKey: "totalOrderCancel",
 			header: () => {
 				return <div className="md:text-base text-xs">Số đơn hủy hàng</div>;
@@ -144,6 +148,7 @@ const CustomerList = () => {
 			},
 		},
 		{
+			id: "totalOrderSuccess",
 			accessorKey: "totalOrderSuccess",
 			header: () => {
 				return (
@@ -159,7 +164,8 @@ const CustomerList = () => {
 			},
 		},
 		{
-			accessorKey: "totalOrder",
+			id: "totalMoney",
+			accessorKey: "totalMoney",
 			header: () => {
 				return <div className="md:text-base text-xs">Số tiền hàng</div>;
 			},
@@ -172,7 +178,8 @@ const CustomerList = () => {
 			},
 		},
 		{
-			accessorKey: "totalOrder",
+			id: "rank",
+			accessorKey: "rank",
 			header: () => {
 				return <div className="md:text-base text-xs">Xếp hạng</div>;
 			},

@@ -123,3 +123,11 @@ export type ProductOrder = {
 	totalAmount: number;
 	items: ProductOrderItem[];
 };
+
+export interface DetailTime {
+	status: number; 
+	date: string; 
+	message: string; 
+	sub: string; 
+	informationStatus: string; 
+}

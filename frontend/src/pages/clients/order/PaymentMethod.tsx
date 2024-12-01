@@ -25,6 +25,8 @@ const PaymentMethod = ({
 	spin,
 	setSpin,
 }: Props) => {
+	console.log(spin);
+
 	const [paymentMethod, setPaymentMethod] = useState<string>("1");
 	const arrayTotal = data?.data?.map((product: any) => {
 		return product.totalAmount;
@@ -210,8 +212,8 @@ const PaymentMethod = ({
 							spin ? "cursor-not-allowed opacity-75" : ""
 						}`}
 						onClick={() => {
-							handleCheckout();
 							setSpin(true);
+							handleCheckout();
 						}}
 						disabled={spin}
 					>
@@ -245,8 +247,8 @@ const PaymentMethod = ({
 							spin ? "cursor-not-allowed opacity-75" : "",
 						)}
 						onClick={() => {
-							handleCheckout();
 							setSpin(true);
+							handleCheckout();
 						}}
 					>
 						{spin && <FaSpinner className="animate-spin mr-2" />}

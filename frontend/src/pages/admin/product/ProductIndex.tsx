@@ -402,10 +402,10 @@ const ProductIndex = () => {
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex flex-col gap-3">
-				<h4 className="font-medium md:text-xl text-base">Danh sách danh mục</h4>
+				<h4 className="font-medium md:text-xl text-base">Danh sách sản phẩm</h4>
 				<div className="flex flex-wrap justify-between gap-2">
 					<Input
-						placeholder="Tìm kiếm danh mục"
+						placeholder="Tìm kiếm sản phẩm"
 						className="w-full sm:w-[40%] md:text-base text-xs"
 						value={key}
 						onChange={(e) => setKey(e.target.value)}
