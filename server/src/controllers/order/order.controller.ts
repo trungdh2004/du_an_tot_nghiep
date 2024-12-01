@@ -461,6 +461,11 @@ class OrderController {
         });
       }
 
+      if (listId.length !== listCartItem.length) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đã có sản phẩm bị xóa mời bạn trờ về",
+        });
+      }
       const listDateNew = listCartItem.map((item) => {
         const variant = item?.product?.is_simple
           ? "Sản phẩm đơn giản"
@@ -1228,6 +1233,12 @@ class OrderController {
         },
       ]);
 
+      if (listId.length !== listCartItem.length) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đã có sản phẩm bị xóa mời bạn trờ về",
+        });
+      }
+
       const checkProduct = listCartItem.find(
         (item) => item?.product?.is_deleted
       );
@@ -1699,63 +1710,7 @@ class OrderController {
           return res.status(STATUS.BAD_REQUEST).json(data);
         }
         return res.status(STATUS.OK).json({ paymentUrl: data?.payUrl });
-      }
-      // if (paymentMethod === 4) {
-      //   const appId = process.env.APP_ID_ZALO!;
-      //   const key1 = process.env.KEY1_ZALO!;
-      //   const key2 = process.env.KEY2_ZALO!;
-      //   const endpoint = process.env.ENDPOINT_ZALO!;
-
-      //   const items: any[] = [];
-
-      //   const embed_data = {
-      //     //sau khi hoàn tất thanh toán sẽ đi vào link này (thường là link web thanh toán thành công của mình)
-      //     redirecturl: returnUrl,
-      //   };
-
-      //   console.log({ returnUrl });
-
-      //   const order = {
-      //     app_id: appId,
-      //     app_trans_id: `${moment().format("YYMMDD")}_${newOrder._id}`, // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
-      //     app_user: newOrder.address.username,
-      //     app_time: Date.now(), // miliseconds
-      //     item: JSON.stringify(items),
-      //     embed_data: JSON.stringify(embed_data),
-      //     amount: 50000,
-      //     //khi thanh toán xong, zalopay server sẽ POST đến url này để thông báo cho server của mình
-      //     //Chú ý: cần dùng ngrok để public url thì Zalopay Server mới call đến được
-      //     callback_url: "https://b074-1-53-37-194.ngrok-free.app/callback",
-      //     description: `Lazada - Payment for the order #${newOrder._id}`,
-      //     bank_code: "",
-      //     mac: "",
-      //   };
-
-      //   const data =
-      //     appId +
-      //     "|" +
-      //     order.app_trans_id +
-      //     "|" +
-      //     order.app_user +
-      //     "|" +
-      //     order.amount +
-      //     "|" +
-      //     order.app_time +
-      //     "|" +
-      //     order.embed_data +
-      //     "|" +
-      //     order.item;
-      //   order.mac = CryptoJS.HmacSHA256(data, key1).toString();
-      //   const { data: dataZalo } = await axios.post(endpoint, null, {
-      //     params: order,
-      //   });
-
-      //   return res.status(STATUS.OK).json({
-      //     ...dataZalo,
-      //     paymentUrl: dataZalo.order_url,
-      //   });
-      // }
-      else {
+      } else {
         const ipAddress = String(
           req.headers["x-forwarded-for"] ||
             req.connection.remoteAddress ||
@@ -1798,6 +1753,10 @@ class OrderController {
         vnp_TxnRef,
         vnp_SecureHash,
       } = req.query;
+
+      console.log({
+        body: req.query,
+      });
 
       if (
         !vnp_Amount ||
@@ -2177,7 +2136,7 @@ class OrderController {
 
       const payment = await PaymentModel.create({
         user: user?.id,
-        method: 1,
+        method: 2,
         codeOrder: existingOrder.code,
         transactionId: transId,
         amount: amount,
