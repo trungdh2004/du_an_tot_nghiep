@@ -17,7 +17,6 @@ const FroalaEditor = ({
 	content,
 	onChangeContext,
 	props,
-	disabled,
 }: FroalaEditorType) => {
 	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
 		useProcessBarLoadingEventNone();
@@ -30,7 +29,7 @@ const FroalaEditor = ({
 		imageOutputSize: true,
 		imageRoundPercent: true,
 		fontFamilySelection: true,
-		fontFamily:true,
+		fontFamily: true,
 		imageMaxSize: 1024 * 1024 * 2.5,
 		imageEditButtons: [
 			"imageReplace",
@@ -73,7 +72,53 @@ const FroalaEditor = ({
 			"#640487",
 			"REMOVE",
 		],
-		fontSize:["8", "10", "12", "14", "16", "18", "20", "22", "24", "26", "28", "30", "32", "34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54", "56", "58", "60", "62", "64", "66", "68", "70", "72", "74", "76", "78", "80", "82", "84", "86", "88", "90", "92", "94", "96"],
+		fontSize: [
+			"8",
+			"10",
+			"12",
+			"14",
+			"16",
+			"18",
+			"20",
+			"22",
+			"24",
+			"26",
+			"28",
+			"30",
+			"32",
+			"34",
+			"36",
+			"38",
+			"40",
+			"42",
+			"44",
+			"46",
+			"48",
+			"50",
+			"52",
+			"54",
+			"56",
+			"58",
+			"60",
+			"62",
+			"64",
+			"66",
+			"68",
+			"70",
+			"72",
+			"74",
+			"76",
+			"78",
+			"80",
+			"82",
+			"84",
+			"86",
+			"88",
+			"90",
+			"92",
+			"94",
+			"96",
+		],
 		toolbarButtons: {
 			moreText: {
 				buttons: [
@@ -118,7 +163,6 @@ const FroalaEditor = ({
 				align: "right",
 				buttonsVisible: 2,
 			},
-			
 		},
 		tableEditButtons: [
 			"tableHeader",
@@ -184,7 +228,7 @@ const FroalaEditor = ({
 
 				return false;
 			},
-			"image.inserted": function (this: any, $img: any, response: any): void {
+			"image.inserted": function (this: any): void {
 				// Không cần làm gì ở đây
 			},
 		},

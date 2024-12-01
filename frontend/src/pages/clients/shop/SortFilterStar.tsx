@@ -1,8 +1,6 @@
 import { cn } from "@/lib/utils";
 import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
-import { useQueryClient } from "@tanstack/react-query";
-import React, { Dispatch, SetStateAction, useState } from "react";
-import { CiStar } from "react-icons/ci";
+import { Dispatch, SetStateAction, useState } from "react";
 import { FaAngleDown, FaAngleUp, FaRegStar, FaStar } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
 interface Props {
@@ -11,7 +9,6 @@ interface Props {
 const SortFilterStar = ({ setSearchParamsObject }: Props) => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [check, setCheck] = useState(false);
-	const query = useQueryClient();
 	const [rating, setRating] = useState<number>(0);
 
 	const handleRatingChange = (rating: string) => {
@@ -27,22 +24,22 @@ const SortFilterStar = ({ setSearchParamsObject }: Props) => {
 		}));
 	};
 	return (
-		<div className="w-full flex flex-col lg:py-2 pb-8">
+		<div className="flex flex-col w-full pb-8 lg:py-2">
 			<div
-				className="flex justify-between items-center cursor-pointer"
+				className="flex items-center justify-between cursor-pointer"
 				onClick={!check ? () => setCheck(true) : () => setCheck(false)}
 			>
-				<h3 className="text-uppercase py-2 font-semibold leading-7 tracking-wide lg:text-base md:text-sm sm:text-xs">
+				<h3 className="py-2 font-semibold leading-7 tracking-wide text-uppercase lg:text-base md:text-sm sm:text-xs">
 					Đánh giá
 				</h3>
 				{!check ? (
 					<FaAngleDown
-						className="cursor-pointer transition-transform"
+						className="transition-transform cursor-pointer"
 						onClick={() => setCheck(true)}
 					/>
 				) : (
 					<FaAngleUp
-						className="cursor-pointer transition-transform"
+						className="transition-transform cursor-pointer"
 						onClick={() => setCheck(false)}
 					/>
 				)}

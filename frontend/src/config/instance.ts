@@ -1,5 +1,4 @@
 import axios from "axios";
-import { JwtPayload, jwtDecode } from "jwt-decode";
 
 const instance = axios.create({
 	baseURL: process.env.SERVER_URL,
@@ -61,4 +60,3 @@ instance.interceptors.response.use(
 );
 
 export default instance;
-

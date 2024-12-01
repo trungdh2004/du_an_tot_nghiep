@@ -32,11 +32,7 @@ const ContactIndex = () => {
 
 	const onSubmit = async (payload: z.infer<typeof formSchema>) => {
 		try {
-			const { data } = await contactFormService(
-				payload.name,
-				payload.email,
-				payload.content,
-			);
+			await contactFormService(payload.name, payload.email, payload.content);
 			form.reset({
 				name: "",
 				email: "",
@@ -49,14 +45,14 @@ const ContactIndex = () => {
 	};
 	return (
 		<>
-			<section className=" mb-36 pt-20">
+			<section className="pt-20  mb-36">
 				<div className="padding">
 					<div className="">
 						<div className="grid grid-cols-12 md:gap-5 lg:gap-10 ">
 							<div className="col-span-12 lg:col-span-6">
 								<div className="max-w-[500px] w-full mx-auto">
-									<div className="space-y-5 pb-16">
-										<div className="flex gap-3 items-center ">
+									<div className="pb-16 space-y-5">
+										<div className="flex items-center gap-3 ">
 											<span className="border-[1px] border-[#c9ae63]/70 p-2 rounded-full">
 												<FaLocationDot color="#c9ae63" />
 											</span>
@@ -64,20 +60,20 @@ const ContactIndex = () => {
 												Dị Nậu, Thạch Thất, Hà Nội
 											</h3>
 										</div>
-										<div className="flex gap-3 items-center ">
+										<div className="flex items-center gap-3 ">
 											<span className="border-[1px] border-[#c9ae63]/80 p-2 rounded-full">
 												<MdOutlinePhoneAndroid color="#c9ae63" />
 											</span>
 											<h3 className="text-[18px]">19001007</h3>
 										</div>
-										<div className="flex gap-3 items-center ">
+										<div className="flex items-center gap-3 ">
 											<span className="border-[1px] border-[#c9ae63]/80 p-2 rounded-full">
 												<GoMail color="#c9ae63" />
 											</span>
 											<h3 className="text-[18px]">Nucshop@gmail.com</h3>
 										</div>
 									</div>
-									<h3 className="text-xl font-medium pb-4">
+									<h3 className="pb-4 text-xl font-medium">
 										Liên hệ với chúng tôi
 									</h3>
 									<Form {...form}>
@@ -94,7 +90,7 @@ const ContactIndex = () => {
 															<Input
 																placeholder="Họ và tên"
 																{...field}
-																className="rounded-xl  outline-none"
+																className="outline-none rounded-xl"
 															/>
 														</FormControl>
 														<FormMessage />
@@ -110,7 +106,7 @@ const ContactIndex = () => {
 															<Input
 																placeholder="Email"
 																{...field}
-																className="rounded-xl  outline-none"
+																className="outline-none rounded-xl"
 															/>
 														</FormControl>
 														<FormMessage />
@@ -133,7 +129,7 @@ const ContactIndex = () => {
 													</FormItem>
 												)}
 											/>
-											<div className="w-full flex justify-center lg:justify-start">
+											<div className="flex justify-center w-full lg:justify-start">
 												<button
 													className="px-4 py-2 border border-[#c9ae63]/80 bg-[#c9ae63] text-white  rounded-lg "
 													type="submit"
@@ -146,7 +142,7 @@ const ContactIndex = () => {
 								</div>
 							</div>
 							<div className="col-span-12 lg:col-span-6">
-								<div className="relative flex justify-center  ">
+								<div className="relative flex justify-center ">
 									<motion.div
 										className="absolute bg-gradient-to-br from-[#9cffe97d] to-[#6b6bd56b] rounded-full inset-x-6 inset-y-14 md:inset-y-6 lg:inset-2  md:inset-x-12"
 										initial={{ scale: 1 }}

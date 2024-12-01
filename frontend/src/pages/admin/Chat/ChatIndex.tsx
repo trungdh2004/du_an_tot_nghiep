@@ -22,7 +22,7 @@ const ChatIndex = () => {
 		<>
 			<div className="grid grid-cols-3 gap-4 h-[calc(100vh-120px)]">
 				<div className="h-full col-span-3 bg-white border rounded-md md:col-span-1 box-shadow">
-					<Conversation setSelectedChat={setSelectedChat} />
+					<Conversation  />
 				</div>
 				{!matches && (
 					<div className="hidden h-full col-span-2 bg-white border rounded-md box-shadow md:block">

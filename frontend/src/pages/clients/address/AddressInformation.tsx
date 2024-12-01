@@ -1,27 +1,25 @@
-import React, { useEffect, useRef, useState } from "react";
-import { TiDeleteOutline } from "react-icons/ti";
-import {
-	keepPreviousData,
-	useMutation,
-	useQuery,
-	useQueryClient,
-} from "@tanstack/react-query";
-import { toast } from "sonner";
-import { Skeleton } from "@/components/ui/skeleton";
-import Paginations from "@/components/common/Pagination";
-import EditAddress from "./EditAddress";
-import { RiEditCircleLine } from "react-icons/ri";
-import {
-	deleteAddress,
-	editAddressMain,
-	fetchAddress,
-} from "@/service/address";
-import { BsCheck2Circle } from "react-icons/bs";
-import { BsCircle } from "react-icons/bs";
-import { CiCircleRemove } from "react-icons/ci";
-import { TooltipComponent } from "@/components/common/TooltipComponent";
 import DialogConfirm from "@/components/common/DialogConfirm";
+import Paginations from "@/components/common/Pagination";
+import { TooltipComponent } from "@/components/common/TooltipComponent";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  deleteAddress,
+  editAddressMain,
+  fetchAddress,
+} from "@/service/address";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { useState } from "react";
+import { BsCheck2Circle, BsCircle } from "react-icons/bs";
+import { CiCircleRemove } from "react-icons/ci";
 import { FaLocationDot } from "react-icons/fa6";
+import { RiEditCircleLine } from "react-icons/ri";
+import { toast } from "sonner";
+import EditAddress from "./EditAddress";
 const AddressInformation = () => {
 	const [openEditById, setOpenEditById] = useState<string | null>(null);
 	const [openDeleteById, setopenDeleteById] = useState<string | null>(null);
@@ -69,7 +67,7 @@ const AddressInformation = () => {
 		},
 	});
 
-	const { isPending, isError, data, isFetching, isPlaceholderData } = useQuery({
+	const { isPending, isError, data } = useQuery({
 		queryKey: ["address", pageIndex],
 		queryFn: () => fetchAddress(pageIndex),
 		placeholderData: keepPreviousData,
@@ -87,10 +85,10 @@ const AddressInformation = () => {
 			</div>
 		);
 	return (
-		<div className="flex flex-col gap-2 max-w-4xl px-auto w-full">
-			<h2 className="text-black font-semibold">Địa chỉ của bạn</h2>
+		<div className="flex flex-col w-full max-w-4xl gap-2 px-auto">
+			<h2 className="font-semibold text-black">Địa chỉ của bạn</h2>
 
-			<div className="flex flex-col gap-5 w-full">
+			<div className="flex flex-col w-full gap-5">
 				{data.content.length === 0 ? (
 					<div className="w-full min-h-[100px] rounded-xl border flex flex-col justify-center items-center">
 						<FaLocationDot size={20} className="mb-2" />
@@ -110,7 +108,7 @@ const AddressInformation = () => {
 									<p className="text-[14px]">{address.address}</p>
 									<p className="text-[14px]">{address.detailAddress}</p>
 								</div>
-								<div className="flex justify-center items-center gap-2">
+								<div className="flex items-center justify-center gap-2">
 									<TooltipComponent label="Chọn mặc định">
 										<button onClick={() => mutate1.mutate(address._id)}>
 											{address.is_main === true ? (

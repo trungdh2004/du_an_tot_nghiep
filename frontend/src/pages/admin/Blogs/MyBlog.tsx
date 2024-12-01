@@ -21,14 +21,13 @@ import { FaEye, FaRegComment, FaRegHeart } from "react-icons/fa";
 import { GrPowerReset } from "react-icons/gr";
 import { MdOutlinePublic, MdOutlinePublicOff } from "react-icons/md";
 import { SlOptionsVertical } from "react-icons/sl";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Select from "react-select";
 import { useDebounceCallback } from "usehooks-ts";
 
 const MyBlogs = () => {
 	const [blogs, setBlogs] = useState<IBlogs[]>([]);
 	const [tags, setTags] = useState<ITag[]>([]);
-	const navigate = useNavigate();
 	const [response, setResponse] = useState<typeResponse>({
 		pageCount: 0,
 		totalElement: 0,

@@ -12,7 +12,7 @@ import "swiper/css/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const ProductByCategory = () => {
-	const { data, isLoading, isError } = useQuery({
+	const { data, isLoading } = useQuery({
 		queryKey: ["getAllCate"],
 		queryFn: async () => {
 			try {
@@ -29,18 +29,18 @@ const ProductByCategory = () => {
 	return (
 		<div className="py-10 padding">
 			<div className="flex flex-col items-center justify-center gap-y-12">
-				<div className="flex justify-between items-center w-full">
-					<div className="text-header flex-1">Đa dạng mẫu mã sản phẩm</div>
+				<div className="flex items-center justify-between w-full">
+					<div className="flex-1 text-header">Đa dạng mẫu mã sản phẩm</div>
 					<Link
 						to={"/shop"}
-						className="text-gray-400 hover:text-custom cursor-pointer flex items-center gap-1"
+						className="flex items-center gap-1 text-gray-400 cursor-pointer hover:text-custom"
 					>
 						<span className="text-sm">Xem thêm </span>
 						<FaAnglesRight size={14} />
 					</Link>
 				</div>
 
-				<div className="w-full md:px-8 relative">
+				<div className="relative w-full md:px-8">
 					<Swiper
 						slidesPerView={6}
 						spaceBetween={20}
@@ -56,8 +56,8 @@ const ProductByCategory = () => {
 						}}
 						slidesOffsetAfter={20}
 						slidesOffsetBefore={20}
-						className="swiper-wrapper  cursor-pointer"
-						modules={[FreeMode, Navigation,Autoplay]}
+						className="cursor-pointer swiper-wrapper"
+						modules={[FreeMode, Navigation, Autoplay]}
 						breakpoints={{
 							320: {
 								slidesPerView: 3,
@@ -67,7 +67,7 @@ const ProductByCategory = () => {
 								slidesPerView: 4,
 								spaceBetween: 20,
 							},
-							760:{
+							760: {
 								slidesPerView: 5,
 								spaceBetween: 30,
 							},
@@ -82,24 +82,26 @@ const ProductByCategory = () => {
 								<SwiperSlide key={item?._id} className="">
 									<Link
 										to={`/shop?category=${item?._id}`}
-										className="flex flex-col justify-start items-center gap-2"
+										className="flex flex-col items-center justify-start gap-2"
 										key={item?._id}
 									>
 										<div className="size-14 md:size-20 lg:size-[100px] rounded-full border">
 											<img src={item?.thumbnail} alt="" />
 										</div>
-										<div className="text-base lg:text-xl font-medium">{item?.name}</div>
+										<div className="text-base font-medium lg:text-xl">
+											{item?.name}
+										</div>
 									</Link>
 								</SwiperSlide>
 							))}
 						{isLoading &&
-							Array.from({ length: 10 }, (item,index) => (
+							Array.from({ length: 10 }, (_, index) => (
 								<SwiperSlide key={index} className="">
 									<Skeleton className="size-[100px] rounded-full" />
 								</SwiperSlide>
 							))}
 					</Swiper>
-					{/* <Carousel className=" w-full ">
+					{/* <Carousel className="w-full ">
 						<CarouselPrevious />
 
 						<CarouselContent className="-ml-1">
@@ -109,7 +111,7 @@ const ProductByCategory = () => {
 									className="pl-1 basis-1/2 md:basis-1/4 lg:basis-[16%]"
 								>
 									<div
-										className="flex flex-col justify-center items-center gap-2"
+										className="flex flex-col items-center justify-center gap-2"
 										key={item?._id}
 									>
 										<div className="size-[100px] rounded-full border">

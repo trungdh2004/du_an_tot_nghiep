@@ -1,12 +1,5 @@
-import OutOfStock from "@/assets/OutofStock.png";
-import { formatCurrency } from "@/common/func";
-import { optimizeCloudinaryUrl } from "@/common/localFunction";
-import { cn } from "@/lib/utils";
 import { IColor, IProduct } from "@/types/typeProduct";
 import { ISize } from "@/types/variants";
-import { FaStar } from "react-icons/fa";
-import { IoEyeOutline } from "react-icons/io5";
-import { Link } from "react-router-dom";
 import { TooltipComponent } from "./TooltipComponent";
 import ProductV2 from "./ProductV2";
 

@@ -1,25 +1,22 @@
-import React, { useEffect, useState } from "react";
-import AddressOrder from "./AddressOrder";
-import ProductOrder from "./ProductOrder";
-import Vorcher from "./Vorcher";
-import Footer from "@/components/client/Footer";
-import PaymentMethod from "./PaymentMethod";
-import NoteOrder from "./NoteOrder";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import {
-	createOrderPayUponReceipt,
-	createOrderVNPayPayment,
-	pagingOrder,
+  createOrderPayUponReceipt,
+  createOrderVNPayPayment,
+  pagingOrder,
 } from "@/service/order";
-import { ObjectCheckoutOrder, ResponseData } from "@/types/ObjectCheckoutOrder";
-import { toast } from "sonner";
+import { ObjectCheckoutOrder } from "@/types/ObjectCheckoutOrder";
 import { IOrderMoneyValue } from "@/types/order";
-import ProductOrderV2 from "./orderV2/ProductOrderV2";
+import { useMutation } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 import MoneyOrder from "./MoneyOrder";
+import NoteOrder from "./NoteOrder";
+import ProductOrderV2 from "./orderV2/ProductOrderV2";
+import PaymentMethod from "./PaymentMethod";
+import Vorcher from "./Vorcher";
 
 const OrderPage = () => {
-	const [searchParams, setSearchParams] = useSearchParams();
+	const [searchParams] = useSearchParams();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const paramsObject = Object.fromEntries(searchParams.entries());
 	const [spin, setSpin] = useState(false);
@@ -88,11 +85,13 @@ const OrderPage = () => {
 	const navigate = useNavigate();
 	const handleCheckout = async () => {
 		if (order.data.length === 0) {
-			toast.error("Vui lòng mua thêm hàng");
+      toast.error("Vui lòng mua thêm hàng");
+      setSpin(false);
 			return;
 		}
 		if (!orderCheckout.addressId) {
-			toast.error("Vui lòng chọn địa chỉ giao hàng");
+      toast.error("Vui lòng chọn địa chỉ giao hàng");
+      setSpin(false);
 			return;
 		}
 		try {
@@ -148,7 +147,7 @@ const OrderPage = () => {
 				</div>
 				<div className="col-span-12 lg:col-span-4">
 					<div className="w-full">
-						<h4 className="font-bold text-xl pb-5 lg:pb-7 hidden lg:block   lg:text-left text-center ">
+						<h4 className="hidden pb-5 text-xl font-bold text-center lg:pb-7 lg:block lg:text-left ">
 							Thông tin liên quan
 						</h4>
 						{/* <div className="hidden md:hidden lg:block">

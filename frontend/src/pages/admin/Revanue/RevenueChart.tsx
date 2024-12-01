@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import RevenueChartFilter from "./RevenueChartFilter";
 import StatisticsCard from "./StatisticsCard";
 const RevenueChart = () => {
@@ -8,12 +7,12 @@ const RevenueChart = () => {
 
 			<div className="mt-4">
 				<div className="grid grid-cols-3 gap-5">
-					<div className="col-span-3  xl:col-span-1">
+					<div className="col-span-3 xl:col-span-1">
 						<StatisticsCard />
 					</div>
 					<div className="col-span-3 bg-white xl:col-span-2 box-shadow rounded-xl">
 						<RevenueChartFilter
-							className="w-full h-[400px] flex flex-col"
+							className="flex flex-col w-full h-full"
 							title="Biểu đồ doanh thu theo tháng hiện tại"
 						/>
 					</div>

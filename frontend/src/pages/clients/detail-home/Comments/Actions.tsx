@@ -1,14 +1,12 @@
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
-	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { GoPencil } from "react-icons/go";
 import { HiOutlineTrash } from "react-icons/hi";
-import { IoFlagOutline } from "react-icons/io5";
 import { TbDotsVertical } from "react-icons/tb";
 
 interface Props {

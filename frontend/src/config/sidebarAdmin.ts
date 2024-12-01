@@ -2,8 +2,9 @@ import { AiOutlineUsergroupAdd } from "react-icons/ai";
 import { CiDeliveryTruck, CiShoppingTag, CiStopwatch } from "react-icons/ci";
 import { FaBox } from "react-icons/fa";
 import { FaTruckFast } from "react-icons/fa6";
+import { FcBullish, FcDoughnutChart } from "react-icons/fc";
 import { GoClockFill } from "react-icons/go";
-import { GrAnalytics, GrBlog } from "react-icons/gr";
+import { GrBlog } from "react-icons/gr";
 import {
 	HiOutlineCheckCircle,
 	HiOutlineClipboardDocumentCheck,
@@ -19,15 +20,15 @@ import {
 	LiaTruckLoadingSolid,
 	LiaUserAstronautSolid,
 } from "react-icons/lia";
-import { LuLayoutDashboard, LuUserCircle } from "react-icons/lu";
-import { MdOutlinePostAdd } from "react-icons/md";
+import { LuUserCircle } from "react-icons/lu";
+import { MdCurrencyExchange, MdOutlinePostAdd } from "react-icons/md";
 import { PiResizeLight } from "react-icons/pi";
 import { TbBasketCancel } from "react-icons/tb";
 import { VscAccount } from "react-icons/vsc";
 const sidebarConfig: any[] = [
 	{
 		path: "",
-		icon: GrAnalytics,
+		icon: FcDoughnutChart,
 		isVisible: true,
 		isAdmin: false,
 		label: "Thống kê",
@@ -219,8 +220,15 @@ const sidebarConfig: any[] = [
 		],
 	},
 	{
+		path: "/payment",
+		icon: MdCurrencyExchange,
+		isVisible: true,
+		label: "Giao dịch",
+		isAdmin: true,
+	},
+	{
 		path: "/revenue",
-		icon: LuLayoutDashboard,
+		icon: FcBullish,
 		isVisible: true,
 		label: "Doanh thu",
 		isAdmin: true,

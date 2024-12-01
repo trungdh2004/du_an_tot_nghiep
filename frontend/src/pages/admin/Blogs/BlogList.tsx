@@ -107,7 +107,7 @@ const BlogList = () => {
 	const [openDeleteBlog, setOpenDeleteBlog] = useState<string | boolean>(false);
 	const handleDeleteBlog = async (req: string | boolean) => {
 		try {
-			const { data } = await deleteBlogBYId(req);
+			await deleteBlogBYId(req);
 			handleBlog();
 			setOpenDeleteBlog(false);
 			toast.success("Xóa bài viết thành công");
@@ -120,10 +120,10 @@ const BlogList = () => {
 		<>
 			<div className="">
 				<div className="flex flex-col gap-3 mb-5">
-					<div className="flex justify-between items-center">
+					<div className="flex items-center justify-between">
 						<h3 className="text-2xl font-semibold">Bài viết</h3>
 					</div>
-					<div className="flex justify-between items-center gap-3">
+					<div className="flex items-center justify-between gap-3">
 						<div className=" w-[40%]">
 							<Input
 								placeholder="Tìm kiếm bài viết"
@@ -193,7 +193,7 @@ const BlogList = () => {
 				</TabsList>
 			</Tabs>
 
-			<div className="grid grid-cols-12 gap-6 xl:gap-8 mt-10">
+			<div className="grid grid-cols-12 gap-6 mt-10 xl:gap-8">
 				{blogs.length ? (
 					blogs.map((item: IBlog, index: number) => (
 						<>
@@ -231,10 +231,10 @@ const BlogList = () => {
 											</DropdownMenuContent>
 										</DropdownMenu>
 									</div>
-									<div className=" bg-gray-200 border-b border-gray-300">
+									<div className="bg-gray-200 border-b border-gray-300 ">
 										<img
 											src={item.thumbnail_url || "/no-image.png"}
-											className="w-full h-full object-cover"
+											className="object-cover w-full h-full"
 											alt=""
 										/>
 									</div>
@@ -258,7 +258,7 @@ const BlogList = () => {
 												</p>
 											</div>
 										</div>
-										<div className="flex justify-between items-center">
+										<div className="flex items-center justify-between">
 											<Link
 												to={`/admin/blogs/${item._id}`}
 												className="line-clamp-1 text-[#212B36] text-[18px] font-semibold hover:underline transition-all duration-300"
@@ -277,7 +277,7 @@ const BlogList = () => {
 												)}
 											</span>
 										</div>
-										<p className="text-xs pt-1 text-gray-400 line-clamp-2">
+										<p className="pt-1 text-xs text-gray-400 line-clamp-2">
 											{item.meta_description}
 										</p>
 										<div className="flex space-x-4 min-[900px]:space-x-1 xl:space-x-4 absolute bottom-4 right-4">

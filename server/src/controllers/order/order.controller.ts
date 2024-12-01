@@ -1301,8 +1301,6 @@ class OrderController {
           _id: voucher,
         });
 
-        console.log(">>existingVoucher", existingVoucher);
-
         if (!existingVoucher) {
           voucherMain = null;
         } else {
@@ -1313,7 +1311,6 @@ class OrderController {
               $ne: 0,
             },
           });
-          console.log(">>check", check);
           if (!check) {
             const data = checkVoucher(existingVoucher);
 
@@ -1550,7 +1547,7 @@ class OrderController {
           : item.attribute.discount;
         return {
           product: item.product?._id,
-          status: 1,
+          status: 0,
           variant: variant,
           price: price,
           quantity: item.quantity,
@@ -1638,12 +1635,6 @@ class OrderController {
         const autoCapture = true;
         const lang = "vi";
 
-        console.log({
-          orderId,
-          requestId,
-          amount,
-        });
-
         const rawSignature =
           "accessKey=" +
           accessKey +
@@ -1708,7 +1699,63 @@ class OrderController {
           return res.status(STATUS.BAD_REQUEST).json(data);
         }
         return res.status(STATUS.OK).json({ paymentUrl: data?.payUrl });
-      } else {
+      }
+      // if (paymentMethod === 4) {
+      //   const appId = process.env.APP_ID_ZALO!;
+      //   const key1 = process.env.KEY1_ZALO!;
+      //   const key2 = process.env.KEY2_ZALO!;
+      //   const endpoint = process.env.ENDPOINT_ZALO!;
+
+      //   const items: any[] = [];
+
+      //   const embed_data = {
+      //     //sau khi hoàn tất thanh toán sẽ đi vào link này (thường là link web thanh toán thành công của mình)
+      //     redirecturl: returnUrl,
+      //   };
+
+      //   console.log({ returnUrl });
+
+      //   const order = {
+      //     app_id: appId,
+      //     app_trans_id: `${moment().format("YYMMDD")}_${newOrder._id}`, // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
+      //     app_user: newOrder.address.username,
+      //     app_time: Date.now(), // miliseconds
+      //     item: JSON.stringify(items),
+      //     embed_data: JSON.stringify(embed_data),
+      //     amount: 50000,
+      //     //khi thanh toán xong, zalopay server sẽ POST đến url này để thông báo cho server của mình
+      //     //Chú ý: cần dùng ngrok để public url thì Zalopay Server mới call đến được
+      //     callback_url: "https://b074-1-53-37-194.ngrok-free.app/callback",
+      //     description: `Lazada - Payment for the order #${newOrder._id}`,
+      //     bank_code: "",
+      //     mac: "",
+      //   };
+
+      //   const data =
+      //     appId +
+      //     "|" +
+      //     order.app_trans_id +
+      //     "|" +
+      //     order.app_user +
+      //     "|" +
+      //     order.amount +
+      //     "|" +
+      //     order.app_time +
+      //     "|" +
+      //     order.embed_data +
+      //     "|" +
+      //     order.item;
+      //   order.mac = CryptoJS.HmacSHA256(data, key1).toString();
+      //   const { data: dataZalo } = await axios.post(endpoint, null, {
+      //     params: order,
+      //   });
+
+      //   return res.status(STATUS.OK).json({
+      //     ...dataZalo,
+      //     paymentUrl: dataZalo.order_url,
+      //   });
+      // }
+      else {
         const ipAddress = String(
           req.headers["x-forwarded-for"] ||
             req.connection.remoteAddress ||
@@ -2233,6 +2280,8 @@ class OrderController {
     }
   }
 
+  //zalo pay
+
   // server khi nhận đơn hàng
   async pagingOrderAdmin(req: RequestModel, res: Response) {
     try {
@@ -2533,6 +2582,14 @@ class OrderController {
         });
       }
 
+      if (existingOrder.status !== 1) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đơn hàng xảy ra lỗi",
+        });
+      }
+
+      console.log("existingOrder", existingOrder.status);
+
       const checkAttribute = existingOrder.orderItems.find((item) => {
         const orderItem = item as IOrderItem;
 
@@ -2579,6 +2636,47 @@ class OrderController {
         });
       }
 
+      let futureDateTimeOrder = handleFutureDateTimeOrder(1000);
+
+      if (existingOrder.distance) {
+        futureDateTimeOrder = handleFutureDateTimeOrder(existingOrder.distance);
+      }
+      console.log("existingOrder", existingOrder.status);
+      const orderUpdate = await OrderModel.findOneAndUpdate(
+        {
+          _id: existingOrder._id,
+          status: 1,
+        },
+        {
+          status: 2,
+          $push: {
+            statusList: 2,
+          },
+          confirmedDate: Date.now(),
+          estimatedDeliveryDate: futureDateTimeOrder,
+        }
+      );
+
+      if (!orderUpdate) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đồng ý đơn hàng lỗi vì có xung đột ",
+        });
+      }
+
+      await OrderItemsModel.updateMany(
+        {
+          _id: {
+            $in: existingOrder.orderItems,
+          },
+        },
+        {
+          status: 2,
+        },
+        {
+          now: true,
+        }
+      );
+
       existingOrder.orderItems.map(async (item, index) => {
         const orderItem = item as IOrderItem;
         const id = orderItem?.attribute?._id;
@@ -2598,38 +2696,6 @@ class OrderController {
           status: 2,
         });
       });
-
-      let futureDateTimeOrder = handleFutureDateTimeOrder(1000);
-
-      if (existingOrder.distance) {
-        futureDateTimeOrder = handleFutureDateTimeOrder(existingOrder.distance);
-      }
-
-      const orderUpdate = await OrderModel.findByIdAndUpdate(
-        existingOrder._id,
-        {
-          status: 2,
-          $push: {
-            statusList: 2,
-          },
-          confirmedDate: Date.now(),
-          estimatedDeliveryDate: futureDateTimeOrder,
-        }
-      );
-
-      await OrderItemsModel.updateMany(
-        {
-          _id: {
-            $in: existingOrder.orderItems,
-          },
-        },
-        {
-          status: 2,
-        },
-        {
-          now: true,
-        }
-      );
 
       socketNotificationOrderClient(
         existingOrder?.code as string,
@@ -2937,6 +3003,14 @@ class OrderController {
           message: "Không có đơn hàng",
         });
       }
+
+      if (existingOrder.status !== 1 && existingOrder.status !== 3) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đơn hàng không thể huy",
+        });
+      }
+
+      console.log("cancel", existingOrder.status);
 
       if (existingOrder.status !== 1 && cancelBy !== 3) {
         return res.status(STATUS.BAD_REQUEST).json({

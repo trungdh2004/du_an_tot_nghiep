@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import { Outlet, useLocation } from "react-router-dom";
-import { useMediaQuery } from "usehooks-ts";
 import Conversation from "./components/Conversation";
 import { useEffect, useState } from "react";
 

@@ -38,7 +38,7 @@ interface IStateInfoProduct {
 	}[];
 }
 
-const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
+const InfoProduct: React.FC<Props> = ({ product }) => {
 	const { isLoggedIn } = useAuth();
 	const navigate = useNavigate();
 	const { startAnimation, RenderAnimation } = useCartAnimation();

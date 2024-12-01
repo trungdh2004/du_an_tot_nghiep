@@ -1,26 +1,25 @@
+import { formatCurrency } from "@/common/func";
+import DialogConfirm from "@/components/common/DialogConfirm";
+import TableComponent from "@/components/common/TableComponent";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-	deleteProductComing,
-	pagingProductComing,
-	updateActiveProductComing,
-	updateProductComing,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  deleteProductComing,
+  pagingProductComing,
+  updateActiveProductComing,
 } from "@/service/product";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
-import React, { useEffect, useState } from "react";
-import ProductComingAdd from "./ProductComingAdd";
-import TableComponent from "@/components/common/TableComponent";
-import { formatCurrency } from "@/common/func";
-import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { useEffect, useState } from "react";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { toast } from "sonner";
-import DialogConfirm from "@/components/common/DialogConfirm";
+import ProductComingAdd from "./ProductComingAdd";
 
 interface Search {
 	pageIndex: number;
@@ -113,7 +112,7 @@ const ProductComing = () => {
 		{
 			accessorKey: "name",
 			header: () => {
-				return <div className="md:text-base text-xs">Tên</div>;
+				return <div className="text-xs md:text-base">Tên</div>;
 			},
 			cell: ({ row }) => {
 				return (
@@ -126,7 +125,7 @@ const ProductComing = () => {
 		{
 			accessorKey: "thumbnail",
 			header: () => {
-				return <div className="md:text-base text-xs">Ảnh</div>;
+				return <div className="text-xs md:text-base">Ảnh</div>;
 			},
 			cell: ({ row }) => {
 				return (
@@ -140,11 +139,11 @@ const ProductComing = () => {
 		{
 			accessorKey: "price",
 			header: () => {
-				return <div className="md:text-base text-xs">Giá</div>;
+				return <div className="text-xs md:text-base">Giá</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs">
+					<div className="text-xs md:text-base">
 						{formatCurrency(row?.original?.product?.price)}
 					</div>
 				);
@@ -153,11 +152,11 @@ const ProductComing = () => {
 		{
 			accessorKey: "discount",
 			header: () => {
-				return <div className="md:text-base text-xs">Giảm giá</div>;
+				return <div className="text-xs md:text-base">Giảm giá</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs">
+					<div className="text-xs md:text-base">
 						{formatCurrency(row?.original?.product?.discount)}
 					</div>
 				);
@@ -166,11 +165,11 @@ const ProductComing = () => {
 		{
 			accessorKey: "quantity",
 			header: () => {
-				return <div className="md:text-base text-xs">Số lượng</div>;
+				return <div className="text-xs md:text-base">Số lượng</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs">
+					<div className="text-xs md:text-base">
 						{row?.original?.product?.quantity}
 					</div>
 				);
@@ -179,11 +178,11 @@ const ProductComing = () => {
 		{
 			accessorKey: "date",
 			header: () => {
-				return <div className="md:text-base text-xs">Ngày kết thúc</div>;
+				return <div className="text-xs md:text-base">Ngày kết thúc</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs">
+					<div className="text-xs md:text-base">
 						{format(new Date(row.original.date), "dd/MM/yyyy")}
 					</div>
 				);
@@ -192,7 +191,7 @@ const ProductComing = () => {
 		{
 			accessorKey: "active",
 			header: () => {
-				return <div className="md:text-base text-xs">Hoạt động</div>;
+				return <div className="text-xs md:text-base">Hoạt động</div>;
 			},
 			cell: ({ row }) => {
 				const status = row.original.active ? "Hoạt động" : "Không hoạt động";
@@ -213,9 +212,9 @@ const ProductComing = () => {
 				return (
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-							<Button variant="ghost" className="h-8 w-8 p-0">
+							<Button variant="ghost" className="w-8 h-8 p-0">
 								<span className="sr-only">Open menu</span>
-								<HiOutlineDotsVertical className="h-4 w-4" />
+								<HiOutlineDotsVertical className="w-4 h-4" />
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
@@ -249,7 +248,7 @@ const ProductComing = () => {
 	return (
 		<div>
 			<div className="flex justify-between py-4">
-				<h4 className="font-medium md:text-xl text-base ">
+				<h4 className="text-base font-medium md:text-xl ">
 					Danh sách sản phẩm chờ
 				</h4>
 				<Button

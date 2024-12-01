@@ -23,14 +23,23 @@ const Coupon = ({ voucher, className }: Props) => {
 
 	return (
 		<div className={cn("w-full h-full rounded-md self-auto", className)}>
-			<div className={cn(styles.voucherItemInfo,'h-full')}>
+			<div className={cn(styles.voucherItemInfo, "h-full")}>
 				<div className={styles.voucherItemDetail}>
 					<div className={styles.voucherItemTitle}>{voucher?.name} </div>
-					<div className={cn(styles.voucherItemDes, 'md:line-clamp-2 line-clamp-1')}>
+					<div
+						className={cn(
+							styles.voucherItemDes,
+							"md:line-clamp-2 line-clamp-1",
+						)}
+					>
 						{voucher?.description}
 					</div>
-					<div className={cn( "flex items-center justify-between")}>
-						<div className={"text-xs flex flex-col md:flex-row items-start md:items-center gap-0.5"}>
+					<div className={cn("flex items-center justify-between")}>
+						<div
+							className={
+								"text-xs flex flex-col md:flex-row items-start md:items-center gap-0.5"
+							}
+						>
 							<span className="hidden md:inline-block">HSD:</span>{" "}
 							<span>{new Date(voucher?.endDate)?.toLocaleDateString()}</span>
 						</div>
@@ -39,7 +48,12 @@ const Coupon = ({ voucher, className }: Props) => {
 						</div>
 					</div>
 				</div>
-				<div className={cn(styles.voucherItemAction,'md:w-28 md:min-w-28 w-20 min-w-20 pr-4 pl-0.5')}>
+				<div
+					className={cn(
+						styles.voucherItemAction,
+						"md:w-28 md:min-w-28 w-20 min-w-20 pr-4 pl-0.5",
+					)}
+				>
 					<motion.div
 						className="flex items-center cursor-pointer action"
 						onClick={handleCopy}

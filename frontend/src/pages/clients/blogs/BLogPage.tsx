@@ -7,7 +7,7 @@ import { SearchObjectBlog } from "@/types/searchObjecTypes";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { FaCommentDots, FaEye, FaRegHeart } from "react-icons/fa";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 type IBlog = {
@@ -34,7 +34,6 @@ type IBlog = {
 const BlogPage = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const newTags = searchParams.get("tags") || "";
-	const navigate = useNavigate();
 	// const paramsObject = Object.fromEntries(searchParams.entries())
 	const [searchObject, setSearchObject] = useState<SearchObjectBlog>({
 		pageIndex: 1,
@@ -45,11 +44,7 @@ const BlogPage = () => {
 		tab: 1,
 		tags: searchParams.get("tags") || "",
 	});
-	const {
-		data: blogs,
-		isLoading,
-		isError,
-	} = useQuery({
+	const { data: blogs } = useQuery({
 		queryKey: ["blogs", searchObject],
 		queryFn: async () => {
 			try {
@@ -112,7 +107,7 @@ const BlogPage = () => {
 				<ScrollArea className=" max-w-[100%] whitespace-nowrap">
 					<div className="pb-4 space-x-3">
 						{tags &&
-							tags.map((tag: any, index: number) => {
+							tags.map((tag: any) => {
 								// console.log(tag)
 								return (
 									<Button

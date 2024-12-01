@@ -37,6 +37,7 @@ import CustomerList from "@/pages/admin/users/customer/CustomerList";
 import ProductComing from "@/pages/admin/product/productComing/ProductComing";
 import StaffIndex from "@/pages/admin/users/staff/StaffIndex";
 import RevenueChart from "@/pages/admin/Revanue/RevenueChart";
+import PaymentIndex from "@/pages/admin/payment/PaymentIndex";
 
 const AdminRouter = [
 	{
@@ -75,11 +76,11 @@ const AdminRouter = [
 			{
 				path: "users/client",
 				element: <CustomerList />,
-      },
-      {
-        path: "users/staff",
-        element: <StaffIndex />,
-      },
+			},
+			{
+				path: "users/staff",
+				element: <StaffIndex />,
+			},
 			// Quản lý sản phẩm
 			{
 				path: "product/update/:id",
@@ -197,8 +198,8 @@ const AdminRouter = [
 				path: "order/orderconfirmShipper",
 				element: <OrderConfirmShipper />,
 			},
-      // Thống kê
-      {
+			// Thống kê
+			{
 				path: "revenue",
 				element: <RevenueChart />,
 			},
@@ -207,7 +208,11 @@ const AdminRouter = [
 				path: "location",
 				element: <LocationIndex />,
 			},
-
+			//payment
+			{
+				path: "payment",
+				element: <PaymentIndex />,
+			},
 			// chat
 			{
 				path: "chat",

@@ -1,16 +1,10 @@
 import { optimizeCloudinaryUrl } from "@/common/localFunction";
 import CommentEditor from "@/components/common/CommentForm";
-import {
-	Sheet,
-	SheetContent,
-	SheetHeader,
-	SheetTitle,
-	SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import TYPE_COMMENT from "@/config/typeComment";
 import { useAuth } from "@/hooks/auth";
 import { createComment, getListComments } from "@/service/comment";
-import { Comment, IObjectComment } from "@/types/TypeObjectComment";
+import { Comment } from "@/types/TypeObjectComment";
 import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { FaRegComment } from "react-icons/fa";
@@ -20,7 +14,6 @@ import CommentItem from "./CommentItem";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { cn } from "@/lib/utils";
 
 const ModalSheetComment = () => {
 	const QueryClient = useQueryClient();
@@ -39,8 +32,26 @@ const ModalSheetComment = () => {
 	const [comments, setComments] = useState<Comment[]>([]);
 
 	useEffect(() => {
-		fetchingDataComments(1);
-	}, []);
+		(async()=>{
+      try {
+        const payload = {
+          commentId: id,
+          commentType: TYPE_COMMENT.BLOGS,
+          pageIndex: 1,
+          pageSize: 7,
+          sort: -1,
+        };
+        const { data } = await getListComments(payload);
+        const { content, ...pagination } = data;
+        setPagination(pagination);  
+        setComments(content);
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          toast.error(error?.response?.data?.message);
+        }
+      }
+    })()
+	}, [id]);
 	const fetchingDataComments = async (pageIndex: number) => {
 		try {
 			const payload = {
@@ -52,8 +63,6 @@ const ModalSheetComment = () => {
 			};
 			const { data } = await getListComments(payload);
 			const { content, ...pagination } = data;
-			console.log(pagination);
-
 			setPagination(pagination);
 			setComments((prevComments) => [...prevComments, ...content]);
 		} catch (error) {

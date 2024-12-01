@@ -5,7 +5,6 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { GoPencil } from "react-icons/go";
 import { HiOutlineTrash } from "react-icons/hi";
 import { TbDotsVertical } from "react-icons/tb";
 

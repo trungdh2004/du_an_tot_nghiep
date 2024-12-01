@@ -1,17 +1,29 @@
 import { getOrderById } from "@/service/order";
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import OrderTracking from "./OrderTracking";
-import OrderInformation from "./OrderInformation";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 import OrderDetailTime from "./OrderDetailTime";
+import OrderInformation from "./OrderInformation";
+import OrderTracking from "./OrderTracking";
 
 const OrderById = () => {
 	const { id } = useParams();
+	const navigate = useNavigate();
 	const [data, setData] = useState({});
 	const [dataTrackings, setDataTracking] = useState([]);
 	useEffect(() => {
 		handleGetOrderById();
 	}, [id]);
+	useEffect(() => {
+		const isEmptyObject = JSON.stringify(data) === "{}";
+		if (isEmptyObject) {
+			const timeout = setTimeout(() => {
+				navigate("/admin/order");
+			}, 2000);
+
+			return () => clearTimeout(timeout);
+		}
+	}, [data, navigate]);
 	const handleGetOrderById = async () => {
 		try {
 			const data = await getOrderById(id as string);
@@ -20,6 +32,7 @@ const OrderById = () => {
 			return data;
 		} catch (error) {
 			console.log(error);
+			toast.error("Không có đơn hàng này");
 		}
 	};
 	return (

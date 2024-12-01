@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const IntroducePage = () => {
 	const [showButton, setShowButton] = useState(false);
@@ -30,7 +30,7 @@ const IntroducePage = () => {
 			<h2 className="text-center text-[20px] sm:text-[22px] pt-1 pb-8">
 				THƯƠNG HIỆU THỜI TRANG NUCSHOP
 			</h2>
-			<div className="flex flex-col md:flex-row justify-between">
+			<div className="flex flex-col justify-between md:flex-row">
 				<p className="w-full md:w-[38%] md:ml-28 text-[14px] sm:text-[16px] text-[#544e46]">
 					Tại NUCSHOP, chúng tôi tự hào mang đến cho bạn những thiết kế áo thời
 					thượng, trẻ trung và đậm chất cá nhân. Với sứ mệnh giúp bạn thể hiện
@@ -48,7 +48,7 @@ const IntroducePage = () => {
 					thể hiện cá tính trong mọi hoàn cảnh.
 				</p>
 			</div>
-			<div className="flex flex-col md:flex-row pt-14 justify-between">
+			<div className="flex flex-col justify-between md:flex-row pt-14">
 				<img
 					src="https://theme.hstatic.net/200000690725/1001078549/14/about01_introduce1_img.jpg?v=549"
 					alt=""
@@ -72,7 +72,7 @@ const IntroducePage = () => {
 					</p>
 				</div>
 			</div>
-			<div className="flex flex-col md:flex-row pt-20 justify-between mb-10">
+			<div className="flex flex-col justify-between pt-20 mb-10 md:flex-row">
 				<div className="pt-10 md:ml-20">
 					<h3 className="text-center pt-8 font-light text-[16px] sm:text-[18px]">
 						MODE FASHION
@@ -98,7 +98,7 @@ const IntroducePage = () => {
 			{showButton && (
 				<button
 					onClick={scrollToTop}
-					className="fixed bottom-5 right-5 bg-gray-600 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-full transition-opacity duration-300"
+					className="fixed px-4 py-2 font-bold text-white transition-opacity duration-300 bg-gray-600 rounded-full bottom-5 right-5 hover:bg-gray-800"
 				>
 					&#x2191;
 				</button>

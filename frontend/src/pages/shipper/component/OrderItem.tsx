@@ -1,9 +1,8 @@
 import { formatCurrency } from "@/common/func";
 import { updateStatusShippingOrder } from "@/service/shipper";
 import { IOrderShipper } from "@/types/shipper.interface";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
-import React from "react";
 import { toast } from "sonner";
 
 interface IProps {
@@ -16,21 +15,21 @@ const OrderItem = ({ order, isSuccess = false }: IProps) => {
 		mutationKey: ["mutation"],
 		mutationFn: (id: string): Promise<IOrderShipper> =>
 			updateStatusShippingOrder(id),
-		onSuccess(data: any, variables, context) {
+		onSuccess(data: any) {
 			window.open(
 				`/shipper/transport/${encodeURIComponent(data.data.data.code)}`,
 			);
 		},
-		onError(data, error) {
+		onError(_, error) {
 			console.log("error:", error);
 			toast.error(error);
 		},
 	});
 
 	return (
-		<div className="w-full rounded-md bg-white box-shadow px-2 md:px-4 py-2 border border-dashed">
+		<div className="w-full px-2 py-2 bg-white border border-dashed rounded-md box-shadow md:px-4">
 			<div className="">
-				<div className="text-sm flex items-center justify-between">
+				<div className="flex items-center justify-between text-sm">
 					<p>
 						Mã đơn hàng:{" "}
 						<span className="font-semibold text-blue-500">{order.code}</span>
@@ -51,8 +50,8 @@ const OrderItem = ({ order, isSuccess = false }: IProps) => {
 					</p>
 				</div>
 
-				<div className="text-sm border-t mt-1">
-					<div className="flex md:flex-row flex-col md:items-center justify-between">
+				<div className="mt-1 text-sm border-t">
+					<div className="flex flex-col justify-between md:flex-row md:items-center">
 						<p>
 							Tổng tiền phải thu :{" "}
 							<span className="font-medium text-red-500">
@@ -68,7 +67,7 @@ const OrderItem = ({ order, isSuccess = false }: IProps) => {
 					)}
 				</div>
 
-				<div className="w-full mt-1 border-t flex items-center justify-between">
+				<div className="flex items-center justify-between w-full mt-1 border-t">
 					{!isSuccess ? (
 						<div>
 							{order?.status === 2 ? (

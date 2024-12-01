@@ -1,23 +1,21 @@
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/auth";
-import { LucideShoppingCart } from "lucide-react";
-import { Link } from "react-router-dom";
-import Notification from "./Notification";
-import Search from "./Search";
-import User from "./User";
-import Cart from "./Cart";
-import { useEffect, useState } from "react";
 import {
 	deleteNotification,
 	getPagingNotification,
-	watchedAllNotification,
 	watchedNotification,
 } from "@/service/notification.service";
-import { toast } from "sonner";
 import {
 	INotification,
 	ISearchObjectNotifications,
 } from "@/types/notification.interface";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { toast } from "sonner";
+import Cart from "./Cart";
+import Notification from "./Notification";
+import Search from "./Search";
+import User from "./User";
 
 const Actions = () => {
 	const { isLoggedIn, authUser, socket } = useAuth();
@@ -143,27 +141,27 @@ const Actions = () => {
 		}
 	};
 
-	const handleWatchedAllNotification = async () => {
-		try {
-			await watchedAllNotification();
-			setDataNotification((prev) => {
-				const newContent = prev.content.map((item) => {
-					return {
-						...item,
-						isRead: true,
-					};
-				});
+	// const handleWatchedAllNotification = async () => {
+	// 	try {
+	// 		await watchedAllNotification();
+	// 		setDataNotification((prev) => {
+	// 			const newContent = prev.content.map((item) => {
+	// 				return {
+	// 					...item,
+	// 					isRead: true,
+	// 				};
+	// 			});
 
-				return {
-					...prev,
-					content: newContent,
-				};
-			});
-			setCountNotRead(0);
-		} catch (error) {
-			toast.error("Đã xem tất cả bị lỗi");
-		}
-	};
+	// 			return {
+	// 				...prev,
+	// 				content: newContent,
+	// 			};
+	// 		});
+	// 		setCountNotRead(0);
+	// 	} catch (error) {
+	// 		toast.error("Đã xem tất cả bị lỗi");
+	// 	}
+	// };
 
 	return (
 		<div className="flex items-center justify-center max-h-8 gap-1 md:gap-4  *:rounded-full  *:cursor-pointer">
@@ -187,7 +185,7 @@ const Actions = () => {
 				</div>
 			) : (
 				<Link to={`/auth/login`}>
-					<Button className="hidden h-8 px-3 py-1 text-sm lg:block md:block bg-custom-300 hover:bg-custom-800">
+					<Button className="hidden h-8 py-1 text-sm lg:block md:block bg-custom-300 hover:bg-custom">
 						Đăng nhập
 					</Button>
 				</Link>

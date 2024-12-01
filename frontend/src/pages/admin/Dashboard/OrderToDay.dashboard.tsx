@@ -1,5 +1,5 @@
 import { formatQuantity } from "@/common/localFunction";
-import { getCountProduct, getToDayOrder } from "@/service/dashboard.service";
+import { getToDayOrder } from "@/service/dashboard.service";
 import { useQuery } from "@tanstack/react-query";
 
 const OrderToDayDashBoard = () => {

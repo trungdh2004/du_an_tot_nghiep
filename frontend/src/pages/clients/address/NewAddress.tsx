@@ -1,5 +1,5 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import MapSearchLocation from "@/components/map/MapSearchLocation";
+import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import {
 	Form,
@@ -10,23 +10,21 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
 import {
 	addAddress,
 	callCity,
 	callCommune,
 	callDistrict,
 } from "@/service/address";
-import { Button } from "@/components/ui/button";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ICity, ICommune, IDistrict } from "@/types/address";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { DialogTitle } from "@radix-ui/react-dialog";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 import AddressLocation from "./AddressLocation";
-import MapComponent from "@/components/map/Map";
-import MapSearchLocation from "@/components/map/MapSearchLocation";
-import { ICity, ICommune, IDistrict } from "@/types/address";
-import { DialogTitle } from "@radix-ui/react-dialog";
 
 interface IProps {
 	open: boolean;
@@ -84,7 +82,7 @@ const NewAddress = ({ open, handleClose }: IProps) => {
 	// 	queryClient.getQueryData<ICity[]>(["city"]) || [],
 	// );
 	// console.log(citys);
-	const { data: citys, isLoading } = useQuery<ICity[]>({
+	const { data: citys } = useQuery<ICity[]>({
 		queryKey: ["city"],
 		queryFn: async () => {
 			const { data } = await callCity();
@@ -157,7 +155,7 @@ const NewAddress = ({ open, handleClose }: IProps) => {
 					</DialogHeader>{" "}
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-							<div className="flex flex-row gap-3 w-full">
+							<div className="flex flex-row w-full gap-3">
 								<FormField
 									control={form.control}
 									name="username"
@@ -222,7 +220,7 @@ const NewAddress = ({ open, handleClose }: IProps) => {
 							<FormField
 								control={form.control}
 								name="location"
-								render={({ field }) => {
+								render={() => {
 									return (
 										<FormItem className="">
 											<div className="w-full h-[240px] border">

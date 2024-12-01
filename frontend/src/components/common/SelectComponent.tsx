@@ -1,6 +1,6 @@
-import React, { ReactNode } from "react";
-import Select, { ActionMeta, GetOptionValue } from "react-select";
 import { Label } from "@/components/ui/label";
+import { ReactNode } from "react";
+import Select, { ActionMeta, GetOptionValue } from "react-select";
 
 type ActionTypes =
 	| "clear"
@@ -72,7 +72,7 @@ type CommonProps<T> = {
 	label?: string;
 	placeholder?: string;
 	isClearable?: boolean;
-	disabled?:boolean
+	disabled?: boolean;
 };
 
 const SelectComponent = <T,>({
@@ -85,7 +85,7 @@ const SelectComponent = <T,>({
 	options,
 	placeholder,
 	isClearable = false,
-	disabled
+	disabled,
 }: CommonProps<T>) => {
 	return (
 		<div>

@@ -1,27 +1,25 @@
+import {
+  convertMeter,
+  convertTimeSection,
+  formatQuantity,
+} from "@/common/localFunction";
 import MapComponent from "@/components/map/Map";
-import instance from "@/config/instance";
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { Marker } from "react-map-gl";
-import {
-	convertMeter,
-	convertTimeSection,
-	formatQuantity,
-} from "@/common/localFunction";
 
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
-import { AiFillHome } from "react-icons/ai";
-import { cn } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import DialogConfirm from "@/components/common/DialogConfirm";
 import SourcePage from "@/components/map/Source";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+import { cancelOrder } from "@/service/order";
 import { getOrderMapByCode, updateStatusShippedOrder } from "@/service/shipper";
-import { distance } from "framer-motion";
+import { AiFillHome } from "react-icons/ai";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
-import { cancelOrder } from "@/service/order";
-import DialogConfirm from "@/components/common/DialogConfirm";
 
 const ShipperTranSport = () => {
 	const { code } = useParams();
@@ -30,7 +28,7 @@ const ShipperTranSport = () => {
 	const [openConfirm, setOpenConfirm] = useState(false);
 
 	const router = useNavigate();
-	const { data, isLoading, isError } = useQuery({
+	const { data, isError } = useQuery({
 		queryKey: ["listOrder", code],
 		queryFn: async () => {
 			try {
@@ -146,7 +144,7 @@ const ShipperTranSport = () => {
 
 	const handleSuccessOrder = async () => {
 		try {
-			const { data: dataOrder } = await updateStatusShippedOrder(
+			 await updateStatusShippedOrder(
 				data?.data?._id,
 			);
 			router("/shipper");
@@ -166,9 +164,9 @@ const ShipperTranSport = () => {
 		}
 	};
 	return (
-		<div className="w-full h-full flex relative overflow-hidden">
+		<div className="relative flex w-full h-full overflow-hidden">
 			<Link to={"/shipper"}>
-				<div className="fixed top-4 left-4 size-10 rounded-full bg-blue-500 z-10 flex items-center justify-center cursor-pointer">
+				<div className="fixed z-10 flex items-center justify-center bg-blue-500 rounded-full cursor-pointer top-4 left-4 size-10">
 					<AiFillHome size={20} className="text-white" />
 				</div>
 			</Link>
@@ -206,7 +204,7 @@ const ShipperTranSport = () => {
 				)}
 			>
 				{/* user */}
-				<div className="w-full p-2 bg-white rounded-md flex">
+				<div className="flex w-full p-2 bg-white rounded-md">
 					<div className="flex-1">
 						<p className="text-sm leading-5 ">
 							Tên:{" "}
@@ -273,30 +271,30 @@ const ShipperTranSport = () => {
 					</p>
 				</div>
 
-				<div className="w-full p-2 bg-white rounded-md flex-1 flex flex-col overflow-hidden">
-					<div className="pb-1 mb-1 border-b text-sm font-medium">
+				<div className="flex flex-col flex-1 w-full p-2 overflow-hidden bg-white rounded-md">
+					<div className="pb-1 mb-1 text-sm font-medium border-b">
 						Tổng số sản phẩm: {data?.data?.orderItems.length} sp
 					</div>
-					<ScrollArea className="w-full flex-1 ">
+					<ScrollArea className="flex-1 w-full ">
 						{data?.data?.orderItems.map((itemOrder: any) => (
 							<div className="flex py-1">
-								<div className="size-12 mr-1">
+								<div className="mr-1 size-12">
 									<img
 										src={itemOrder?.product?.thumbnail}
 										alt=""
-										className="w-full h-full object-cover"
+										className="object-cover w-full h-full"
 									/>
 								</div>
 								<div className="flex flex-col justify-between flex-1">
-									<p className="line-clamp-1 text-sm leading-3 font-medium">
+									<p className="text-sm font-medium leading-3 line-clamp-1">
 										{itemOrder?.product?.name}
 									</p>
-									<p className="line-clamp-1 text-xs">
+									<p className="text-xs line-clamp-1">
 										Loại: {`${itemOrder?.variant}`}
 									</p>
-									<p className="line-clamp-1 text-xs flex justify-between">
+									<p className="flex justify-between text-xs line-clamp-1">
 										<span>Số lượng: {itemOrder?.quantity}</span>
-										<span className="text-red-500 font-medium">
+										<span className="font-medium text-red-500">
 											{formatQuantity(itemOrder?.totalMoney, "đ")}
 										</span>
 									</p>
@@ -324,7 +322,7 @@ const ShipperTranSport = () => {
 				</Button>
 
 				<div
-					className="absolute h-10 w-6 top-1/2 -translate-y-1/2 bg-blue-200 -left-5 cursor-pointer rounded-s-full border-l border-blue-500"
+					className="absolute w-6 h-10 -translate-y-1/2 bg-blue-200 border-l border-blue-500 cursor-pointer top-1/2 -left-5 rounded-s-full"
 					onClick={() => {
 						setIsOpen((prev) => !prev);
 					}}

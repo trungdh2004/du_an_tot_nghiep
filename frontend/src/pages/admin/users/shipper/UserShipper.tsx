@@ -1,4 +1,4 @@
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 
 import DialogConfirm from "@/components/common/DialogConfirm";
 import TableComponent from "@/components/common/TableComponent";
@@ -28,9 +28,9 @@ import { BsPersonFillCheck } from "react-icons/bs";
 import { CiLock, CiUnlock } from "react-icons/ci";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { IoFilter } from "react-icons/io5";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { useDebounceCallback } from "usehooks-ts";
-import { Link } from "react-router-dom";
 interface IData {
 	_id: string;
 	user: IUser;
@@ -71,7 +71,6 @@ const UserShipper = () => {
 		return user._id;
 	});
 	const [openBanId, setopenBanId] = useState<string | null>(null);
-	const [isPending, startTransition] = useTransition();
 	const [openUnbanId, setopenUnbanId] = useState<string | null>(null);
 	const [openBanManyId, setopenBanManyId] = useState<string | boolean | null>(
 		null,
@@ -128,7 +127,7 @@ const UserShipper = () => {
 
 	const handleBlock = async (id: string) => {
 		try {
-			const { data } = await updateActionShippers({
+			await updateActionShippers({
 				listId: [id],
 				type: 1,
 				isBlock: true,
@@ -143,7 +142,7 @@ const UserShipper = () => {
 
 	const handleUnBlock = async (id: string) => {
 		try {
-			const { data } = await updateActionShippers({
+			await updateActionShippers({
 				listId: [id],
 				type: 2,
 				isBlock: true,
@@ -158,7 +157,7 @@ const UserShipper = () => {
 
 	const handleBanMany = async (listId: string[]) => {
 		try {
-			const { data } = await updateActionShippers({
+			await updateActionShippers({
 				listId,
 				type: 1,
 				isBlock: true,
@@ -175,7 +174,7 @@ const UserShipper = () => {
 
 	const handleUnBanMany = async (listId: string[]) => {
 		try {
-			const { data } = await updateActionShippers({
+			await updateActionShippers({
 				listId,
 				type: 2,
 				isBlock: true,

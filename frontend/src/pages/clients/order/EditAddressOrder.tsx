@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import MapSearchLocation from "@/components/map/MapSearchLocation";
+import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
 	Form,
@@ -9,7 +10,6 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
 import {
 	callCity,
 	callCommune,
@@ -17,14 +17,13 @@ import {
 	editAddress,
 	getAddressById,
 } from "@/service/address";
-import { Button } from "@/components/ui/button";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import MapComponent from "@/components/map/Map";
-import MapSearchLocation from "@/components/map/MapSearchLocation";
 import { IAddress, ICity, ICommune, IDistrict } from "@/types/address";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 import AddressLocation from "../address/AddressLocation";
 
 const formSchema = z.object({
@@ -88,7 +87,7 @@ const EditAddressOrder = ({
 	const queryClient = useQueryClient();
 	const { mutate } = useMutation({
 		mutationFn: async (dataNew: any) => editAddress({ id, dataNew }),
-    onSuccess: ({ data }) => {
+		onSuccess: ({ data }) => {
 			toast.success("Bạn cập nhật địa chỉ thành công");
 			queryClient.invalidateQueries({
 				queryKey: ["address"],
@@ -103,7 +102,7 @@ const EditAddressOrder = ({
 			toast.error("Bạn cập nhật địa chỉ thất bại");
 		},
 	});
-	const { data: citys = [], isLoading } = useQuery<ICity[]>({
+	const { data: citys = [] } = useQuery<ICity[]>({
 		queryKey: ["city"],
 		queryFn: async () => {
 			const { data } = await callCity();
@@ -191,10 +190,10 @@ const EditAddressOrder = ({
 	return (
 		<Dialog open={open} onOpenChange={handleClose}>
 			<DialogContent className="w-[90%] sm:max-w-[660px] rounded-md max-h-[90vh] p-2 sm:p-4 overflow-y-auto">
-				<h2 className="text-xl font-bold mb-2">Cập nhật địa chỉ</h2>
+				<h2 className="mb-2 text-xl font-bold">Cập nhật địa chỉ</h2>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-						<div className="flex flex-row gap-3 w-full">
+						<div className="flex flex-row w-full gap-3">
 							<FormField
 								control={form.control}
 								name="username"
@@ -259,7 +258,7 @@ const EditAddressOrder = ({
 						<FormField
 							control={form.control}
 							name="location"
-							render={({ field }) => {
+							render={() => {
 								return (
 									<FormItem className="">
 										<div className="w-full h-[240px]">

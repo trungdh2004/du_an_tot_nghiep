@@ -31,7 +31,7 @@ const HomePage = () => {
 				<img
 					src="./bannerHome2.webp"
 					alt=""
-					className="object-cover object-left  min-h-[100px] "
+					className="object-cover min-h-[100px]"
 				/>
 			</div>
 			<ProductsList />

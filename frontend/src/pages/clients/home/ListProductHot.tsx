@@ -14,7 +14,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 
 const ListProductHot = () => {
-	const { data, isLoading, isError } = useQuery({
+	const { data, isLoading } = useQuery({
 		queryKey: ["getListHost"],
 		queryFn: async () => {
 			try {

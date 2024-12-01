@@ -1,28 +1,27 @@
 import { formatQuantity } from "@/common/localFunction";
+import Paginations from "@/components/common/Pagination";
 import { cn } from "@/lib/utils";
 import { fetchOrder, receivedClientOrder } from "@/service/order";
 import { IItemOrder, IItemOrderList, IOrderList } from "@/types/order";
+import { SearchObjectType } from "@/types/searchObjecTypes";
+import { typeResponse } from "@/types/typeReponse";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 import { FaStar } from "react-icons/fa";
-import { Link, ScrollRestoration } from "react-router-dom";
+import { Link } from "react-router-dom";
 import CancelConfirm from "./CancelConfirm";
 import Evaluate from "./Evaluate";
 import LoadingTable from "./LoadingTable";
-import { SearchObjectType } from "@/types/searchObjecTypes";
-import { Pagination } from "@/components/ui/pagination";
-import Paginations from "@/components/common/Pagination";
-import { typeResponse } from "@/types/typeReponse";
 
 const OrderManagements = () => {
 	const queryClient = useQueryClient();
 	const [active, setActive] = useState(7);
 	const [status, setStatus] = useState(null);
-	const [showLoader, setShowLoader] = useState(true);
+	const [, setShowLoader] = useState(true);
 	const [openId, setOpenId] = useState<string | boolean>(false);
 	const [openEvaluate, setOpenEvaluate] = useState<string[] | null>(null);
-	const [response, setResponse] = useState<typeResponse>({
+	const [, setResponse] = useState<typeResponse>({
 		pageCount: 0,
 		totalElement: 0,
 		totalOptionPage: 0,
@@ -151,7 +150,7 @@ const OrderManagements = () => {
 			<div className="">
 				<div className="w-full">
 					<div className="sticky top-0">
-						<ul className="flex scroll-custom  no-scrollbar text-base bg-white md:border md:border-gray-200 rounded box-shadow scroll-custom overflow-x-auto">
+						<ul className="flex overflow-x-auto text-base bg-white rounded scroll-custom no-scrollbar md:border md:border-gray-200 box-shadow">
 							{menuList.map((item: any) => (
 								<li
 									key={item.index}
@@ -216,7 +215,7 @@ const OrderManagements = () => {
 												return (
 													<div
 														key={itemOrderList.productId}
-														className="w-full bg-white box-shadow  border border-gray-200 rounded-sm px-2 lg:px-8 "
+														className="w-full px-2 bg-white border border-gray-200 rounded-sm box-shadow lg:px-8 "
 													>
 														<div className="">
 															{itemOrderList?.items?.map(
@@ -228,7 +227,7 @@ const OrderManagements = () => {
 																		>
 																			<div
 																				key={itemOrder._id}
-																				className="w-full flex justify-between gap-3 md:gap-5 py-3  border-b border-gray-300 "
+																				className="flex justify-between w-full gap-3 py-3 border-b border-gray-300 md:gap-5 "
 																			>
 																				<div className="size-[80px] md:size-[100px] bg-gray-100 border ">
 																					<img
@@ -237,7 +236,7 @@ const OrderManagements = () => {
 																						alt=""
 																					/>
 																				</div>
-																				<div className="flex flex-1 flex-col md:flex-row md:justify-between gap-2">
+																				<div className="flex flex-col flex-1 gap-2 md:flex-row md:justify-between">
 																					<div className="w-full md:w-[65%]">
 																						<h3 className="text-sm md:text-[16px] font-medium line-clamp-2 ">
 																							{itemOrder?.product.name}
@@ -247,7 +246,7 @@ const OrderManagements = () => {
 																								<span className="hidden md:block">
 																									Phân loại hàng:
 																								</span>
-																								<span className="text-gray-500 text-sm md:text-base font-normal">
+																								<span className="text-sm font-normal text-gray-500 md:text-base">
 																									{itemOrder?.variant}
 																								</span>
 																							</p>
@@ -257,7 +256,7 @@ const OrderManagements = () => {
 																						</div>
 																					</div>
 																					<div className="w-full md:w-[25%] text-red-500 text-xs md:text-sm flex items-end md:items-center font-medium ">
-																						<span className="w-full md:text-right pr-3">
+																						<span className="w-full pr-3 md:text-right">
 																							{formatQuantity(
 																								itemOrder?.price,
 																								"₫",
@@ -271,12 +270,12 @@ const OrderManagements = () => {
 																},
 															)}
 
-															<div className="w-full flex justify-between items-center py-3">
+															<div className="flex items-center justify-between w-full py-3">
 																{item.status === 5 && (
 																	<div className="w-full">
 																		{itemOrderList?.is_evaluate === true ? (
 																			<div className="">
-																				<span className="text-custom text-sm">
+																				<span className="text-sm text-custom">
 																					Đã đánh giá
 																				</span>
 																			</div>
@@ -297,18 +296,18 @@ const OrderManagements = () => {
 																							),
 																						);
 																				}}
-																				className="flex items-center px-3 py-2 cursor-pointer text-custom  border border-custom hover:bg-custom-100 rounded-sm text-sm "
+																				className="flex items-center px-3 py-2 text-sm border rounded-sm cursor-pointer text-custom border-custom hover:bg-custom-100 "
 																			>
-																				<FaStar className="text-orange-500 mr-1" />{" "}
+																				<FaStar className="mr-1 text-orange-500" />{" "}
 																				<span className="">Đánh giá</span>
 																			</button>
 																		)}
 																	</div>
 																)}
-																<div className="flex item-center justify-end w-full">
-																	<p className="text-right text-sm md:text-base lg:font-medium md:flex md:items-center ">
+																<div className="flex justify-end w-full item-center">
+																	<p className="text-sm text-right md:text-base lg:font-medium md:flex md:items-center ">
 																		Tổng số tiền{" "}
-																		<span className="hidden md:block mr-1">
+																		<span className="hidden mr-1 md:block">
 																			({itemOrderList?.items.length as number}{" "}
 																			sản phẩm):
 																		</span>
@@ -347,7 +346,7 @@ const OrderManagements = () => {
 													</button>
 												)}
 												{[2, 3].includes(item.status) && (
-													<div className=" text-sm lg:text-base font-medium ">
+													<div className="text-sm font-medium lg:text-base">
 														Thời gian nhận hàng dự kiến:{" "}
 														<span className="">
 															{format(
@@ -358,7 +357,7 @@ const OrderManagements = () => {
 													</div>
 												)}
 												{[5].includes(item.status) && (
-													<div className=" text-sm lg:text-base font-medium ">
+													<div className="text-sm font-medium lg:text-base">
 														Đã nhận hàng:{" "}
 														<span className="">
 															{format(
@@ -368,7 +367,7 @@ const OrderManagements = () => {
 														</span>
 													</div>
 												)}
-												<div className="text-sm lg:text-base font-medium">
+												<div className="text-sm font-medium lg:text-base">
 													Thành tiền:{" "}
 													<span className="text-red-500 font-medium lg:font-semibold text-sm lg:text-[16px]">
 														{formatQuantity(item.totalMoney, "₫")}
@@ -381,7 +380,7 @@ const OrderManagements = () => {
 							);
 						})}
 					{orderData?.totalPage > 1 && (
-						<div className="w-full flex justify-center pt-5">
+						<div className="flex justify-center w-full pt-5">
 							<Paginations
 								forcePage={searchObject.pageIndex - 1}
 								pageCount={orderData?.totalPage}

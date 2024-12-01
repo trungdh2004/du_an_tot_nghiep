@@ -21,7 +21,6 @@ import {
 	YAxis,
 } from "recharts";
 import { toast } from "sonner";
-import classNames from "classnames";
 
 interface RevenueData {
 	value: number;
@@ -76,7 +75,7 @@ const RevenueChartFilter = ({
 		month: "",
 	});
 	const [data, setData] = useState<RevenueData[]>([]);
-	const [isLoading, setIsLoading] = useState(false);
+	const [_, setIsLoading] = useState(false);
 
 	const fetchData = async () => {
 		setIsLoading(true);

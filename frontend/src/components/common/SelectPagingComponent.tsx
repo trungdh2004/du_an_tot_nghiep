@@ -125,12 +125,12 @@ const SelectPagingComponent = <T,>({
 	}, [open]);
 
 	const getData = async () => {
-		let newPage = 1;
+		const newPage = 1;
 		fetchData(newPage);
 	};
 
 	const loadPagingData = () => {
-		let page = obj.pageIndex;
+		const page = obj.pageIndex;
 		fetchData(page + 1);
 	};
 
@@ -175,7 +175,7 @@ const SelectPagingComponent = <T,>({
 				getOptionValue={getOptionValue}
 				classNamePrefix="react-select"
 				styles={customStyles}
-				onMenuScrollToBottom={(e) => {
+				onMenuScrollToBottom={() => {
 					if (obj.pageIndex < obj.totalPage) {
 						loadPagingData();
 					}

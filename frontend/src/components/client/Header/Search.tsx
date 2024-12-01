@@ -1,3 +1,4 @@
+import { calculateTimeDistance, formatCurrency } from "@/common/func";
 import { optimizeCloudinaryUrl } from "@/common/localFunction";
 import {
 	Dialog,
@@ -6,19 +7,17 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import useDebounce from "@/hooks/shared";
+import { cn } from "@/lib/utils";
 import { searchPopupService } from "@/service/system";
 import { ISearchPopup } from "@/types/system";
 import { AxiosError } from "axios";
 import { useState } from "react";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { IoIosSearch } from "react-icons/io";
 import { IoSearch } from "react-icons/io5";
+import { MdOutlineSearch } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { formatCurrency } from "../../../../../server/src/config/func";
-import { calculateTimeDistance } from "@/common/func";
-import { MdOutlineSearch } from "react-icons/md";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { cn } from "@/lib/utils";
 const Search = () => {
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const [isLoading, setLoading] = useState<boolean>(false);
@@ -29,10 +28,6 @@ const Search = () => {
 			try {
 				setLoading(true);
 				const { data } = await searchPopupService({ keyword });
-				const fakeData = {
-					listBlog: data?.listBlog || [],
-					listProduct: data?.listProduct || [],
-				};
 				setAutocomplete(data);
 			} catch (error) {
 				if (error instanceof AxiosError) {
@@ -112,7 +107,7 @@ const Search = () => {
 						<Link
 							onClick={handleChangePath}
 							to={`/search?topic=product&q=${encodeURIComponent(textKeyWord)}`}
-							className="hover:text-custom text-sm"
+							className="text-sm hover:text-custom"
 						>
 							Xem thêm
 						</Link>
@@ -155,7 +150,7 @@ const Search = () => {
 						<Link
 							onClick={handleChangePath}
 							to={`/search?topic=blog&q=${encodeURIComponent(textKeyWord)}`}
-							className="hover:text-custom text-sm"
+							className="text-sm hover:text-custom"
 						>
 							Xem thêm
 						</Link>
