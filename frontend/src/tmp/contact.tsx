@@ -12,10 +12,10 @@ const ContactForm: React.FC = () => {
   const [errors, setErrors] = useState<string[]>([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { id, value, type, checked } = e.target;
+    const { id, value, type } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [id]: type === "checkbox" ? checked : value,
+      [id]: type === "checkbox" ?   value
     }));
   };
 
