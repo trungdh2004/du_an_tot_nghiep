@@ -37,6 +37,7 @@ import CustomerList from "@/pages/admin/users/customer/CustomerList";
 import ProductComing from "@/pages/admin/product/productComing/ProductComing";
 import StaffIndex from "@/pages/admin/users/staff/StaffIndex";
 import RevenueChart from "@/pages/admin/Revanue/RevenueChart";
+import PaymentIndex from "@/pages/admin/payment/PaymentIndex";
 
 const AdminRouter = [
 	{
@@ -207,7 +208,11 @@ const AdminRouter = [
 				path: "location",
 				element: <LocationIndex />,
 			},
-
+			//payment
+			{
+				path: "payment",
+				element: <PaymentIndex />,
+			},
 			// chat
 			{
 				path: "chat",

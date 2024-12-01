@@ -3,3 +3,9 @@ export interface ICustomer {
 	pageIndex: number;
 	pageSize: number;
 }
+
+export interface IPagingPayment extends ICustomer {
+	keyword: string;
+	startDate: string | null;
+	endDate: string | null;
+}

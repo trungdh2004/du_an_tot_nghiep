@@ -92,6 +92,7 @@ const StaffIndex = () => {
 	};
 	const columns: ColumnDef<IData>[] = [
 		{
+			id: "full_name",
 			accessorKey: "full_name",
 			header: () => {
 				return <div className="text-xs md:text-base">Tên</div>;
@@ -103,6 +104,7 @@ const StaffIndex = () => {
 			},
 		},
 		{
+			id: "email",
 			accessorKey: "email",
 			header: () => {
 				return <div className="text-xs md:text-base">Email</div>;
@@ -114,6 +116,7 @@ const StaffIndex = () => {
 			},
 		},
 		{
+			id: "avatarUrl",
 			accessorKey: "avatarUrl",
 			header: () => {
 				return <div className="text-xs md:text-base">Ảnh</div>;
@@ -128,6 +131,7 @@ const StaffIndex = () => {
 			},
 		},
 		{
+			id: "provider",
 			accessorKey: "provider",
 			header: () => {
 				return <div className="text-xs md:text-base">Phương thức</div>;
@@ -138,6 +142,7 @@ const StaffIndex = () => {
 			},
 		},
 		{
+			id: "createdAt",
 			accessorKey: "createdAt",
 			header: () => {
 				return <div className="text-xs md:text-base">Ngày tạo</div>;
@@ -150,6 +155,7 @@ const StaffIndex = () => {
 		},
 		{
 			id: "status",
+			accessorKey: "status",
 			header: () => {
 				return <div className="text-xs md:text-base">Trạng thái</div>;
 			},
@@ -166,6 +172,7 @@ const StaffIndex = () => {
 		},
 		{
 			id: "actions",
+			accessorKey: "actions",
 			enableHiding: false,
 			cell: ({ row }) => {
 				return (

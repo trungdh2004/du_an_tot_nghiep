@@ -42,6 +42,8 @@ interface IData {
 	is_staff: boolean;
 	blocked_at: boolean;
 	createdAt: string;
+	quyen: any;
+	status: any;
 }
 
 const UserIndex = () => {
@@ -162,6 +164,7 @@ const UserIndex = () => {
 	const columns: ColumnDef<IData>[] = [
 		{
 			id: "select",
+			accessorKey: "select",
 			header: ({ table }) => (
 				<Checkbox
 					checked={
@@ -193,6 +196,7 @@ const UserIndex = () => {
 			size: 100,
 		},
 		{
+			id: "full_name",
 			accessorKey: "full_name",
 			header: () => {
 				return <div className="text-xs md:text-base">Tên</div>;
@@ -204,6 +208,7 @@ const UserIndex = () => {
 			},
 		},
 		{
+			id: "email",
 			accessorKey: "email",
 			header: () => {
 				return <div className="text-xs md:text-base">Email</div>;
@@ -215,6 +220,7 @@ const UserIndex = () => {
 			},
 		},
 		{
+			id: "avatarUrl",
 			accessorKey: "avatarUrl",
 			header: () => {
 				return <div className="text-xs md:text-base">Ảnh</div>;
@@ -229,6 +235,7 @@ const UserIndex = () => {
 			},
 		},
 		{
+			id: "provider",
 			accessorKey: "provider",
 			header: () => {
 				return <div className="text-xs md:text-base">Phương thức</div>;
@@ -239,6 +246,7 @@ const UserIndex = () => {
 			},
 		},
 		{
+			id: "createdAt",
 			accessorKey: "createdAt",
 			header: () => {
 				return <div className="text-xs md:text-base">Ngày tạo</div>;
@@ -250,6 +258,7 @@ const UserIndex = () => {
 			},
 		},
 		{
+			id: "quyen",
 			accessorKey: "quyen",
 			header: () => {
 				return <div className="text-xs md:text-base">Quyền</div>;
@@ -268,6 +277,7 @@ const UserIndex = () => {
 		},
 		{
 			id: "status",
+			accessorKey: "status",
 			header: () => {
 				return <div className="text-xs md:text-base">Trạng thái</div>;
 			},
@@ -284,6 +294,7 @@ const UserIndex = () => {
 		},
 		{
 			id: "actions",
+			accessorKey: "actions",
 			enableHiding: false,
 			cell: ({ row }) => {
 				return (

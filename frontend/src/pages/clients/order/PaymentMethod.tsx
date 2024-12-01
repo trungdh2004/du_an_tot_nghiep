@@ -25,6 +25,8 @@ const PaymentMethod = ({
 	spin,
 	setSpin,
 }: Props) => {
+	console.log(spin);
+
 	const [paymentMethod, setPaymentMethod] = useState<string>("1");
 	const arrayTotal = data?.data?.map((product: any) => {
 		return product.totalAmount;
@@ -138,38 +140,6 @@ const PaymentMethod = ({
 								<img src="/momo.png" alt="" className="size-7" />
 							</span>
 						</Label>
-						<Label
-							htmlFor={"paymentMethod4"}
-							className={cn(
-								`relative max-w-full max-h-[50px] overflow-hidden flex justify-between items-center border border-solid border-line border-[#e9e9e9] cursor-pointer py-2 px-4 gap-2 rounded  bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d]  has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]`,
-								spin ? "cursor-not-allowed opacity-75" : "",
-							)}
-						>
-							<input
-								className={cn(
-									"peer",
-									spin ? "cursor-not-allowed opacity-75" : "",
-								)}
-								hidden
-								type="radio"
-								name="paymentMethod"
-								id="paymentMethod4"
-								value="4"
-								checked={paymentMethod === "4"}
-								onChange={(e) => {
-									setPaymentMethod(e.target.value);
-									setOrderCheckout((prev: any) => {
-										return { ...prev, paymentMethod: parseInt(e.target.value) };
-									});
-								}}
-							/>
-							<span className="text-sm capitalize lg:text-base md:text-base">
-								Thanh toán ZaloPay
-							</span>
-							<span>
-								<img src="/zalopay.png" alt="" className="size-7" />
-							</span>
-						</Label>
 					</div>
 				</div>
 				{/* <hr /> */}
@@ -242,8 +212,8 @@ const PaymentMethod = ({
 							spin ? "cursor-not-allowed opacity-75" : ""
 						}`}
 						onClick={() => {
-							handleCheckout();
 							setSpin(true);
+							handleCheckout();
 						}}
 						disabled={spin}
 					>
@@ -277,8 +247,8 @@ const PaymentMethod = ({
 							spin ? "cursor-not-allowed opacity-75" : "",
 						)}
 						onClick={() => {
-							handleCheckout();
 							setSpin(true);
+							handleCheckout();
 						}}
 					>
 						{spin && <FaSpinner className="mr-2 animate-spin" />}

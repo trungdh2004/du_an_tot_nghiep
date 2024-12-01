@@ -85,11 +85,13 @@ const OrderPage = () => {
 	const navigate = useNavigate();
 	const handleCheckout = async () => {
 		if (order.data.length === 0) {
-			toast.error("Vui lòng mua thêm hàng");
+      toast.error("Vui lòng mua thêm hàng");
+      setSpin(false);
 			return;
 		}
 		if (!orderCheckout.addressId) {
-			toast.error("Vui lòng chọn địa chỉ giao hàng");
+      toast.error("Vui lòng chọn địa chỉ giao hàng");
+      setSpin(false);
 			return;
 		}
 		try {

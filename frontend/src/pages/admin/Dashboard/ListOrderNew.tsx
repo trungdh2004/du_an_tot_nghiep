@@ -87,7 +87,7 @@ const ListOrderNew = () => {
 							<TableHead className="w-[100px]">Người đặt</TableHead>
 							<TableHead>Giá trị đơn</TableHead>
 							<TableHead>Thanh toán</TableHead>
-							<TableHead>Thanh toán</TableHead>
+							<TableHead>PT Thanh toán</TableHead>
 							<TableHead>Số sản phẩm</TableHead>
 							<TableHead>Ngày đặt</TableHead>
 							<TableHead className="min-w-[120px]">Trạng thái</TableHead>
@@ -136,7 +136,13 @@ const ListOrderNew = () => {
 										{formatCurrency(row.amountToPay)}
 									</TableCell>
 									<TableCell className="font-semibold text-nowrap">
-										{row?.paymentMethod === 1 ? "Tiền mặt" : "VNPAY"}
+										{row?.paymentMethod === 1
+											? "Tiền mặt"
+											: row?.paymentMethod === 2
+												? "VNPAY"
+												: row?.paymentMethod === 3
+													? "MOMO"
+													: "Phương thức khác"}
 									</TableCell>
 									<TableCell>{row.orderItems?.length} sp</TableCell>
 									<TableCell>{format(row.orderDate, "dd/MM/yyy")}</TableCell>

@@ -20,8 +20,8 @@ import {
   LiaTruckLoadingSolid,
   LiaUserAstronautSolid,
 } from "react-icons/lia";
-import { LuUserCircle } from "react-icons/lu";
-import { MdOutlinePostAdd } from "react-icons/md";
+import { LuLayoutDashboard, LuUserCircle } from "react-icons/lu";
+import { MdCurrencyExchange, MdOutlinePostAdd } from "react-icons/md";
 import { PiResizeLight } from "react-icons/pi";
 import { TbBasketCancel } from "react-icons/tb";
 import { VscAccount } from "react-icons/vsc";
@@ -218,6 +218,13 @@ const sidebarConfig: any[] = [
 				label: "Đơn đã hủy",
 			},
 		],
+	},
+	{
+		path: "/payment",
+		icon: MdCurrencyExchange,
+		isVisible: true,
+		label: "Giao dịch",
+		isAdmin: true,
 	},
 	{
 		path: "/revenue",

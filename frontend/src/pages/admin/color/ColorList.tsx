@@ -279,10 +279,10 @@ const ColorList = () => {
 	return (
 		<>
 			<div className="flex flex-col gap-3 mb-5">
-				<h4 className="text-base font-medium md:text-xl">Danh sách danh mục</h4>
+				<h4 className="text-base font-medium md:text-xl">Danh sách màu sắc</h4>
 				<div className="flex justify-between">
 					<Input
-						placeholder="Tìm kiếm danh mục"
+						placeholder="Tìm kiếm màu sắc"
 						className="w-[40%] md:text-base text-xs"
 						onChange={(event) => debounced(event.target.value)}
 					/>
@@ -377,10 +377,10 @@ const ColorList = () => {
 			{!!openUnhiddenColor && (
 				<DialogConfirm
 					open={!!openUnhiddenColor}
-					title="Xác nhận bỏ ẩn danh mục"
+					title="Xác nhận bỏ ẩn màu sắc"
 					handleClose={() => setopenUnhiddenColor(false)}
 					handleSubmit={() => handleUnhiddenColor(openUnhiddenColor)}
-					content="Bạn có chắc muốn bỏ ẩn danh mục này?"
+					content="Bạn có chắc muốn bỏ ẩn màu sắc này?"
 					labelConfirm="Bỏ ẩn"
 				/>
 			)}

@@ -274,7 +274,7 @@ const SizeIndex = () => {
 				<h4 className="text-xl font-medium">Danh sách kích thước</h4>
 				<div className="flex justify-between">
 					<Input
-						placeholder="Tìm kiếm người dùng"
+						placeholder="Tìm kiếm kích thước"
 						className="w-[40%] md:text-base text-xs"
 						onChange={(e) => debounced(e.target.value)}
 					/>
