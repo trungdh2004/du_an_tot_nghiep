@@ -12,11 +12,12 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import instance from "@/config/instance";
 import { getAllTags } from "@/service/tags-admin";
+import { IBlogs } from "@/types/blogs";
 import { SearchObjectBlog } from "@/types/searchObjecTypes";
 import { typeResponse } from "@/types/typeReponse";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import { FaCommentDots, FaEye, FaRegComment, FaRegHeart } from "react-icons/fa";
+import { FaEye, FaRegComment, FaRegHeart } from "react-icons/fa";
 import { GrPowerReset } from "react-icons/gr";
 import { MdOutlinePublic, MdOutlinePublicOff } from "react-icons/md";
 import { SlOptionsVertical } from "react-icons/sl";
@@ -25,7 +26,7 @@ import Select from "react-select";
 import { useDebounceCallback } from "usehooks-ts";
 
 const MyBlogs = () => {
-	const [blogs, setBlogs] = useState<IBlog[]>([]);
+	const [blogs, setBlogs] = useState<IBlogs[]>([]);
 	const [tags, setTags] = useState<ITag[]>([]);
 	const navigate = useNavigate();
 	const [response, setResponse] = useState<typeResponse>({
@@ -162,7 +163,7 @@ const MyBlogs = () => {
 
 			<div className="grid grid-cols-12 gap-6 xl:gap-8 mt-10">
 				{blogs.length ? (
-					blogs.map((item: IBlog, index: number) => (
+					blogs.map((item: IBlogs, index: number) => (
 						<>
 							<div
 								key={index}
@@ -279,13 +280,15 @@ const MyBlogs = () => {
 					</div>
 				)}
 			</div>
-			<div className="flex justify-center mt-5">
-				<Paginations
-					forcePage={searchObject.pageIndex - 1}
-					pageCount={response.pageCount}
-					handlePageClick={handleChangePag}
-				/>
-			</div>
+			{response.pageCount > 1 && (
+				<div className="flex justify-center mt-5">
+					<Paginations
+						forcePage={searchObject.pageIndex - 1}
+						pageCount={response.pageCount}
+						handlePageClick={handleChangePag}
+					/>
+				</div>
+			)}
 		</>
 	);
 };

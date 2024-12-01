@@ -55,7 +55,7 @@ const BlogList = () => {
 		totalElement: 0,
 		totalOptionPage: 0,
 	});
-	console.log(blogs);
+	console.log(response);
 
 	const [searchObject, setSearchObject] = useState<SearchObjectBlog>({
 		pageIndex: 1,
@@ -304,13 +304,13 @@ const BlogList = () => {
 						</>
 					))
 				) : (
-            <div className="col-span-12 min-h-[360px] flex justify-center items-center">
-              <img src="/blog.png" alt="" className="w-15 h-16" />
+					<div className="col-span-12 min-h-[360px] flex justify-center items-center">
+						<img src="/blog.png" alt="" className="w-15 h-16" />
 						<h3 className="text-lg">Không có bài viết!</h3>
 					</div>
 				)}
 			</div>
-			{blogs.length > 0 && (
+			{response.pageCount > 1 && (
 				<div className="flex justify-center mt-5">
 					<Paginations
 						forcePage={searchObject.pageIndex - 1}
