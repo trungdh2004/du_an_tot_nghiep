@@ -1,13 +1,13 @@
 import { formatCurrency } from "@/common/func";
 import TableComponent from "@/components/common/TableComponent";
-import { ICustomer, IPagingPayment } from "@/types/customer";
+import { Input } from "@/components/ui/input";
+import { IPagingPayment } from "@/types/customer";
 import { pagingPaymentAdmin } from "@/types/payment";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { format } from "date-fns";
-import React, { useEffect, useState } from "react";
-import SearchPayment from "./SearchPayment";
-import { Input } from "@/components/ui/input";
+import { useEffect, useState } from "react";
 import { useDebounceCallback } from "usehooks-ts";
+import SearchPayment from "./SearchPayment";
 
 interface IData {
 	_id: string;
