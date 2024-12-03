@@ -242,7 +242,7 @@ const InfoProduct: React.FC<Props> = ({ product }) => {
 							</div>
 							<p className="flex items-center gap-1 text-nowrap max-md:border-none">
 								<span className="font-medium text-black">
-									{product?.ratingCount}
+									{product?.ratingQuantity}
 								</span>
 								Đánh giá
 							</p>
