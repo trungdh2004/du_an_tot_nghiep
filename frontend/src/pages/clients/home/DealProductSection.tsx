@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import React from "react";
 import { toast } from "sonner";
 import Countdown from "./CoutDown";
+import { Link } from "react-router-dom";
 const DealProductSection: React.FC = () => {
 	const { data: dealProduct } = useQuery({
 		queryKey: ["activeProductHome"],
@@ -53,9 +54,9 @@ const DealProductSection: React.FC = () => {
 								</span>
 							</div>
 
-							<button className="px-2 py-1 text-white transition-colors rounded md:px-8 md:py-3 bg-custom hover:bg-custom-600">
+							<Link to={`/shop/detail/${dealProduct?.product?.slug}`} className="px-2 py-1 text-white transition-colors rounded md:px-8 md:py-3 bg-custom hover:bg-custom-600">
 								Mua ngay
-							</button>
+							</Link>
 						</div>
 						<div className="flex flex-col items-start gap-2 countDownWrap">
 							<h6 className="text-lg font-medium text-gray-500">
