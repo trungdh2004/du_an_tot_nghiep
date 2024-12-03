@@ -1,13 +1,15 @@
+import DialogConfirm from "@/components/common/DialogConfirm";
 import TableComponent from "@/components/common/TableComponent";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/auth";
 import { Decentralization, pagingStaff } from "@/service/user-admin";
 import { SearchObjectType } from "@/types/searchObjecTypes";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
@@ -41,6 +43,8 @@ const StaffIndex = () => {
 		totalElement: 0,
 		totalOptionPage: 0,
 	});
+	const [open, setOpen] = useState<string | boolean>(false);
+	const { authUser } = useAuth();
 	useEffect(() => {
 		handlePagingUser();
 	}, [searchObject]);
@@ -71,9 +75,11 @@ const StaffIndex = () => {
 			const { data } = await Decentralization(id as string, 1);
 			toast.success("Cập nhật thành công");
 			handlePagingUser();
+			setOpen(false);
 			return data;
 		} catch (error) {
 			console.log(error);
+			toast.success("Cập nhật thật bại ");
 		}
 	};
 	const handleChangePageSize = (value: number) => {
@@ -172,12 +178,12 @@ const StaffIndex = () => {
 		},
 		{
 			id: "actions",
-			accessorKey: "actions",
+			accessorKey: "Chức năng",
 			enableHiding: false,
 			cell: ({ row }) => {
 				return (
 					<div>
-						{!row?.original?.is_admin && (
+						{authUser?.is_admin && (
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
 									<Button variant="ghost" className="w-8 h-8 p-0">
@@ -188,7 +194,7 @@ const StaffIndex = () => {
 								<DropdownMenuContent align="end">
 									{!row?.original?.is_admin && (
 										<DropdownMenuItem
-											onClick={() => handleUpdate(row?.original?._id)}
+											onClick={() => setOpen(row?.original?._id)}
 											className="cursor-pointer"
 										>
 											Chuyển sang khách
@@ -230,6 +236,15 @@ const StaffIndex = () => {
 				totalElement={response.totalElement}
 				handleChangePageSize={handleChangePageSize}
 			/>
+			{!!open && (
+				<DialogConfirm
+					open={!!open}
+					handleClose={() => setOpen(false)}
+					content="Bạn muốn thay đổi quyền người này"
+					handleSubmit={() => handleUpdate(open as string)}
+					labelConfirm="Xác nhận"
+				/>
+			)}
 		</div>
 	);
 };

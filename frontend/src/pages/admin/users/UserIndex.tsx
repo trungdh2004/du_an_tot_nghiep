@@ -32,6 +32,7 @@ import { IoFilter } from "react-icons/io5";
 import { toast } from "sonner";
 import { useDebounceCallback } from "usehooks-ts";
 import DiaLogDecentralization from "./DiaLogDecentralization";
+import { useAuth } from "@/hooks/auth";
 interface IData {
 	_id: string;
 	full_name: string;
@@ -86,6 +87,7 @@ const UserIndex = () => {
 		provider: "",
 	});
 	const [data, setData] = useState<IData[]>([]);
+	const { authUser } = useAuth();
 	useEffect(() => {
 		handlePagingUser();
 	}, [searchObject]);
@@ -294,12 +296,12 @@ const UserIndex = () => {
 		},
 		{
 			id: "actions",
-			accessorKey: "actions",
+			accessorKey: "Hoạt động",
 			enableHiding: false,
 			cell: ({ row }) => {
 				return (
 					<div>
-						{!row?.original?.is_admin && (
+						{authUser?.is_admin && !row?.original?.is_admin && (
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
 									<Button variant="ghost" className="w-8 h-8 p-0">
@@ -308,17 +310,15 @@ const UserIndex = () => {
 									</Button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent align="end">
-									{!row?.original?.is_admin && (
-										<DropdownMenuItem
-											onClick={() => {
-												setopenIdUpdated(row?.original?._id);
-												setisStaff(row?.original?.is_staff);
-											}}
-											className="cursor-pointer"
-										>
-											Phân quyền
-										</DropdownMenuItem>
-									)}
+									<DropdownMenuItem
+										onClick={() => {
+											setopenIdUpdated(row?.original?._id);
+											setisStaff(row?.original?.is_staff);
+										}}
+										className="cursor-pointer"
+									>
+										Phân quyền
+									</DropdownMenuItem>
 									{row?.original?.blocked_at ? (
 										<DropdownMenuItem
 											className="text-green-400 cursor-pointer"
