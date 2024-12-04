@@ -1,33 +1,31 @@
+import DialogConfirm from "@/components/common/DialogConfirm";
 import TableComponent from "@/components/common/TableComponent";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import {
-	activeCategory,
-	hiddencate,
-	hiddenManyCate,
-	paddingCate,
-	unhiddencate,
-	unhiddenManyCate,
-} from "@/service/category-admin";
-import { SearchObjectType } from "@/types/searchObjecTypes";
-import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
-import React, { useEffect, useState } from "react";
-import { parseISO, format } from "date-fns";
-import CategoryAdd from "./CategoryAddandUpdate";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { HiOutlineDotsVertical } from "react-icons/hi";
-import { Button } from "@/components/ui/button";
+  hiddencate,
+  hiddenManyCate,
+  paddingCate,
+  unhiddencate,
+  unhiddenManyCate
+} from "@/service/category-admin";
+import { SearchObjectType } from "@/types/searchObjecTypes";
 import { typeResponse } from "@/types/typeReponse";
-import { useDebounceCallback } from "usehooks-ts";
+import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
+import { format, parseISO } from "date-fns";
+import { useEffect, useState } from "react";
+import { HiOutlineDotsVertical } from "react-icons/hi";
 import { toast } from "sonner";
-import DialogConfirm from "@/components/common/DialogConfirm";
-import { AxiosError } from "axios";
+import { useDebounceCallback } from "usehooks-ts";
+import CategoryAdd from "./CategoryAddandUpdate";
 
 const CategoryIndex = () => {
 	interface IData {
@@ -96,7 +94,7 @@ const CategoryIndex = () => {
 
 	const handleHiddenCate = async (id: string | boolean) => {
 		try {
-			const { data } = await hiddencate(id);
+			 await hiddencate(id);
 			setOpenHiddenCategory(false);
 			handleCategory();
 			toast.success("Đã ẩn danh mục thành công");
@@ -107,7 +105,7 @@ const CategoryIndex = () => {
 
 	const handleManyCate = async (listId: any) => {
 		try {
-			const { data } = await hiddenManyCate(listId);
+			await hiddenManyCate(listId);
 			setOpenManyCate(false);
 			handleCategory();
 			setRowSelection({});
@@ -120,7 +118,7 @@ const CategoryIndex = () => {
 
 	const handleUnManyCate = async (listId: any) => {
 		try {
-			const { data } = await unhiddenManyCate(listId);
+		 await unhiddenManyCate(listId);
 			setOpenUnManyCate(false);
 			handleCategory();
 			setRowSelection({});
@@ -133,7 +131,7 @@ const CategoryIndex = () => {
 
 	const handleUnhiddenCate = async (id: string | boolean) => {
 		try {
-			const { data } = await unhiddencate(id);
+			 await unhiddencate(id);
 			setopenUnhiddenCategory(false);
 			handleCategory();
 			toast.success("Bỏ ẩn danh mục thành công");
@@ -156,19 +154,19 @@ const CategoryIndex = () => {
 		setRowSelection({});
 		setListRowSelected([]);
 	};
-	const handleUpdateActive = async (id: string, active: boolean) => {
-		try {
-			const { data } = await activeCategory({
-				id,
-				active,
-			});
-			toast.success(data?.message);
-		} catch (error) {
-			if (error instanceof AxiosError) {
-				toast.error(error?.response?.data?.message);
-			}
-		}
-	};
+	// const handleUpdateActive = async (id: string, active: boolean) => {
+	// 	try {
+	// 		const { data } = await activeCategory({
+	// 			id,
+	// 			active,
+	// 		});
+	// 		toast.success(data?.message);
+	// 	} catch (error) {
+	// 		if (error instanceof AxiosError) {
+	// 			toast.error(error?.response?.data?.message);
+	// 		}
+	// 	}
+	// };
 	const columns: ColumnDef<IData>[] = [
 		{
 			accessorKey: "select",

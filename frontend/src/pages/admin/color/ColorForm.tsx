@@ -46,8 +46,6 @@ const formSchema = z.object({
 
 const ColorForm = ({
 	open,
-	title,
-	labelConfirm,
 	handleClose,
 	handlePaging,
 }: FormDialog) => {
@@ -92,7 +90,7 @@ const ColorForm = ({
 	const onHandleUpdate = async (dataForm: any) => {
 		try {
 			setOpenProcessLoadingEventNone();
-			const { data } = await instance.put(`color/update/${open}`, dataForm);
+			await instance.put(`color/update/${open}`, dataForm);
 			handleClose();
 			handlePaging();
 			toast.success("Bạn đã cập nhật màu thành công");

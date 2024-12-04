@@ -1,4 +1,3 @@
-import React from "react";
 import { formatCurrency, formatQuantitySort } from "@/common/func";
 import { IColor, IProduct } from "@/types/typeProduct";
 const ProductDisPlay = ({ productShop }: any) => {

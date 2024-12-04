@@ -1,21 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { formatCurrency } from "@/common/func";
-import Countdown from "./CoutDown";
-import { AxiosError } from "axios";
-import { toast } from "sonner";
-import { findProductActive, pagingProductComing } from "@/service/product";
-import { IProduct } from "@/types/typeProduct";
+import { findProductActive } from "@/service/product";
 import { useQuery } from "@tanstack/react-query";
-type DealProductType = {
-	active: boolean;
-	createdAt: string;
-	date: string;
-	product: IProduct;
-	updatedAt: string;
-	__v: number;
-	_id: string;
-};
+import { AxiosError } from "axios";
+import { motion } from "framer-motion";
+import React from "react";
+import { toast } from "sonner";
+import Countdown from "./CoutDown";
 const DealProductSection: React.FC = () => {
 	const { data: dealProduct } = useQuery({
 		queryKey: ["activeProductHome"],
@@ -32,8 +22,7 @@ const DealProductSection: React.FC = () => {
 		},
 	});
 
-	console.log({dealProduct});
-	
+	console.log({ dealProduct });
 
 	return (
 		<section className="relative py-6 md:py-12 mt-14">

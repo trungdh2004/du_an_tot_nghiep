@@ -1,8 +1,7 @@
-import React from "react";
 
 const OrderProcessing = () => {
 	return (
-		<div className="flex justify-center items-center">
+		<div className="flex items-center justify-center">
 			<p>Đơn hàng của bạn đa</p>
 		</div>
 	);

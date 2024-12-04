@@ -1,5 +1,3 @@
-import React from "react";
-import { Button } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -7,10 +5,7 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -24,10 +19,10 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { AiFillExclamationCircle } from "react-icons/ai";
 import { cancelOrder } from "@/service/order";
-import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AiFillExclamationCircle } from "react-icons/ai";
+import { toast } from "sonner";
 
 const FormSchema = z.object({
 	type: z.string().min(1, { message: "Vui lòng chọn lý do hủy đơn hàng" }),
@@ -43,7 +38,7 @@ interface IRes {
 	cancelBy: number;
 	open: string;
 }
-const CancelConfirm = ({ open, handleClose, handleFetchOrder }: Props) => {
+const CancelConfirm = ({ open, handleClose }: Props) => {
 	const queryClient = useQueryClient();
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
@@ -68,7 +63,7 @@ const CancelConfirm = ({ open, handleClose, handleFetchOrder }: Props) => {
 	// }
 	const { mutate } = useMutation({
 		mutationFn: async ({ open, note, cancelBy = 1 }: IRes) => {
-			const data = await cancelOrder(open, note, cancelBy);
+			await cancelOrder(open, note, cancelBy);
 		},
 		onSuccess: () => {
 			handleClose();
@@ -127,7 +122,7 @@ const CancelConfirm = ({ open, handleClose, handleFetchOrder }: Props) => {
 																<FormControl>
 																	<RadioGroupItem value={item} />
 																</FormControl>
-																<FormLabel className="font-normal text-sm md:text-base">
+																<FormLabel className="text-sm font-normal md:text-base">
 																	{item}
 																</FormLabel>
 															</FormItem>
@@ -140,7 +135,7 @@ const CancelConfirm = ({ open, handleClose, handleFetchOrder }: Props) => {
 									)}
 								/>
 								<button
-									className="w-full bg-custom-500 py-3 text-sm md:text-base uppercase text-white rounded-sm"
+									className="w-full py-3 text-sm text-white uppercase rounded-sm bg-custom-500 md:text-base"
 									type="submit"
 								>
 									Đồng ý

@@ -1,10 +1,9 @@
-import React from "react";
-import { MdOutlineMail, MdOutlinePhoneInTalk } from "react-icons/md";
-import { IoLocationOutline } from "react-icons/io5";
-import { FaYoutube } from "react-icons/fa6";
-import { FaFacebook, FaInstagram } from "react-icons/fa";
-import { Link } from "react-router-dom";
 import { LogoNucSVG } from "@/assets/svg";
+import { FaFacebook, FaInstagram } from "react-icons/fa";
+import { FaYoutube } from "react-icons/fa6";
+import { IoLocationOutline } from "react-icons/io5";
+import { MdOutlineMail, MdOutlinePhoneInTalk } from "react-icons/md";
+import { Link } from "react-router-dom";
 const Footer = () => {
 	return (
 		<div className="padding mx-auto bg-[#131118] *:text-white relative">

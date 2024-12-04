@@ -26,15 +26,15 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
 		const url = payload[0]?.payload?.productImage;
 		return (
 			<div className="p-2 rounded-sm bg-white box-shadow min-w-[120px]">
-				<p className="font-medium mb-1 text-sm text-center flex justify-center">
-					<img src={url} className="size-5 rounded-sm border" />
+				<p className="flex justify-center mb-1 text-sm font-medium text-center">
+					<img src={url} className="border rounded-sm size-5" />
 				</p>
 				<table className="w-full text-xs">
 					<tr>
 						<td colSpan={1}>
-							<div className="size-3 bg-orange-500 rounded-sm "></div>
+							<div className="bg-orange-500 rounded-sm size-3 "></div>
 						</td>
-						<td className=" text-left" colSpan={2}>
+						<td className="text-left " colSpan={2}>
 							<div className="">Số lượng bán</div>
 						</td>
 						<td className="text-end" colSpan={2}>
@@ -43,9 +43,9 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
 					</tr>
 					<tr>
 						<td colSpan={1}>
-							<div className="size-3 bg-blue-500 rounded-sm "></div>
+							<div className="bg-blue-500 rounded-sm size-3 "></div>
 						</td>
-						<td className=" text-left" colSpan={2}>
+						<td className="text-left " colSpan={2}>
 							<div className="">Doanh thu</div>
 						</td>
 						<td className="text-end" colSpan={2}>
@@ -89,7 +89,7 @@ export default function ProductDashboard() {
 							tickLine={false}
 							tickMargin={10}
 							axisLine={false}
-							tick={({ x, y, payload, value }) => {
+							tick={({ x, y, payload }) => {
 								const image = data[payload.index].productImage;
 								return (
 									<foreignObject x={x - 15} y={y - 10} width={30} height={30}>

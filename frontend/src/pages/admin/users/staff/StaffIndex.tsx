@@ -1,19 +1,18 @@
 import TableComponent from "@/components/common/TableComponent";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Decentralization, pagingStaff } from "@/service/user-admin";
 import { SearchObjectType } from "@/types/searchObjecTypes";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { format, parseISO } from "date-fns";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { toast } from "sonner";
 import { useDebounceCallback } from "usehooks-ts";
@@ -93,31 +92,34 @@ const StaffIndex = () => {
 	};
 	const columns: ColumnDef<IData>[] = [
 		{
+			id: "full_name",
 			accessorKey: "full_name",
 			header: () => {
-				return <div className="md:text-base text-xs">Tên</div>;
+				return <div className="text-xs md:text-base">Tên</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs">{row?.original?.full_name}</div>
+					<div className="text-xs md:text-base">{row?.original?.full_name}</div>
 				);
 			},
 		},
 		{
+			id: "email",
 			accessorKey: "email",
 			header: () => {
-				return <div className="md:text-base text-xs">Email</div>;
+				return <div className="text-xs md:text-base">Email</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs">{row?.original?.email}</div>
+					<div className="text-xs md:text-base">{row?.original?.email}</div>
 				);
 			},
 		},
 		{
+			id: "avatarUrl",
 			accessorKey: "avatarUrl",
 			header: () => {
-				return <div className="md:text-base text-xs">Ảnh</div>;
+				return <div className="text-xs md:text-base">Ảnh</div>;
 			},
 			cell: ({ row }) => {
 				return (
@@ -129,30 +131,33 @@ const StaffIndex = () => {
 			},
 		},
 		{
+			id: "provider",
 			accessorKey: "provider",
 			header: () => {
-				return <div className="md:text-base text-xs">Phương thức</div>;
+				return <div className="text-xs md:text-base">Phương thức</div>;
 			},
 			cell: ({ row }) => {
 				const value = `${row.getValue("provider") === "google.com" ? "Google" : "Đăng ký"}`;
-				return <div className="font-medium md:text-base text-xs">{value}</div>;
+				return <div className="text-xs font-medium md:text-base">{value}</div>;
 			},
 		},
 		{
+			id: "createdAt",
 			accessorKey: "createdAt",
 			header: () => {
-				return <div className="md:text-base text-xs">Ngày tạo</div>;
+				return <div className="text-xs md:text-base">Ngày tạo</div>;
 			},
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.createdAt);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
-				return <div className="md:text-base text-xs">{formattedDate}</div>;
+				return <div className="text-xs md:text-base">{formattedDate}</div>;
 			},
 		},
 		{
 			id: "status",
+			accessorKey: "status",
 			header: () => {
-				return <div className="md:text-base text-xs">Trạng thái</div>;
+				return <div className="text-xs md:text-base">Trạng thái</div>;
 			},
 			cell: ({ row }) => {
 				const status = row.original.blocked_at ? "Bị cấm" : "Hoạt động";
@@ -167,6 +172,7 @@ const StaffIndex = () => {
 		},
 		{
 			id: "actions",
+			accessorKey: "actions",
 			enableHiding: false,
 			cell: ({ row }) => {
 				return (
@@ -174,9 +180,9 @@ const StaffIndex = () => {
 						{!row?.original?.is_admin && (
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
-									<Button variant="ghost" className="h-8 w-8 p-0">
+									<Button variant="ghost" className="w-8 h-8 p-0">
 										<span className="sr-only">Open menu</span>
-										<HiOutlineDotsVertical className="h-4 w-4" />
+										<HiOutlineDotsVertical className="w-4 h-4" />
 									</Button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent align="end">
@@ -199,7 +205,7 @@ const StaffIndex = () => {
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex flex-col gap-3">
-				<h4 className="font-medium md:text-xl text-base">
+				<h4 className="text-base font-medium md:text-xl">
 					Danh sách người dùng
 				</h4>
 				<div className="flex justify-between">
@@ -223,8 +229,7 @@ const StaffIndex = () => {
 				pageCount={response.pageCount}
 				totalElement={response.totalElement}
 				handleChangePageSize={handleChangePageSize}
-      />
-      
+			/>
 		</div>
 	);
 };

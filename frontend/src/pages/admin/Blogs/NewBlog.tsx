@@ -38,10 +38,8 @@ import {
 	AiOutlineCloudUpload,
 	AiOutlineLoading3Quarters,
 } from "react-icons/ai";
-import { IoMdArrowRoundBack } from "react-icons/io";
 import { MdOutlineCalendarMonth } from "react-icons/md";
-import { Link, useNavigate } from "react-router-dom";
-import Select from "react-select";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 const NewBlog = () => {

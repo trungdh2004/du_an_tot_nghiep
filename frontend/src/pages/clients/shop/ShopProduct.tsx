@@ -1,25 +1,23 @@
+import Paginations from "@/components/common/Pagination";
+import Product from "@/components/common/Product";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { pagingProduct } from "@/service/product";
+import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Category from "./Category";
 import Color from "./Color";
-import Size from "./Size";
-import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { pagingProduct } from "@/service/product";
-import ProductDisPlay from "./ProductDisPlay";
-import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
-import Paginations from "@/components/common/Pagination";
-import ProductSkeleton from "./ProductSkeleton";
 import Price from "./Price";
-import SelectSort from "./SelectSort";
-import SearchProductMobile from "./SearchProductMobile";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import SortFilterStar from "./SortFilterStar";
-import Product from "@/components/common/Product";
 import ProductEmpty from "./ProductEmpty";
+import ProductSkeleton from "./ProductSkeleton";
+import SearchProductMobile from "./SearchProductMobile";
+import SelectSort from "./SelectSort";
+import Size from "./Size";
+import SortFilterStar from "./SortFilterStar";
 
 const ShopProduct = () => {
-	const [pageIndex, setPageIndex] = useState(1);
-	const query = useQueryClient();
+	const [_, setPageIndex] = useState(1);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [searchParamsObject, setSearchParamsObject] =
 		useState<SearchObjectTypeProduct>(() => {
@@ -73,7 +71,6 @@ const ShopProduct = () => {
 	const {
 		data: productShop,
 		isLoading,
-		isPending,
 		isError,
 	} = useQuery({
 		queryKey: ["productShop", searchParamsObject],

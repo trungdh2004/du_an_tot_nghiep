@@ -1,12 +1,12 @@
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import React, { useEffect, useState } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { useEffect, useState } from "react";
 import { IoFilter } from "react-icons/io5";
 import { useMediaQuery } from "usehooks-ts";
 import Category from "./Category";
-import Price from "./Price";
 import Color from "./Color";
+import Price from "./Price";
 import Size from "./Size";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import SortFilterStar from "./SortFilterStar";
 
 const SearchProductMobile = ({
@@ -28,7 +28,7 @@ const SearchProductMobile = ({
 				</div>
 
 				<SheetContent side={"top"} className="px-0">
-					<ScrollArea className="h-screen rounded-md px-4">
+					<ScrollArea className="h-screen px-4 rounded-md">
 						<Category setSearchParamsObject={setSearchParamsObject} />
 						<Price
 							setSearchParamsObject={setSearchParamsObject}

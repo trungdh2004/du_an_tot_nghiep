@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export function ComponentChartType() {
-	const { data, isLoading } = useQuery({
+	const { data } = useQuery({
 		queryKey: ["chartUser"],
 		queryFn: async () => {
 			try {
@@ -52,7 +52,7 @@ export function ComponentChartType() {
 												<tspan
 													x={viewBox.cx}
 													y={viewBox.cy}
-													className="fill-foreground text-3xl font-bold"
+													className="text-3xl font-bold fill-foreground"
 												>
 													{totalUser}
 												</tspan>
@@ -67,11 +67,11 @@ export function ComponentChartType() {
 			</div>
 			<div className="flex items-center justify-around py-2">
 				<div className="flex items-center gap-2">
-					<p className="size-3 bg-blue-500 rounded-sm"></p>
+					<p className="bg-blue-500 rounded-sm size-3"></p>
 					<p>Đăng kí</p>
 				</div>
 				<div className="flex items-center gap-2">
-					<p className="size-3 bg-orange-500 rounded-sm"></p>
+					<p className="bg-orange-500 rounded-sm size-3"></p>
 					<p>Google</p>
 				</div>
 			</div>

@@ -1,7 +1,7 @@
 import { optimizeCloudinaryUrl } from "@/common/localFunction";
 import { IBlogSearch } from "@/types/blogs";
 import { format } from "date-fns";
-import { FaCommentDots, FaEye, FaRegHeart } from "react-icons/fa";
+import { FaEye, FaRegHeart } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 type Props = {

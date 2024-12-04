@@ -2,7 +2,7 @@ import SidebarShipper from "@/components/shipper/sidebar/SidebarShipper";
 import { Link, Outlet, ScrollRestoration } from "react-router-dom";
 import { TooltipComponent } from "@/components/common/TooltipComponent";
 import { FaMapMarkerAlt } from "react-icons/fa";
-import { FaCartPlus, FaShoppingCart, FaRegChartBar } from "react-icons/fa";
+import { FaCartPlus, FaShoppingCart } from "react-icons/fa";
 import { FaUser } from "react-icons/fa6";
 import { FaArrowLeft } from "react-icons/fa";
 

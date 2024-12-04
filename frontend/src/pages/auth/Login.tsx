@@ -25,7 +25,7 @@ import {
 import { Input } from "../../components/ui/input";
 import SignInWithFacebookOrGoogle from "./SignInWithFacebookOrGoogle";
 const Login = () => {
-	const [searchParams, SetURLSearchParams] = useSearchParams();
+	const [searchParams] = useSearchParams();
 	const router = useNavigate();
 	const { setCarts, setTotalCart } = useCart();
 	const { setAuthUser, setIsLoggedIn } = useAuth();
@@ -49,7 +49,7 @@ const Login = () => {
 	const onSubmit = async (payload: z.infer<typeof formSchema>) => {
 		try {
 			const { data } = await loginAccount(payload);
-			const { user, accessToken, message } = data;
+			const { user, accessToken } = data;
 
 			// Cập nhật trạng thái đăng nhập và token Authorization
 			setAuthUser?.(user);
@@ -59,10 +59,8 @@ const Login = () => {
 				pagingCartV2(),
 				getCountMyShoppingCart(),
 			]);
-
 			setCarts(cartsResponse?.data?.listData || []);
 			setTotalCart(totalCountResponse?.data?.count || 0);
-			toast.success(message);
 			const historyUrl = searchParams.get("url");
 
 			if (historyUrl) {

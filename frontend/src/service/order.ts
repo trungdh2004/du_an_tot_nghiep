@@ -1,8 +1,6 @@
 import instance from "@/config/instance";
 import { ObjectCheckoutOrder } from "@/types/ObjectCheckoutOrder";
 import { SearchObjectOrder } from "@/types/searchObjectOrder";
-import axios from "axios";
-import { boolean, string } from "zod";
 
 export const pagingOrder = async (listId: any) => {
 	const data = await instance.post(`/order/pagingCartOrder`, listId);

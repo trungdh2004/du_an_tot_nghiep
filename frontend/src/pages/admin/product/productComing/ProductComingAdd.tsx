@@ -1,48 +1,41 @@
-import React, { useEffect, useState } from "react";
 import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { format } from "date-fns";
+import { useEffect } from "react";
 
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
 import SelectPagingComponent from "@/components/common/SelectPagingComponent";
-import { CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-	createProductComing,
-	getProductComingById,
-	updateProductComing,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import {
+  createProductComing,
+  getProductComingById,
+  updateProductComing,
 } from "@/service/product";
-import { toast } from "sonner";
-import { vi } from "date-fns/locale";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
-	Form,
-	FormControl,
-	FormDescription,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
-import { Label } from "recharts";
-import { useProcessBarLoadingEventNone } from "@/store/useSidebarAdmin";
 interface Props {
 	open: boolean | string;
 	close: () => void;
@@ -55,8 +48,6 @@ interface DataComingState {
 }
 
 const ProductComingAdd = ({ open, close, handleCustomer }: Props) => {
-	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
-		useProcessBarLoadingEventNone();
 	const FormSchema = z.object({
 		product: z.object({
 			_id: z.string(),
@@ -77,7 +68,7 @@ const ProductComingAdd = ({ open, close, handleCustomer }: Props) => {
 	});
 	const createProduct = async (dataComing: DataComingState) => {
 		try {
-			const { data } = await createProductComing(dataComing);
+			await createProductComing(dataComing);
 			toast.success("Thêm sản phẩm chờ thành công");
 			handleCustomer();
 			close();
@@ -89,7 +80,7 @@ const ProductComingAdd = ({ open, close, handleCustomer }: Props) => {
 
 	const updateProduct = async (dataComing: DataComingState) => {
 		try {
-			const { data } = await updateProductComing(open as string, dataComing);
+			await updateProductComing(open as string, dataComing);
 			toast.success("Cập nhật sản phẩm chờ thành công");
 			handleCustomer();
 			close();
@@ -172,7 +163,7 @@ const ProductComingAdd = ({ open, close, handleCustomer }: Props) => {
 									);
 								}}
 							/>
-							<div className="flex justify-between items-center  gap-4">
+							<div className="flex items-center justify-between gap-4">
 								<FormField
 									control={form.control}
 									name="date"
@@ -194,11 +185,11 @@ const ProductComingAdd = ({ open, close, handleCustomer }: Props) => {
 															) : (
 																<span>Chọn ngày</span>
 															)}
-															<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+															<CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
 														</Button>
 													</FormControl>
 												</PopoverTrigger>
-												<PopoverContent className=" p-0" align="start">
+												<PopoverContent className="p-0 " align="start">
 													<Calendar
 														mode="single"
 														selected={field.value}
@@ -225,7 +216,7 @@ const ProductComingAdd = ({ open, close, handleCustomer }: Props) => {
 										return (
 											<FormItem className="w-2/6">
 												<FormLabel>
-													<div className="flex flex-row items-center space-x-3 space-y-0 rounded-sm px-2 h-10 border mt-6 hover:bg-slate-100 cursor-pointer">
+													<div className="flex flex-row items-center h-10 px-2 mt-6 space-x-3 space-y-0 border rounded-sm cursor-pointer hover:bg-slate-100">
 														<FormControl>
 															<Checkbox
 																checked={field.value}

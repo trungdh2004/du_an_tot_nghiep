@@ -10,33 +10,10 @@ import {
 } from "recharts";
 
 import { formatQuantity } from "@/common/localFunction";
-import { ChartConfig } from "@/components/ui/chart";
 import { getCountCategory } from "@/service/dashboard.service";
 import { useQuery } from "@tanstack/react-query";
 
 export const description = "A bar chart with a custom label";
-
-const chartData = [
-	{ month: "January", desktop: 186, mobile: 80 },
-	{ month: "February", desktop: 305, mobile: 200 },
-	{ month: "March", desktop: 237, mobile: 120 },
-	{ month: "April", desktop: 73, mobile: 190 },
-	{ month: "May", desktop: 209, mobile: 130 },
-	{ month: "June", desktop: 214, mobile: 140 },
-];
-
-const chartConfig = {
-	desktop: {
-		label: "Desktop",
-		color: "#008cff",
-	},
-	totalMoney: {
-		label: "Doanh thu",
-	},
-	label: {
-		color: "hsl(var(--background))",
-	},
-} satisfies ChartConfig;
 interface CustomTooltipProps extends TooltipProps<number, string> {}
 
 const CustomTooltip: React.FC<CustomTooltipProps> = ({
@@ -60,7 +37,9 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
 							<div className=""></div>
 						</td>
 						<td className="text-end" colSpan={2}>
-							<div className="">{formatQuantity(payload[0].value || 0,"đ")}</div>
+							<div className="">
+								{formatQuantity(payload[0].value || 0, "đ")}
+							</div>
 						</td>
 					</tr>
 				</table>
@@ -72,7 +51,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
 };
 
 export default function CategoryDashboard() {
-	const { data, isLoading } = useQuery({
+	const { data } = useQuery({
 		queryKey: ["dashboardCategory"],
 		queryFn: async () => {
 			try {
@@ -115,7 +94,6 @@ export default function CategoryDashboard() {
 							layout="horizontal"
 							fill="#008cff"
 							radius={4}
-              
 						>
 							<LabelList
 								dataKey="categoryName"
@@ -139,7 +117,7 @@ export default function CategoryDashboard() {
 								}}
 							/>
 							<LabelList
-                dataKey="totalMoney"
+								dataKey="totalMoney"
 								position="insideRight"
 								content={(props) => {
 									const { x, y, value } = props;

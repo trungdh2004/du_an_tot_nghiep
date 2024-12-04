@@ -1,13 +1,11 @@
 import { cn } from "@/lib/utils";
+import { useCallback, useEffect, useState } from "react";
 import Actions from "./Actions";
 import Menu from "./Menu";
 import MenuMobile from "./MenuMobile";
-import { useLocation } from "react-router-dom";
-import { useEffect, useState, useCallback } from "react";
 
 const Header = () => {
-	const location = useLocation();
-	const [isScroll, setIsScroll] = useState(false);
+	const [, setIsScroll] = useState(false);
 
 	const handleScroll = useCallback(() => {
 		setIsScroll(window.scrollY > 100);
@@ -24,7 +22,7 @@ const Header = () => {
 		<div
 			className={cn(
 				" w-full  z-50  padding backdrop-blur-md  bg-transparent sticky top-0",
-				
+
 				// 	? "bg-transparent fixed"
 				// 	: "backdrop-blur-md fixed",
 				// isScroll && "backdrop-blur-md",

@@ -6,12 +6,12 @@ import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
 import { IColor } from "@/types/typeProduct";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { useQueryClient } from "@tanstack/react-query";
-import React, {
-	Dispatch,
-	SetStateAction,
-	useCallback,
-	useEffect,
-	useState,
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
 } from "react";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
@@ -20,7 +20,7 @@ interface Props {
 	setSearchParamsObject: Dispatch<SetStateAction<SearchObjectTypeProduct>>;
 	searchParamsObject: SearchObjectTypeProduct;
 }
-const Color = ({ setSearchParamsObject, searchParamsObject }: Props) => {
+const Color = ({ setSearchParamsObject }: Props) => {
 	const [colors, setColors] = useState([]);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [check, setCheck] = useState(false);

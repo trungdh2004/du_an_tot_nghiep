@@ -104,7 +104,7 @@ const CartItem = ({
 				)}
 			>
 				{(item?.attribute?._id && item?.attribute?.quantity) ||
-				(item?.is_simple && item?.totalQuantity > 0)? (
+				(item?.is_simple && item?.totalQuantity > 0) ? (
 					<Checkbox
 						checked={checked}
 						onCheckedChange={() =>

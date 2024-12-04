@@ -1,4 +1,3 @@
-import React from "react";
 import { NumericFormat } from "react-number-format";
 import { Input } from "../ui/input";
 
@@ -27,7 +26,7 @@ const InputNumberFormat = ({
 	allowNegative = false,
 	isAllowed,
 	disabled = false,
-	placeholder
+	placeholder,
 }: IProps) => {
 	return (
 		<NumericFormat

@@ -9,11 +9,11 @@ import {
 	reactionsComment,
 } from "@/service/comment";
 import { Comment, IPageComment } from "@/types/TypeObjectComment";
+import { AxiosError } from "axios";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import Reaction from "./Reaction";
-import { AxiosError } from "axios";
 import { toast } from "sonner";
+import Reaction from "./Reaction";
 type Props = {
 	comment: Comment;
 	parrent_id: string;
@@ -24,7 +24,7 @@ const CommentItem = ({ comment, parrent_id, setComment }: Props) => {
 	const [content, setContent] = useState(``);
 	const [pageIndex, setPageIndex] = useState(1);
 	const [check, setCheck] = useState<IPageComment | null>(null);
-	const [open, setOpen] = useState(false);
+	const [_, setOpen] = useState(false);
 	const [openFeedback, setOpenFeedback] = useState<string | null>(null);
 	const [openAnswer, setOpenAnswer] = useState(false);
 	const navigate = useNavigate();
@@ -286,7 +286,7 @@ const CommentItem = ({ comment, parrent_id, setComment }: Props) => {
 								size="small"
 							/>
 						) : (
-							<div className="p-2 px-4 bg-custom-400 rounded-full">
+							<div className="p-2 px-4 rounded-full bg-custom-400">
 								Bạn hãy đăng nhập để được bình luận
 							</div>
 						))}
@@ -363,7 +363,7 @@ const CommentItem = ({ comment, parrent_id, setComment }: Props) => {
 											handleChange={handleChange}
 										/>
 									) : (
-										<div className="p-2 px-4 bg-custom-400 rounded-full">
+										<div className="p-2 px-4 rounded-full bg-custom-400">
 											Bạn hãy đăng nhập để được bình luận
 										</div>
 									))}

@@ -1,10 +1,9 @@
-import React from "react";
 
 const OverlayVioletV2 = () => {
 	return (
 		<>
 			<div
-				className="fixed  inset-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80 bg-main"
+				className="fixed inset-0 overflow-hidden -top-40 -z-10 transform-gpu blur-3xl sm:-top-80 bg-main"
 				aria-hidden="true"
 			>
 				<div

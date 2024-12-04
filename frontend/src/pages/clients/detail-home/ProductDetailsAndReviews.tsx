@@ -6,7 +6,6 @@ import DescProduct from "./DescProduct";
 import ProductReview from "./review/ProductReview";
 import { getReviewProduct } from "@/service/review";
 import { SearchRatingState } from "@/types/review";
-import ProductRelated from "./ProductRelated";
 type Props = {
 	product?: IProductDetail;
 	isLoading?: boolean;

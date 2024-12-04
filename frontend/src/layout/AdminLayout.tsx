@@ -1,10 +1,9 @@
 import HeaderAdmin from "@/components/admin/header/HeaderAdmin";
 import Sidebar from "@/components/admin/sidebar/Sidebar";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import React, { useEffect } from "react";
-import { Outlet, ScrollRestoration } from "react-router-dom";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useOpenSidebar } from "@/store/useSidebarAdmin";
+import { useEffect } from "react";
+import { Outlet, ScrollRestoration } from "react-router-dom";
 import { useMediaQuery } from "usehooks-ts";
 
 const AdminLayout = () => {
@@ -23,7 +22,7 @@ const AdminLayout = () => {
 					<Sidebar />
 				</SheetContent>
 			</Sheet>
-			<div className="fixed top-0 left-0 bottom-0 hidden lg:block">
+			<div className="fixed top-0 bottom-0 left-0 hidden lg:block">
 				<Sidebar />
 			</div>
 			<div className="lg:pl-[280px] w-full">
@@ -34,7 +33,6 @@ const AdminLayout = () => {
 				</div>
 			</div>
 			<ScrollRestoration />
-
 		</div>
 	);
 };

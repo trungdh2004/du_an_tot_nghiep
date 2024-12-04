@@ -31,9 +31,9 @@ const DetailProduct = () => {
 		},
 	});
 
-  if(!isLoading && Object.keys(data || {})?.length <= 0 ){
-    return <NotFound/>
-  }
+	if (!isLoading && Object.keys(data || {})?.length <= 0) {
+		return <NotFound />;
+	}
 	return (
 		<div className="">
 			<div className="padding ">

@@ -3,7 +3,7 @@ type Props = {
 	description?: string;
 	isLoading?: boolean;
 };
-const DescProduct = ({ description, isLoading }: Props) => {
+const DescProduct = ({ description }: Props) => {
 	const md = new Remarkable({
 		html: true, // Cho phép HTML bên trong Markdown
 		xhtmlOut: false, // Xuất ra HTML với các tag tự đóng
@@ -17,8 +17,10 @@ const DescProduct = ({ description, isLoading }: Props) => {
 
 	return (
 		<div className="p-4 break-all bg-white rounded-md box-shadow">
-			<h3 className="py-4 text-base font-medium border-b  md:text-xl">Chi tiết sản phẩm :</h3>
-			<div dangerouslySetInnerHTML={{ __html: htmlContent }} className="p-2"/>
+			<h3 className="py-4 text-base font-medium border-b md:text-xl">
+				Chi tiết sản phẩm :
+			</h3>
+			<div dangerouslySetInnerHTML={{ __html: htmlContent }} className="p-2" />
 		</div>
 	);
 };

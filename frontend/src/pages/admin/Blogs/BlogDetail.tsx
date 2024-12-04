@@ -1,5 +1,5 @@
 import { TooltipComponent } from "@/components/common/TooltipComponent";
-import { getBlogDetail, showBlogsEdit } from "@/service/blog";
+import { getBlogDetail } from "@/service/blog";
 import { useEffect, useState } from "react";
 import { LuFileEdit } from "react-icons/lu";
 import { Link, useParams } from "react-router-dom";
@@ -23,8 +23,6 @@ type IBlog = {
 };
 import { Remarkable } from "remarkable";
 import { format } from "date-fns";
-import { Button } from "@/components/ui/button";
-import { IoMdArrowRoundBack } from "react-icons/io";
 
 const BlogDetail = () => {
 	const [blog, setBlog] = useState<IBlog>();

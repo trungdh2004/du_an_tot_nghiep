@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -7,10 +6,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import {
 	Form,
 	FormControl,
@@ -19,24 +14,25 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import {
 	addCategory,
 	getCategory,
 	updateCategory,
 } from "@/service/category-admin";
-import instance from "@/config/instance";
+import { uploadFileService } from "@/service/upload";
 import {
 	useProcessBarLoading,
 	useProcessBarLoadingEventNone,
 } from "@/store/useSidebarAdmin";
-import {
-	AiOutlineCloudUpload,
-	AiOutlineLoading3Quarters,
-} from "react-icons/ai";
-import { cn } from "@/lib/utils";
-import { uploadFileService } from "@/service/upload";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { AiOutlineCloudUpload } from "react-icons/ai";
 import { ImageType } from "react-images-uploading";
+import { toast } from "sonner";
+import { z } from "zod";
 
 interface FormDialog {
 	open: boolean | string;
@@ -90,8 +86,8 @@ const CategoryAdd = ({
 		},
 	});
 	console.log(open);
-	const { isOpen, setOpen, setClose } = useProcessBarLoading();
-	const [isPending, setIsPending] = useState(false);
+	const { setOpen, setClose } = useProcessBarLoading();
+	const [isPending] = useState(false);
 	const [previewUrl, setPreviewUrl] = useState({
 		isLoading: false,
 		url: "",
@@ -118,7 +114,7 @@ const CategoryAdd = ({
 
 	const onHandleUpdate = async (dataForm: any) => {
 		try {
-			const { data } = await updateCategory(open, dataForm);
+			await updateCategory(open, dataForm);
 			handleClose();
 			handlePaging();
 			toast.success("Bạn cập nhật danh mục thành công");
@@ -130,7 +126,7 @@ const CategoryAdd = ({
 	};
 	const onHandleAdd = async (dataForm: any) => {
 		try {
-			const { data } = await addCategory(dataForm);
+			await addCategory(dataForm);
 			form.reset();
 			handleClose();
 			handlePaging();

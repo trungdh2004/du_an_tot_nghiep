@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/auth";
 import { getCurrentShipper } from "@/service/shipper";
 import useStoreShipper from "@/store/useCurrentShipper";
 import { AxiosError } from "axios";
-import React, { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 type PrivateRouterType = {
