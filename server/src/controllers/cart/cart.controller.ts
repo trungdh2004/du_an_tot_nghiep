@@ -881,6 +881,33 @@ class CartController {
         });
       }
 
+      if (existingProduct.attributes.length > 0 && !existingProduct.is_simple) {
+        if (!attribute) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Bạn chưa chọn loại hàng",
+            toast: true,
+          });
+        }
+
+        const check = existingProduct.attributes.find(
+          (item) => item.toString() === attribute.toString()
+        );
+
+        if (!check) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Sản phẩm đã bị thay đổi và không còn loại hàng bạn chọn",
+            toast: true,
+          });
+        }
+      }
+
+      if (existingProduct.is_simple && !!attribute) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Sản phẩm đã bị thay đổi mời bạn load lại trang web",
+          toast: true,
+        });
+      }
+
       const existingProductCart = await CartItemModel.deleteMany({
         product: productId,
         attribute: attribute,

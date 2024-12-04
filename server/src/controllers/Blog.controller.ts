@@ -32,7 +32,7 @@ class BlogController {
       const newPos = await BlogsModel.create({
         user_id: user.id,
         title,
-        content
+        content,
       });
 
       return res.status(STATUS.OK).json(newPos);
@@ -198,33 +198,33 @@ class BlogController {
     try {
       const user = req.user;
       const { id } = req.params;
-  
+
       if (!user?.id) {
         return res.status(STATUS.AUTHENTICATOR).json({
           message: "Bạn chưa đăng nhập",
         });
       }
-  
+
       if (!id) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn chưa chọn bài viết",
         });
       }
-  
+
       const existingBlog = await BlogsModel.findById(id);
-  
+
       if (!existingBlog) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có bài viết nào",
         });
       }
-  
+
       if (!existingBlog.isPublish) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bài viết chưa được đăng",
         });
       }
-  
+
       const updatedBlog = await BlogsModel.findByIdAndUpdate(
         existingBlog._id,
         {
@@ -233,7 +233,7 @@ class BlogController {
         },
         { new: true }
       );
-  
+
       return res.status(STATUS.OK).json({
         message: "Hủy đăng bài viết thành công",
         data: updatedBlog,
@@ -534,6 +534,12 @@ class BlogController {
           message: "Không có bài viết nào",
         });
 
+      await BlogsModel.findByIdAndUpdate(id, {
+        $inc: {
+          views_count: 1,
+        },
+      });
+
       const countBlog = await BlogsModel.countDocuments({
         _id: {
           $ne: existingBlog?._id,
@@ -622,12 +628,7 @@ class BlogController {
 
   async pagingBlogClient(req: RequestModel, res: Response) {
     try {
-      const {
-        keyword,
-        pageSize,
-        pageIndex,
-        tags,
-      } = req.body;
+      const { keyword, pageSize, pageIndex, tags } = req.body;
 
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
@@ -649,13 +650,12 @@ class BlogController {
 
       const newDate = new Date();
 
-
       const listBlogs = await BlogsModel.find({
         ...queryTab,
         ...queryTags,
-        published_at:{
+        published_at: {
           $lte: newDate,
-        }
+        },
       })
         .sort(querySort)
         .skip(skip)
@@ -667,7 +667,7 @@ class BlogController {
           },
           "selected_tags",
         ])
-        .exec();
+        .select("-content");
 
       const countBlogs = await BlogsModel.countDocuments({
         ...queryTab,
