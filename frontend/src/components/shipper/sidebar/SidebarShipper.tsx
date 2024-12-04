@@ -1,13 +1,9 @@
 import { formatCurrency } from "@/common/func";
 import { optimizeCloudinaryUrl } from "@/common/localFunction";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { formatCurrency } from "@/common/func";
-import { optimizeCloudinaryUrl } from "@/common/localFunction";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import useStoreShipper from "@/store/useCurrentShipper";
 import { BsCoin } from "react-icons/bs";
-import SidebarListShipper from "./SidebarList";
 import SidebarListShipper from "./SidebarList";
 
 const SidebarShipper = () => {
@@ -19,7 +15,6 @@ const SidebarShipper = () => {
 			<div className="p-4 sticky top-[0px]  backdrop-blur-sm z-10">
 				<div className="rounded-md bg-gray-current h-[60px] flex items-center px-5 ">
 					<div className="w-10 h-10 mr-2 border rounded-full">
-					<div className="w-10 h-10 mr-2 border rounded-full">
 						<Avatar>
 							<AvatarImage
 								src={
@@ -28,20 +23,16 @@ const SidebarShipper = () => {
 								}
 								alt="@avatar"
 								className="w-full h-full border border-gray-400 rounded-full"
-								className="w-full h-full border border-gray-400 rounded-full"
 							/>
 							<AvatarFallback>T</AvatarFallback>
 						</Avatar>
 					</div>
 					<div className="flex-1 text-sm font-semibold">
-					<div className="flex-1 text-sm font-semibold">
 						<p>{current?.fullName}</p>
-						
 					</div>
 				</div>
 			</div>
 			{/* list */}
-			<div className="w-full px-4">
 			<div className="w-full px-4">
 				{/* dashboard */}
 
