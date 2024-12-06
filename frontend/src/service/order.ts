@@ -75,6 +75,10 @@ export const selectShipper = async ({
 	return data;
 };
 
+export const updateIsShiper = (id: string) => {
+	return instance.post(`/order/shippingUnit/${id}`);
+};
+
 export const cancelOrder = async (
 	id: string,
 	note: string | null,

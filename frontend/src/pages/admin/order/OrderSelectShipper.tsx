@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { selectShipper } from "@/service/order";
+import { SearchShipperOrder } from "@/types/shipper.interface";
 import { useState } from "react";
 import { toast } from "sonner";
 interface Props {
@@ -11,9 +12,11 @@ interface Props {
 	dataOrderId: any;
 	// handleChangeAddress: (id: string) => void;
 	dataShipper: any;
-	pageIndex: number;
-	setPageIndex: (pageIndex: number) => void;
 	getOrderById: any;
+	searchObjecOrder: SearchShipperOrder;
+	setSearchObjectOrder: React.Dispatch<
+		React.SetStateAction<SearchShipperOrder>
+	>;
 }
 const OrderSelectShipper = ({
 	open,
@@ -23,8 +26,8 @@ const OrderSelectShipper = ({
 	// handleChangeAddress,
 	getOrderById,
 	dataShipper,
-	pageIndex,
-	setPageIndex,
+	searchObjecOrder,
+	setSearchObjectOrder,
 }: Props) => {
 	console.log(dataOrderId);
 
@@ -101,10 +104,13 @@ const OrderSelectShipper = ({
 					</div>
 					<div className="flex justify-center">
 						<Paginations
-							forcePage={pageIndex - 1}
+							forcePage={searchObjecOrder.pageIndex - 1}
 							pageCount={dataShipper?.totalPage}
 							handlePageClick={(event: any) => {
-								setPageIndex(event.selected + 1);
+								setSearchObjectOrder((prev) => ({
+									...prev,
+									pageIndex: event.selected + 1,
+								}));
 							}}
 						/>
 					</div>

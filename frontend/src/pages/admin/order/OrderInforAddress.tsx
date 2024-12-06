@@ -2,7 +2,7 @@ import { formatCurrency } from "@/common/func";
 import { TooltipComponent } from "@/components/common/TooltipComponent";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { confirmOrder } from "@/service/order";
+import { confirmOrder, updateIsShiper } from "@/service/order";
 import { pagingShipper } from "@/service/shipper";
 import { SearchShipperOrder } from "@/types/shipper.interface";
 import { formatInTimeZone } from "date-fns-tz";
@@ -13,7 +13,6 @@ import OrderCancelConfirm from "./OrderCancelConfirm";
 import OrderSelectShipper from "./OrderSelectShipper";
 
 const OrderInforAddress = ({ data, getOrderById }: any) => {
-	const [pageIndex, setPageIndex] = useState(1);
 	const handleChangeOrder = async (id: string) => {
 		try {
 			const data = await confirmOrder(id);
@@ -24,13 +23,15 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 			console.log(error);
 		}
 	};
-	const [searchObjecOrder] = useState<SearchShipperOrder>({
-		pageIndex: pageIndex,
-		pageSize: 5,
-		active: null,
-		keyword: "",
-		isBlock: null,
-	});
+	const [searchObjecOrder, setSearchObjectOrder] = useState<SearchShipperOrder>(
+		{
+			pageIndex: 1,
+			pageSize: 3,
+			active: null,
+			keyword: "",
+			isBlock: null,
+		},
+	);
 	const [dataShipper, setDataShipper] = useState({});
 	const [open, setOpen] = useState(false);
 	const [openCancel, setOpenCancel] = useState(false);
@@ -44,6 +45,15 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 			}
 		})();
 	}, [searchObjecOrder]);
+	const handleUpdateShipper = async (id: string) => {
+		try {
+			await updateIsShiper(id);
+			getOrderById();
+			toast.success("Chuyển thành công");
+		} catch (error) {
+			toast.error("Chuyển thất bại");
+		}
+	};
 	return (
 		<div className="col-span-1">
 			<div className="flex flex-col gap-5">
@@ -153,7 +163,11 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 					)}
 				>
 					<div className="flex items-center justify-between">
-						<h3 className="font-medium">Lựa chọn giao hàng</h3>
+						<h3 className="font-medium">
+							{data.is_shipper
+								? "Lựa chọn giao hàng"
+								: "Lựa chọn đơn vị vận chuyển"}
+						</h3>
 						{data?.status === 2 && data.shipper !== null && (
 							<TooltipComponent label="Đổi shipper">
 								<div onClick={() => setOpen(true)}>
@@ -165,14 +179,52 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 							</TooltipComponent>
 						)}
 					</div>
-					{data.status === 2 && data.shipper === null ? (
-						<Button
-							className="bg-[#369de7] hover:bg-[#5eb3f0]"
-							onClick={() => setOpen(true)}
-						>
-							Lựa chọn
-						</Button>
-					) : [2, 3, 4, 5].includes(data.status) && data.shipper !== null ? (
+					{data.status === 2 ? (
+						data.is_shipper === false ? (
+							<Button
+								className="bg-[#36e762] hover:bg-[#5ef083]"
+								onClick={() => handleUpdateShipper(data._id)}
+							>
+								Chuyển
+							</Button>
+						) : data.shipper === null ? (
+							<Button
+								className="bg-[#369de7] hover:bg-[#5eb3f0]"
+								onClick={() => setOpen(true)}
+							>
+								Lựa chọn
+							</Button>
+						) : (
+							<div className="flex flex-col gap-4">
+								<div className="flex items-center gap-5">
+									<img
+										src={data?.shipper?.avatar}
+										alt="Shipper Avatar"
+										className="w-20 h-20"
+									/>
+									<div className="flex flex-col gap-1">
+										<span className="text-sm">
+											Họ tên:{" "}
+											<span className="font-semibold">
+												{data?.shipper?.fullName}
+											</span>
+										</span>
+										<span className="text-sm">
+											Số điện thoại:{" "}
+											<span className="font-semibold">
+												{data?.shipper?.phone}
+											</span>
+										</span>
+										<span className="text-sm">
+											Địa chỉ: {data?.shipper?.city?.name} -{" "}
+											{data?.shipper?.district?.name} -{" "}
+											{data?.shipper?.commune?.name}
+										</span>
+									</div>
+								</div>
+							</div>
+						)
+					) : [3, 4, 5].includes(data.status) && data.shipper !== null ? (
 						<div className="flex flex-col gap-4">
 							<div className="flex items-center gap-5">
 								<img
@@ -226,11 +278,11 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 				<OrderSelectShipper
 					open={open}
 					closeOpen={() => setOpen(false)}
-					pageIndex={pageIndex}
-					setPageIndex={setPageIndex}
 					dataShipper={dataShipper}
 					dataOrderId={data}
 					getOrderById={getOrderById}
+					searchObjecOrder={searchObjecOrder}
+					setSearchObjectOrder={setSearchObjectOrder}
 				/>
 			)}
 			{!!openCancel && (
