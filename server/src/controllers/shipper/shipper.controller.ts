@@ -802,6 +802,7 @@ class ShipperController {
       const listOrder = await OrderModel.find({
         status: 2,
         is_shipper: true,
+        shipper: null,
       })
         .skip(skip)
         .limit(limit)
@@ -810,6 +811,7 @@ class ShipperController {
       const count = await OrderModel.countDocuments({
         status: 2,
         is_shipper: true,
+        shipper: null,
       });
 
       const data = formatDataPaging({
