@@ -31,7 +31,8 @@ const formSchema = z.object({
 		.string({
 			message: "Bạn phải nhập họ tên",
 		})
-		.min(0, {
+		.trim()
+		.min(1, {
 			message: "Bạn phải nhập họ tên",
 		}),
 	phone: z
@@ -140,7 +141,9 @@ const EditAddress = ({ open, handleClose, id }: IProps) => {
 	}, [id]);
 
 	const onSubmit = async (dataForm: any) => {
-		mutate(dataForm);
+		console.log("dataForm", dataForm);
+
+		// mutate(dataForm);
 	};
 
 	const handleOnChangeCity = async (value: ICity) => {

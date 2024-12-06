@@ -31,7 +31,8 @@ const formSchema = z.object({
 		.string({
 			message: "Bạn phải nhập họ tên",
 		})
-		.min(0, {
+		.trim()
+		.min(1, {
 			message: "Bạn phải nhập họ tên",
 		}),
 	phone: z
