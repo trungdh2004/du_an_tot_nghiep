@@ -456,6 +456,11 @@ class ShipperController {
           status: 3,
           $push: {
             statusList: 3,
+            informationOrder: {
+              name: "Đơn hàng đang vận chuyển",
+              date: Date.now(),
+              content: `Đơn hàng mã ${existingOrder.code} đang đã được vận chuyển`,
+            },
           },
           shippingDate: Date.now(),
         },
@@ -524,6 +529,11 @@ class ShipperController {
           status: 4,
           $push: {
             statusList: 4,
+            informationOrder: {
+              name: "Đơn hàng đã giao thành công",
+              date: Date.now(),
+              content: `Đơn hàng mã ${existingOrder.code} đã được giao thành công`,
+            },
           },
           shippedDate: Date.now(),
         },
@@ -786,7 +796,7 @@ class ShipperController {
   async getListOrderIsShipper(req: RequestShipper, res: Response) {
     try {
       const shipper = req.shipper;
-      const { pageSize = 1, pageIndex } = req.body;
+      const { pageSize, pageIndex } = req.body;
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
       const listOrder = await OrderModel.find({
@@ -795,7 +805,7 @@ class ShipperController {
       })
         .skip(skip)
         .limit(limit)
-        .select("-informationOrder")
+        .select("-informationOrder");
 
       const count = await OrderModel.countDocuments({
         status: 2,

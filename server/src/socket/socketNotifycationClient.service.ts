@@ -37,6 +37,9 @@ export const socketNotificationOrderClient = async (
     if (status === 6) {
       message = `Đơn hàng có mã :<strong>${code}</strong> đã bị hủy !!`;
     }
+    if (status === 7) {
+      message = `Đơn hàng có mã :<strong>${code}</strong> đã bị nhân viên từ chối giao hàng !!`;
+    }
 
     const newNotification = await NotificationModel.create({
       message: message,
