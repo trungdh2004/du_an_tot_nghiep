@@ -123,7 +123,7 @@ const StatisticsCard = () => {
 								Tổng doanh thu <FcMoneyTransfer />
 							</p>
 							<h3 className="mt-2 font-sans text-lg font-bold text-red-500">
-								{formatCurrency(data.totalMoney)}
+								{formatCurrency(data.totalOrderSuccess)}
 							</h3>
 						</div>
 					</div>

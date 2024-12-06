@@ -18,7 +18,13 @@ const Price = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 	const handleSearchPrice = (values: number[]) => {
 		setValues(values);
 	};
-
+	useEffect(() => {
+		return () => {
+      console.log("đẹp lắm em tới");
+      
+			setValues([0, 5000000]);
+		};
+	}, []);
 	useEffect(() => {
 		if (check) {
 			setCheck(false);

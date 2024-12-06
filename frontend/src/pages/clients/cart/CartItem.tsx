@@ -244,17 +244,12 @@ const CartItem = ({
 				</span>
 				<span
 					className={cn(
-						item?.totalQuantity > 0 &&
-							(item?.attribute?.discount || item?.is_simple)
+						item?.attribute?.discount || item?.is_simple
 							? "text-red-500"
 							: "text-gray-700",
 					)}
 				>
-					{formatCurrency(
-						item?.totalQuantity > 0
-							? item?.attribute?.discount || item?.discount || 0
-							: 0,
-					)}
+					{formatCurrency(item?.attribute?.discount || item?.discount || 0)}
 				</span>
 			</div>
 			<div className="hidden lg:flex w-[15.4265%] text-center items-center justify-center">
@@ -275,11 +270,9 @@ const CartItem = ({
 			<div className="hidden lg:block w-[10.43557%] text-center">
 				<span className="text-red-500">
 					{formatCurrency(
-						item?.totalQuantity > 0
-							? item?.is_simple
-								? item?.discount * Number(item?.quantity)
-								: item?.attribute?.discount * Number(item?.quantity) || 0
-							: 0,
+						item?.is_simple
+							? item?.discount * Number(item?.quantity) || 0
+							: item?.attribute?.discount * Number(item?.quantity) || 0,
 					)}
 				</span>
 			</div>

@@ -11,6 +11,13 @@ const sidebarShipper: any[] = [
 		isAdmin: false,
 		label: "Trang chủ",
 	},
+  {
+		path: "/shipper/for-shippers",
+		icon: HiOutlineInboxArrowDown,
+		isVisible: true,
+		isAdmin: false,
+		label: "Đơn hàng mới",
+	},
 	{
 		path: "/shipper/orderNew",
 		icon: HiOutlineInboxArrowDown,
@@ -18,6 +25,7 @@ const sidebarShipper: any[] = [
 		isAdmin: false,
 		label: "Đơn hàng",
 	},
+  
 	{
 		path: "/shipper/orderSuccess",
 		icon: FaTruckRampBox,

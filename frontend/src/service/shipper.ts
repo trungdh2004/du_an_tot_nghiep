@@ -45,3 +45,10 @@ export const pagingOrderShipperById = (
 		status,
 		pageSize,
 	});
+export const getListOrderIsShipper = ({ pageIndex = 0, pageSize = 10 }) =>
+	instance.post(`/shipper/getListOrderIsShipper`, {
+		pageIndex,
+		pageSize,
+	});
+export const confirmOrderShipper = (orderId: string) =>
+	instance.post(`/shipper/confirmOrderShipper/${orderId}`);
