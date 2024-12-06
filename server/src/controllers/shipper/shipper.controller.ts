@@ -783,6 +783,43 @@ class ShipperController {
       });
     }
   }
+  async getListOrderIsShipper(req: RequestShipper, res: Response) {
+    try {
+      const shipper = req.shipper;
+      const { pageSize = 1, pageIndex } = req.body;
+      let limit = pageSize || 10;
+      let skip = (pageIndex - 1) * limit || 0;
+      const listOrder = await OrderModel.find({
+        shipper: shipper?.id,
+        status: 2,
+        is_shipper: true,
+      })
+        .skip(skip)
+        .limit(limit)
+        .populate("orderItems");
+
+      const count = await OrderModel.countDocuments({
+        shipper: shipper?.id,
+        status: 2,
+        is_shipper: true,
+      });
+
+      const data = formatDataPaging({
+        pageIndex: pageSize,
+        limit,
+        count,
+        data: listOrder,
+      });
+
+      return res.status(STATUS.OK).json({
+        ...data,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
 }
 
 export default new ShipperController();
