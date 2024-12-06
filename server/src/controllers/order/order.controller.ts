@@ -2717,40 +2717,18 @@ class OrderController {
           message: "Không có đơn hàng nào",
         });
       }
-
-      if (existingOrder.status !== 1) {
-        return res.status(STATUS.BAD_REQUEST).json({
-          message: "Đơn hàng xảy ra lỗi",
-        });
-      }
-
-      const orderUpdate = await OrderModel.findByIdAndUpdate(
-        existingOrder._id,
-        {
-          is_shipper: true,
-          $push: {
-            informationOrder: {
-              name: "Sang bên vị vận chuyển",
-              date: Date.now(),
-              content:
-                "Đơn hàng đã đóng gói thành công và chuyển sang vận chuyển",
-            },
+      
+      await OrderModel.findByIdAndUpdate(existingOrder._id, {
+        is_shipper: true,
+        $push: {
+          informationOrder: {
+            name: "Sang bên vị vận chuyển",
+            date: Date.now(),
+            content:
+              "Đơn hàng đã đóng gói thành công và chuyển sang vận chuyển",
           },
-        }
-      );
-
-      if (!orderUpdate) {
-        return res.status(STATUS.BAD_REQUEST).json({
-          message: "Đồng ý đơn hàng lỗi vì có xung đột ",
-        });
-      }
-
-      socketNotificationOrderClient(
-        existingOrder?.code as string,
-        2,
-        `${existingOrder?.user}`,
-        existingOrder?._id as string
-      );
+        },
+      });
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập đơn hàng thành công",
