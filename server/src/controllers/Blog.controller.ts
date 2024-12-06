@@ -657,7 +657,7 @@ class BlogController {
           $lte: newDate,
         },
       })
-        .sort(querySort)
+        .sort({ published_at: -1 })
         .skip(skip)
         .limit(limit)
         .populate([
