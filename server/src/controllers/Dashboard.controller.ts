@@ -149,7 +149,7 @@ class DashboardController {
     try {
       const listOrder = await OrderModel.find({
         status: {
-          $in: [1, 2, 3, 4, 5, 6, 7],
+          $in: [1, 2, 3],
         },
       })
         .sort({
@@ -169,7 +169,7 @@ class DashboardController {
         {
           $match: {
             status: {
-              $in: [4, 5],
+              $in: [5],
             },
           },
         },

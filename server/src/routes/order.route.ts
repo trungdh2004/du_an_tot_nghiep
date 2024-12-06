@@ -52,6 +52,11 @@ routerOrder.post(
   orderController.confirmOrderAdmin
 );
 routerOrder.post(
+  "/shippingUnit/:id",
+  authentication,
+  orderController.shippingUnit
+);
+routerOrder.post(
   "/deliveredToShipper/:id",
   authentication,
   orderController.deliveredToShipper

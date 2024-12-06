@@ -632,6 +632,13 @@ class OrderController {
         orderItems: listIdOrderItem,
         status: 1,
         statusList: [0, 1],
+        informationOrder: [
+          {
+            name: "Đặt hàng thành công",
+            date: Date.now(),
+            content: "Đơn hàng đặt thành công",
+          },
+        ],
       });
 
       if (!newOrder) {
@@ -1604,6 +1611,13 @@ class OrderController {
         note,
         code,
         orderItems: listIdOrderItem,
+        informationOrder: [
+          {
+            name: "Đặt hàng thành công",
+            date: Date.now(),
+            content: "Đơn hàng đặt thành công",
+          },
+        ],
       });
 
       if (!newOrder) {
@@ -2547,8 +2561,6 @@ class OrderController {
         });
       }
 
-      console.log("existingOrder", existingOrder.status);
-
       const checkAttribute = existingOrder.orderItems.find((item) => {
         const orderItem = item as IOrderItem;
 
@@ -2600,7 +2612,6 @@ class OrderController {
       if (existingOrder.distance) {
         futureDateTimeOrder = handleFutureDateTimeOrder(existingOrder.distance);
       }
-      console.log("existingOrder", existingOrder.status);
       const orderUpdate = await OrderModel.findOneAndUpdate(
         {
           _id: existingOrder._id,
@@ -2610,6 +2621,11 @@ class OrderController {
           status: 2,
           $push: {
             statusList: 2,
+            informationOrder: {
+              name: "Xác nhận đơn hàng",
+              date: Date.now(),
+              content: "Đơn hàng đang được chuẩn bị",
+            },
           },
           confirmedDate: Date.now(),
           estimatedDeliveryDate: futureDateTimeOrder,
@@ -2655,6 +2671,79 @@ class OrderController {
           status: 2,
         });
       });
+
+      socketNotificationOrderClient(
+        existingOrder?.code as string,
+        2,
+        `${existingOrder?.user}`,
+        existingOrder?._id as string
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Cập nhập đơn hàng thành công",
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  // chuyể đơn vị vận chuyển
+  async shippingUnit(req: RequestModel, res: Response) {
+    try {
+      const { id } = req.params;
+      const user = req.user;
+
+      if (!id)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn đơn hàng",
+        });
+
+      const existingOrder = await OrderModel.findById(id).populate({
+        path: "orderItems",
+        populate: [
+          {
+            path: "attribute",
+          },
+          {
+            path: "product",
+          },
+        ],
+      });
+
+      if (!existingOrder) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có đơn hàng nào",
+        });
+      }
+
+      if (existingOrder.status !== 1) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đơn hàng xảy ra lỗi",
+        });
+      }
+
+      const orderUpdate = await OrderModel.findByIdAndUpdate(
+        existingOrder._id,
+        {
+          is_shipper: true,
+          $push: {
+            informationOrder: {
+              name: "Sang bên vị vận chuyển",
+              date: Date.now(),
+              content:
+                "Đơn hàng đã đóng gói thành công và chuyển sang vận chuyển",
+            },
+          },
+        }
+      );
+
+      if (!orderUpdate) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đồng ý đơn hàng lỗi vì có xung đột ",
+        });
+      }
 
       socketNotificationOrderClient(
         existingOrder?.code as string,
@@ -2723,6 +2812,13 @@ class OrderController {
         id,
         {
           shipper: existingShipper._id,
+          $push: {
+            informationOrder: {
+              name: "Đã chọn người vận chuyển",
+              date: Date.now(),
+              content: `Đơn hàng đã được giao cho shipper ${existingShipper.fullName}`,
+            },
+          },
         },
         { new: true }
       );
@@ -2894,6 +2990,11 @@ class OrderController {
           status: 5,
           $push: {
             statusList: 5,
+            informationOrder: {
+              name: "Giao hàng thành công",
+              date: Date.now(),
+              content: `Đơn hàng đã được nhận bởi ${existingOrder.address.username}`,
+            },
           },
           deliveredDate: Date.now(),
         },
@@ -2969,8 +3070,6 @@ class OrderController {
         });
       }
 
-      console.log("cancel", existingOrder.status);
-
       if (existingOrder.status !== 1 && cancelBy !== 3) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Đơn hàng không thể hủy",
@@ -2983,6 +3082,11 @@ class OrderController {
           status: 6,
           $push: {
             statusList: 6,
+            informationOrder: {
+              name: "Đơn hàng đã hủy",
+              date: Date.now(),
+              content: noteCancel,
+            },
           },
           noteCancel,
           cancelBy: cancelBy,
