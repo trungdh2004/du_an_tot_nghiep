@@ -795,7 +795,7 @@ class ShipperController {
       })
         .skip(skip)
         .limit(limit)
-        .populate("orderItems");
+        .select("-informationOrder")
 
       const count = await OrderModel.countDocuments({
         status: 2,
