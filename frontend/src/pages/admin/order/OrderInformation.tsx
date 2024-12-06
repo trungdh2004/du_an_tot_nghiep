@@ -1,16 +1,18 @@
 import { formatCurrency } from "@/common/func";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
+	Table,
+	TableBody,
+	TableCell,
+	TableFooter,
+	TableHead,
+	TableHeader,
+	TableRow,
 } from "@/components/ui/table";
 import OrderInforAddress from "./OrderInforAddress";
 
 const OrderInformation = ({ data, getOrderById }: any) => {
+	console.log(data.is_shipper);
+
 	const arrayTotal = data?.orderItems?.map((product: any) => {
 		return product.totalMoney;
 	});
