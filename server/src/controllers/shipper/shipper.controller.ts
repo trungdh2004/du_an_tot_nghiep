@@ -898,6 +898,55 @@ class ShipperController {
       });
     }
   }
+
+  async confirmOrderShipper(req: RequestShipper, res: Response) {
+    try {
+      const { id } = req.params;
+      const shipper = req.shipper;
+
+      if (!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Chưa nhập giá trị",
+        });
+      }
+
+      const existingOrder = await OrderModel.findById(id);
+
+      if (!existingOrder)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có đơn hàng",
+        });
+
+      if (existingOrder.shipper) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đơn hàng này đã có người khác giao",
+        });
+      }
+      const updateOrder = await OrderModel.findByIdAndUpdate(
+        id,
+        {
+          status: 2,
+          $push: {
+            informationOrder: {
+              name: "Từ chối giao hàng",
+              date: Date.now(),
+              content: `Nhân viên ${shipper?.fullName} đã nhận giao hàng`,
+            },
+          },
+          shipper: shipper?.id,
+        },
+        { new: true }
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Cập nhập đơn thành công",
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
 }
 
 export default new ShipperController();

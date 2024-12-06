@@ -21,5 +21,6 @@ routerShipper.get("/getDetailShipper/:id",authentication, shipperController.ship
 routerShipper.post("/getDetailShipperAdmin/:id",authentication, shipperController.pagingOrderShipperAdmin);
 routerShipper.post("/changeAccountShipper",authenticationShipper, shipperController.changeAccountShipper);
 routerShipper.post("/refuseOrderShipper/:id",authenticationShipper, shipperController.refuseOrderShipper);
+routerShipper.post("/confirmOrderShipper/:id",authenticationShipper, shipperController.confirmOrderShipper);
 
 export default routerShipper;
