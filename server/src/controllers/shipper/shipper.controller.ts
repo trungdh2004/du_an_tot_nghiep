@@ -790,7 +790,6 @@ class ShipperController {
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
       const listOrder = await OrderModel.find({
-        shipper: shipper?.id,
         status: 2,
         is_shipper: true,
       })
@@ -799,7 +798,6 @@ class ShipperController {
         .populate("orderItems");
 
       const count = await OrderModel.countDocuments({
-        shipper: shipper?.id,
         status: 2,
         is_shipper: true,
       });
@@ -813,6 +811,76 @@ class ShipperController {
 
       return res.status(STATUS.OK).json({
         ...data,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async refuseOrderShipper(req: RequestShipper, res: Response) {
+    try {
+      const { id } = req.params;
+      const shipper = req.shipper;
+
+      if (!shipper) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn không phải là shipper",
+        });
+      }
+
+      if (!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Chưa nhập giá trị",
+        });
+      }
+
+      const existingOrder = await OrderModel.findById(id).populate(
+        "orderItems"
+      );
+
+      if (!existingOrder)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có đơn hàng",
+        });
+
+      if (existingOrder.shipper.toString() !== shipper?.id.toString()) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đơn hàng này không phải của bạn",
+        });
+      }
+
+      if (existingOrder.status !== 2) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đơn hàng này không không thể hủy giao",
+        });
+      }
+      const updateOrder = await OrderModel.findByIdAndUpdate(
+        id,
+        {
+          status: 2,
+          $push: {
+            informationOrder: {
+              name: "Từ chối giao hàng",
+              date: Date.now(),
+              content: `Nhân viên ${shipper.fullName} đã từ chối giao hàng`,
+            },
+          },
+          shipper: null,
+        },
+        { new: true }
+      );
+
+      socketNotificationOrderClient(
+        updateOrder?.code as string,
+        7,
+        `${updateOrder?.user}`,
+        updateOrder?._id as string
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Cập nhập đơn thành công",
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
