@@ -122,9 +122,8 @@ export type ProductOrder = {
 };
 
 export interface DetailTime {
-	status: number; 
-	date: string; 
-	message: string; 
-	sub: string; 
-	informationStatus: string; 
+	_id: string;
+	content: string;
+	date: string;
+	name: string;
 }
