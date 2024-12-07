@@ -52,3 +52,5 @@ export const getListOrderIsShipper = ({ pageIndex = 0, pageSize = 10 }) =>
 	});
 export const confirmOrderShipper = (orderId: string) =>
 	instance.post(`/shipper/confirmOrderShipper/${orderId}`);
+export const refuseOrderShipper = (orderId: string) =>
+	instance.post(`/shipper/refuseOrderShipper/${orderId}`);

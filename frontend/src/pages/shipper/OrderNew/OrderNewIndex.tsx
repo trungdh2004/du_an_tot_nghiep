@@ -21,19 +21,19 @@ const OrderNewIndex = () => {
 		pageIndex: 1,
 		totalPage: 1,
 	});
+  const getOrderShipper = async () =>{
+    try {
+      const { data } = await pagingOrderShipper(1, status);
 
+      setResultOrder({
+        content: data.content,
+        pageIndex: data.pageIndex,
+        totalPage: data.totalPage,
+      });
+    } catch (error) {}
+  }
 	useEffect(() => {
-		(async () => {
-			try {
-				const { data } = await pagingOrderShipper(1, status);
-
-				setResultOrder({
-					content: data.content,
-					pageIndex: data.pageIndex,
-					totalPage: data.totalPage,
-				});
-			} catch (error) {}
-		})();
+		getOrderShipper();
 	}, [status]);
 
 	const handleNextPage = async () => {
@@ -139,7 +139,7 @@ const OrderNewIndex = () => {
 			>
 				<div className="grid w-full grid-cols-1 gap-4 px-2 md:grid-cols-2 md:px-4">
 					{resultOrder?.content?.map((order: any) => (
-						<OrderItem key={order._id} order={order} />
+						<OrderItem key={order._id} order={order} onHandleSuccess={getOrderShipper}/>
 					))}
 
 					{resultOrder?.content?.length === 0 && (

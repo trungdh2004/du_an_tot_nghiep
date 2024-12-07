@@ -33,7 +33,7 @@ const ForShippersPage = () => {
 			</h2>
 			<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 				{resultOrder?.content.map((order:any,index:number) => (
-					<OrderCard key={order.id} index={index} {...order} />
+					<OrderCard key={order.id} index={index} {...order} onConfirm={()=>handleGetListOrderIsShipper(1,12)}/>
 				))}
 			</div>
 		</div>

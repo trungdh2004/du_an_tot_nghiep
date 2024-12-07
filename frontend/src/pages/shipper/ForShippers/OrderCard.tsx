@@ -24,6 +24,7 @@ interface OrderCardProps {
 	amountToPay: number;
 	shippingCost: number;
 	distance: number;
+  onConfirm:()=>void;
 }
 
 export function OrderCard({
@@ -35,11 +36,13 @@ export function OrderCard({
 	amountToPay,
 	shippingCost,
 	distance,
+  onConfirm,
 }: OrderCardProps) {
 	const { hours, minutes } = estimateTime(distance);
   const handleConfirmOrderShipper = async ()=>{
     try {
       const {data} = await confirmOrderShipper(_id);
+      onConfirm();
       toast.success(data?.message);
     } catch (error) {
       if (error instanceof AxiosError) {

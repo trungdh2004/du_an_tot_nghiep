@@ -1,3 +1,4 @@
+import { BsClipboard2Pulse } from "react-icons/bs";
 import { FaArrowLeftLong, FaTruckRampBox } from "react-icons/fa6";
 import { FiHome } from "react-icons/fi";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
@@ -13,7 +14,7 @@ const sidebarShipper: any[] = [
 	},
   {
 		path: "/shipper/for-shippers",
-		icon: HiOutlineInboxArrowDown,
+		icon: BsClipboard2Pulse ,
 		isVisible: true,
 		isAdmin: false,
 		label: "Đơn hàng mới",
