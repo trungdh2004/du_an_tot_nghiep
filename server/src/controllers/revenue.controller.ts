@@ -101,7 +101,7 @@ class RevenueController {
     try {
       const listOrder = await OrderModel.find({
         status: {
-          $in: [4, 5, 6],
+          $in: [ 5, 6],
         },
       }).select({
         totalMoney: 1,
@@ -187,7 +187,7 @@ class RevenueController {
       const listOrder = await OrderModel.find<IOrderArrayMonth>({
         ...queryOrder,
         status: {
-          $in: [4, 5, 6],
+          $in: [5, 6],
         },
       }).select({
         totalMoney: 1,

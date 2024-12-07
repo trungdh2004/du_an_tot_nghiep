@@ -166,7 +166,7 @@ const OrderInforAddress = ({ data, getOrderById }: any) => {
 						<h3 className="font-medium">
 							{data.is_shipper
 								? "Lựa chọn giao hàng"
-								: "Lựa chọn đơn vị vận chuyển"}
+								: "Chuyển đến đơn vị vận chuyển"}
 						</h3>
 						{data?.status === 2 && data.shipper !== null && (
 							<TooltipComponent label="Đổi shipper">

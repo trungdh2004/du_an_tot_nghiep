@@ -1,4 +1,4 @@
-import { formatQuantity } from "@/common/localFunction";
+import { formatQuantity, optimizeCloudinaryUrl } from "@/common/localFunction";
 import { cn } from "@/lib/utils";
 import { fetchOrderDetail, receivedClientOrder } from "@/service/order";
 import { IListStatusOrderDate, IOrderItemDetail } from "@/types/order";
@@ -298,9 +298,9 @@ const PurchaseOrder = () => {
 												key={itemOrder._id}
 												className="flex justify-between w-full gap-3 px-5 py-4 border-b border-gray-300 border-dotted md:gap-5 "
 											>
-												<div className="size-[80px] md:size-[100px] bg-gray-100 ">
+												<div className="size-[80px] md:size-[100px] ">
 													<img
-														src={itemOrder?.product.thumbnail}
+														src={optimizeCloudinaryUrl(itemOrder?.product.thumbnail, 100,100)}
 														className="w-full h-full"
 														alt=""
 													/>
@@ -325,7 +325,7 @@ const PurchaseOrder = () => {
 														</div>
 													</div>
 													<div className="lg:w-[200px] text-red-500 text-sm md:text-base flex items-end md:items-center font-medium ">
-														{/* <span className="pr-3 text-gray-500 line-through">{formatQuantity(itemOrder?.product.price, "₫")}</span> */}
+														<span className="pr-3 text-gray-500 line-through">{formatQuantity(itemOrder?.product.price, "₫")}</span>
 														<span className="">
 															{formatQuantity(itemOrder?.price, "₫")}
 														</span>

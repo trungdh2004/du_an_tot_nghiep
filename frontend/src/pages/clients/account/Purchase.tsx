@@ -1,4 +1,4 @@
-import { formatQuantity } from "@/common/localFunction";
+import { formatQuantity, optimizeCloudinaryUrl } from "@/common/localFunction";
 import Paginations from "@/components/common/Pagination";
 import { cn } from "@/lib/utils";
 import { fetchOrder, receivedClientOrder } from "@/service/order";
@@ -229,9 +229,9 @@ const OrderManagements = () => {
 																				key={itemOrder._id}
 																				className="flex justify-between w-full gap-3 py-3 border-b border-gray-300 md:gap-5 "
 																			>
-																				<div className="size-[80px] md:size-[100px] bg-gray-100 border ">
+																				<div className="size-[80px] md:size-[100px] ">
 																					<img
-																						src={itemOrder?.product.thumbnail}
+																						src={optimizeCloudinaryUrl(itemOrder?.product.thumbnail,100,100)}
 																						className="w-full h-full"
 																						alt=""
 																					/>

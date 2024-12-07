@@ -68,6 +68,8 @@ const CartPage = () => {
 		totalQuantity: 0,
 		totalAmount: 0,
 	});
+  console.log(">>>>>Carts",carts);
+  
 	const [discountCode, setDiscountCode] = useState<{
 		applyCode: string;
 		currentVoucherCode: UseVouchersType | null;

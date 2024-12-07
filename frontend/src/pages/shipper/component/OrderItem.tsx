@@ -1,16 +1,17 @@
 import { formatCurrency } from "@/common/func";
-import { updateStatusShippingOrder } from "@/service/shipper";
+import { refuseOrderShipper, updateStatusShippingOrder } from "@/service/shipper";
 import { IOrderShipper } from "@/types/shipper.interface";
 import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { format } from "date-fns";
 import { toast } from "sonner";
-
 interface IProps {
 	order: any;
 	isSuccess?: boolean;
+  onHandleSuccess?: () => void;
 }
 
-const OrderItem = ({ order, isSuccess = false }: IProps) => {
+const OrderItem = ({ order, isSuccess = false,onHandleSuccess }: IProps) => {
 	const { mutate } = useMutation({
 		mutationKey: ["mutation"],
 		mutationFn: (id: string): Promise<IOrderShipper> =>
@@ -25,7 +26,17 @@ const OrderItem = ({ order, isSuccess = false }: IProps) => {
 			toast.error(error);
 		},
 	});
-
+  const handleRefuseOrderShipper = async (orderId:string) =>{
+    try {
+      const {data} = await refuseOrderShipper(orderId);
+      onHandleSuccess?.();
+      toast.success(data?.message);
+    } catch (error) {
+      if(error instanceof AxiosError) {
+        toast.error(error?.request?.data?.message);
+      }
+    }
+  }
 	return (
 		<div className="w-full px-2 py-2 bg-white border border-dashed rounded-md box-shadow md:px-4">
 			<div className="">
@@ -69,7 +80,15 @@ const OrderItem = ({ order, isSuccess = false }: IProps) => {
 
 				<div className="flex items-center justify-between w-full mt-1 border-t">
 					{!isSuccess ? (
-						<div>
+						<div className="space-x-2 space-y-2">
+              <button
+									className="px-4 py-[2px] mt-1 border border-red-500 text-red-500 rounded-full text-sm font-semibold hover:bg-red-500 hover:text-white leading-5"
+									onClick={() => {
+										handleRefuseOrderShipper(order._id as string);
+									}}
+								>
+									Huỷ giao hàng
+								</button>
 							{order?.status === 2 ? (
 								<button
 									className="px-4 py-[2px] mt-1 border border-blue-500 text-blue-500 rounded-full text-sm font-semibold hover:bg-blue-500 hover:text-white leading-5"
