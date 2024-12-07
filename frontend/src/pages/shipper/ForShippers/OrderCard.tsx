@@ -17,7 +17,6 @@ import { toast } from "sonner";
 
 interface OrderCardProps {
   _id:string;
-	index: string;
 	code: string;
 	address: any;
 	orderItems: string[];
@@ -29,7 +28,6 @@ interface OrderCardProps {
 
 export function OrderCard({
   _id,
-	index,
 	code,
 	address,
 	orderItems,
@@ -54,7 +52,7 @@ export function OrderCard({
 		<Card className="w-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-105">
 			<div className="p-4 bg-gradient-to-r from-giuspo-600 to-giuspo-400">
 				<div className="flex items-center justify-between">
-					<h3 className="text-lg font-bold text-black">Đơn hàng #{index}</h3>
+					<h3 className="text-lg font-bold text-black">Đơn hàng #{code}</h3>
 					<Badge variant="secondary" className="bg-white text-giuspo-600">
 						Khoảng cách {convertToKm(distance)} km
 					</Badge>
