@@ -39,7 +39,7 @@ const OrderById = () => {
 		<div className="grid grid-cols-1 gap-4">
 			<OrderTracking data={dataTrackings} />
 			<OrderInformation data={data} getOrderById={handleGetOrderById} />
-			<OrderDetailTime data={dataTrackings} />
+			<OrderDetailTime data={data} />
 		</div>
 	);
 };
