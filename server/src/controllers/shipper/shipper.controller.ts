@@ -10,6 +10,8 @@ import UserModel from "../../models/User.Schema";
 import { socketNotificationOrderClient } from "../../socket/socketNotifycationClient.service";
 import STATUS from "../../utils/status";
 import { IOrderItem } from "./../../interface/order";
+import { socketNotificationAdmin } from "../../socket/socketNotifycationServer.service";
+import { TYPE_NOTIFICATION_ADMIN } from "../../config/typeNotification";
 
 class ShipperController {
   async registerShipper(req: RequestModel, res: Response) {
@@ -884,11 +886,10 @@ class ShipperController {
         { new: true }
       );
 
-      socketNotificationOrderClient(
-        updateOrder?.code as string,
-        7,
-        `${updateOrder?.user}`,
-        updateOrder?._id as string
+      socketNotificationAdmin(
+        `<p>Đơn hàng: <span style="color:blue;font-weight:500;">${existingOrder.code}</span> đã bị từ chối giao bởi ${shipper.fullName}</p>`,
+        TYPE_NOTIFICATION_ADMIN.ORDER,
+        existingOrder._id
       );
 
       return res.status(STATUS.OK).json({
@@ -905,6 +906,12 @@ class ShipperController {
     try {
       const { id } = req.params;
       const shipper = req.shipper;
+
+      if (!shipper) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn không phải là shipper",
+        });
+      }
 
       if (!id) {
         return res.status(STATUS.BAD_REQUEST).json({
@@ -927,10 +934,9 @@ class ShipperController {
       const updateOrder = await OrderModel.findByIdAndUpdate(
         id,
         {
-          status: 2,
           $push: {
             informationOrder: {
-              name: "Từ chối giao hàng",
+              name: "Nhận giao hàng",
               date: Date.now(),
               content: `Nhân viên ${shipper?.fullName} đã nhận giao hàng`,
             },
@@ -938,6 +944,12 @@ class ShipperController {
           shipper: shipper?.id,
         },
         { new: true }
+      );
+
+      socketNotificationAdmin(
+        `<p>Đơn hàng: <span style="color:blue;font-weight:500;">${existingOrder.code}</span> đã nhận giao bởi ${shipper.fullName}</p>`,
+        TYPE_NOTIFICATION_ADMIN.ORDER,
+        existingOrder._id
       );
 
       return res.status(STATUS.OK).json({

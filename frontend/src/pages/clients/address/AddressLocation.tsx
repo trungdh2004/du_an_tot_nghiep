@@ -6,7 +6,9 @@ import {
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { callCity } from "@/service/address";
 import { PopoverClose } from "@radix-ui/react-popover";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -42,7 +44,6 @@ interface IProps {
 const AddressLocation = ({
 	field,
 	districts,
-	citys,
 	commune,
 	classContent,
 	iCity,
@@ -52,6 +53,14 @@ const AddressLocation = ({
 	handleOnChangeDistrict,
 	handleOnChangeCommune,
 }: IProps) => {
+	const { data: citys = [] } = useQuery<ICity[]>({
+		queryKey: ["city"],
+		queryFn: async () => {
+			const { data } = await callCity();
+			return data;
+		},
+		staleTime: Infinity,
+	});
 	const [initValue, setInitValue] = useState("idDistrict");
 
 	useEffect(() => {
