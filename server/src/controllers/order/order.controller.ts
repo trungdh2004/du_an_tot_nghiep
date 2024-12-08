@@ -2268,6 +2268,7 @@ class OrderController {
         method,
         is_shipper,
         paymentStatus,
+        keyword
       } = req.body;
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
@@ -2276,6 +2277,14 @@ class OrderController {
       let queryMethod = {};
       let queryPaymentStatus = {};
       let shipperQuery = {};
+      let queryKeyword = keyword
+        ? {
+            name: {
+              $regex: keyword,
+              $options: "i",
+            },
+          }
+        : {};
 
       if (startDate || endDate) {
         let dateStartString = null;
@@ -2340,27 +2349,27 @@ class OrderController {
         }
       }
 
-      if (method) {
-        switch (method) {
-          case 1:
-            queryMethod = {
-              paymentMethod: 1,
-            };
-            break;
-          case 2:
-            queryMethod = {
-              paymentMethod: 2,
-            };
-            break;
-          case 3:
-            queryMethod = {
-              paymentMethod: 3,
-            };
-            break;
-          default:
-            queryMethod = {};
+        if (method) {
+          switch (method) {
+            case 1:
+              queryMethod = {
+                paymentMethod: 1,
+              };
+              break;
+            case 2:
+              queryMethod = {
+                paymentMethod: 2,
+              };
+              break;
+            case 3:
+              queryMethod = {
+                paymentMethod: 3,
+              };
+              break;
+            default:
+              queryMethod = {};
+          }
         }
-      }
 
       if (paymentStatus) {
         queryPaymentStatus = {
@@ -2717,7 +2726,7 @@ class OrderController {
           message: "Không có đơn hàng nào",
         });
       }
-      
+
       await OrderModel.findByIdAndUpdate(existingOrder._id, {
         is_shipper: true,
         $push: {

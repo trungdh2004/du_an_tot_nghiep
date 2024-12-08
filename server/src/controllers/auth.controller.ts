@@ -192,10 +192,15 @@ class AuthController {
 
       const existingEmail = await UserModel.findOne<IUser>({
         email,
-        uid,
       });
 
       if (existingEmail) {
+        if (existingEmail.uid !== uid) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Email này đã có tài khoản",
+          });
+        }
+
         const accessToken = await this.generateAccessToken({
           id: existingEmail._id,
           email: existingEmail.email,
