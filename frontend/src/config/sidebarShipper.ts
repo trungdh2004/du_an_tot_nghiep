@@ -24,7 +24,7 @@ const sidebarShipper: any[] = [
 		icon: HiOutlineInboxArrowDown,
 		isVisible: true,
 		isAdmin: false,
-		label: "Đơn hàng",
+		label: "Đơn hàng cần giao",
 	},
   
 	{

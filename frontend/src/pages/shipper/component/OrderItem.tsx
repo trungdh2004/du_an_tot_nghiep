@@ -33,7 +33,7 @@ const OrderItem = ({ order, isSuccess = false,onHandleSuccess }: IProps) => {
       toast.success(data?.message);
     } catch (error) {
       if(error instanceof AxiosError) {
-        toast.error(error?.request?.data?.message);
+        toast.error(error?.response?.data?.message);
       }
     }
   }
@@ -81,14 +81,16 @@ const OrderItem = ({ order, isSuccess = false,onHandleSuccess }: IProps) => {
 				<div className="flex items-center justify-between w-full mt-1 border-t">
 					{!isSuccess ? (
 						<div className="space-x-2 space-y-2">
-              <button
+             {order?.status === 2 && (
+								<button
 									className="px-4 py-[2px] mt-1 border border-red-500 text-red-500 rounded-full text-sm font-semibold hover:bg-red-500 hover:text-white leading-5"
 									onClick={() => {
 										handleRefuseOrderShipper(order._id as string);
 									}}
 								>
-									Huỷ giao hàng
+									Từ chối giao hàng
 								</button>
+							)}
 							{order?.status === 2 ? (
 								<button
 									className="px-4 py-[2px] mt-1 border border-blue-500 text-blue-500 rounded-full text-sm font-semibold hover:bg-blue-500 hover:text-white leading-5"
