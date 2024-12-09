@@ -59,12 +59,12 @@ const sidebarConfig: any[] = [
 				isVisible: true,
 				label: "Khách hàng",
 			},
-			{
-				path: "/staff",
-				icon: LiaUserAstronautSolid,
-				isVisible: true,
-				label: "Nhân viên",
-			},
+			// {
+			// 	path: "/staff",
+			// 	icon: LiaUserAstronautSolid,
+			// 	isVisible: true,
+			// 	label: "Nhân viên",
+			// },
 		],
 	},
 	{
