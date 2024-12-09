@@ -65,7 +65,7 @@ const AddressLocation = ({
 
 	useEffect(() => {
 		handleOnChangeCity(citys[0]);
-	}, []);
+	}, [citys]);
 
 	return (
 		<Popover>
