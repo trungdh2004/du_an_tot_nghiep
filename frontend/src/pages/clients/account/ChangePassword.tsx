@@ -17,7 +17,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { toast } from "sonner";
-import { z } from "zod";
+import { boolean, z } from "zod";
+import { useAuth } from "@/hooks/auth";
 const formSchema = z.object({
 	passwordOld: z
 		.string({ required_error: "Bạn phải nhập mật khẩu cũ" })
@@ -41,7 +42,9 @@ const ChangePassword = () => {
 	const [isPasswordOld, setIsPasswordOld] = useState(false);
 	const [isPasswordNew, setIsPasswordNew] = useState(false);
 	const [isConfirmPassword, setIsConfirmPassword] = useState(false);
-
+	const [checkUid, setCheckUid] = useState(false);
+	const { authUser } = useAuth();
+	console.log("authUser", authUser?.uid);
 	const onSubmit = async (data: IPassword) => {
 		try {
 			await changePassword(data);
@@ -83,6 +86,7 @@ const ChangePassword = () => {
 															{...field}
 															type={isPasswordOld ? "text" : "password"}
 															className=""
+															disabled={!!authUser?.uid}
 														/>
 													</FormControl>
 													{isPasswordOld ? (
@@ -119,6 +123,7 @@ const ChangePassword = () => {
 															{...field}
 															type={isPasswordNew ? "text" : "password"}
 															className=""
+															disabled={!!authUser?.uid}
 														/>
 													</FormControl>
 													{isPasswordNew ? (
@@ -155,6 +160,7 @@ const ChangePassword = () => {
 															{...field}
 															type={isConfirmPassword ? "text" : "password"}
 															className=""
+															disabled={!!authUser?.uid}
 														/>
 													</FormControl>
 													{isConfirmPassword ? (

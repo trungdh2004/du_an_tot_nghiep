@@ -3,10 +3,10 @@ import Paginations from "@/components/common/Pagination";
 import { TooltipComponent } from "@/components/common/TooltipComponent";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -107,7 +107,7 @@ const BlogList = () => {
 	const [openDeleteBlog, setOpenDeleteBlog] = useState<string | boolean>(false);
 	const handleDeleteBlog = async (req: string | boolean) => {
 		try {
-			 await deleteBlogBYId(req);
+			await deleteBlogBYId(req);
 			handleBlog();
 			setOpenDeleteBlog(false);
 			toast.success("Xóa bài viết thành công");
@@ -310,7 +310,7 @@ const BlogList = () => {
 					</div>
 				)}
 			</div>
-			{blogs.length > 0 && (
+			{response.pageCount > 1 && (
 				<div className="flex justify-center mt-5">
 					<Paginations
 						forcePage={searchObject.pageIndex - 1}
