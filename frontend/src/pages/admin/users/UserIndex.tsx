@@ -164,39 +164,39 @@ const UserIndex = () => {
 	};
 
 	const columns: ColumnDef<IData>[] = [
-		{
-			id: "select",
-			accessorKey: "select",
-			header: ({ table }) => (
-				<Checkbox
-					checked={
-						table.getIsAllPageRowsSelected() ||
-						(table.getIsSomePageRowsSelected() && "indeterminate")
-					}
-					onCheckedChange={(value) => {
-						table.toggleAllPageRowsSelected(!!value);
-						if (value) setListRowSelected(data);
-						if (!value) setListRowSelected([]);
-					}}
-					aria-label="Select all"
-				/>
-			),
-			cell: ({ row }) => (
-				<Checkbox
-					checked={row.getIsSelected()}
-					onCheckedChange={(value) => {
-						row.toggleSelected(!!value);
-						if (value) setListRowSelected((prev) => [...prev, row.original]);
-						if (!value)
-							setListRowSelected((prev) => {
-								return prev.filter((item) => item._id !== row.original._id);
-							});
-					}}
-					aria-label="Select row"
-				/>
-			),
-			size: 100,
-		},
+		// {
+		// 	id: "select",
+		// 	accessorKey: "select",
+		// 	header: ({ table }) => (
+		// 		<Checkbox
+		// 			checked={
+		// 				table.getIsAllPageRowsSelected() ||
+		// 				(table.getIsSomePageRowsSelected() && "indeterminate")
+		// 			}
+		// 			onCheckedChange={(value) => {
+		// 				table.toggleAllPageRowsSelected(!!value);
+		// 				if (value) setListRowSelected(data);
+		// 				if (!value) setListRowSelected([]);
+		// 			}}
+		// 			aria-label="Select all"
+		// 		/>
+		// 	),
+		// 	cell: ({ row }) => (
+		// 		<Checkbox
+		// 			checked={row.getIsSelected()}
+		// 			onCheckedChange={(value) => {
+		// 				row.toggleSelected(!!value);
+		// 				if (value) setListRowSelected((prev) => [...prev, row.original]);
+		// 				if (!value)
+		// 					setListRowSelected((prev) => {
+		// 						return prev.filter((item) => item._id !== row.original._id);
+		// 					});
+		// 			}}
+		// 			aria-label="Select row"
+		// 		/>
+		// 	),
+		// 	size: 100,
+		// },
 		{
 			id: "full_name",
 			accessorKey: "full_name",
@@ -310,7 +310,7 @@ const UserIndex = () => {
 									</Button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent align="end">
-									<DropdownMenuItem
+									{/* <DropdownMenuItem
 										onClick={() => {
 											setopenIdUpdated(row?.original?._id);
 											setisStaff(row?.original?.is_staff);
@@ -318,7 +318,7 @@ const UserIndex = () => {
 										className="cursor-pointer"
 									>
 										Phân quyền
-									</DropdownMenuItem>
+									</DropdownMenuItem> */}
 									{row?.original?.blocked_at ? (
 										<DropdownMenuItem
 											className="text-green-400 cursor-pointer"

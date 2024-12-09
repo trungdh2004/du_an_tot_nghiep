@@ -41,14 +41,14 @@ const Vorcher = ({
 			} else {
 				alert("Mã voucher không đúng hoặc đã hết hạn sử dụng!");
 			}
-		} catch (error) {
+		} catch (error: any) {
 			setVoucher(null);
 			setShow(true);
 			setOrderCheckout((prev: any) => {
 				return { ...prev, voucher: null };
 			});
 			setMoneyVoucher(null);
-			toast.error("Không có voucher nào ");
+			toast.error(error?.response?.data?.message);
 		}
 	};
 
