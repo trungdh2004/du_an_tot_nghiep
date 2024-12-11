@@ -54,6 +54,8 @@ const VoucherIndex = () => {
 		<div>
 			<div className="padding">
 				<div className="py-10">
+					<h4 className="text-xl mb-4 font-semibold">Danh sách voucher</h4>
+
 					{vouchers.length > 0 ? (
 						<div className=" grid md:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-2  ">
 							{vouchers?.map((voucher) => (
@@ -69,7 +71,7 @@ const VoucherIndex = () => {
 						</div>
 					)}
 					<div className="flex justify-center pt-8">
-						{vouchers.length > 0 && (
+						{response.pageCount > 1 && (
 							<Paginations
 								forcePage={searchObject.pageIndex - 1}
 								pageCount={response.pageCount}
