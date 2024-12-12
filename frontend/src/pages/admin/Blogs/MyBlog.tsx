@@ -3,10 +3,10 @@ import Paginations from "@/components/common/Pagination";
 import { TooltipComponent } from "@/components/common/TooltipComponent";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -279,13 +279,15 @@ const MyBlogs = () => {
 					</div>
 				)}
 			</div>
-			<div className="flex justify-center mt-5">
-				<Paginations
-					forcePage={searchObject.pageIndex - 1}
-					pageCount={response.pageCount}
-					handlePageClick={handleChangePag}
-				/>
-			</div>
+			{response.pageCount > 1 && (
+				<div className="flex justify-center mt-5">
+					<Paginations
+						forcePage={searchObject.pageIndex - 1}
+						pageCount={response.pageCount}
+						handlePageClick={handleChangePag}
+					/>
+				</div>
+			)}
 		</>
 	);
 };
