@@ -466,6 +466,47 @@ class OrderController {
           message: "Đã có sản phẩm bị xóa mời bạn trờ về",
         });
       }
+
+      const checkProduct = listCartItem.find(
+        (item) => item?.product?.is_deleted
+      );
+
+      if (checkProduct) {
+        const stringName = truncateSentence(checkProduct.product.name, 30);
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: `Sản phẩm '${stringName}' đã bị xóa`,
+        });
+      }
+      const checkAttribute = listCartItem.find(
+        (item) => !item.attribute && !item?.product?.is_simple
+      );
+
+      if (checkAttribute) {
+        const stringName = truncateSentence(checkAttribute.product.name, 30);
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: `Sản phẩm '${stringName}' đã xóa loại sản phẩm bạn chọn`,
+        });
+      }
+
+      const checkQuantity = listCartItem.find((item) => {
+        const quantity = item.quantity;
+        const quantityAttribute = item?.product?.is_simple
+          ? item.product.quantity
+          : item.attribute.quantity;
+
+        if (quantity > quantityAttribute) {
+          return true;
+        }
+        return false;
+      });
+
+      if (checkQuantity) {
+        const stringName = truncateSentence(checkQuantity.product.name, 30);
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: `Sản phẩm '${stringName}' đã vượt quá số lượng`,
+        });
+      }
+
       const listDateNew = listCartItem.map((item) => {
         const variant = item?.product?.is_simple
           ? "Sản phẩm đơn giản"
@@ -1474,6 +1515,52 @@ class OrderController {
         });
       }
 
+      if (listId.length !== listCartItem.length) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đã có sản phẩm bị xóa mời bạn trờ về",
+        });
+      }
+
+      const checkProduct = listCartItem.find(
+        (item) => item?.product?.is_deleted
+      );
+
+      if (checkProduct) {
+        const stringName = truncateSentence(checkProduct.product.name, 30);
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: `Sản phẩm '${stringName}' đã bị xóa`,
+        });
+      }
+      const checkAttribute = listCartItem.find(
+        (item) => !item.attribute && !item?.product?.is_simple
+      );
+
+      if (checkAttribute) {
+        const stringName = truncateSentence(checkAttribute.product.name, 30);
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: `Sản phẩm '${stringName}' đã xóa loại sản phẩm bạn chọn`,
+        });
+      }
+
+      const checkQuantity = listCartItem.find((item) => {
+        const quantity = item.quantity;
+        const quantityAttribute = item?.product?.is_simple
+          ? item.product.quantity
+          : item.attribute.quantity;
+
+        if (quantity > quantityAttribute) {
+          return true;
+        }
+        return false;
+      });
+
+      if (checkQuantity) {
+        const stringName = truncateSentence(checkQuantity.product.name, 30);
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: `Sản phẩm '${stringName}' đã vượt quá số lượng`,
+        });
+      }
+
       const listProduct = listCartItem.map((item) => {
         const productId = item.product._id;
         let totalMoney = 0;
@@ -2268,7 +2355,7 @@ class OrderController {
         method,
         is_shipper,
         paymentStatus,
-        keyword
+        keyword,
       } = req.body;
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
@@ -2349,27 +2436,27 @@ class OrderController {
         }
       }
 
-        if (method) {
-          switch (method) {
-            case 1:
-              queryMethod = {
-                paymentMethod: 1,
-              };
-              break;
-            case 2:
-              queryMethod = {
-                paymentMethod: 2,
-              };
-              break;
-            case 3:
-              queryMethod = {
-                paymentMethod: 3,
-              };
-              break;
-            default:
-              queryMethod = {};
-          }
+      if (method) {
+        switch (method) {
+          case 1:
+            queryMethod = {
+              paymentMethod: 1,
+            };
+            break;
+          case 2:
+            queryMethod = {
+              paymentMethod: 2,
+            };
+            break;
+          case 3:
+            queryMethod = {
+              paymentMethod: 3,
+            };
+            break;
+          default:
+            queryMethod = {};
         }
+      }
 
       if (paymentStatus) {
         queryPaymentStatus = {

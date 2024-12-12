@@ -113,7 +113,7 @@ const WrapperSearch = () => {
 						onClick={() => handleClickActive(t.topic)}
 						key={t.topic}
 						className={cn(
-							"pb-1 font-semibold",
+							"pb-1 font-semibold cursor-pointer",
 							topic === t.topic
 								? "text-orange-500 border-b-2 border-orange-500"
 								: "text-gray-500",
