@@ -119,13 +119,12 @@ const OrderPage = () => {
 				return data;
 			}
 		} catch (error: any) {
-			console.error("Error creating order:", error?.message);
-			toast.error("Đã xảy ra lỗi trong quá trình đặt hàng");
+			toast.error(error?.response?.data?.message);
 		} finally {
 			setSpin(false);
 		}
 	};
-	useEffect(() => {
+  useEffect(() => {
 		if (order?.data?.length === 0) {
 			toast.error("Vui lòng mua thêm hàng");
 			const timeout = setTimeout(() => {
