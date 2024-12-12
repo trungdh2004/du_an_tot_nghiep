@@ -125,8 +125,10 @@ const OrderPage = () => {
 			setSpin(false);
 		}
 	};
-	useEffect(() => {
-		if (order?.data?.length === 0) {
+  useEffect(() => {
+    console.log(order?.data);
+    
+		if (order?.data?.length === 0 || order?.data === undefined) {
 			toast.error("Vui lòng mua thêm hàng");
 			const timeout = setTimeout(() => {
 				navigate("/");
