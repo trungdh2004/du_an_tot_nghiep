@@ -21,7 +21,9 @@ const ShopProduct = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [searchParamsObject, setSearchParamsObject] =
 		useState<SearchObjectTypeProduct>(() => {
-			const paramsObject: any = Object.fromEntries(searchParams.entries());
+      const paramsObject: any = Object.fromEntries(searchParams.entries());
+      console.log(paramsObject);
+      
 			const colorCheck =
 				paramsObject?.color
 					?.split(",")
@@ -41,8 +43,8 @@ const ShopProduct = () => {
 				sort: 1,
 				fieldSort: "",
 				category: paramsObject?.category,
-				min: parseInt(paramsObject?.min) | 0,
-				max: parseInt(paramsObject?.max) | 5000000,
+				min: parseInt(paramsObject?.min) ?? 0,
+				max: parseInt(paramsObject?.max) ?? 5000000,
 				tab: 1,
 				rating: null,
 			};
