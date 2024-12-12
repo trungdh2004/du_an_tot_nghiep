@@ -1,13 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/auth";
 import {
-  deleteNotification,
-  getPagingNotification,
-  watchedNotification
+	deleteNotification,
+	getPagingNotification,
+	watchedNotification,
 } from "@/service/notification.service";
 import {
-  INotification,
-  ISearchObjectNotifications,
+	INotification,
+	ISearchObjectNotifications,
 } from "@/types/notification.interface";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";

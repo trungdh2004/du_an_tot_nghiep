@@ -40,16 +40,16 @@ const DealProductSection: React.FC = () => {
 							Sản phẩm nổi bật
 						</span>
 
-						<h2 className="text-custom text-[18px] sm:text-xl md:text-2xl lg:text-4xl font-medium leading-tight">
+						<h2 className="text-custom-300 text-[18px] sm:text-xl md:text-2xl lg:text-4xl font-medium leading-tight">
 							{dealProduct?.product?.name}
 						</h2>
 
 						<div className="flex flex-wrap items-center gap-4 mt-2 max-sm:flex-col max-sm:items-start md:gap-8">
 							<div className="flex items-center">
-								<span className="text-xl font-medium text-custom sm:text-2xl md:text-3xl lg:text-4xl">
+								<span className="text-xl font-medium text-custom sm:text-2xl md:text-3xl lg:text-3xl">
 									{formatCurrency(dealProduct?.product?.discount || 0)}
 								</span>
-								<span className="ml-4 text-base text-gray-400 line-through sm:text-xl">
+								<span className="ml-4 text-base text-gray-400 line-through sm:text-4xl">
 									{formatCurrency(dealProduct?.product?.price || 0)}
 								</span>
 							</div>

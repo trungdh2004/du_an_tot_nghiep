@@ -287,10 +287,7 @@ const InfoProduct: React.FC<Props> = ({ product }) => {
 							thước sản phẩm
 						</p>
 						<div
-							className={cn(
-								"space-y-5 p-1.5 w-full",
-								isErrorAttribute && "bg-custom-50",
-							)}
+							className={cn("space-y-5 p-1.5 w-full", isErrorAttribute && "")}
 						>
 							<div
 								className={cn(

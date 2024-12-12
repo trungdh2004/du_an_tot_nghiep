@@ -42,7 +42,7 @@ const ListProductHot = () => {
 			{/* {!isLoading &&
 					} */}
 
-			<div className="relative w-full pt-10 pb-6 group/parrent [&>.swiper-button-disabled]:opacity-50 [&>.swiper-button-disabled]:pointer-events-none">
+			<div className="relative w-full pt-6 pb-6 group/parrent [&>.swiper-button-disabled]:opacity-50 [&>.swiper-button-disabled]:pointer-events-none">
 				<Swiper
 					className="[&>.swiper-wrapper]:py-1.5"
 					modules={[Navigation]}

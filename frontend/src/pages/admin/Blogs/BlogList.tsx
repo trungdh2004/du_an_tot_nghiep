@@ -55,7 +55,7 @@ const BlogList = () => {
 		totalElement: 0,
 		totalOptionPage: 0,
 	});
-	console.log(blogs);
+	console.log(response);
 
 	const [searchObject, setSearchObject] = useState<SearchObjectBlog>({
 		pageIndex: 1,
@@ -305,7 +305,7 @@ const BlogList = () => {
 					))
 				) : (
 					<div className="col-span-12 min-h-[360px] flex justify-center items-center">
-						<img src="/blog.png" alt="" className="h-16 w-15" />
+						<img src="/blog.png" alt="" className="w-15 h-16" />
 						<h3 className="text-lg">Không có bài viết!</h3>
 					</div>
 				)}

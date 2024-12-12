@@ -96,13 +96,11 @@ const OrderManagements = () => {
 	};
 	const handleFetchOrder = async () => {
 		const { data } = await fetchOrder({ ...searchObject, status: status });
-		console.log("data", data);
 		setResponse({
 			pageCount: data?.data?.totalPage,
 			totalElement: data?.data?.totalAllOptions,
 			totalOptionPage: data?.data?.totalOptionPage,
 		});
-
 		return data?.data;
 	};
 	const { data: orderData, isLoading } = useQuery({
@@ -185,13 +183,15 @@ const OrderManagements = () => {
 									<div key={item._id} className="my-5">
 										<div className="">
 											{/* head-order */}
-											<div className="flex items-center justify-between w-full px-2 py-5 bg-white border border-gray-200 rounded-sm box-shadow md:px-5">
-												<div className="text-xs font-semibold md:text-base">
-													Mã đơn hàng:{" "}
-													<span className="font-medium text-gray-900">
-														{item?.code}{" "}
-													</span>
-												</div>
+											<div className="w-full bg-white box-shadow flex justify-between items-center rounded-sm border border-gray-200 px-2 md:px-5 py-5">
+												<Link to={`/account/purchase/order/${item?._id} `}>
+													<div className="text-xs md:text-base font-semibold">
+														Mã đơn hàng:{" "}
+														<span className="text-gray-900 font-medium">
+															{item?.code}{" "}
+														</span>
+													</div>
+												</Link>
 												<div
 													className={cn(
 														item.status == 6
