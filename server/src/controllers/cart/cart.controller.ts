@@ -358,11 +358,11 @@ class CartController {
                 ? item.product.price
                 : item.attribute?.price || 0,
               attribute: item.attribute,
-              is_simple: item.product.is_simple,
+              is_simple: item.is_simple,
               createdAt: item.createdAt,
               productId: item.product._id,
               slug: item.product.slug,
-              totalQuantity: item.product.is_simple
+              totalQuantity: item.is_simple
                 ? item.product.quantity
                 : item.attribute?.quantity,
             };
@@ -444,16 +444,16 @@ class CartController {
                   ? item.product.price
                   : item.attribute?.price || 0,
                 attribute: item.attribute,
-                is_simple: item.product.is_simple,
+                is_simple: item.is_simple,
                 createdAt: item.createdAt,
                 productId: item.product._id,
                 slug: item.product.slug,
-                totalQuantity: item.product.is_simple
+                totalQuantity: item.is_simple
                   ? item.product.quantity
                   : item.attribute?.quantity,
               },
             ],
-            is_simple: item.product.is_simple,
+            is_simple: item.is_simple,
           };
           return [...acc, data];
         },
@@ -663,6 +663,7 @@ class CartController {
         {
           quantity: quantity ? quantity : existingCartItem.quantity,
           attribute: attribute ? attribute : existingCartItem.attribute,
+          is_simple: !attribute,
         },
         {
           new: true,

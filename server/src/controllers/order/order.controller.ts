@@ -127,236 +127,6 @@ interface IReturnVnPay {
 }
 
 class OrderController {
-  async createOrderPayUponReceipt(req: RequestModel, res: Response) {
-    try {
-      const user = req.user;
-      const { listId, addressId, voucher, paymentMethod, note } = req.body;
-
-      if (paymentMethod !== 1) {
-        return res.status(STATUS.BAD_REQUEST).json({
-          message: "Phương thức thanh toán lỗi",
-        });
-      }
-
-      if (!listId || listId.length === 0) {
-        return res.status(STATUS.BAD_REQUEST).json({
-          message: "Bạn chưa chọn sản phẩm",
-        });
-      }
-
-      if (!addressId) {
-        return res.status(STATUS.BAD_REQUEST).json({
-          message: "Bạn chưa chọn địa chỉ",
-        });
-      }
-
-      let address = await AddressModel.findById(addressId);
-
-      if (!address) {
-        return res.status(STATUS.BAD_REQUEST).json({
-          message: "Không có địa chỉ",
-        });
-      }
-
-      const findLocationShop = await LocationModel.findOne();
-
-      const longShop = findLocationShop?.long || long;
-      const latShop = findLocationShop?.lat || lat;
-
-      const addressDetail = await AddressModel.aggregate([
-        {
-          $geoNear: {
-            near: {
-              type: "Point",
-              coordinates: [longShop, latShop],
-            },
-            distanceField: "dist",
-            spherical: true,
-          },
-        },
-        {
-          $match: {
-            _id: new mongoose.Types.ObjectId(address._id),
-          },
-        },
-        {
-          $limit: 1,
-        },
-      ]);
-
-      if (!addressDetail) {
-        return res.status(STATUS.BAD_REQUEST).json({
-          message: "Không có địa chỉ",
-        });
-      }
-
-      let voucherMain = null;
-
-      if (voucher) {
-        const existingVoucher = await VoucherModel.findById(voucher);
-
-        if (existingVoucher) {
-          const check = await OrderModel.findOne({
-            voucher: existingVoucher._id,
-            user: user?.id,
-            status: {
-              $ne: 0,
-            },
-          });
-
-          if (!check) {
-            const data = checkVoucher(existingVoucher);
-            if (data.check) {
-              voucherMain = data.voucher as IVoucher;
-            }
-            if (!data.check) {
-              return res.status(STATUS.BAD_REQUEST).json({
-                message: data.message,
-              });
-            }
-          } else {
-            return res.status(STATUS.BAD_REQUEST).json({
-              message: "Bạn đã sử dụng voucher",
-            });
-          }
-        } else {
-          return res.status(STATUS.BAD_REQUEST).json({
-            message: "Không có voucher",
-          });
-        }
-      }
-
-      const listCartItem = await CartItemModel.find<IProductCart>({
-        _id: {
-          $in: listId,
-        },
-      }).populate([
-        {
-          path: "attribute",
-          populate: [
-            {
-              path: "color",
-              model: "Color",
-            },
-            {
-              path: "size",
-              model: "Size",
-            },
-          ],
-        },
-      ]);
-
-      if (!listCartItem || listCartItem.length === 0) {
-        return res.status(STATUS.BAD_REQUEST).json({
-          message: "Không có sản phẩm nào",
-        });
-      }
-      const listDateNew = listCartItem.map((item) => {
-        return {
-          product: item.product,
-          status: 1,
-          color: {
-            name: ((item.attribute as IAttribute).color as IColor)?.name,
-            code: ((item.attribute as IAttribute).color as IColor)?.code,
-          },
-          size: ((item.attribute as IAttribute).size as ISize)?.name,
-          price: (item.attribute as IAttribute).discount,
-          quantity: item.quantity,
-          totalMoney: +item.quantity * +(item.attribute as IAttribute).discount,
-          attribute: item.attribute,
-        };
-      });
-
-      const shippingCost = addressDetail
-        ? chargeShippingFee(addressDetail[0]?.dist)
-        : 0;
-
-      const checkTotalMoney = listDateNew?.reduce((acc: number, item: any) => {
-        return acc + item.totalMoney;
-      }, 0);
-
-      if (voucherMain) {
-        if (voucherMain.minimumOrderValue > checkTotalMoney) {
-          return res.status(STATUS.BAD_REQUEST).json({
-            message: "Đơn hàng không đạt đủ điều kiện voucher",
-          });
-        }
-      }
-
-      const listOrderItem = await OrderItemsModel.create(listDateNew);
-
-      const listIdOrderItem =
-        listOrderItem?.length > 0 ? listOrderItem?.map((item) => item._id) : [];
-
-      const totalMoney = listCartItem.reduce(
-        (acc: number, item: IProductCart) => {
-          const totalMoney =
-            +item.quantity * +(item.attribute as IAttribute).discount;
-          return acc + +totalMoney;
-        },
-        0
-      );
-
-      // Tạo một ngày mới sau 2 ngày
-
-      let code = generateOrderCode();
-      code = await generateCode(code);
-
-      const { amountReduced, totalMoneyNew } = amountReducedVoucher(
-        totalMoney,
-        voucherMain
-      );
-
-      const newOrder = await OrderModel.create({
-        user: user?.id,
-        address: {
-          username: address.username,
-          phone: address.phone,
-          address: address.address,
-          detailAddress: address.detailAddress,
-          location: address.location,
-        },
-        totalMoney: totalMoneyNew + shippingCost,
-        amountToPay: totalMoneyNew + shippingCost,
-        voucherAmount: amountReduced,
-        voucher: voucherMain,
-        voucherVersion: voucherMain?.version,
-        distance: addressDetail[0].dist,
-        shippingCost: shippingCost || 0,
-        paymentMethod,
-        note,
-        code,
-        orderItems: listIdOrderItem,
-        status: 1,
-        statusList: [0, 1],
-      });
-
-      if (!newOrder) {
-        return res.status(STATUS.BAD_REQUEST).json({
-          message: "Tạo đơn hàng thất bại",
-        });
-      }
-      // await CartItemModel.deleteMany({
-      //   _id: {
-      //     $in: listId,
-      //   },
-      // });
-      socketNotificationAdmin(
-        `<p>Đơn hàng: <span style="color:blue;font-weight:500;">${newOrder.code}</span> vừa được đặt, vui lòng kiểm tra thông tin</p>`,
-        TYPE_NOTIFICATION_ADMIN.ORDER,
-        newOrder._id
-      );
-
-      return res.status(STATUS.OK).json({
-        message: "Tạo đơn hàng thành công",
-      });
-    } catch (error: any) {
-      return res.status(STATUS.INTERNAL).json({
-        message: error.message,
-      });
-    }
-  }
-
   async createOrderPayUponReceiptV2(req: RequestModel, res: Response) {
     try {
       const user = req.user;
@@ -507,6 +277,12 @@ class OrderController {
         });
       }
 
+      // return res.status(STATUS.BAD_REQUEST).json({
+      //   message: "hhihi",
+      //   checkQuantity,
+      //   checkAttribute,
+      // });
+
       const listDateNew = listCartItem.map((item) => {
         const variant = item?.product?.is_simple
           ? "Sản phẩm đơn giản"
@@ -548,8 +324,6 @@ class OrderController {
           totalMoney: formatCurrency(+item.quantity * +price),
         };
       });
-
-      // voucher
 
       const listProduct = listCartItem.map((item) => {
         const productId = item.product._id;
@@ -1106,7 +880,6 @@ class OrderController {
           },
           {
             path: "attribute",
-            // match: { $ne: null },
             populate: [
               {
                 path: "color",
@@ -1132,6 +905,7 @@ class OrderController {
           message: `Sản phẩm "${check.product.name}" xảy ra lỗi mời bạn quay lại giỏ hàng`,
         });
       }
+
       const listData = listCartItem.reduce((acc: IListCart[], item) => {
         const findCart = acc.find((sub) => sub.productId === item.product._id);
 
@@ -1141,12 +915,14 @@ class OrderController {
             _id: item._id,
             thumbnail: item.product.thumbnail,
             name: item.product.name,
-            discount: item.is_simple
+            discount: item.product.is_simple
               ? item.product.discount
               : item.attribute.discount,
-            price: item.is_simple ? item.product.price : item.attribute.price,
+            price: item.product.is_simple
+              ? item.product.price
+              : item.attribute.price,
             attribute: item.attribute,
-            is_simple: item.is_simple,
+            is_simple: item.product.is_simple,
             createdAt: item.createdAt,
             productId: item.product._id,
           };
@@ -1160,12 +936,14 @@ class OrderController {
           _id: item._id,
           thumbnail: item.product.thumbnail,
           name: item.product.name,
-          discount: item.is_simple
+          discount: item.product.is_simple
             ? item.product.discount
             : item.attribute.discount,
-          price: item.is_simple ? item.product.price : item.attribute.price,
+          price: item.product.is_simple
+            ? item.product.price
+            : item.attribute.price,
           attribute: item.attribute,
-          is_simple: item.is_simple,
+          is_simple: item.product.is_simple,
           createdAt: item.createdAt,
           productId: item.product._id,
         };
@@ -1283,7 +1061,7 @@ class OrderController {
 
       if (listId.length !== listCartItem.length) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message: "Đã có sản phẩm bị xóa mời bạn trờ về",
+          message: "Đã có sản phẩm bị xóa",
         });
       }
 

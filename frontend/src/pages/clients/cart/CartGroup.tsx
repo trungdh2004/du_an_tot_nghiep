@@ -139,6 +139,7 @@ const CartGroup = ({
 									productId={cart.product._id as string}
 									checked={checkedState[item._id as string]}
 									onCheckedChange={onItemCheckedChange}
+									checkAttribute={cart.attributes.length > 0}
 								/>
 							</motion.div>
 						</div>

@@ -335,6 +335,11 @@ class ProductController {
           }
         );
 
+        if (is_simple !== existingProduct.is_simple) {
+          await CartItemModel.deleteMany({
+            product: existingProduct._id,
+          });
+        }
         return res.status(STATUS.OK).json({
           message: "Tạo thành công",
           data: product,

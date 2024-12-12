@@ -106,7 +106,7 @@ const useUpdateAttributeItemCart = () => {
 				...cart,
 				items: cart?.items?.map((itemCart) =>
 					itemCart?._id === item?._id
-						? { ...itemCart, attribute: data?.data?.attribute }
+						? { ...itemCart, attribute: data?.data?.attribute,is_simple:false }
 						: itemCart,
 				),
 			}));
