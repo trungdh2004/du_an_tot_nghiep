@@ -40,7 +40,7 @@ export function ModalCodition(voucher: IVoucher) {
 				<div className="text-[#333f48]">
 					<div className="flex flex-col items-center p-2 border border-gray-200 rounded-md">
 						<h3 className="text-base font-bold text-center">
-							Voucher {formatCurrency(50000000)}
+							Voucher {formatCurrency(voucher?.maxAmount)}
 						</h3>
 						<Barcode value={voucher?.code} format="CODE128" height={30} />
 					</div>
