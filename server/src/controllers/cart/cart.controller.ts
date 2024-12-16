@@ -579,6 +579,7 @@ class CartController {
 
   async updateCartItem(req: RequestModel, res: Response) {
     try {
+      const user = req.user;
       const { quantity, attribute } = req.body;
       const { id } = req.params;
       if (!quantity && !attribute) {
@@ -591,6 +592,10 @@ class CartController {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Bạn chưa chọn",
         });
+
+      const cartUser = await CartModel.findOne({
+        user: user?.id,
+      });
 
       const existingCartItem = await CartItemModel.findById(id).populate(
         "attribute product"
@@ -638,6 +643,7 @@ class CartController {
       if (attribute) {
         const checkCartItem = await CartItemModel.findOne({
           attribute: attribute,
+          cart: cartUser?._id,
         });
 
         if (checkCartItem) {
