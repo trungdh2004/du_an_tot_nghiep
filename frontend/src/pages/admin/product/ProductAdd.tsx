@@ -6,20 +6,20 @@ import { formatCurrency } from "@/common/func";
 import FroalaEditor from "@/components/common/Froala";
 import InputNumberFormat from "@/components/common/InputNumberFormat";
 import {
-  ListColorComponent,
-  ListSizeComponent,
+	ListColorComponent,
+	ListSizeComponent,
 } from "@/components/common/Product";
 import SelectComponent from "@/components/common/SelectComponent";
 import { TooltipComponent } from "@/components/common/TooltipComponent";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import instance from "@/config/instance";
@@ -29,16 +29,16 @@ import { addProduct } from "@/service/product";
 import { getAllSize } from "@/service/size-admin";
 import { uploadFileService, uploadMultipleFileService } from "@/service/upload";
 import {
-  useProcessBarLoading,
-  useProcessBarLoadingEventNone,
+	useProcessBarLoading,
+	useProcessBarLoadingEventNone,
 } from "@/store/useSidebarAdmin";
 import { IColor, IProduct } from "@/types/typeProduct";
 import { ISize } from "@/types/variants";
 import { useMutation } from "@tanstack/react-query";
 import {
-  AiFillCloseCircle,
-  AiOutlineCloudUpload,
-  AiOutlineLoading3Quarters,
+	AiFillCloseCircle,
+	AiOutlineCloudUpload,
+	AiOutlineLoading3Quarters,
 } from "react-icons/ai";
 import { BsStars } from "react-icons/bs";
 import { CiCirclePlus } from "react-icons/ci";
@@ -48,13 +48,14 @@ import { MdDeleteForever } from "react-icons/md";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const formSchema = z
 	.object({
 		name: z.string().nonempty({ message: "Nhập tên sản phẩm" }),
-		price: z.string().min(1, "Phải lớn hơn 0"),
+		price: z.number().min(1, "Phải lớn hơn 0"),
 		description: z.string().nonempty("Nhập mô tả sản phẩm"),
-		discount: z.string().min(1, "Phải lớn hơn 0"),
+		discount: z.number().min(1, "Phải lớn hơn 0"),
 		is_hot: z.boolean(),
 		is_simple: z.boolean(),
 		quantity: z.number(),
@@ -147,9 +148,20 @@ const formSchema = z
 			path: ["quantity"], // Chỉ rõ trường bị lỗi
 		},
 	)
+	.refine(
+		(data) => {
+			console.log("data", data);
+			if (data.discount > data.price) {
+				return false;
+			}
+			return true;
+		},
+		{
+			message: "Giá giảm phải nhỏ hơn giá gốc",
+			path: ["discount"],
+		},
+	)
 	.superRefine((data, ctx) => {
-		console.log({ data, ctx });
-
 		if (!data.is_simple && (!data.attributes || data.attributes.length === 0)) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
@@ -249,12 +261,12 @@ const ProductAddPage = () => {
 	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
 		useProcessBarLoadingEventNone();
 	const form = useForm<ProductFormValues>({
-		// resolver: zodResolver(formSchema),
+		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: "",
 			category: null,
-			price: "",
-			discount: "",
+			price: 0,
+			discount: 0,
 			featured: false,
 			description: "",
 			thumbnail: "",
@@ -265,7 +277,7 @@ const ProductAddPage = () => {
 			quantity: 0,
 		},
 	});
-	const {  setOpen, setClose } = useProcessBarLoading();
+	const { setOpen, setClose } = useProcessBarLoading();
 	const [previewUrl, setPreviewUrl] = useState({
 		isLoading: false,
 		url: "",
@@ -275,7 +287,7 @@ const ProductAddPage = () => {
 	const [category, setCategory] = useState([]);
 	const [size, setSize] = useState<ISize[]>([]);
 	const [color, setColor] = useState<IColor[]>([]);
-	const [isPending, ] = useState(false);
+	const [isPending] = useState(false);
 	const { mutate } = useMutation({
 		mutationFn: (value: IProduct) => addProduct(value),
 		onSuccess: () => {
@@ -452,7 +464,7 @@ const ProductAddPage = () => {
 												<FormControl>
 													<SelectComponent<ICate>
 														value={field.value}
-														onChange={(newValue: ICate, ) => {
+														onChange={(newValue: ICate) => {
 															field.onChange(newValue);
 															form.clearErrors(`category`);
 														}}
