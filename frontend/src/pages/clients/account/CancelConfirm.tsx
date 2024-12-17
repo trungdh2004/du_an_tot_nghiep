@@ -46,7 +46,7 @@ const CancelConfirm = ({ open, handleClose }: Props) => {
 	const ListContent = [
 		"Muốn nhập/thay dổi mã Voucher",
 		"Muốn thay đổi sản phẩm trong đơn hàng",
-		"Thủ tục thanh toán quá rác rối",
+		"Thủ tục thanh toán quá rắc rối",
 		"Tìm giá rẻ hơn chỗ khác",
 		"Đổi ý không muốn mua nữa",
 	];
