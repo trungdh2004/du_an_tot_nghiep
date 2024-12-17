@@ -162,20 +162,20 @@ const CustomerList = () => {
 				);
 			},
 		},
-		{
-			id: "rank",
-			accessorKey: "rank",
-			header: () => {
-				return <div className="text-xs md:text-base">Xếp hạng</div>;
-			},
-			cell: ({ row }) => {
-				return (
-					<div className="text-xs text-center md:text-base">
-						{row?.original?.rank}
-					</div>
-				);
-			},
-		},
+		// {
+		// 	id: "rank",
+		// 	accessorKey: "rank",
+		// 	header: () => {
+		// 		return <div className="text-xs md:text-base">Xếp hạng</div>;
+		// 	},
+		// 	cell: ({ row }) => {
+		// 		return (
+		// 			<div className="text-xs text-center md:text-base">
+		// 				{row?.original?.rank}
+		// 			</div>
+		// 		);
+		// 	},
+		// },
 		// {
 		// 	id: "actions",
 		// 	enableHiding: false,
