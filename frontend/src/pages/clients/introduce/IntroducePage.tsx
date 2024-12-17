@@ -52,13 +52,13 @@ const IntroducePage = () => {
 				<img
 					src="https://theme.hstatic.net/200000690725/1001078549/14/about01_introduce1_img.jpg?v=549"
 					alt=""
-					className="w-full md:w-[50%] transition-transform duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg hover:rounded-lg"
+					className="w-full md:w-[50%] transition-transform duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg hover:rounded-lg cursor-pointer"
 				/>
 				<div className="mt-8 md:mt-0 md:mr-28">
 					<h3 className="text-center pt-16 font-sans text-[16px] sm:text-[18px]">
 						NUCSHOP
 					</h3>
-					<h2 className="text-center font-serif text-[20px] sm:text-[22px] pt-1 pb-8">
+					<h2 className="text-center text-[20px] sm:text-[22px] pt-1 pb-8">
 						CÂU CHUYỆN THƯƠNG HIỆU
 					</h2>
 					<p className="w-full md:w-[500px] text-[14px] sm:text-[16px] text-[#544e46]">
@@ -72,12 +72,12 @@ const IntroducePage = () => {
 					</p>
 				</div>
 			</div>
-			<div className="flex flex-col md:flex-row pt-20 justify-between mb-10">
+			<div className="flex flex-col md:flex-row pt-20 justify-between mb-[80px]">
 				<div className="pt-10 md:ml-20">
 					<h3 className="text-center pt-8 font-light text-[16px] sm:text-[18px]">
 						MODE FASHION
 					</h3>
-					<h2 className="text-center font-semibold text-[20px] sm:text-[22px] pt-1 pb-8">
+					<h2 className="text-center text-[20px] sm:text-[22px] pt-1 pb-8">
 						GIÁ TRỊ CỐT LÕI
 					</h2>
 					<p className="w-full md:w-[500px] text-[14px] sm:text-[16px] text-[#544e46]">
@@ -90,7 +90,7 @@ const IntroducePage = () => {
 					</p>
 				</div>
 				<img
-					className="w-full md:w-[50%] transition-transform duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg hover:rounded-lg mt-8 md:mt-0"
+					className="w-full md:w-[50%] transition-transform duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg hover:rounded-lg mt-8 md:mt-0 cursor-pointer"
 					src="https://theme.hstatic.net/200000690725/1001078549/14/about01_introduce2_img.jpg?v=549"
 					alt=""
 				/>
