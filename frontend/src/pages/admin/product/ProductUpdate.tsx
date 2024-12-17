@@ -7,20 +7,20 @@ import { formatCurrency } from "@/common/func";
 import FroalaEditor from "@/components/common/Froala";
 import InputNumberFormat from "@/components/common/InputNumberFormat";
 import {
-  ListColorComponent,
-  ListSizeComponent,
+	ListColorComponent,
+	ListSizeComponent,
 } from "@/components/common/Product";
 import SelectComponent from "@/components/common/SelectComponent";
 import { TooltipComponent } from "@/components/common/TooltipComponent";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -30,16 +30,16 @@ import { getProductById, updateProductById } from "@/service/product";
 import { getAllSize } from "@/service/size-admin";
 import { uploadFileService, uploadMultipleFileService } from "@/service/upload";
 import {
-  useProcessBarLoading,
-  useProcessBarLoadingEventNone,
+	useProcessBarLoading,
+	useProcessBarLoadingEventNone,
 } from "@/store/useSidebarAdmin";
 import { IColor, IProduct } from "@/types/typeProduct";
 import { ISize } from "@/types/variants";
 import { useMutation } from "@tanstack/react-query";
 import {
-  AiFillCloseCircle,
-  AiOutlineCloudUpload,
-  AiOutlineLoading3Quarters,
+	AiFillCloseCircle,
+	AiOutlineCloudUpload,
+	AiOutlineLoading3Quarters,
 } from "react-icons/ai";
 import { BsStars } from "react-icons/bs";
 import { CiCirclePlus } from "react-icons/ci";
@@ -147,6 +147,19 @@ const formSchema = z
 		{
 			message: "Số lượng phải lớn hơn 0",
 			path: ["quantity"], // Chỉ rõ trường bị lỗi
+		},
+	)
+	.refine(
+		(data) => {
+			console.log("data", data);
+			if (data.discount > data.price) {
+				return false;
+			}
+			return true;
+		},
+		{
+			message: "Giá giảm phải nhỏ hơn giá gốc",
+			path: ["discount"],
 		},
 	)
 	.superRefine((data, ctx) => {

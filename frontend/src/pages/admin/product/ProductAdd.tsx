@@ -53,9 +53,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 const formSchema = z
 	.object({
 		name: z.string().nonempty({ message: "Nhập tên sản phẩm" }),
-		price: z.string().min(1, "Phải lớn hơn 0"),
+		price: z.number().min(1, "Phải lớn hơn 0"),
 		description: z.string().nonempty("Nhập mô tả sản phẩm"),
-		discount: z.string().min(1, "Phải lớn hơn 0"),
+		discount: z.number().min(1, "Phải lớn hơn 0"),
 		is_hot: z.boolean(),
 		is_simple: z.boolean(),
 		quantity: z.number(),
@@ -148,9 +148,20 @@ const formSchema = z
 			path: ["quantity"], // Chỉ rõ trường bị lỗi
 		},
 	)
+	.refine(
+		(data) => {
+			console.log("data", data);
+			if (data.discount > data.price) {
+				return false;
+			}
+			return true;
+		},
+		{
+			message: "Giá giảm phải nhỏ hơn giá gốc",
+			path: ["discount"],
+		},
+	)
 	.superRefine((data, ctx) => {
-		console.log({ data, ctx });
-
 		if (!data.is_simple && (!data.attributes || data.attributes.length === 0)) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
@@ -254,8 +265,8 @@ const ProductAddPage = () => {
 		defaultValues: {
 			name: "",
 			category: null,
-			price: "",
-			discount: "",
+			price: 0,
+			discount: 0,
 			featured: false,
 			description: "",
 			thumbnail: "",

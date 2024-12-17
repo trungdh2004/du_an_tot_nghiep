@@ -2916,13 +2916,20 @@ class OrderController {
         });
       }
 
+
       if (existingOrder.status !== 1 && existingOrder.status !== 3) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Đơn hàng không thể huy",
         });
       }
 
-      if (existingOrder.status !== 1 && cancelBy !== 3) {
+      if (existingOrder.status === 1 && cancelBy === 3) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đơn hàng không thể hủy",
+        });
+      }
+
+      if (existingOrder.status === 3 && cancelBy !== 3) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Đơn hàng không thể hủy",
         });
