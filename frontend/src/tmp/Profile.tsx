@@ -15,12 +15,12 @@ function ProfilePage() {
   const [isSaving, setIsSaving] = useState(false);
 
   const handleEditClick = () => {
-
+    setOriginalInfo(userInfo); // Lưu thông tin cũ
     setIsEditing(true);
   };
 
   const handleCancelClick = () => {
-    setUserInfo(originalInfo || userInfo);
+    setUserInfo(originalInfo || userInfo); // Khôi phục thông tin cũ
     setErrors({});
     setIsEditing(false);
   };
@@ -46,9 +46,13 @@ function ProfilePage() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert("Dung lượng ảnh quá lớn. Vui lòng chọn ảnh dưới 2MB.");
+        return;
+      }
       const reader = new FileReader();
       reader.onload = () => {
-
+        setProfileImage(reader.result); // Cập nhật ảnh đại diện
       };
       reader.onerror = () => {
         alert("Không thể tải ảnh. Vui lòng thử lại.");
@@ -72,9 +76,8 @@ function ProfilePage() {
 
   const saveToServer = async () => {
     try {
-
       console.log("Thông tin đang được lưu:", userInfo);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Mô phỏng lưu
       alert("Thông tin đã được lưu thành công!");
     } catch (error) {
       alert("Có lỗi xảy ra khi lưu thông tin. Vui lòng thử lại.");
@@ -111,69 +114,32 @@ function ProfilePage() {
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-gray-600 mb-1">Tên:</label>
-            {isEditing ? (
-              <>
-                <input
-                  type="text"
-                  name="name"
-                  value={userInfo.name}
-                  onChange={handleChange}
-                  className={`w-full border rounded px-3 py-2 text-sm sm:text-base ${
-                    errors.name ? "border-red-500" : ""
-                  }`}
-                />
-                {errors.name && (
-                  <p className="text-red-500 text-sm">{errors.name}</p>
-                )}
-              </>
-            ) : (
-              <p className="text-lg">{userInfo.name}</p>
-            )}
-          </div>
-          <div>
-            <label className="block text-gray-600 mb-1">Email:</label>
-            {isEditing ? (
-              <>
-                <input
-                  type="email"
-                  name="email"
-                  value={userInfo.email}
-                  onChange={handleChange}
-                  className={`w-full border rounded px-3 py-2 text-sm sm:text-base ${
-                    errors.email ? "border-red-500" : ""
-                  }`}
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-sm">{errors.email}</p>
-                )}
-              </>
-            ) : (
-              <p className="text-lg">{userInfo.email}</p>
-            )}
-          </div>
-          <div>
-            <label className="block text-gray-600 mb-1">Số điện thoại:</label>
-            {isEditing ? (
-              <>
-                <input
-                  type="text"
-                  name="phone"
-                  value={userInfo.phone}
-                  onChange={handleChange}
-                  className={`w-full border rounded px-3 py-2 text-sm sm:text-base ${
-                    errors.phone ? "border-red-500" : ""
-                  }`}
-                />
-                {errors.phone && (
-                  <p className="text-red-500 text-sm">{errors.phone}</p>
-                )}
-              </>
-            ) : (
-              <p className="text-lg">{userInfo.phone}</p>
-            )}
-          </div>
+          {["name", "email", "phone"].map((field) => (
+            <div key={field}>
+              <label className="block text-gray-600 mb-1 capitalize">
+                {field === "phone" ? "Số điện thoại" : field}:
+              </label>
+              {isEditing ? (
+                <>
+                  <input
+                    type={field === "email" ? "email" : "text"}
+                    name={field}
+                    value={userInfo[field]}
+                    onChange={handleChange}
+                    placeholder={`Nhập ${field}`}
+                    className={`w-full border rounded px-3 py-2 text-sm sm:text-base ${
+                      errors[field] ? "border-red-500" : ""
+                    }`}
+                  />
+                  {errors[field] && (
+                    <p className="text-red-500 text-sm">{errors[field]}</p>
+                  )}
+                </>
+              ) : (
+                <p className="text-lg">{userInfo[field]}</p>
+              )}
+            </div>
+          ))}
           <div className="col-span-1 sm:col-span-2 lg:col-span-3">
             <label className="block text-gray-600 mb-1">Giới thiệu:</label>
             {isEditing ? (
@@ -181,6 +147,7 @@ function ProfilePage() {
                 name="bio"
                 value={userInfo.bio}
                 onChange={handleChange}
+                placeholder="Nhập giới thiệu về bạn"
                 className="w-full border rounded px-3 py-2 text-sm sm:text-base"
               />
             ) : (
@@ -242,7 +209,6 @@ function ProfilePage() {
               <strong>Giới thiệu:</strong> {userInfo.bio}
             </p>
           </div>
-
         )}
       </div>
     </div>
