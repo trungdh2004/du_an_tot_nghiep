@@ -99,7 +99,11 @@ const voucherSchema = z
 			message: "Giá trị giảm tối đa là 100% cho loại giảm giá phần trăm",
 			path: ["discountValue"],
 		},
-	);
+	)
+	.refine((data) => data.startDate <= data.endDate, {
+		message: "Ngày bắt đầu không được lớn hơn ngày kết thúc",
+		path: ["startDate"],
+	});;
 export type VoucherFormValues = z.infer<typeof voucherSchema>;
 
 const VoucherForm = () => {
@@ -152,7 +156,9 @@ const VoucherForm = () => {
 
 	const handleCreateVoucher = async (
 		payload: z.infer<typeof voucherSchema>,
-	) => {
+  ) => {
+    console.log(payload);
+    
 		try {
 			const { status, type, listUseProduct, ...voucherData } = payload;
 			const formattedData = {
