@@ -24,10 +24,10 @@ const IntroducePage = () => {
 	}, []);
 	return (
 		<div className="w-full px-4 sm:px-6 lg:px-8">
-			<h1 className="text-center pt-8 text-[16px] sm:text-[18px]">
+			<h1 className="text-center pt-10 text-[16px] sm:text-[18px]">
 				VỀ CHÚNG TÔI
 			</h1>
-			<h2 className="text-center text-[20px] sm:text-[22px] pt-1 pb-8">
+			<h2 className="text-center text-[20px] sm:text-[22px] pt-3 pb-8">
 				THƯƠNG HIỆU THỜI TRANG NUCSHOP
 			</h2>
 			<div className="flex flex-col md:flex-row justify-between">
@@ -52,7 +52,7 @@ const IntroducePage = () => {
 				<img
 					src="https://theme.hstatic.net/200000690725/1001078549/14/about01_introduce1_img.jpg?v=549"
 					alt=""
-					className="w-full md:w-[50%] transition-transform duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg hover:rounded-lg cursor-pointer"
+					className="w-full md:w-[50%] transition-all duration-300 ease-in-out transform hover:scale-105 hover:-translate-y-2 hover:shadow-xl hover:bg-gradient-to-r hover:from-blue-400 hover:to-blue-700 hover:text-white hover:rounded-lg cursor-pointer"
 				/>
 				<div className="mt-8 md:mt-0 md:mr-28">
 					<h3 className="text-center pt-16 font-sans text-[16px] sm:text-[18px]">
@@ -90,7 +90,7 @@ const IntroducePage = () => {
 					</p>
 				</div>
 				<img
-					className="w-full md:w-[50%] transition-transform duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg hover:rounded-lg mt-8 md:mt-0 cursor-pointer"
+					className="w-full md:w-[50%] transition-all duration-300 ease-in-out transform hover:scale-105 hover:-translate-y-2 hover:shadow-xl hover:bg-gradient-to-r hover:from-blue-400 hover:to-blue-700 hover:text-white hover:rounded-lg cursor-pointer"
 					src="https://theme.hstatic.net/200000690725/1001078549/14/about01_introduce2_img.jpg?v=549"
 					alt=""
 				/>
