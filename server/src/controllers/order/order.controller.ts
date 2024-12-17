@@ -405,10 +405,6 @@ class OrderController {
         };
       }
 
-      const shippingCost = addressDetail
-        ? chargeShippingFee(addressDetail[0]?.dist)
-        : 0;
-
       const listOrderItem = await OrderItemsModel.create(listDateNew);
 
       const listIdOrderItem =
@@ -417,7 +413,13 @@ class OrderController {
       const totalMoney2 = listOrderItem.reduce((acc: number, item) => {
         return acc + item.totalMoney;
       }, 0);
+      const totalQuantity = listCartItem.reduce((acc: number, item) => {
+        return acc + item.quantity;
+      }, 0);
 
+      const shippingCost = addressDetail
+        ? chargeShippingFee(addressDetail[0]?.dist, totalMoney, totalQuantity)
+        : 0;
       // // Tạo một ngày mới sau 2 ngày
 
       let code = generateOrderCode();
@@ -634,10 +636,6 @@ class OrderController {
         }
       }
 
-      const shippingCost = addressMain
-        ? chargeShippingFee(addressMain[0]?.dist)
-        : 0;
-
       const listIdObject = listId.map(
         (item: string) => new mongoose.Types.ObjectId(item)
       );
@@ -730,6 +728,10 @@ class OrderController {
           },
         },
       ]);
+
+      const shippingCost = addressMain
+        ? chargeShippingFee(addressMain[0]?.dist)
+        : 0;
 
       return res.status(STATUS.OK).json({
         message: "Lấy thành công ",
@@ -841,10 +843,6 @@ class OrderController {
           ]);
         }
       }
-
-      const shippingCost = addressMain
-        ? chargeShippingFee(addressMain[0]?.dist)
-        : 0;
 
       const listCartItem = await CartItemModel.find<IndexCartItem>({
         _id: {
@@ -984,6 +982,14 @@ class OrderController {
       }, 0);
 
       let voucherMain = null;
+
+      const totalQuantity = listCartItem.reduce((acc: number, item) => {
+        return acc + item.quantity;
+      }, 0);
+
+      const shippingCost = addressMain
+        ? chargeShippingFee(addressMain[0]?.dist, totalMoney, totalQuantity)
+        : 0;
 
       if (voucher) {
         const existingVoucher = await VoucherModel.findOne({
@@ -1248,9 +1254,6 @@ class OrderController {
           message: "Không có địa chỉ",
         });
       }
-      const shippingCost = addressDetail
-        ? chargeShippingFee(addressDetail[0]?.dist)
-        : 0;
 
       const listCartItem = await CartItemModel.find<IndexCartItem>({
         _id: {
@@ -1449,6 +1452,13 @@ class OrderController {
         return acc + item?.totalMoney;
       }, 0);
 
+      const totalQuantity = listOrderItem.reduce((acc: number, item) => {
+        return acc + item.quantity;
+      }, 0);
+
+      const shippingCost = addressDetail
+        ? chargeShippingFee(addressDetail[0]?.dist, totalMoney2, totalQuantity)
+        : 0;
       // Tạo một ngày mới sau 2 ngày
 
       let code = generateOrderCode();
@@ -2915,7 +2925,6 @@ class OrderController {
           message: "Không có đơn hàng",
         });
       }
-
 
       if (existingOrder.status !== 1 && existingOrder.status !== 3) {
         return res.status(STATUS.BAD_REQUEST).json({
