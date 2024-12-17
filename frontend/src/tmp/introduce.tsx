@@ -39,7 +39,6 @@ function AboutPage() {
 
 
       <div className="container mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-12">
-
         <div className="mb-12">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
             Sứ Mệnh
@@ -71,14 +70,16 @@ function AboutPage() {
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
                   {member.name}
                 </h3>
-                <p className="text-sm sm:text-base text-gray-500">{member.role}</p>
+                <p className="text-sm sm:text-base text-gray-500">
+                  {member.role}
+                </p>
               </div>
             ))}
           </div>
         </div>
 
 
-        <div>
+        <div className="mb-12">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
             Giá Trị
           </h2>
@@ -101,20 +102,69 @@ function AboutPage() {
             </li>
           </ul>
         </div>
-      </div>
 
 
-      <div className="bg-blue-600 text-white py-8 sm:py-12 px-4 sm:px-6 lg:px-12 text-center">
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
-          Hãy cùng hợp tác với chúng tôi!
-        </h2>
-        <p className="text-base sm:text-lg lg:text-xl mb-6">
-          Nếu bạn có ý tưởng hoặc cần hỗ trợ, đừng ngần ngại liên hệ với chúng
-          tôi.
-        </p>
-        <button className="w-full sm:w-auto bg-white text-blue-600 font-semibold px-6 py-3 rounded-lg shadow hover:bg-gray-100 transition-colors">
-          Liên Hệ Ngay
-        </button>
+        <div className="mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
+            Tầm Nhìn
+          </h2>
+          <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
+            Tầm nhìn của chúng tôi là trở thành một tổ chức dẫn đầu trong việc
+            phát triển công nghệ, không chỉ tại địa phương mà còn trên toàn cầu.
+            Chúng tôi mong muốn xây dựng một cộng đồng bền vững, nơi công nghệ
+            là nguồn cảm hứng và sức mạnh để thay đổi cuộc sống.
+          </p>
+        </div>
+
+
+        <div className="mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
+            Phản Hồi Từ Khách Hàng
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <p className="text-gray-600 italic mb-4">
+                "Dịch vụ của họ thật tuyệt vời! Tôi đã cải thiện hiệu quả công
+                việc nhờ vào giải pháp mà họ cung cấp."
+              </p>
+              <h4 className="text-lg font-semibold text-gray-800">
+                - Nguyễn Thị E
+              </h4>
+            </div>
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <p className="text-gray-600 italic mb-4">
+                "Đội ngũ rất chuyên nghiệp và thân thiện. Tôi cảm thấy an tâm
+                khi hợp tác với họ."
+              </p>
+              <h4 className="text-lg font-semibold text-gray-800">
+                - Trần Văn F
+              </h4>
+            </div>
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <p className="text-gray-600 italic mb-4">
+                "Sản phẩm của họ không chỉ tốt mà còn vượt ngoài mong đợi của
+                tôi."
+              </p>
+              <h4 className="text-lg font-semibold text-gray-800">
+                - Lê Thị G
+              </h4>
+            </div>
+          </div>
+        </div>
+
+
+        <div className="bg-blue-600 text-white py-8 sm:py-12 px-4 sm:px-6 lg:px-12 text-center">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
+            Hãy cùng hợp tác với chúng tôi!
+          </h2>
+          <p className="text-base sm:text-lg lg:text-xl mb-6">
+            Nếu bạn có ý tưởng hoặc cần hỗ trợ, đừng ngần ngại liên hệ với chúng
+            tôi.
+          </p>
+          <button className="w-full sm:w-auto bg-white text-blue-600 font-semibold px-6 py-3 rounded-lg shadow hover:bg-gray-100 transition-colors">
+            Liên Hệ Ngay
+          </button>
+        </div>
       </div>
     </div>
   );
