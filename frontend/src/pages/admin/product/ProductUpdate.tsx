@@ -212,9 +212,16 @@ const formSchema = z
 			}
 		}
 
-		if (data.attributes && data.attributes.length > 1) {
+		if (data.attributes && data.attributes.length > 0) {
 			const combinations = new Set();
 			data.attributes.forEach((attr, index) => {
+				if (attr.discount > attr.price) {
+					ctx.addIssue({
+						code: z.ZodIssueCode.custom,
+						message: "Giá giảm phải nhỏ hơn giá gốc",
+						path: ["attributes", index, "discount"],
+					});
+				}
 				const combination = `${attr.color?._id}-${attr.size?._id}`;
 				if (combinations.has(combination)) {
 					ctx.addIssue({
