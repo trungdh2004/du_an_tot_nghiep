@@ -159,8 +159,8 @@ class AuthController {
       });
 
       await CartModel.create({
-        user:newUser?._id
-      })
+        user: newUser?._id,
+      });
 
       return res.status(STATUS.OK).json({
         message: "Đăng kí tài khoản thành công",
@@ -192,10 +192,15 @@ class AuthController {
 
       const existingEmail = await UserModel.findOne<IUser>({
         email,
-        uid,
       });
 
       if (existingEmail) {
+        if (existingEmail.uid !== uid) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Email này đã có tài khoản",
+          });
+        }
+
         const accessToken = await this.generateAccessToken({
           id: existingEmail._id,
           email: existingEmail.email,
@@ -233,8 +238,8 @@ class AuthController {
       });
 
       await CartModel.create({
-        user:newUser?._id
-      })
+        user: newUser?._id,
+      });
       const accessToken = await this.generateAccessToken({
         id: newUser._id,
         email: newUser.email,
@@ -302,6 +307,23 @@ class AuthController {
             is_admin: (data as PayloadToken).is_admin,
             is_staff: (data as PayloadToken).is_staff,
           };
+
+          const user = await UserModel.findById((data as PayloadToken).id);
+
+          if (!user) {
+            res.clearCookie("token");
+
+            return res.status(STATUS.BAD_REQUEST).json({
+              message: "Không có tài khoản",
+            });
+          }
+
+          if (user.blocked_at) {
+            res.clearCookie("token");
+            return res.status(STATUS.BAD_REQUEST).json({
+              message: "Tài khoản đã bị khóa",
+            });
+          }
 
           const newAccessToken = await this.generateAccessToken(payload);
           const newRefreshToken = await this.generateRefreshToken(payload);
@@ -385,6 +407,12 @@ class AuthController {
         });
       }
 
+      if (existing.provider === "google.com") {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Tài khoản đăng nhập bằng google ?",
+        });
+      }
+
       const randomOtp = Math.floor(100000 + Math.random() * 900000);
 
       const data = {
@@ -453,6 +481,12 @@ class AuthController {
       if (!existingEmail) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Email chưa được đăng kí",
+        });
+      }
+
+      if (existingEmail.provider === "google.com") {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Tài khoản đăng nhập bằng google ?",
         });
       }
 
@@ -534,15 +568,15 @@ class AuthController {
 
       const hashPassword = await bcrypt.hash(password, 10);
 
-      await UserModel.findOneAndUpdate(
-        {
-          email: existingEmail,
-          _id: existingEmail._id,
-        },
+      const updateNew = await UserModel.findByIdAndUpdate(
+        existingEmail._id,
         {
           password: hashPassword,
-        }
+        },
+        { new: true }
       );
+
+      console.log("updateNew", updateNew);
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập mật khẩu thành công",
@@ -734,12 +768,16 @@ class AuthController {
         });
       }
 
-      const updateUser = await UserModel.findByIdAndUpdate(user?.id, {
-        birthDay,
-        full_name,
-        avatarUrl,
-        phone,
-      },{new:true});
+      const updateUser = await UserModel.findByIdAndUpdate(
+        user?.id,
+        {
+          birthDay,
+          full_name,
+          avatarUrl,
+          phone,
+        },
+        { new: true }
+      );
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập thành công",

@@ -34,7 +34,13 @@ export const socketNotificationOrderClient = async (
     if (status === 4) {
       message = `Đơn hàng có mã :<strong>${code}</strong> đã giao thành công !!`;
     }
-    
+    if (status === 6) {
+      message = `Đơn hàng có mã :<strong>${code}</strong> đã bị hủy !!`;
+    }
+    if (status === 7) {
+      message = `Đơn hàng có mã :<strong>${code}</strong> đã bị nhân viên từ chối giao hàng !!`;
+    }
+
     const newNotification = await NotificationModel.create({
       message: message,
       receiver: [userId],
@@ -43,8 +49,6 @@ export const socketNotificationOrderClient = async (
       directId: id,
       recipientType: "single",
     });
-
-    
 
     if (newNotification) {
       io.to(socket).emit("notification", newNotification);
@@ -58,13 +62,13 @@ export const socketNotificationAllClient = async (
   message: string,
   id: string,
   type: string,
-  thumbnail?:string
+  thumbnail?: string
 ) => {
   try {
     const io = getIo();
 
-    if(!message || !id || !type) {
-      return
+    if (!message || !id || !type) {
+      return;
     }
 
     const newNotification = await NotificationModel.create({
@@ -73,25 +77,26 @@ export const socketNotificationAllClient = async (
       type: type,
       directId: id,
       recipientType: "all",
-      thumbnail
+      thumbnail,
     });
 
     io.emit("notification", newNotification);
 
-    return 
+    return;
   } catch (error) {
-
-    return
+    return;
   }
 };
 
-export const socketNewOrderShipperClient = async (order:any,shipper:string) => {
-  if(!order || !shipper) {
-    return
+export const socketNewOrderShipperClient = async (
+  order: any,
+  shipper: string
+) => {
+  if (!order || !shipper) {
+    return;
   }
-  const io = getIo()
+  const io = getIo();
   const socket = getSocket(shipper);
 
-  io.to(socket).emit("newOrderShipper", order)
-
-}
+  io.to(socket).emit("newOrderShipper", order);
+};

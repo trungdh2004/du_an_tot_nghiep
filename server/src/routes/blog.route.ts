@@ -19,7 +19,13 @@ routerBlogs.get(
 routerBlogs.put("/publish/:id", authentication, BlogController.publish);
 routerBlogs.get("/detail/:id", BlogController.getBlogById);
 routerBlogs.get("/detailClient/:id", BlogController.getBlogDetailClient);
-routerBlogs.put("/reactions/:id",authentication, BlogController.reactions);
+routerBlogs.put("/reactions/:id", authentication, BlogController.reactions);
 routerBlogs.delete("/delete/:id", authentication, BlogController.deleteGetById);
+routerBlogs.put(
+  "/cancel-publish/:id",
+  authentication,
+  BlogController.cancelPublish
+);
+routerBlogs.post("/pagingBlogClient", BlogController.pagingBlogClient);
 
 export default routerBlogs;

@@ -1,3 +1,4 @@
+import { calculateTimeDistance, formatCurrency } from "@/common/func";
 import { optimizeCloudinaryUrl } from "@/common/localFunction";
 import {
 	Dialog,
@@ -6,33 +7,33 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import useDebounce from "@/hooks/shared";
+import { cn } from "@/lib/utils";
 import { searchPopupService } from "@/service/system";
 import { ISearchPopup } from "@/types/system";
 import { AxiosError } from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { IoIosSearch } from "react-icons/io";
 import { IoSearch } from "react-icons/io5";
+import { MdOutlineSearch } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { formatCurrency } from "../../../../../server/src/config/func";
-import { calculateTimeDistance } from "@/common/func";
-import { MdOutlineSearch } from "react-icons/md";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { cn } from "@/lib/utils";
 const Search = () => {
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const [isLoading, setLoading] = useState<boolean>(false);
 	const [textKeyWord, setTextKeyWord] = useState<string>("");
 	const [autocomplete, setAutocomplete] = useState<ISearchPopup | []>();
+  useEffect(()=>{
+    return ()=>{
+      setTextKeyWord('');
+      setAutocomplete([])
+    }
+  },[isOpen])
 	const findSearch = useDebounce((keyword: string) => {
 		(async () => {
 			try {
 				setLoading(true);
 				const { data } = await searchPopupService({ keyword });
-				const fakeData = {
-					listBlog: data?.listBlog || [],
-					listProduct:data?.listProduct || [],
-				}
 				setAutocomplete(data);
 			} catch (error) {
 				if (error instanceof AxiosError) {
@@ -57,7 +58,7 @@ const Search = () => {
 		setIsOpen(false);
 		setAutocomplete([]);
 	};
-	
+
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger asChild>
@@ -110,9 +111,9 @@ const Search = () => {
 					>
 						<p className="text-base font-medium text-black/85">Sản phẩm</p>
 						<Link
-						onClick={handleChangePath}
+							onClick={handleChangePath}
 							to={`/search?topic=product&q=${encodeURIComponent(textKeyWord)}`}
-							className="hover:text-blue-500 text-sm"
+							className="text-sm hover:text-custom"
 						>
 							Xem thêm
 						</Link>
@@ -134,7 +135,9 @@ const Search = () => {
 											/>
 										</div>
 										<div className="flex-grow">
-											<p className="flex-grow text-sm truncate max-w-36 md:max-w-sm">{product?.name}</p>
+											<p className="flex-grow text-sm truncate max-w-36 md:max-w-sm">
+												{product?.name}
+											</p>
 											<p className="text-xs text-red-500">
 												{formatCurrency(product?.price)}
 											</p>
@@ -151,9 +154,9 @@ const Search = () => {
 					>
 						<p className="text-base font-medium text-black/85">Bài viết</p>
 						<Link
-						onClick={handleChangePath}
+							onClick={handleChangePath}
 							to={`/search?topic=blog&q=${encodeURIComponent(textKeyWord)}`}
-							className="hover:text-blue-500 text-sm"
+							className="text-sm hover:text-custom"
 						>
 							Xem thêm
 						</Link>
@@ -175,7 +178,9 @@ const Search = () => {
 											/>
 										</div>
 										<div className="">
-											<p className="flex-grow text-sm truncate max-w-36 md:max-w-sm">{blog?.meta_title}</p>
+											<p className="flex-grow text-sm truncate max-w-36 md:max-w-sm">
+												{blog?.meta_title}
+											</p>
 											<p className="text-xs text-gray-400">
 												{calculateTimeDistance(blog?.published_at)}
 											</p>

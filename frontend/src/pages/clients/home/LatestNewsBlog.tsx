@@ -1,142 +1,162 @@
 import { pagingBlogs } from "@/service/blog";
 import { IBlogs } from "@/types/blogs";
-import { format } from "date-fns";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { FaCommentDots, FaEye, FaRegHeart } from "react-icons/fa";
+import { FaAnglesRight } from "react-icons/fa6";
+import { GrFormPrevious } from "react-icons/gr";
+import { MdOutlineNavigateNext } from "react-icons/md";
 import { Link } from "react-router-dom";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Navigation } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { useMediaQuery } from "usehooks-ts";
 
 const LatestNewsBlog = () => {
-	const [newBlogs, setNewBlogs] = useState<IBlogs[]>();
-	useEffect(() => {
-		(async () => {
-			console.log("Đã chạy blog");
-			const { data } = await pagingBlogs({
-				pageSize: 4,
-				pageIndex: 1,
-				fieldSort: "published_at",
-				sort: -1,
-			});
-			setNewBlogs(data?.content);
-		})();
-	}, []);
+	const matches = useMediaQuery("(max-width: 1024px)");
+	const { data: newBlogs } = useQuery({
+		queryKey: ["listBlogHome"],
+		queryFn: async () => {
+			try {
+				const { data } = await pagingBlogs({
+					pageSize: 4,
+					pageIndex: 1,
+					fieldSort: "published_at",
+					sort: -1,
+					keyword: "",
+				});
+				return data?.content || [];
+			} catch (error) {
+				return [];
+			}
+		},
+	});
+
 	return (
 		<div className="my-20 padding">
-			<div className="relative flex flex-col justify-between mb-12  sm:flex-row sm:items-end lg:mb-14 text-neutral-900 dark:text-neutral-50">
-				<h2 className="text-3xl font-semibold md:text-4xl">
-					Những tin tức mới nhất. <span>Từ blog Ciseco</span>
-				</h2>
+			<div className="flex items-center justify-between w-full">
+				<div className="flex-1 text-header">Thông tin mới tại NUCSHOP</div>
 			</div>
-			<div className="grid gap-6 lg:grid-cols-2 md:gap-8">
-				<div className="relative flex flex-col h-full group">
-					<div className="relative flex-grow flex-shrink-0 block w-full h-0 overflow-hidden aspect-w-4 aspect-h-3 rounded-3xl">
-						<div className="w-full h-full ">
-							<img
-								src={
-									newBlogs?.[0]?.thumbnail_url ||
-									"https://ciseco-nextjs.vercel.app/_next/image?url=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F6168061%2Fpexels-photo-6168061.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26dpr%3D2%26h%3D750%26w%3D1260&w=1080&q=75"
-								}
-								alt=""
-								className="object-cover w-full h-full "
-							/>
-						</div>
-					</div>
-					<div className="flex flex-col pr-10 mt-8 ">
-						<h2 className="block text-lg font-semibold capitalize transition-colors text-neutral-900 dark:text-neutral-100 sm:text-2xl">
-							{newBlogs?.[0]?.meta_title}
-						</h2>
-						<span className="hidden mt-4 sm:block text-neutral-500 dark:text-neutral-400">
-							<span className="line-clamp-2">
-								{newBlogs?.[0]?.meta_description}
-							</span>
-						</span>
-						<div className="inline-flex items-center mt-5 text-sm fledx-wrap text-neutral-800 dark:text-neutral-200">
-							<Link
-								to={`/blogs/${newBlogs?.[0]?._id}`}
-								className="relative flex items-center flex-shrink-0 space-x-2"
-							>
-								<div className="relative inline-flex items-center justify-center flex-shrink-0 text-sm font-semibold uppercase rounded-full shadow-inner wil-avatar text-neutral-100 h-7 w-7 ring-1 ring-white dark:ring-neutral-900">
-									<img
-										src={
-											newBlogs?.[0]?.user?.avatarUrl ||
-											"https://ciseco-nextjs.vercel.app/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FImage-1.e0d669ee.png&w=128&q=75"
-										}
-										alt=""
-										className="absolute inset-0 object-cover w-full h-full rounded-full"
-									/>
-								</div>
-								<span className="block font-medium text-neutral-6000 hover:text-black dark:text-neutral-300 dark:hover:text-white">
-									{newBlogs?.[0]?.user?.full_name}
-								</span>
-							</Link>
-							<span className="text-neutral-500 dark:text-neutral-400 mx-[6px] font-medium">
-								·
-							</span>
-							<span className="font-normal text-neutral-500 dark:text-neutral-400 line-clamp-1">
-								{" "}
-								{format(
-									newBlogs?.[0]?.published_at || new Date(),
-									"dd-MM-yyyy",
-								)}
-							</span>
-						</div>
-					</div>
-				</div>
-				<div className="grid gap-6 md:gap-8">
-					{newBlogs?.slice(1).map?.((blog) => (
-						<div className="flex">
-							<div className="flex flex-col h-full py-2">
-								<h2 className="block text-base font-semibold">
-									<Link to={""} className="capitalize line-clamp-2">
-										{blog?.meta_title}
-									</Link>
-								</h2>
-								<span className="hidden my-3 sm:block text-slate-500 dark:text-slate-400 ">
-									<span className="line-clamp-2">{blog?.meta_description}</span>
-								</span>
-								<div className="hidden mt-auto sm:block">
-									<div className="inline-flex items-center text-sm leading-none fledx-wrap text-neutral-800 dark:text-neutral-200">
-										<Link
-											to={""}
-											className="relative flex items-center flex-shrink-0 space-x-2"
-										>
-											<div className="relative inline-flex items-center justify-center flex-shrink-0 text-sm font-semibold uppercase rounded-full shadow-inner wil-avatar text-neutral-100 h-7 w-7 ring-1 ring-white dark:ring-neutral-900">
+
+			<div className="relative my-5 group/parrent">
+				{newBlogs?.length ? (
+					<>
+						<Swiper
+							modules={[Navigation]}
+							loop={true}
+							spaceBetween={16}
+							breakpoints={{
+								320: {
+									slidesPerView: 1,
+								},
+								768: {
+									slidesPerView: 2,
+								},
+
+								1024: {
+									slidesPerView: 3,
+								},
+								1280: {
+									slidesPerView: 4,
+								},
+							}}
+							navigation={{
+								enabled: matches,
+								prevEl: ".btn-prev",
+								nextEl: ".btn-next",
+							}}
+							className="thumbShow"
+						>
+							{newBlogs.map((item: IBlogs, index: number) => (
+								<SwiperSlide key={index} className="h-[360px]">
+									<Link to={`/blogDetail/${item?._id}`}>
+										<div className="h-[350px] grid grid-rows-2 border rounded-xl overflow-hidden relative">
+											<div className="bg-gray-200 border-b border-gray-300">
 												<img
-													src={
-														blog?.user?.avatarUrl ||
-														"https://ciseco-nextjs.vercel.app/_next/image?url=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F6168061%2Fpexels-photo-6168061.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26dpr%3D2%26h%3D750%26w%3D1260&w=1080&q=75"
-													}
+													src={item.thumbnail_url || "/no-image.png"}
+													className="object-cover w-full h-full"
 													alt=""
-													className="object-cover w-full h-full rounded-3xl"
 												/>
 											</div>
-											<span className="block font-medium text-neutral-6000 hover:text-black dark:text-neutral-300 dark:hover:text-white">
-												{blog?.user?.full_name}
-											</span>
-										</Link>
-										<span className="text-neutral-500 dark:text-neutral-400 mx-[6px] font-medium">
-											·
-										</span>
-										<span className="font-normal text-neutral-500 dark:text-neutral-400 line-clamp-1">
-											{" "}
-											{format(blog?.published_at || new Date(), "dd-MM-yyyy")}
-										</span>
-									</div>
-								</div>
-							</div>
-							<div className="relative flex-shrink-0 block w-2/5 h-full ml-3 sm:w-1/3 sm:ml-5">
-								<div className="absolute inset-0">
-									<img
-										src={
-											blog?.thumbnail_url ||
-											"https://ciseco-nextjs.vercel.app/_next/image?url=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F3579484%2Fpexels-photo-3579484.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26w%3D600%26lazy%3Dload&w=640&q=75"
-										}
-										alt=""
-										className="object-cover w-full h-full rounded-xl sm:rounded-3xl"
-									/>
-								</div>
-							</div>
-						</div>
-					))}
-				</div>
+											<div className="px-4 pt-2 bg-white">
+												<div className="flex items-center gap-1 pb-2">
+													<img
+														src={item.user_id.avatarUrl || "/avatar_25.jpg"}
+														className="w-[40px] h-[40px] border-[3px] border-white rounded-full"
+														alt=""
+													/>
+													<div>
+														<h3 className="text-sm font-medium">
+															{item.user_id.full_name}
+														</h3>
+													</div>
+												</div>
+												<div className="flex items-center justify-between">
+													<Link
+														to={`/blogDetail/${item._id}`}
+														className="line-clamp-1 text-[#212B36] text-[18px] font-semibold hover:underline transition-all duration-300"
+													>
+														{item.title || "Bài viết chưa có tiêu đề"}
+													</Link>
+												</div>
+												<p className="pt-1 text-xs text-gray-400 line-clamp-2">
+													{item.meta_description}
+												</p>
+												<div className="flex space-x-4 min-[900px]:space-x-1 xl:space-x-4 absolute bottom-4 right-4">
+													<div className="flex gap-3">
+														<span className="text-[#212B36] text-xs flex items-center gap-1">
+															<FaRegHeart size={16} />
+															{item.countLike}
+														</span>
+														<span className="text-[#212B36] text-xs flex items-center gap-1">
+															<FaCommentDots size={16} />
+															{item.comments_count}
+														</span>
+														<span className="text-[#212B36] text-xs flex items-center gap-1">
+															<FaEye size={16} />
+															{item.views_count}
+														</span>
+													</div>
+												</div>
+											</div>
+										</div>
+									</Link>
+								</SwiperSlide>
+							))}
+						</Swiper>
+						{matches && (
+							<>
+								<button
+									className={`btn-next    absolute z-10 top-[39%] right-0  group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`}
+								>
+									<MdOutlineNavigateNext className="text-sm group-hover/parrent:text-base" />
+								</button>
+								<button
+									className={`btn-prev  absolute z-10 top-[39%] left-0  group-hover/parrent:size-12 text-[#0000008a] bg-white shadow-[0_1px_12px_0_rgba(0,0,0,.12)] size-7 border flex justify-center items-center rounded-full   duration-300 cursor-pointer`}
+								>
+									<GrFormPrevious className="text-sm group-hover/parrent:text-base" />
+								</button>
+							</>
+						)}
+					</>
+				) : (
+					<div className="flex items-center justify-center w-full h-full col-span-12 mt-10">
+						<h3 className="text-lg text-[#1A1E26]">Chưa có bài viết nào.</h3>
+					</div>
+				)}
+			</div>
+
+			<div className="text-center">
+				<Link
+					to={"/blogs"}
+					className="inline-flex items-center justify-center gap-2 text-gray-500 group hover:text-custom"
+				>
+					<span className="font-medium ">Xem thêm</span>
+					<span className="duration-200 group-hover:translate-x-4">
+						<FaAnglesRight size={16} className="" />
+					</span>
+				</Link>
 			</div>
 		</div>
 	);

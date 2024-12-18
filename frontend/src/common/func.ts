@@ -49,8 +49,7 @@ export function calculateTimeDistance(pastDate: any, isEnd?: boolean) {
 }
 
 export function formatDateMessage(pastDate: any) {
-
-	if(!pastDate) return ''
+	if (!pastDate) return "";
 
 	const now = new Date();
 	const oldDate = new Date(pastDate);
@@ -60,10 +59,24 @@ export function formatDateMessage(pastDate: any) {
 		oldDate.getMonth() === now.getMonth() &&
 		oldDate.getFullYear() === now.getFullYear()
 	) {
-
-		return `${oldDate?.getHours()}:${oldDate?.getMinutes()}`
+		return `${oldDate?.getHours()}:${oldDate?.getMinutes()}`;
 	}
 
+	return `${oldDate?.getHours()}:${oldDate?.getMinutes()} ${oldDate?.getDate()}/${oldDate.getMonth()}/${oldDate.getFullYear()}`;
+}
+export function getYearsArray(startYear: number, endYear: number) {
+	return Array.from(
+		{ length: endYear - startYear + 1 },
+		(_, i) => startYear + i,
+	);
+}
+export function convertToKm(meters: number) {
+	return parseFloat((meters / 1000).toFixed(2));
+}
+export function estimateTime(km: number, speedKmh = 25) {
+	let timeInHours = parseFloat((km / 1000).toFixed(2)) / speedKmh;
+	let hours = Math.floor(timeInHours); 
+	let minutes = Math.round((timeInHours - hours) * 60); 
 
-	return `${oldDate?.getHours()}:${oldDate?.getMinutes()} ${oldDate?.getDay()}/${oldDate.getMonth()}/${oldDate.getFullYear()}`
+	return { hours, minutes };
 }

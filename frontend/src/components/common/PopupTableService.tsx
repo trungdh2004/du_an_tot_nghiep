@@ -1,20 +1,14 @@
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import Paginations from "./Pagination";
 import { useEffect, useState } from "react";
-import {
-	keepPreviousData,
-	useQuery,
-	useQueryClient,
-} from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { pagingProductOfVoucher } from "@/service/product";
 import { FaRegCircle, FaRegCheckCircle } from "react-icons/fa";
 
@@ -147,7 +141,7 @@ const PopupTableService = ({
 										</tr>
 									);
 								})}
-							
+
 							{data?.content?.length === 0 && (
 								<tr>
 									<th colSpan={4}>Không có dữ liệu</th>
@@ -177,9 +171,13 @@ const PopupTableService = ({
 					<Button variant={"outline"} size={"sm"} onClick={handleCloseModel}>
 						Hủy
 					</Button>
-					<Button variant={"danger"} size={"sm"} onClick={() => {
-						setListSelect([])
-					}}>
+					<Button
+						variant={"danger"}
+						size={"sm"}
+						onClick={() => {
+							setListSelect([]);
+						}}
+					>
 						Bỏ tất cả
 					</Button>
 					<Button

@@ -1,9 +1,19 @@
-import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { array, z } from "zod";
+import { z } from "zod";
 
+import { formatCurrency } from "@/common/func";
+import FroalaEditor from "@/components/common/Froala";
+import InputNumberFormat from "@/components/common/InputNumberFormat";
+import {
+	ListColorComponent,
+	ListSizeComponent,
+} from "@/components/common/Product";
+import SelectComponent from "@/components/common/SelectComponent";
+import { TooltipComponent } from "@/components/common/TooltipComponent";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
 	Form,
 	FormControl,
@@ -13,41 +23,39 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-	AiOutlineCloudUpload,
-	AiOutlineLoading3Quarters,
-	AiFillCloseCircle,
-} from "react-icons/ai";
 import { cn } from "@/lib/utils";
+import { getAllCategory } from "@/service/category-admin";
+import { getAllColor } from "@/service/color";
+import { getProductById, updateProductById } from "@/service/product";
+import { getAllSize } from "@/service/size-admin";
 import { uploadFileService, uploadMultipleFileService } from "@/service/upload";
 import {
 	useProcessBarLoading,
 	useProcessBarLoadingEventNone,
 } from "@/store/useSidebarAdmin";
-import ImageUploading, { ImageListType } from "react-images-uploading";
-import { CiCirclePlus } from "react-icons/ci";
-import { getAllCategory } from "@/service/category-admin";
-import { getAllSize } from "@/service/size-admin";
-import { IColor, IItemListColor, IProduct } from "@/types/typeProduct";
-import { MdDeleteForever } from "react-icons/md";
-import FroalaEditor from "@/components/common/Froala";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { getProductById, updateProductById } from "@/service/product";
-import { useNavigate, useParams } from "react-router-dom";
-import SelectComponent from "@/components/common/SelectComponent";
-import Select from "react-select";
-import { getAllColor } from "@/service/color";
+import { IColor, IProduct } from "@/types/typeProduct";
 import { ISize } from "@/types/variants";
-import { ICategory } from "@/types/category";
-import { Checkbox } from "@/components/ui/checkbox";
+import { useMutation } from "@tanstack/react-query";
+import {
+	AiFillCloseCircle,
+	AiOutlineCloudUpload,
+	AiOutlineLoading3Quarters,
+} from "react-icons/ai";
+import { BsStars } from "react-icons/bs";
+import { CiCirclePlus } from "react-icons/ci";
+import { FaStar } from "react-icons/fa";
+import { IoEyeOutline } from "react-icons/io5";
+import { MdDeleteForever } from "react-icons/md";
+import ImageUploading, { ImageListType } from "react-images-uploading";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const formSchema = z
 	.object({
 		name: z.string().nonempty({ message: "Nhập tên sản phẩm" }),
-		price: z.string().min(1, "Phải lớn hơn 0"),
+		price: z.number().min(1, "Phải lớn hơn 0"),
 		description: z.string().nonempty("Nhập mô tả sản phẩm"),
-		discount: z.string().min(1, "Phải lớn hơn 0"),
+		discount: z.number().min(1, "Phải lớn hơn 0"),
 		is_hot: z.boolean(),
 		is_simple: z.boolean(),
 		quantity: z.number(),
@@ -104,6 +112,7 @@ const formSchema = z
 				price: z.number().min(1, "Phải lớn hơn 0"),
 				quantity: z.number().min(1, "Phải lớn hơn 0"),
 				discount: z.number().min(1, "Phải lớn hơn 0"),
+				_id: z.string().optional(),
 			}),
 		),
 		featured: z.boolean(),
@@ -140,9 +149,20 @@ const formSchema = z
 			path: ["quantity"], // Chỉ rõ trường bị lỗi
 		},
 	)
+	.refine(
+		(data) => {
+			console.log("data", data);
+			if (data.discount > data.price) {
+				return false;
+			}
+			return true;
+		},
+		{
+			message: "Giá giảm phải nhỏ hơn giá gốc",
+			path: ["discount"],
+		},
+	)
 	.superRefine((data, ctx) => {
-		console.log({ data, ctx });
-
 		if (!data.is_simple && (!data.attributes || data.attributes.length === 0)) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
@@ -155,12 +175,12 @@ const formSchema = z
 			// Nếu is_simple là true, cho phép attributes là mảng rỗng
 			if (data.attributes && data.attributes.length > 0) {
 				// Nếu có attributes, không yêu cầu các trường con
-				data.attributes.forEach((attr, index) => {
-					const colorPath = ["attributes", index, "color"];
-					const sizePath = ["attributes", index, "size"];
-					const pricePath = ["attributes", index, "price"];
-					const quantityPath = ["attributes", index, "quantity"];
-					const discountPath = ["attributes", index, "discount"];
+				data.attributes.forEach((attr) => {
+					// const colorPath = ["attributes", index, "color"];
+					// const sizePath = ["attributes", index, "size"];
+					// const pricePath = ["attributes", index, "price"];
+					// const quantityPath = ["attributes", index, "quantity"];
+					// const discountPath = ["attributes", index, "discount"];
 
 					if (attr.color) {
 						z.object({
@@ -192,9 +212,16 @@ const formSchema = z
 			}
 		}
 
-		if (data.attributes && data.attributes.length > 1) {
+		if (data.attributes && data.attributes.length > 0) {
 			const combinations = new Set();
 			data.attributes.forEach((attr, index) => {
+				if (attr.discount > attr.price) {
+					ctx.addIssue({
+						code: z.ZodIssueCode.custom,
+						message: "Giá giảm phải nhỏ hơn giá gốc",
+						path: ["attributes", index, "discount"],
+					});
+				}
 				const combination = `${attr.color?._id}-${attr.size?._id}`;
 				if (combinations.has(combination)) {
 					ctx.addIssue({
@@ -232,6 +259,11 @@ export type ProductFormValues = Omit<FormSchemaType, "attributes"> & {
 	attributes: AttributeType[];
 };
 
+type ICate = {
+	_id: string;
+	name: string;
+};
+
 const ProductUpdate = () => {
 	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
 		useProcessBarLoadingEventNone();
@@ -242,8 +274,8 @@ const ProductUpdate = () => {
 		defaultValues: {
 			name: "",
 			category: null,
-			price: "",
-			discount: "",
+			price: 0,
+			discount: 0,
 			featured: false,
 			description: "",
 			thumbnail: "",
@@ -254,7 +286,7 @@ const ProductUpdate = () => {
 			quantity: 0,
 		},
 	});
-	const { isOpen, setOpen, setClose } = useProcessBarLoading();
+	const { setOpen, setClose } = useProcessBarLoading();
 	const [previewUrl, setPreviewUrl] = useState({
 		isLoading: false,
 		url: "",
@@ -264,7 +296,7 @@ const ProductUpdate = () => {
 	const [category, setCategorys] = useState([]);
 	const [size, setSize] = useState([]);
 	const [color, setColor] = useState([]);
-	const [isPending, setIsPending] = useState(false);
+	const [isPending] = useState(false);
 	const { mutate } = useMutation({
 		mutationFn: (value: IProduct) => updateProductById(id as string, value),
 		onSuccess: () => {
@@ -301,8 +333,8 @@ const ProductUpdate = () => {
 				form.reset({
 					category: data.data.category,
 					name: data.data.name,
-					price: data.data.price.toString(),
-					discount: data.data.discount.toString(),
+					price: data.data.price,
+					discount: data.data.discount,
 					thumbnail: data.data.thumbnail,
 					images: data.data.images,
 					attributes: data.data.attributes,
@@ -336,37 +368,35 @@ const ProductUpdate = () => {
 			const listImageNotFile = values.images?.filter((image) => !image?.file);
 			const listImageFile = values.images?.filter((image) => image?.file);
 			let listImage = [];
-
 			if (listImageFile?.length > 0) {
 				const formData = new FormData();
 				for (let i = 0; i < listImageFile?.length; i++) {
 					formData.append("images", listImageFile[i]?.file as any);
 				}
-
 				const { data } = await uploadMultipleFileService(formData);
-
 				listImage = data?.map((item: any) => ({
 					url: item.path,
 				}));
 			}
 			const images = [...listImageNotFile, ...listImage];
+
 			const attribute = values.attributes?.map((attribute) => ({
 				...attribute,
 				color: attribute.color?._id as string,
 				size: attribute.size?._id as string,
 			}));
+
 			const data = {
 				...values,
 				images,
 				category: values.category?._id,
-				attributes: attribute,
+				attributes: values.is_simple ? [] : attribute,
 				price: +values.price,
 				discount: +values.discount,
 			};
 			mutate(data as IProduct);
 		} catch (error) {
 			console.log("error", error);
-
 			toast.error("Chỉnh sửa sản phẩm xảy ra lỗi");
 		}
 	};
@@ -410,9 +440,33 @@ const ProductUpdate = () => {
 			}, [])
 		: [];
 
+	const listSize = form.watch("attributes")
+		? form.watch("attributes")?.reduce((acc: ISize[], item) => {
+				if (!item?.size?._id) return acc;
+				let group = acc.find((g) => g._id === (item.color as ISize)?._id);
+
+				// Nếu nhóm không tồn tại, tạo nhóm mới
+				if (!group) {
+					group = {
+						_id: (item.size as ISize)._id as string,
+						name: (item.size as ISize).name as string,
+					};
+					acc.push(group);
+					return acc;
+				}
+				return acc;
+			}, [])
+		: [];
+
+	const handleDescription = () => {
+		const text = `<p><span style=\"font-size: 16px;\"><strong>M&ocirc; tả</strong><br>${form.watch("name")} có phom d&aacute;ng rộng, ph&ugrave; hợp mọi v&oacute;c d&aacute;ng, gi&uacute;p người mặc dễ d&agrave;ng che đi khuyết điểm.<br style=\"box-sizing: border-box; letter-spacing: 0px;\" id=\"isPasted\">Thiết kế &aacute;o c&oacute;  gi&uacute;p bảo vệ cơ thể, tăng t&iacute;nh thời trang.<br style=\"box-sizing: border-box; letter-spacing: 0px;\">Ngực &aacute;o c&oacute; h&igrave;nh in chữ to tạo một điểm nhấn.</span></p><p><span style=\"font-size: 16px;\"><br></span></p><p><span style=\"font-size: 16px;\"><strong>Chất liệu</strong></span></p><p><span style=\"font-size: 16px;\"><strong><span style=\"color: rgb(51, 63, 72); font-family: sans-serif; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 500; letter-spacing: normal; orphans: 2; text-align: justify; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;\" id=\"isPasted\">60% cotton 40% polyester.</span></strong></span></p><p><span style=\"font-size: 16px;\"><br></span></p><p><span style=\"font-size: 16px;\"><strong><span id=\"isPasted\">Hưỡng dẫn sử dụng</span></strong></span></p><p><span style=\"font-size: 16px;\">Giặt m&aacute;y ở chế độ nhẹ, nhiệt độ thường.</span></p><p><span style=\"font-size: 16px;\">Kh&ocirc;ng sử dụng h&oacute;a chất tẩy c&oacute; chứa Clo</span></p><p><span style=\"font-size: 16px;\">Phơi trong b&oacute;ng m&aacute;t</span></p><p><span style=\"font-size: 16px;\">Sấy th&ugrave;ng, chế độ nhẹ nh&agrave;ng</span></p>`;
+
+		form.setValue("description", text);
+	};
+
 	return (
 		<div>
-			<h4 className="text-xl font-medium">Thêm mới sản phẩm</h4>
+			<h4 className="text-xl font-medium">Chỉnh sửa sản phẩm</h4>
 
 			<div className="grid w-full gap-5 mt-4 lg:grid-cols-12">
 				<Form {...form}>
@@ -447,46 +501,18 @@ const ProductUpdate = () => {
 									<FormField
 										disabled={isPending}
 										control={form.control}
-										name="price"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Giá sản phẩm</FormLabel>
-												<FormControl>
-													<Input
-														placeholder="Giá sản phẩm"
-														{...field}
-														onChange={(event) => {
-															const numericValue = event.target.value.replace(
-																/[^0-9]/g,
-																"",
-															);
-															return field.onChange(numericValue);
-														}}
-													/>
-												</FormControl>
-
-												<FormMessage className="text-xs" />
-											</FormItem>
-										)}
-									/>
-								</div>
-								{/* category */}
-								<div className="col-span-2 sm:col-span-1">
-									<FormField
-										disabled={isPending}
-										control={form.control}
 										name="category"
 										render={({ field }) => (
 											<FormItem>
 												<FormLabel>Danh mục</FormLabel>
 												<FormControl>
-													<SelectComponent<ICategory>
+													<SelectComponent<ICate>
 														value={field.value}
-														onChange={(newValue: ICategory, action) => {
+														onChange={(newValue: ICate) => {
 															field.onChange(newValue);
 															form.clearErrors(`category`);
 														}}
-														placeholder="Kích thước"
+														placeholder="Danh mục"
 														options={category}
 														getOptionLabel={(option) => option.name}
 														getOptionValue={(option) => option?._id as string}
@@ -501,21 +527,44 @@ const ProductUpdate = () => {
 									<FormField
 										disabled={isPending}
 										control={form.control}
+										name="price"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Giá sản phẩm</FormLabel>
+												<FormControl>
+													<InputNumberFormat
+														value={field.value}
+														onChange={(value) => {
+															field.onChange(value.floatValue);
+														}}
+														suffix="đ"
+														placeholder="Giá sản phẩm"
+													/>
+												</FormControl>
+
+												<FormMessage className="text-xs" />
+											</FormItem>
+										)}
+									/>
+								</div>
+								{/* category */}
+
+								<div className="col-span-2 sm:col-span-1">
+									<FormField
+										disabled={isPending}
+										control={form.control}
 										name="discount"
 										render={({ field }) => (
 											<FormItem>
 												<FormLabel>Giảm giá</FormLabel>
 												<FormControl>
-													<Input
-														placeholder="Giá sản phẩm"
-														{...field}
-														onChange={(event) => {
-															const numericValue = event.target.value.replace(
-																/[^0-9]/g,
-																"",
-															);
-															return field.onChange(numericValue);
+													<InputNumberFormat
+														value={field.value}
+														onChange={(value) => {
+															field.onChange(value.floatValue);
 														}}
+														suffix="đ"
+														placeholder="Giá giảm"
 													/>
 												</FormControl>
 
@@ -534,12 +583,40 @@ const ProductUpdate = () => {
 											<FormItem>
 												<FormLabel>Ảnh sản phẩm</FormLabel>
 												<FormControl>
-													<div className="w-full ">
+													<div className="w-full bg-white border rounded-sm">
 														<label
 															htmlFor="file-upload"
 															className={cn("w-full relative ")}
+															onDragOver={(e) => {
+																e.preventDefault();
+															}}
+															onDrop={(event) => {
+																const items = event.dataTransfer.items; // Lấy danh sách items được kéo thả
+
+																for (const item of items) {
+																	if (
+																		item.kind === "file" &&
+																		item.type.startsWith("image/")
+																	) {
+																		const file = item.getAsFile(); // Lấy file ảnh
+
+																		if (file) {
+																			field.onChange(async () => {
+																				setPreviewUrl({
+																					url: URL.createObjectURL(file),
+																					isLoading: true,
+																				});
+																				form.clearErrors("thumbnail");
+																				const url =
+																					await handleUploadFile(file);
+																				field.onChange(url);
+																			});
+																		}
+																	}
+																}
+															}}
 														>
-															<div className="relative w-full bg-white border rounded-sm">
+															<div className="relative w-full bg-white ">
 																<div
 																	className={cn(
 																		"w-full h-[160px] flex justify-center items-center flex-col",
@@ -584,6 +661,36 @@ const ProductUpdate = () => {
 																)}
 															</div>
 														</label>
+
+														<div className="flex justify-center h-6 px-2 mb-2">
+															<div
+																className="w-40 text-sm text-center text-blue-500 bg-blue-100 rounded-sm cursor-pointer hover:bg-blue-200"
+																onPaste={(event) => {
+																	console.log("paste dc nè");
+																	const items = event.clipboardData.items;
+																	for (const item of items) {
+																		if (item.type.startsWith("image/")) {
+																			const file = item.getAsFile();
+																			if (file) {
+																				field.onChange(async () => {
+																					setPreviewUrl({
+																						url: URL.createObjectURL(file),
+																						isLoading: true,
+																					});
+																					form.clearErrors("thumbnail");
+																					const url =
+																						await handleUploadFile(file);
+																					field.onChange(url);
+																				});
+																			}
+																		}
+																	}
+																}}
+															>
+																Click to paste image
+															</div>
+														</div>
+
 														<input
 															type="file"
 															name=""
@@ -626,7 +733,7 @@ const ProductUpdate = () => {
 											<FormItem>
 												<FormLabel>Ảnh khác</FormLabel>
 												<FormControl>
-													<div className="w-full ">
+													<div className="w-full bg-white border rounded-sm">
 														<ImageUploading
 															multiple
 															value={images}
@@ -654,54 +761,97 @@ const ProductUpdate = () => {
 																dragProps,
 															}) => {
 																return (
-																	// Khu vực kéo và thả hoặc nhấp để tải ảnh
-																	<div
-																		className={cn(
-																			"w-full relative h-[160px] rounded-sm border grid grid-cols-4 grid-rows-2 gap-1 p-1 bg-white",
-																		)}
-																	>
-																		{imageList?.map(
-																			(image: any, index: number) => {
-																				return (
-																					<div className="col-span-1 row-span-1">
-																						<div
-																							// key={index}
-																							className="relative flex items-center justify-center w-full h-full border rounded "
-																						>
-																							<img
-																								src={image?.url}
-																								alt=""
-																								onClick={() =>
-																									onImageUpdate(index)
-																								}
-																								className="cursor-pointer h-[90%] object-cover 	"
-																							/>
-																							<AiFillCloseCircle
-																								className="absolute right-0 cursor-pointer top-2 right"
-																								size={20}
-																								onClick={() =>
-																									onImageRemove(index)
-																								}
-																							/>
-																						</div>
-																					</div>
-																				);
-																			},
-																		)}
-																		<button
-																			type="button"
-																			onClick={onImageUpload}
-																			{...dragProps}
+																	<div>
+																		<div
 																			className={cn(
-																				"col-span-1 row-span-1 relative w-full h-full border rounded flex justify-center items-center",
-																				images.length === maxNumber && "hidden",
+																				"w-full relative h-[160px]   grid grid-cols-4 grid-rows-2 gap-1 p-1 ",
 																			)}
 																		>
-																			<AiOutlineCloudUpload
-																				size={50}
-																				strokeWidth={1}
-																			/>
-																		</button>
+																			{imageList?.map(
+																				(image: any, index: number) => {
+																					return (
+																						<div
+																							className="col-span-1 row-span-1"
+																							key={index}
+																						>
+																							<div
+																								// key={index}
+																								className="relative flex items-center justify-center w-full h-full border rounded "
+																							>
+																								<img
+																									src={image?.url}
+																									alt=""
+																									onClick={() =>
+																										onImageUpdate(index)
+																									}
+																									className="cursor-pointer h-[90%] object-cover 	"
+																								/>
+																								<AiFillCloseCircle
+																									className="absolute right-0 cursor-pointer top-2 right"
+																									size={20}
+																									onClick={() =>
+																										onImageRemove(index)
+																									}
+																								/>
+																							</div>
+																						</div>
+																					);
+																				},
+																			)}
+																			<button
+																				type="button"
+																				onClick={onImageUpload}
+																				{...dragProps}
+																				className={cn(
+																					"col-span-1 row-span-1 relative w-full h-full border rounded flex justify-center items-center",
+																					images.length === maxNumber &&
+																						"hidden",
+																				)}
+																			>
+																				<AiOutlineCloudUpload
+																					size={50}
+																					strokeWidth={1}
+																				/>
+																			</button>
+																		</div>
+																		<div className="flex justify-center h-6 px-2 mb-2">
+																			<div
+																				className="w-40 text-sm text-center text-blue-500 bg-blue-100 rounded-sm cursor-pointer hover:bg-blue-200"
+																				onPaste={(event) => {
+																					const items =
+																						event.clipboardData.items;
+																					for (const item of items) {
+																						if (
+																							item.type.startsWith("image/")
+																						) {
+																							const file = item.getAsFile();
+																							if (file) {
+																								const url =
+																									URL.createObjectURL(file);
+
+																								const list = [
+																									...imageList,
+																									{
+																										url,
+																										file,
+																									},
+																								];
+
+																								console.log("list", list);
+
+																								setImages(list);
+																								field.onChange(list);
+																								if (list.length > 0) {
+																									form.clearErrors("images");
+																								}
+																							}
+																						}
+																					}
+																				}}
+																			>
+																				Click to paste image
+																			</div>
+																		</div>
 																	</div>
 																);
 															}}
@@ -728,17 +878,19 @@ const ProductUpdate = () => {
 																field.onChange(e);
 																console.log({ e });
 																if (e) {
-																	form.setValue("attributes", []);
+																	// form.setValue("attributes", []);
 																} else {
-																	form.setValue("attributes", [
-																		{
-																			size: null,
-																			color: null,
-																			price: 0,
-																			quantity: 0,
-																			discount: 0,
-																		},
-																	]);
+																	if (form.watch("attributes").length === 0) {
+																		form.setValue("attributes", [
+																			{
+																				size: null,
+																				color: null,
+																				price: 0,
+																				quantity: 0,
+																				discount: 0,
+																			},
+																		]);
+																	}
 																	form.setValue("quantity", 0);
 																}
 															}}
@@ -786,11 +938,19 @@ const ProductUpdate = () => {
 												<FormItem>
 													<FormLabel>Số lượng</FormLabel>
 													<FormControl>
-														<Input
+														{/* <Input
 															placeholder="Số lượng"
 															{...field}
 															type="number"
 															onChange={(e) => field.onChange(+e.target.value)}
+														/> */}
+														<InputNumberFormat
+															value={field.value}
+															onChange={(value) => {
+																field.onChange(value.floatValue);
+															}}
+															suffix=""
+															placeholder="Số lượng"
 														/>
 													</FormControl>
 
@@ -832,7 +992,7 @@ const ProductUpdate = () => {
 																	<FormLabel>Kích thước</FormLabel>
 																	<SelectComponent<ISize>
 																		value={field.value}
-																		onChange={(newValue: ISize, action) => {
+																		onChange={(newValue: ISize) => {
 																			field.onChange(newValue);
 																			form.clearErrors(
 																				`attributes.${index}.size`,
@@ -859,7 +1019,7 @@ const ProductUpdate = () => {
 																		<FormLabel>Màu</FormLabel>
 																		<SelectComponent<IColor>
 																			value={field.value}
-																			onChange={(newValue: IColor, action) => {
+																			onChange={(newValue: IColor) => {
 																				field.onChange(newValue);
 																				form.clearErrors(
 																					`attributes.${index}.color`,
@@ -897,38 +1057,13 @@ const ProductUpdate = () => {
 																<FormItem className="flex flex-col w-full">
 																	<FormLabel>Giá</FormLabel>
 																	<FormControl>
-																		<Input
-																			placeholder="Giá"
-																			type="number"
-																			{...field}
-																			className=""
-																			onChange={(event) =>
-																				field.onChange(+event.target.value)
-																			}
-																			min={0}
-																		/>
-																	</FormControl>
-																	<FormMessage className="text-xs" />
-																</FormItem>
-															)}
-														/>
-														<FormField
-															disabled={isPending}
-															name={`attributes.${index}.quantity`}
-															control={control}
-															render={({ field }) => (
-																<FormItem className="flex flex-col w-full">
-																	<FormLabel>Số lượng</FormLabel>
-																	<FormControl>
-																		<Input
-																			placeholder="Số lượng"
-																			type="number"
-																			{...field}
-																			className=""
-																			onChange={(event) =>
-																				field.onChange(+event.target.value)
-																			}
-																			min={0}
+																		<InputNumberFormat
+																			value={field.value}
+																			onChange={(value) => {
+																				field.onChange(value.floatValue);
+																			}}
+																			suffix="đ"
+																			placeholder=""
 																		/>
 																	</FormControl>
 																	<FormMessage className="text-xs" />
@@ -943,21 +1078,41 @@ const ProductUpdate = () => {
 																<FormItem className="flex flex-col w-full">
 																	<FormLabel>Giảm giá</FormLabel>
 																	<FormControl>
-																		<Input
-																			placeholder="Giảm giá"
-																			type="number"
-																			{...field}
-																			className=""
-																			onChange={(event) =>
-																				field.onChange(+event.target.value)
-																			}
-																			min={0}
+																		<InputNumberFormat
+																			value={field.value}
+																			onChange={(value) => {
+																				field.onChange(value.floatValue);
+																			}}
+																			suffix="đ"
+																			placeholder=""
 																		/>
 																	</FormControl>
 																	<FormMessage className="text-xs" />
 																</FormItem>
 															)}
 														/>
+														<FormField
+															disabled={isPending}
+															name={`attributes.${index}.quantity`}
+															control={control}
+															render={({ field }) => (
+																<FormItem className="flex flex-col w-full">
+																	<FormLabel>Số lượng</FormLabel>
+																	<FormControl>
+																		<InputNumberFormat
+																			value={field.value}
+																			onChange={(value) => {
+																				field.onChange(value.floatValue);
+																			}}
+																			suffix=""
+																			placeholder=""
+																		/>
+																	</FormControl>
+																	<FormMessage className="text-xs" />
+																</FormItem>
+															)}
+														/>
+
 														<div className="flex items-center justify-center w-full">
 															<button
 																type="button"
@@ -1010,7 +1165,21 @@ const ProductUpdate = () => {
 										control={control}
 										render={({ field }) => (
 											<FormItem className="flex flex-col w-full">
-												<FormLabel>Mô tả</FormLabel>
+												<div className="flex items-center justify-between">
+													<FormLabel>Mô tả</FormLabel>
+
+													<TooltipComponent label="Tự tạo mô tả theo tên">
+														<div
+															className="flex items-center justify-center rounded-full cursor-pointer size-7 group hover:bg-gray-50"
+															onClick={handleDescription}
+														>
+															<BsStars
+																size={20}
+																className="text-blue-500 group-hover:text-blue-700"
+															/>
+														</div>
+													</TooltipComponent>
+												</div>
 												<FormControl>
 													<FroalaEditor
 														content={field.value}
@@ -1029,40 +1198,73 @@ const ProductUpdate = () => {
 								disabled={isPending || previewUrl.isLoading}
 								className="mt-4"
 							>
-								Thêm sản phẩm
+								Lưu sản phẩm
 							</Button>
 						</div>
 					</form>
 				</Form>
 				<div className="hidden p-4 lg:block lg:col-span-3 ">
-					<div className="w-full border rounded">
-						<img
-							src={
-								form.watch("thumbnail") ||
-								"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTixbrVNY9XIHQBZ1iehMIV0Z9AtHB9dp46lg&s"
-							}
-							alt=""
-							className="w-full object-cover max-h-[200px] border-b"
-						/>
-
-						<div className="p-3 bg-white">
-							<p className="font-medium line-clamp-1">
-								{form.watch("name") || "Chưa có tên"}
-							</p>
-							<div className="flex items-center justify-start -space-x-1 *:size-3 *:inline-block  *:rounded-full my-1.5">
-								{listColor?.map((item) => (
-									<span
-										style={{ background: item.code }}
-										className="border box-shadow border-black/40"
-									></span>
-								))}
+					<div className="relative flex flex-col overflow-hidden transition-all duration-300 bg-white border border-gray-200 rounded-xl group hover:shadow-lg">
+						<div className="relative overflow-hidden border bg-[#fff] flex justify-center items-center max-w-full min-w-full box-shadow">
+							<div className="relative inline-block w-full group aspect-square">
+								<div className="transition duration-500 transform bg-white ">
+									<img
+										className="object-cover w-full h-full aspect-square"
+										src={
+											form.watch("thumbnail") ||
+											"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTixbrVNY9XIHQBZ1iehMIV0Z9AtHB9dp46lg&s"
+										}
+										alt="Image 1"
+									/>
+								</div>
 							</div>
+							<div className="absolute flex items-center justify-center w-full transition-all duration-300 ease-in-out rounded -bottom-10 group-hover:bottom-8">
+								<div className="flex justify-center gap-1 items-center lg:w-[200px] w-[150px] lg:text-base text-sm lg:py-2 py-1 bg-opacity-30 border text-white bg-[#232323] text-center leading-[40px] border-none transition-transform hover:scale-90 hover:bg-[#f5f5f5] hover:text-[#262626] duration-300">
+									<IoEyeOutline />
+									<p className="text-xs lg:text-sm">Xem chi tiết</p>
+								</div>
+							</div>
+							{form.watch("is_hot") && (
+								<div className="absolute left-3 top-5 text-center rounded-full w-[35px] h-[35px]  p-1 bg-[#f54040]">
+									<p className="lg:text-[12px] text-xs pt-1 text-white">HOT</p>
+								</div>
+							)}
+						</div>
+						<div className="flex flex-col gap-1 p-2 sm:gap-2">
 							<div className="flex items-center justify-between">
-								<span className="text-sm font-medium text-red-500">
-									{form.watch("price") || 0} đ
-								</span>
-								<span className="text-xs">Đã bán : 0</span>
+								<div className="flex items-center gap-1 ">
+									<FaStar className="text-yellow-400" size={10} />
+									<FaStar className="text-yellow-400" size={10} />
+									<FaStar className="text-yellow-400" size={10} />
+									<FaStar className="text-yellow-400" size={10} />
+									<FaStar className="text-yellow-400" size={10} />
+								</div>
+								<div>
+									<p className="text-xs lg:text-sm">Đã bán 0</p>
+								</div>
 							</div>
+							<h3 className=" md:text-[18px] text-sm text-[#1A1E26] font-semibold min-w-0 truncate">
+								{form.watch("name")}
+							</h3>
+
+							<div className="flex items-center gap-2">
+								<span className="md:text-base text-xs justify-start font-[500] text-red-500">
+									{formatCurrency(form.watch("discount") || 0)}
+								</span>
+								<span className="lg:text-[13px] md:text-[13px] text-[10px] font-normal hidden sm:block">
+									<del>{formatCurrency(form.watch("price") || 0)}</del>
+								</span>
+							</div>
+							<div
+								className={cn(
+									"flex items-center justify-between",
+									!form.watch("attributes") && "hidden",
+								)}
+							>
+								<ListColorComponent listColor={listColor} />
+								<ListSizeComponent listSize={listSize} />
+							</div>
+							<div></div>
 						</div>
 					</div>
 				</div>

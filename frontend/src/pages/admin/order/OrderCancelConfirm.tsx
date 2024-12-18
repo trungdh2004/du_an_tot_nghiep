@@ -1,9 +1,9 @@
-import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useDebounceCallback } from "usehooks-ts";
 import { cancelOrder } from "@/service/order";
+import { useState } from "react";
+import { useDebounceCallback } from "usehooks-ts";
 interface Props {
 	open: boolean;
 	closeOpen: (isOpen: boolean) => void;
@@ -22,7 +22,7 @@ const OrderCancelConfirm = ({
 	}, 300);
 	const handleCancelOrder = async (textnote: string) => {
 		try {
-			const data = await cancelOrder(dataOrderId._id, textnote,2);
+			const data = await cancelOrder(dataOrderId._id, textnote, 2);
 			getOrderById();
 			closeOpen(false);
 			return data;

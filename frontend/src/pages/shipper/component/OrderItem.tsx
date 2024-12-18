@@ -1,36 +1,46 @@
 import { formatCurrency } from "@/common/func";
-import { updateStatusShippingOrder } from "@/service/shipper";
+import { refuseOrderShipper, updateStatusShippingOrder } from "@/service/shipper";
 import { IOrderShipper } from "@/types/shipper.interface";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { format } from "date-fns";
-import React from "react";
 import { toast } from "sonner";
-
 interface IProps {
 	order: any;
 	isSuccess?: boolean;
+  onHandleSuccess?: () => void;
 }
 
-const OrderItem = ({ order, isSuccess = false }: IProps) => {
+const OrderItem = ({ order, isSuccess = false,onHandleSuccess }: IProps) => {
 	const { mutate } = useMutation({
 		mutationKey: ["mutation"],
 		mutationFn: (id: string): Promise<IOrderShipper> =>
 			updateStatusShippingOrder(id),
-		onSuccess(data: any, variables, context) {
+		onSuccess(data: any) {
 			window.open(
 				`/shipper/transport/${encodeURIComponent(data.data.data.code)}`,
 			);
 		},
-		onError(data, error) {
+		onError(_, error) {
 			console.log("error:", error);
 			toast.error(error);
 		},
 	});
-
+  const handleRefuseOrderShipper = async (orderId:string) =>{
+    try {
+      const {data} = await refuseOrderShipper(orderId);
+      onHandleSuccess?.();
+      toast.success(data?.message);
+    } catch (error) {
+      if(error instanceof AxiosError) {
+        toast.error(error?.response?.data?.message);
+      }
+    }
+  }
 	return (
-		<div className="w-full rounded-md bg-white box-shadow px-2 md:px-4 py-2 border border-dashed">
+		<div className="w-full px-2 py-2 bg-white border border-dashed rounded-md box-shadow md:px-4">
 			<div className="">
-				<div className="text-sm flex items-center justify-between">
+				<div className="flex items-center justify-between text-sm">
 					<p>
 						Mã đơn hàng:{" "}
 						<span className="font-semibold text-blue-500">{order.code}</span>
@@ -51,8 +61,8 @@ const OrderItem = ({ order, isSuccess = false }: IProps) => {
 					</p>
 				</div>
 
-				<div className="text-sm border-t mt-1">
-					<div className="flex md:flex-row flex-col md:items-center justify-between">
+				<div className="mt-1 text-sm border-t">
+					<div className="flex flex-col justify-between md:flex-row md:items-center">
 						<p>
 							Tổng tiền phải thu :{" "}
 							<span className="font-medium text-red-500">
@@ -68,9 +78,19 @@ const OrderItem = ({ order, isSuccess = false }: IProps) => {
 					)}
 				</div>
 
-				<div className="w-full mt-1 border-t flex items-center justify-between">
+				<div className="flex items-center justify-between w-full mt-1 border-t">
 					{!isSuccess ? (
-						<div>
+						<div className="space-x-2 space-y-2">
+             {order?.status === 2 && (
+								<button
+									className="px-4 py-[2px] mt-1 border border-red-500 text-red-500 rounded-full text-sm font-semibold hover:bg-red-500 hover:text-white leading-5"
+									onClick={() => {
+										handleRefuseOrderShipper(order._id as string);
+									}}
+								>
+									Từ chối giao hàng
+								</button>
+							)}
 							{order?.status === 2 ? (
 								<button
 									className="px-4 py-[2px] mt-1 border border-blue-500 text-blue-500 rounded-full text-sm font-semibold hover:bg-blue-500 hover:text-white leading-5"
@@ -95,9 +115,12 @@ const OrderItem = ({ order, isSuccess = false }: IProps) => {
 								</button>
 							)}
 						</div>
-					): (
+					) : (
 						<p className="text-sm ">
-							Đã giao: <span className="font-medium text-blue-500">{format(order.shippedDate, "hh:mm dd-MM-yyyy")}</span>
+							Đã giao:{" "}
+							<span className="font-medium text-blue-500">
+								{format(order.shippedDate, "hh:mm dd-MM-yyyy")}
+							</span>
 						</p>
 					)}
 

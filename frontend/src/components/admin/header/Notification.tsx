@@ -6,19 +6,18 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IoNotificationsOutline } from "react-icons/io5";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { IoCheckmark } from "react-icons/io5";
 import { HiMiniEllipsisHorizontal } from "react-icons/hi2";
-import { IoIosRemoveCircleOutline } from "react-icons/io";
 import {
 	INotificationAdmin,
 	ISearchObjectNotificationsAdmin,
 } from "@/types/notification.interface";
 import { TYPE_NOTIFICATION } from "@/config/configType";
 import { useNavigate } from "react-router-dom";
-import { watchedNotification, watchedNotificationAdmin } from "@/service/notification.service";
+
 import { calculateTimeDistance } from "@/common/func";
 
 interface IProps {
@@ -26,8 +25,8 @@ interface IProps {
 	dataNotification: ISearchObjectNotificationsAdmin;
 	handleNextPage: () => void;
 	handleWatchedNotification: (id: string, isRead: boolean) => void;
-	userId:string,
-	dataContent:INotificationAdmin[]
+	userId: string;
+	dataContent: INotificationAdmin[];
 }
 
 const Notification = ({
@@ -36,7 +35,7 @@ const Notification = ({
 	handleNextPage,
 	handleWatchedNotification,
 	userId,
-	dataContent
+	dataContent,
 }: IProps) => {
 	const router = useNavigate();
 	const [open, setOpen] = useState(false);
@@ -104,7 +103,7 @@ const Notification = ({
 					>
 						{dataContent?.length > 0 &&
 							dataContent?.map((item) => {
-								const isRead = item.readOnly.includes(userId as string)
+								const isRead = item.readOnly.includes(userId as string);
 
 								return (
 									<div className="relative " key={item._id}>
@@ -122,7 +121,7 @@ const Notification = ({
 														}
 													}
 												}
-												setOpen(false)
+												setOpen(false);
 											}}
 										>
 											<div className="flex w-full items-center justify-start gap-x-2 cursor-pointer ">
@@ -139,7 +138,7 @@ const Notification = ({
 												</div>
 											</div>
 										</DropdownMenuItem>
-	
+
 										<div className="absolute right-1 top-1  z-[1px] group">
 											<button className="size-5 rounded-full hover:bg-gray-200 flex items-center justify-center ">
 												<HiMiniEllipsisHorizontal size={14} />
@@ -153,15 +152,13 @@ const Notification = ({
 												>
 													<IoCheckmark size={16} />
 													<span>
-														{isRead
-															? "Đánh dấu chưa xem"
-															: "Đánh dấu đã xem"}
+														{isRead ? "Đánh dấu chưa xem" : "Đánh dấu đã xem"}
 													</span>
 												</button>
 											</div>
 										</div>
 									</div>
-								)
+								);
 							})}
 
 						{dataContent.length === 0 && (

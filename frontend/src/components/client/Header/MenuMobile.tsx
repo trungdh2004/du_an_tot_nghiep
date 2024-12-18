@@ -14,6 +14,7 @@ import { IoMenu } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
+import SearchMobile from "./SearchMobile";
 const MenuMobile = () => {
 	const { isLoggedIn, authUser, setAuthUser, setIsLoggedIn } = useAuth();
 	const { clearStateCart } = useCart();
@@ -61,16 +62,17 @@ const MenuMobile = () => {
 								alt=""
 							/>
 						</div>
-						<div className="">
+						<div className="flex-1 text-start">
 							<p className="text-sm">{authUser?.full_name}</p>
-							<span className="w-32 line-clamp-1 text-xs font-normal text-[#757575] ">
-								{authUser?.email}
+							<span className=" line-clamp-1 text-xs font-normal text-[#757575] ">
+								{authUser?.email}-{authUser?.email}-{authUser?.email}
 							</span>
 						</div>
 					</div>
 				</SheetHeader>
 				<div className="">
-					<ul className="text-black font-medium flex flex-col items-start justify-center  *:py-4 *:px-1 *:rounded *:cursor-pointer  transition-all *:w-full ">
+					<SearchMobile handleCloseSidebar={() => setClose(false)} />
+					<ul className="mt-2 text-black font-medium flex flex-col gap-1 items-start justify-center  *:py-2.5 *:px-1 *:rounded *:cursor-pointer  transition-all *:w-full ">
 						<li className=" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14]">
 							<NavLink to={"/"} className="block">
 								Trang chủ
@@ -79,6 +81,16 @@ const MenuMobile = () => {
 						<li className=" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14]">
 							<NavLink to={"/shop"} className="block">
 								Sản phẩm
+							</NavLink>
+						</li>
+						<li
+							className={cn(
+								" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14] hidden",
+								isLoggedIn && "block",
+							)}
+						>
+							<NavLink to={"/cart"} className="block">
+								Giỏ hàng
 							</NavLink>
 						</li>
 						<li className=" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14]">
@@ -116,16 +128,7 @@ const MenuMobile = () => {
 								Đăng nhập
 							</NavLink>
 						</li>
-						<li
-							className={cn(
-								" hover:bg-[#919eab14] has-[.active]:bg-[#919eab14] hidden",
-								isLoggedIn && "block",
-							)}
-						>
-							<NavLink to={"/cart"} className="block">
-								Giỏ hàng
-							</NavLink>
-						</li>
+
 						<li
 							onClick={handleLogout}
 							className={cn(

@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
+import { useState } from "react";
 import ReactPaginate from "react-paginate";
 
 // Example items, to simulate fetching from another resources.
 const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
-function Items({ currentItems } : any) {
+function Items({ currentItems }: any) {
 	return (
 		<>
 			{currentItems &&
-				currentItems.map((item : any) => (
+				currentItems.map((item: any) => (
 					<div>
 						<h3>Item #{item}</h3>
 					</div>
@@ -18,17 +17,17 @@ function Items({ currentItems } : any) {
 	);
 }
 
-function PaginatedItems({ itemsPerPage } : any) {
+function PaginatedItems({ itemsPerPage }: any) {
 	const [itemOffset, setItemOffset] = useState(0);
-  const endOffset = itemOffset + itemsPerPage;
-  console.log(endOffset);
-  
+	const endOffset = itemOffset + itemsPerPage;
+	console.log(endOffset);
+
 	console.log(`Loading items from ${itemOffset} to ${endOffset}`);
 	const currentItems = items.slice(itemOffset, endOffset);
 	const pageCount = Math.ceil(items.length / itemsPerPage);
-  const handlePageClick = (event: any) => {
-    console.log(event);
-    
+	const handlePageClick = (event: any) => {
+		console.log(event);
+
 		const newOffset = (event.selected * itemsPerPage) % items.length;
 		console.log(
 			`User requested page number ${event.selected}, which is offset ${newOffset}`,
@@ -51,5 +50,4 @@ function PaginatedItems({ itemsPerPage } : any) {
 	);
 }
 
-
-export default PaginatedItems
+export default PaginatedItems;

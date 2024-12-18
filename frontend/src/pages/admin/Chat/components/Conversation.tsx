@@ -36,7 +36,7 @@ const Conversation = () => {
 		totalPage: 0,
 		totalAllOptions: 0,
 	});
-	const [isLoad,setIsLoad] = useState(false)
+	const [isLoad, setIsLoad] = useState(false);
 	const { socket } = useAuth();
 
 	useEffect(() => {
@@ -44,8 +44,9 @@ const Conversation = () => {
 			try {
 				const { data } = await pagingConversation(1);
 				setConversation(data);
-			} catch (error) {} finally {
-				setIsLoad(true)
+			} catch (error) {
+			} finally {
+				setIsLoad(true);
 			}
 		})();
 	}, []);
@@ -53,6 +54,8 @@ const Conversation = () => {
 	useEffect(() => {
 		if (socket) {
 			socket.on("updateConversation", (dataConver: any) => {
+				// console.log("dataConver",dataConver);
+
 				setConversation((prev) => {
 					const dataFilter = prev?.content?.filter(
 						(item) => item?._id !== dataConver?._id,

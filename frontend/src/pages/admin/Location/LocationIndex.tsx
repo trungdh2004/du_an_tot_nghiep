@@ -1,12 +1,7 @@
 import { TooltipComponent } from "@/components/common/TooltipComponent";
 import MapComponent from "@/components/map/Map";
 import { Button } from "@/components/ui/button";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { getLocation, updateLocation } from "@/service/location";
 import { useProcessBarLoadingEventNone } from "@/store/useSidebarAdmin";
@@ -53,7 +48,7 @@ const LocationIndex = () => {
 		longitude: 105.62583879555804,
 		zoom: 15,
 	});
-	const onMarkerDragStart = useCallback((event: MarkerDragEvent) => {}, []);
+	const onMarkerDragStart = useCallback(() => {}, []);
 
 	const onMarkerDrag = useCallback((event: MarkerDragEvent) => {
 		setMarker({
@@ -90,7 +85,7 @@ const LocationIndex = () => {
 	const handleUpdate = async () => {
 		setOpenProcessLoadingEventNone();
 		try {
-			const { data } = await updateLocation({
+			 await updateLocation({
 				long: marker.longitude,
 				lat: marker.latitude,
 			});
@@ -126,9 +121,9 @@ const LocationIndex = () => {
 	}, []);
 	return (
 		<div className="flex flex-col gap-3">
-			<div className="flex items-center gap-3 w-full justify-between">
+			<div className="flex items-center justify-between w-full gap-3">
 				<div className="flex items-center gap-2">
-					<h4 className="font-medium md:text-xl text-base">Vị trí cửa hàng</h4>
+					<h4 className="text-base font-medium md:text-xl">Vị trí cửa hàng</h4>
 
 					<TooltipComponent label="Tìm vị trí trên google map và copy kinh độ vĩ độ chính xác cửa hàng">
 						<div className="cursor-pointer">
@@ -140,7 +135,7 @@ const LocationIndex = () => {
 					<Form {...form}>
 						<form
 							onSubmit={form.handleSubmit(onSubmit)}
-							className=" flex items-center gap-2"
+							className="flex items-center gap-2 "
 						>
 							<FormField
 								control={form.control}
@@ -205,7 +200,7 @@ const LocationIndex = () => {
 							<Button
 								type="submit"
 								variant={"outline"}
-								className=" border-blue-500"
+								className="border-blue-500 "
 							>
 								<CiLocationOn className="mr-2 text-blue-500" size={20} />{" "}
 								<span className="text-blue-500">Tìm kiếm</span>
@@ -218,7 +213,7 @@ const LocationIndex = () => {
 				<Form {...form}>
 					<form
 						onSubmit={form.handleSubmit(onSubmit)}
-						className=" flex items-center gap-2"
+						className="flex items-center gap-2 "
 					>
 						<FormField
 							control={form.control}
@@ -281,7 +276,7 @@ const LocationIndex = () => {
 				</MapComponent>
 			</div>
 
-			<div className="w-full flex justify-between gap-4">
+			<div className="flex justify-between w-full gap-4">
 				<div className="flex-1">
 					Tọa độ hiện tại : {marker?.latitude} - {marker?.longitude}
 				</div>

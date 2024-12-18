@@ -1,4 +1,5 @@
 export interface IAddress {
+	_id: string;
 	username: string;
 	phone: string;
 	city: {
@@ -8,7 +9,7 @@ export interface IAddress {
 	};
 	district: {
 		name: string;
-		idDistrict: String;
+		idDistrict: string;
 		_id?: string;
 	};
 	commune: {

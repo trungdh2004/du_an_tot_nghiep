@@ -24,13 +24,19 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import useDebounce from "@/hooks/shared";
 import { cn } from "@/lib/utils";
-import { publishBlogs, showBlogsEdit, updateBlogs } from "@/service/blog";
+import {
+	cancelPublish,
+	publishBlogs,
+	showBlogsEdit,
+	updateBlogs,
+} from "@/service/blog";
 import { getAllTags } from "@/service/tags-admin";
 import { uploadFileService } from "@/service/upload";
 import {
 	useProcessBarLoading,
 	useProcessBarLoadingEventNone,
 } from "@/store/useSidebarAdmin";
+import { IBlogs } from "@/types/blogs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { format } from "date-fns";
@@ -58,7 +64,7 @@ const EditBlog = () => {
 	const { setOpen, setClose } = useProcessBarLoading();
 	const { id } = useParams();
 	const [tags, setTags] = useState();
-	const [blogs, setBlogs] = useState<z.infer<typeof formSchema>>();
+	const [blogs, setBlogs] = useState<IBlogs>();
 	const [previewUrl, setPreviewUrl] = useState({
 		url: "",
 		isLoading: false,
@@ -146,16 +152,38 @@ const EditBlog = () => {
 				toast.warning("Vui lòng chờ ảnh tải xong");
 			} else {
 				setOpenProcessLoadingEventNone();
+				const date = new Date(values.published_at);
+				date.setHours(0, 0, 0);
+
 				const payload = {
 					...values,
+					published_at: date,
 				};
 				setStatusLoading({ isSubmitted: true, isLoading: true });
-				const reponse = await publishBlogs(id as string, payload);
-				if (reponse.status === 200) {
-					toast.success("Cập nhập bài viết thành công");
-					navigate("/admin/blogs");
+				// const reponse = await publishBlogs(id as string, payload);
+				// if (reponse.status === 200) {
+				// 	toast.success("Cập nhập bài viết thành công");
+				// 	navigate("/admin/blogs");
+				// } else {
+				// 	throw new Error("Cập nhập bài viết thất bại");
+				// }
+
+				if (blogs?.isPublish) {
+					const reponse = await cancelPublish(id as string, payload);
+					if (reponse.status === 200) {
+						toast.success("Hủy xuất bản thành công");
+						navigate("/admin/blogs");
+					} else {
+						throw new Error("Hủy xuất bản thất bại");
+					}
 				} else {
-					throw new Error("Cập nhập bài viết thất bại");
+					const reponse = await publishBlogs(id as string, payload);
+					if (reponse.status === 200) {
+						toast.success("Đăng tải bài viết thành công");
+						navigate("/admin/blogs");
+					} else {
+						throw new Error("Đăng tải bài viết thất bại");
+					}
 				}
 			}
 		} catch (error) {
@@ -321,10 +349,14 @@ const EditBlog = () => {
 																onSelect={(e) => {
 																	field.onChange(e?.toISOString());
 																}}
-																disabled={(date) =>
-																	date < new Date() ||
-																	date < new Date("1900-01-01")
-																}
+																disabled={(date) => {
+																	const newDate = new Date();
+																	newDate.setDate(newDate.getDate() - 1);
+																	return (
+																		date < newDate ||
+																		date < new Date("1900-01-01")
+																	);
+																}}
 																initialFocus
 															/>
 														</PopoverContent>
@@ -336,13 +368,28 @@ const EditBlog = () => {
 										/>
 									</div>
 									<div className="flex items-center justify-end px-5 py-3">
-										<Button
-											disabled={previewUrl.isLoading || statusLoading.isLoading}
-											type="submit"
-											className="py-0.5 px-5 bg-blue-500 hover:bg-blue-500/80"
-										>
-											Đăng tải
-										</Button>
+										{blogs?.isPublish ? (
+											<Button
+												disabled={
+													previewUrl.isLoading || statusLoading.isLoading
+												}
+												type="submit"
+												variant={"danger"}
+												// className="py-0.5 px-5 bg-blue-500 hover:bg-blue-500/80"
+											>
+												Gỡ bài viết
+											</Button>
+										) : (
+											<Button
+												disabled={
+													previewUrl.isLoading || statusLoading.isLoading
+												}
+												type="submit"
+												className="py-0.5 px-5 bg-blue-500 hover:bg-blue-500/80"
+											>
+												Đăng tải
+											</Button>
+										)}
 									</div>
 								</div>
 							</div>
@@ -363,7 +410,7 @@ const EditBlog = () => {
 															value="item-1"
 															className="border-none"
 														>
-															<AccordionTrigger className="px-5 py-3 pt-0 border-none">
+															<AccordionTrigger className="px-5 py-3 border-none">
 																<FormLabel className="cursor-pointer">
 																	Nhãn
 																</FormLabel>
@@ -410,7 +457,7 @@ const EditBlog = () => {
 															value="item-1"
 															className="border-none"
 														>
-															<AccordionTrigger className="px-5 py-3 pt-0 border-none">
+															<AccordionTrigger className="px-5 py-3 border-none">
 																<FormLabel className="cursor-pointer">
 																	Hình ảnh thu nhỏ
 																</FormLabel>

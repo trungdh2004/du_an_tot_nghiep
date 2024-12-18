@@ -29,6 +29,7 @@ const InputQuantity: React.FC<InputQuantityProps> = ({
 			setValue(clampedValue);
 			getValue?.(clampedValue);
 		},
+
 		[maxTotal, getValue],
 	);
 
@@ -45,12 +46,13 @@ const InputQuantity: React.FC<InputQuantityProps> = ({
 		},
 		[value, updateValue],
 	);
-useEffect(() => {
-	setValue(defaultValue);
+	useEffect(() => {
+		setValue(defaultValue);
 	}, [defaultValue]);
-	// useEffect(() => {
-	// 	updateValue(defaultValue);
-	// }, [defaultValue, updateValue]);
+	useEffect(() => {
+		const minValue = value <= 0 ? 1 : value;
+		setValue(Math.min(minValue, maxTotal));
+	}, [maxTotal]);
 
 	const sizeClasses = {
 		small: "h-8 text-sm",
@@ -58,7 +60,7 @@ useEffect(() => {
 		large: "h-12 text-lg",
 		mobile: "h-5 text-sm",
 		responsive:
-			"h-8 text-sm sm:h-9 sm:text-base md:h-10 md:text-base lg:h-12 lg:text-lg",
+			"h-8 text-xs sm:h-8 sm:text-sm md:h-8 md:text-sm lg:h-8 lg:text-base",
 	};
 
 	const buttonClasses = cn(

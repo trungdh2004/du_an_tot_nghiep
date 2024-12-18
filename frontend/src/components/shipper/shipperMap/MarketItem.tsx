@@ -1,17 +1,15 @@
 import { formatQuantity } from "@/common/localFunction";
 import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { updateStatusShippingOrder } from "@/service/shipper";
 import { IOrderShipper } from "@/types/shipper.interface";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import React from "react";
 import { FaBox } from "react-icons/fa";
 import { Marker } from "react-map-gl";
-import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 interface IProps {
@@ -19,13 +17,13 @@ interface IProps {
 	location: number[];
 }
 
-const MarketItem = ({ order, location}: IProps) => {
+const MarketItem = ({ order, location }: IProps) => {
 	const queryClient = useQueryClient();
 	const { mutate } = useMutation({
 		mutationKey: ["mutation"],
 		mutationFn: (id: string): Promise<IOrderShipper> =>
 			updateStatusShippingOrder(id),
-		onSuccess(data: any, variables, context) {
+		onSuccess(data: any) {
 			queryClient.invalidateQueries({
 				queryKey: ["listOrder", "shipper"],
 			});
@@ -33,7 +31,7 @@ const MarketItem = ({ order, location}: IProps) => {
 				`/shipper/transport/${encodeURIComponent(data.data.data.code)}`,
 			);
 		},
-		onError(data, error) {
+		onError(_, error) {
 			console.log("error:", error);
 			toast.error(error);
 		},
@@ -46,10 +44,12 @@ const MarketItem = ({ order, location}: IProps) => {
 					<div>
 						{/* <GoDotFill size={20} className="text-red-500" /> */}
 						<div className="relative flex items-center justify-center">
-							<div className={cn(
-								"relative size-10 rounded-full flex justify-center items-center bg-blue-500 z-10",
-								order.status === 3 && "bg-green-500",
-							)}>
+							<div
+								className={cn(
+									"relative size-10 rounded-full flex justify-center items-center bg-blue-500 z-10",
+									order.status === 3 && "bg-green-500",
+								)}
+							>
 								<FaBox size={20} color="white" />
 							</div>
 							<div
@@ -63,7 +63,7 @@ const MarketItem = ({ order, location}: IProps) => {
 				</PopoverTrigger>
 				<PopoverContent className="w-[240px] p-2" align="center" side="top">
 					<div className="">
-						<div className=" pb-1 border-b">
+						<div className="pb-1 border-b ">
 							<p className="font-semibold">Tên: {order.address.username}</p>
 							<p className="font-semibold">SĐT: {order.address.phone}</p>
 						</div>
@@ -95,7 +95,7 @@ const MarketItem = ({ order, location}: IProps) => {
 							</span>{" "}
 						</p>
 						<p className="line-clamp-2">Lời nhắn: {order.note}</p>
-						<div className="pt-2 border-t mt-1">
+						<div className="pt-2 mt-1 border-t">
 							<div
 								className={cn(
 									"w-full text-center border rounded-md border-blue-500 text-blue-500 hover:bg-blue-100",

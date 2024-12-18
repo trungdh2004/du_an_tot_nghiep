@@ -9,7 +9,6 @@ import SidebarItem from "./SidebarItem";
 import { useAuth } from "@/hooks/auth";
 import sidebarShipper from "@/config/sidebarShipper";
 
-
 const SidebarListShipper = () => {
 	const location = useLocation();
 	const { authUser } = useAuth();
@@ -17,9 +16,9 @@ const SidebarListShipper = () => {
 	return (
 		<div>
 			{sidebarShipper?.map((item, index) => {
-				if(item.isAdmin) {
-					if(!authUser?.is_admin) {
-						return null
+				if (item.isAdmin) {
+					if (!authUser?.is_admin) {
+						return null;
 					}
 				}
 

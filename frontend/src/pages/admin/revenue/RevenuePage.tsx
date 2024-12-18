@@ -1,9 +1,6 @@
-import React from 'react'
 
 const RevenuePage = () => {
-  return (
-    <div>RevenuePage</div>
-  )
-}
+	return <div>RevenuePage</div>;
+};
 
-export default RevenuePage
+export default RevenuePage;

@@ -35,6 +35,9 @@ import ChatInit from "@/pages/admin/Chat/ChatInit";
 import ChatContent from "@/pages/admin/Chat/components/ChatContent";
 import CustomerList from "@/pages/admin/users/customer/CustomerList";
 import ProductComing from "@/pages/admin/product/productComing/ProductComing";
+import StaffIndex from "@/pages/admin/users/staff/StaffIndex";
+import RevenueChart from "@/pages/admin/Revanue/RevenueChart";
+import PaymentIndex from "@/pages/admin/payment/PaymentIndex";
 
 const AdminRouter = [
 	{
@@ -73,6 +76,10 @@ const AdminRouter = [
 			{
 				path: "users/client",
 				element: <CustomerList />,
+			},
+			{
+				path: "users/staff",
+				element: <StaffIndex />,
 			},
 			// Quản lý sản phẩm
 			{
@@ -114,11 +121,11 @@ const AdminRouter = [
 			{
 				path: "product/add",
 				element: <ProductAddPage />,
-      },
-      {
-        path: "product/coming",
-        element: <ProductComing />,
-      },
+			},
+			{
+				path: "product/coming",
+				element: <ProductComing />,
+			},
 			// Quản lý biến thể
 			{
 				path: "variant/size",
@@ -191,13 +198,21 @@ const AdminRouter = [
 				path: "order/orderconfirmShipper",
 				element: <OrderConfirmShipper />,
 			},
-
+			// Thống kê
+			{
+				path: "revenue",
+				element: <RevenueChart />,
+			},
 			// location
 			{
 				path: "location",
 				element: <LocationIndex />,
 			},
-
+			//payment
+			{
+				path: "payment",
+				element: <PaymentIndex />,
+			},
 			// chat
 			{
 				path: "chat",

@@ -1,6 +1,6 @@
 import { IProductDetail } from "@/types/product";
 import React from "react";
-import { FaRegStar, FaStar } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
 interface Props {
 	dataReview: SearchRatingState | null;
 	setSearchRating: React.Dispatch<
@@ -16,7 +16,7 @@ import ListReview from "./ListReview";
 import { SearchRatingState } from "@/types/review";
 const ProductReview = ({ dataReview, setSearchRating, product }: Props) => {
 	return (
-		<div className="bg-white box-shadow py-4 px-7 mb-5">
+		<div className="bg-white box-shadow py-4 px-7 mb-5 box-shadow rounded-md">
 			<h3 className="text-xl py-4">Đánh giá sản phẩm</h3>
 			<div className="border border-orange-100 bg-orange-100 py-4 px-3 bg-opacity-20 flex gap-8">
 				<div className="flex items-center gap-2">

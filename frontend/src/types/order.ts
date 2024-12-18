@@ -1,6 +1,3 @@
-import { Variants } from "framer-motion";
-import { IColor } from "./typeProduct";
-
 export interface IStatus {
 	index: number | null;
 	name: string | null;
@@ -123,3 +120,10 @@ export type ProductOrder = {
 	totalAmount: number;
 	items: ProductOrderItem[];
 };
+
+export interface DetailTime {
+	_id: string;
+	content: string;
+	date: string;
+	name: string;
+}

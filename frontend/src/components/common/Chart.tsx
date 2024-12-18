@@ -1,13 +1,12 @@
-import React from "react";
 import {
-	BarChart,
 	Bar,
+	BarChart,
+	CartesianGrid,
+	Legend,
+	ResponsiveContainer,
+	Tooltip,
 	XAxis,
 	YAxis,
-	CartesianGrid,
-	Tooltip,
-	Legend,
-  ResponsiveContainer,
 } from "recharts";
 
 const data = [
@@ -26,19 +25,18 @@ const data = [
 ];
 
 const SimpleBarChart = () => {
-  return (
-    <ResponsiveContainer width="100%" height="100%">
-      <BarChart  data={data}>
-			<CartesianGrid strokeDasharray="3 3" />
-			<XAxis dataKey="name" />
-			<YAxis />
-			<Tooltip />
-			<Legend />
-			<Bar dataKey="uv" fill="#3b83f6" />
-			<Bar dataKey="pv" fill="#82ca9d" />
-		</BarChart>
-    </ResponsiveContainer>
-		
+	return (
+		<ResponsiveContainer width="100%" height="100%">
+			<BarChart data={data}>
+				<CartesianGrid strokeDasharray="3 3" />
+				<XAxis dataKey="name" />
+				<YAxis />
+				<Tooltip />
+				<Legend />
+				<Bar dataKey="uv" fill="#3b83f6" />
+				<Bar dataKey="pv" fill="#82ca9d" />
+			</BarChart>
+		</ResponsiveContainer>
 	);
 };
 

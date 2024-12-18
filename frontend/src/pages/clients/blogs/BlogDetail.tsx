@@ -1,7 +1,5 @@
-import { Dialog } from "@/components/ui/dialog";
 import { actionUpdateReactions, getBlogDetailClient } from "@/service/blog";
 import { IBlogs } from "@/types/blogs";
-import { DialogContent } from "@radix-ui/react-dialog";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { format } from "date-fns";
@@ -17,7 +15,7 @@ import { FaHeart } from "react-icons/fa";
 const BlogDetail = () => {
 	const { id } = useParams();
 	const { authUser, isLoggedIn } = useAuth();
-	const  QueryClient = useQueryClient();
+	const QueryClient = useQueryClient();
 	const handleCurrentRoute = useCurrentRouteAndNavigation();
 	const { data: blog } = useQuery({
 		queryKey: ["blogDetail", id],
@@ -47,7 +45,7 @@ const BlogDetail = () => {
 			try {
 				const isLike = blog?.data?.reactions?.includes(authUser?._id);
 				await actionUpdateReactions({ id: id as string, isLike: !isLike });
-				QueryClient.invalidateQueries({queryKey:['blogDetail']})
+				QueryClient.invalidateQueries({ queryKey: ["blogDetail"] });
 			} catch (error) {
 				if (error instanceof AxiosError) {
 					toast.error(error?.response?.data?.message);
@@ -203,13 +201,6 @@ const BlogDetail = () => {
 							))}
 					</div>
 				</div>
-			</div>
-			<div className="">
-				<Dialog>
-					<DialogContent className="sm:max-w-[425px]">
-						dâdadadadadada
-					</DialogContent>
-				</Dialog>
 			</div>
 		</div>
 	);

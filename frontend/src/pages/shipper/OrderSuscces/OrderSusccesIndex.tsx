@@ -1,18 +1,8 @@
-import { Button } from "@/components/ui/button";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import OrderItem from "../component/OrderItem";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import InfiniteScroll from "react-infinite-scroll-component";
+
 import { pagingOrderShipper } from "@/service/shipper";
-import { cn } from "@/lib/utils";
-import { IoReload } from "react-icons/io5";
-import { TooltipComponent } from "@/components/common/TooltipComponent";
-import { toast } from "sonner";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const OrderSuccessIndex = () => {
 	const [resultOrder, setResultOrder] = useState({
@@ -39,37 +29,39 @@ const OrderSuccessIndex = () => {
 		try {
 			const pageNext = resultOrder.pageIndex + 1 || 2;
 			const { data } = await pagingOrderShipper(pageNext, 4);
-			setResultOrder({
-				content: data.content,
-				pageIndex: data.pageIndex,
-				totalPage: data.totalPage,
+			setResultOrder((prev: any) => {
+				return {
+					...prev,
+					content: [...prev.content, ...data.content],
+					pageIndex: data.pageIndex,
+				};
 			});
 		} catch (error) {}
 	};
 
-	const handleReset = async () => {
-		try {
-			const { data } = await pagingOrderShipper(1, 4);
-			setResultOrder({
-				content: data.content,
-				pageIndex: data.pageIndex,
-				totalPage: data.totalPage,
-			});
-			toast.success("Đã cập nhập dữ liệu mới")
-		} catch (error:any) {
-			toast.error(error.message)
-		}
-	}
+	// const handleReset = async () => {
+	// 	try {
+	// 		const { data } = await pagingOrderShipper(1, 4);
+	// 		setResultOrder({
+	// 			content: data.content,
+	// 			pageIndex: data.pageIndex,
+	// 			totalPage: data.totalPage,
+	// 		});
+	// 		toast.success("Đã cập nhập dữ liệu mới");
+	// 	} catch (error: any) {
+	// 		toast.error(error.message);
+	// 	}
+	// };
 
-	const hasMore =
-		resultOrder.content.length === 0
-			? false
-			: resultOrder.pageIndex !== resultOrder.totalPage;
+	// const hasMore =
+	// 	resultOrder.content.length === 0
+	// 		? false
+	// 		: resultOrder.pageIndex !== resultOrder.totalPage;
 
 	return (
-		<div className=" relative">
-			<header className="p-2 md:px-4 md:mb-4 flex justify-between items-end sticky top-0 bg-main w-full">
-				<h2 className="font-semibold text-xl sm:text-2xl leading-8">
+		<div className="relative ">
+			<header className="sticky top-0 flex items-end justify-between w-full p-2 md:px-4 md:mb-4 bg-main">
+				<h2 className="text-xl font-semibold leading-8 sm:text-2xl">
 					Đơn hàng đã giao
 				</h2>
 			</header>
@@ -77,8 +69,8 @@ const OrderSuccessIndex = () => {
 			<InfiniteScroll
 				dataLength={resultOrder.content.length} //This is important field to render the next resultOrder
 				next={handleNextPage}
-				hasMore={hasMore}
-				loader={<p className="text-center text-sm text-gray-400">Loading...</p>}
+				hasMore={resultOrder?.pageIndex !== resultOrder?.totalPage}
+				loader={<p className="text-sm text-center text-gray-400">Loading...</p>}
 				endMessage={<p style={{ textAlign: "center" }}></p>}
 				refreshFunction={() => {
 					console.log("refreshFunction");
@@ -93,13 +85,13 @@ const OrderSuccessIndex = () => {
 				}
 				scrollableTarget="scrollableDiv"
 			>
-				<div className="grid grid-cols-1 md:grid-cols-2 w-full gap-4 px-2 md:px-4">
+				<div className="grid w-full grid-cols-1 gap-4 px-2 md:grid-cols-2 md:px-4">
 					{resultOrder?.content?.map((order: any) => (
-						<OrderItem key={order._id} order={order} isSuccess/>
+						<OrderItem key={order._id} order={order} isSuccess />
 					))}
 
 					{resultOrder?.content?.length === 0 && (
-						<div className="w-full col-span-2 border rounded-md h-20 flex items-center justify-center p-4 text-center">
+						<div className="flex items-center justify-center w-full h-20 col-span-2 p-4 text-center border rounded-md">
 							Không có đơn hàng
 						</div>
 					)}

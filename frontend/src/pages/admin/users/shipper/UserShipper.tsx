@@ -1,4 +1,4 @@
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 
 import DialogConfirm from "@/components/common/DialogConfirm";
 import TableComponent from "@/components/common/TableComponent";
@@ -28,9 +28,9 @@ import { BsPersonFillCheck } from "react-icons/bs";
 import { CiLock, CiUnlock } from "react-icons/ci";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { IoFilter } from "react-icons/io5";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { useDebounceCallback } from "usehooks-ts";
-import { Link } from "react-router-dom";
 interface IData {
 	_id: string;
 	user: IUser;
@@ -71,7 +71,6 @@ const UserShipper = () => {
 		return user._id;
 	});
 	const [openBanId, setopenBanId] = useState<string | null>(null);
-	const [isPending, startTransition] = useTransition();
 	const [openUnbanId, setopenUnbanId] = useState<string | null>(null);
 	const [openBanManyId, setopenBanManyId] = useState<string | boolean | null>(
 		null,
@@ -79,7 +78,7 @@ const UserShipper = () => {
 	const [openUnbanManyId, setopenUnbanManyId] = useState<
 		string | boolean | null
 	>(null);
-	const [isOpenUpdateActive,setIsOpenUpdateActive] = useState(false);
+	const [isOpenUpdateActive, setIsOpenUpdateActive] = useState(false);
 	const debounced = useDebounceCallback((inputValue: string) => {
 		setSearchObject((prev) => ({
 			...prev,
@@ -128,7 +127,11 @@ const UserShipper = () => {
 
 	const handleBlock = async (id: string) => {
 		try {
-			const { data } = await updateActionShippers({listId:[id],type:1,isBlock:true});
+			await updateActionShippers({
+				listId: [id],
+				type: 1,
+				isBlock: true,
+			});
 			setopenBanId(null);
 			handlePagingUser();
 			toast.success("Đã cấm người dùng thành công");
@@ -139,7 +142,11 @@ const UserShipper = () => {
 
 	const handleUnBlock = async (id: string) => {
 		try {
-			const { data } =  await updateActionShippers({listId:[id],type:2,isBlock:true});;
+			await updateActionShippers({
+				listId: [id],
+				type: 2,
+				isBlock: true,
+			});
 			setopenUnbanId(null);
 			handlePagingUser();
 			toast.success("Bỏ cấm người dùng thành công");
@@ -150,7 +157,11 @@ const UserShipper = () => {
 
 	const handleBanMany = async (listId: string[]) => {
 		try {
-			const { data } = await updateActionShippers({listId,type:1,isBlock:true});
+			await updateActionShippers({
+				listId,
+				type: 1,
+				isBlock: true,
+			});
 			setopenBanManyId(null);
 			handlePagingUser();
 			setListRowSelected([]);
@@ -163,7 +174,11 @@ const UserShipper = () => {
 
 	const handleUnBanMany = async (listId: string[]) => {
 		try {
-			const { data } = await updateActionShippers({listId,type:2,isBlock:true});
+			await updateActionShippers({
+				listId,
+				type: 2,
+				isBlock: true,
+			});
 			setopenUnbanManyId(null);
 			setListRowSelected([]);
 			setRowSelection({});
@@ -180,18 +195,17 @@ const UserShipper = () => {
 			pageIndex: 1,
 		}));
 	};
-	const handleUpdateActive =async (ids: string[],type:number=1) => { 
+	const handleUpdateActive = async (ids: string[], type: number = 1) => {
 		try {
-			 const {data} = await updateActionShippers({listId:ids,type})
-			 handlePagingUser();
-			 toast.success(data?.message);
+			const { data } = await updateActionShippers({ listId: ids, type });
+			handlePagingUser();
+			toast.success(data?.message);
 		} catch (error) {
-			if(error instanceof AxiosError){
+			if (error instanceof AxiosError) {
 				toast.error(error?.response?.data?.message);
 			}
 		}
-	}
-	;
+	};
 	const columns: ColumnDef<IData>[] = [
 		{
 			id: "select",
@@ -234,8 +248,14 @@ const UserShipper = () => {
 				return (
 					<div className="flex items-center gap-1 text-xs md:text-base">
 						<div className="">
-							<p><span className="font-semibold">Họ tên: </span> {row?.original?.fullName}</p>
-							<p><span className="font-semibold">Điện thoại: </span> {row?.original?.phone}</p>
+							<p>
+								<span className="font-semibold">Họ tên: </span>{" "}
+								{row?.original?.fullName}
+							</p>
+							<p>
+								<span className="font-semibold">Điện thoại: </span>{" "}
+								{row?.original?.phone}
+							</p>
 						</div>
 					</div>
 				);
@@ -306,7 +326,14 @@ const UserShipper = () => {
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
-							<DropdownMenuItem><Link to={`http://localhost:4000/admin/users/shipper/${row?.original?._id}/detail`} className="block">Xem chi tiết</Link></DropdownMenuItem>
+							<DropdownMenuItem>
+								<Link
+									to={`http://localhost:4000/admin/users/shipper/${row?.original?._id}/detail`}
+									className="block"
+								>
+									Xem chi tiết
+								</Link>
+							</DropdownMenuItem>
 							{row?.original?.is_block ? (
 								<DropdownMenuItem
 									className="text-green-400"
@@ -316,7 +343,10 @@ const UserShipper = () => {
 								</DropdownMenuItem>
 							) : (
 								<DropdownMenuItem
-									className={cn("text-red-400 hidden",row?.original?.active && 'block')}
+									className={cn(
+										"text-red-400 hidden",
+										row?.original?.active && "block",
+									)}
 									onClick={() => setopenBanId(row?.original?._id)}
 								>
 									Cấm
@@ -350,8 +380,13 @@ const UserShipper = () => {
 						className="w-[40%] md:text-base text-xs"
 						onChange={(event) => debounced(event.target.value)}
 					/>
-					<div className={cn("hidden items-center justify-center gap-3", listIdUser.length !== 0 && 'flex')}>
-						{ searchObject.tab == 1 ? (
+					<div
+						className={cn(
+							"hidden items-center justify-center gap-3",
+							listIdUser.length !== 0 && "flex",
+						)}
+					>
+						{searchObject.tab == 1 ? (
 							<>
 								<Button
 									onClick={() => {
@@ -372,14 +407,14 @@ const UserShipper = () => {
 									<p className="px-1">Mở khoá nhiều</p>
 								</Button>
 							</>
-						) :  (
+						) : (
 							<>
 								<Button
 									onClick={() => {
 										setIsOpenUpdateActive(true);
 									}}
 									className="bg-white text-[#7f7f7f] hover:bg-[#eeeeee] w-full border"
-								> 
+								>
 									<BsPersonFillCheck className="text-xl" />{" "}
 									<p className="px-1">Xác nhận nhiều</p>
 								</Button>
@@ -578,7 +613,10 @@ const UserShipper = () => {
 					open={isOpenUpdateActive}
 					handleClose={() => setIsOpenUpdateActive(false)}
 					content="Xác nhận người giao hàng"
-					handleSubmit={() => {handleUpdateActive(listIdUser);setIsOpenUpdateActive(false)}}
+					handleSubmit={() => {
+						handleUpdateActive(listIdUser);
+						setIsOpenUpdateActive(false);
+					}}
 					labelConfirm="Xác nhận"
 				/>
 			)}

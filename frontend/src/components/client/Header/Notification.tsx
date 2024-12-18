@@ -6,21 +6,15 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { formatDistanceToNow } from "date-fns";
-import { vi } from "date-fns/locale";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IoNotificationsOutline } from "react-icons/io5";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { IoCheckmark } from "react-icons/io5";
 import { HiMiniEllipsisHorizontal } from "react-icons/hi2";
 import { IoIosRemoveCircleOutline } from "react-icons/io";
-import {
-	INotification,
-	ISearchObjectNotifications,
-} from "@/types/notification.interface";
+import { ISearchObjectNotifications } from "@/types/notification.interface";
 import { TYPE_NOTIFICATION } from "@/config/configType";
 import { useNavigate } from "react-router-dom";
-import { watchedNotification } from "@/service/notification.service";
 import { calculateTimeDistance } from "@/common/func";
 
 interface IProps {
@@ -52,7 +46,7 @@ const Notification = ({
 						setOpen(!open);
 					}}
 				>
-					<span className=" rounded-full bg-red-500 text-white absolute w-4 h-4 text-xs flex items-center justify-center -top-1 -right-1">
+					<span className=" rounded-full bg-custom-500 text-white absolute w-4 h-4 text-xs flex items-center justify-center -top-1 -right-1">
 						{countNotRead}
 					</span>
 					<IoNotificationsOutline strokeWidth={4} size={20} />
@@ -68,7 +62,7 @@ const Notification = ({
 					<div className="flex items-center justify-between">
 						<h6 className="h6 text-lg max-sm:text-sm">Thông báo</h6>
 						{/* <button
-							className="text-sm font-normal border-none outline-none text-blue-500 px-2 py-1 hover:bg-gray-100 rounded-sm"
+							className="text-sm font-normal border-none outline-none text-custom px-2 py-1 hover:bg-gray-100 rounded-sm"
 							onClick={handleWatchedAllNotification}
 						>
 							Đánh dấu đã đọc
@@ -121,7 +115,7 @@ const Notification = ({
 													}
 												}
 											}
-											setOpen(false)
+											setOpen(false);
 										}}
 									>
 										<div className="flex w-full items-center justify-start gap-x-2 cursor-pointer ">

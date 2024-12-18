@@ -1,29 +1,29 @@
+import Paginations from "@/components/common/Pagination";
+import Product from "@/components/common/Product";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { pagingProduct } from "@/service/product";
+import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Category from "./Category";
 import Color from "./Color";
-import Size from "./Size";
-import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { pagingProduct } from "@/service/product";
-import ProductDisPlay from "./ProductDisPlay";
-import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
-import Paginations from "@/components/common/Pagination";
-import ProductSkeleton from "./ProductSkeleton";
 import Price from "./Price";
-import SelectSort from "./SelectSort";
-import SearchProductMobile from "./SearchProductMobile";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import SortFilterStar from "./SortFilterStar";
-import Product from "@/components/common/Product";
 import ProductEmpty from "./ProductEmpty";
+import ProductSkeleton from "./ProductSkeleton";
+import SearchProductMobile from "./SearchProductMobile";
+import SelectSort from "./SelectSort";
+import Size from "./Size";
+import SortFilterStar from "./SortFilterStar";
 
 const ShopProduct = () => {
-	const [pageIndex, setPageIndex] = useState(1);
-	const query = useQueryClient();
+	const [_, setPageIndex] = useState(1);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [searchParamsObject, setSearchParamsObject] =
 		useState<SearchObjectTypeProduct>(() => {
-			const paramsObject: any = Object.fromEntries(searchParams.entries());
+      const paramsObject: any = Object.fromEntries(searchParams.entries());
+      console.log(paramsObject);
+      
 			const colorCheck =
 				paramsObject?.color
 					?.split(",")
@@ -35,7 +35,7 @@ const ShopProduct = () => {
 					.map((c: string) => c.trim())
 					.filter(Boolean) ?? [];
 			return {
-				pageIndex: pageIndex,
+				pageIndex: paramsObject?.pageIndex | 1,
 				pageSize: 12,
 				keyword: "",
 				color: colorCheck,
@@ -43,16 +43,36 @@ const ShopProduct = () => {
 				sort: 1,
 				fieldSort: "",
 				category: paramsObject?.category,
-				min: 0,
-				max: 5000000,
+				min: parseInt(paramsObject?.min) ?? 0,
+				max: parseInt(paramsObject?.max) ?? 5000000,
 				tab: 1,
 				rating: null,
 			};
 		});
+	useEffect(() => {
+		if (!searchParams.toString()) {
+			setSearchParamsObject(() => {
+				return {
+					pageIndex: 1,
+					pageSize: 12,
+					keyword: "",
+					color: [],
+					size: [],
+					sort: 1,
+					fieldSort: "",
+					category: "",
+					min: 0,
+					max: 5000000,
+					tab: 1,
+					rating: null,
+				};
+			});
+		}
+	}, [searchParams]);
+
 	const {
 		data: productShop,
 		isLoading,
-		isPending,
 		isError,
 	} = useQuery({
 		queryKey: ["productShop", searchParamsObject],
@@ -60,10 +80,8 @@ const ShopProduct = () => {
 			const { data } = await pagingProduct(searchParamsObject);
 			return data;
 		},
-		staleTime: 1000 * 60 * 15,
-		refetchInterval: 1000 * 60 * 15,
-		retry: 2,
 	});
+	if (isError) return <p>Error occurred!</p>;
 	return (
 		<div className="padding pt-[40px]">
 			<div className="relative grid lg:grid-cols-12 gap-9">
@@ -114,9 +132,8 @@ const ShopProduct = () => {
 									}));
 									searchParams.set("pageIndex", event.selected + 1);
 									setSearchParams(searchParams);
-									query.invalidateQueries({ queryKey: ["productShop"] });
 								}}
-								forcePage={pageIndex - 1}
+								forcePage={searchParamsObject.pageIndex - 1}
 							/>
 						</div>
 					)}

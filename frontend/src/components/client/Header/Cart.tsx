@@ -1,4 +1,3 @@
-import { formatCurrency } from "@/common/func";
 import {
 	HoverCard,
 	HoverCardContent,
@@ -15,7 +14,7 @@ import CartPreview from "./CartPreview";
 const Cart = () => {
 	const { totalCart, cartsPreviews } = useCart();
 	const { isLoggedIn } = useAuth();
-	const navigateIsLogin = useCurrentRouteAndNavigation();	
+	const navigateIsLogin = useCurrentRouteAndNavigation();
 	return (
 		<Link
 			to={"/cart"}
@@ -35,7 +34,7 @@ const Cart = () => {
 					>
 						<span
 							className={cn(
-								" rounded-full bg-red-500 text-center text-white absolute w-4 h-4 text-xs flex items-center justify-center top-0 -right-1 ",
+								" rounded-full bg-custom-500 text-center text-white absolute w-4 h-4 text-xs flex items-center justify-center top-0 -right-1 ",
 								isLoggedIn && "inline-block",
 							)}
 						>

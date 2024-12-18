@@ -8,7 +8,7 @@ routerProductComing.post("/paging", productComingController.pagingProductComing)
 routerProductComing.get("/findById/:id", productComingController.findById);
 routerProductComing.put("/update/:id", productComingController.updateComing);
 routerProductComing.get("/active/:id", productComingController.activeProductComing);
-routerProductComing.get("/findByActive/:id", productComingController.findByActive);
+routerProductComing.get("/findByActive", productComingController.findByActive);
 routerProductComing.delete("/delete/:id", productComingController.deleteProductComing);
 
 export default routerProductComing;

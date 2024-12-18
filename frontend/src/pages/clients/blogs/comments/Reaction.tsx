@@ -29,7 +29,7 @@ const Reaction = ({
 	comment,
 	setComment,
 }: IProps) => {
-	const { authUser, isLoggedIn } = useAuth();	
+	const { authUser, isLoggedIn } = useAuth();
 	const checkLike = comment?.reactions.includes(authUser?._id);
 
 	const handleDeleteComment = async (props: Comment) => {
@@ -68,7 +68,7 @@ const Reaction = ({
 								{checkLike ? (
 									<AiFillLike
 										size={20}
-										className="text-blue-500 cursor-pointer"
+										className="text-custom cursor-pointer"
 										onClick={() => {
 											handleDislike();
 										}}
@@ -103,7 +103,7 @@ const Reaction = ({
 					</div>
 				)}
 			</div>
-			{(isLoggedIn && comment?.user?._id == authUser?._id) && (
+			{isLoggedIn && comment?.user?._id == authUser?._id && (
 				<Actions handleDelete={() => handleDeleteComment(comment)} />
 			)}
 		</div>

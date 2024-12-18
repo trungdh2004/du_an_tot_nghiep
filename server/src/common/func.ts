@@ -1,6 +1,17 @@
-export const chargeShippingFee = (dis: number) => {
+export const chargeShippingFee = (
+  dis: number,
+  totalMoney?: number,
+  quantity?: number
+) => {
   if (!dis) return 0;
 
+  if (totalMoney && totalMoney > 5000000) {
+    return 0;
+  }
+
+  if (quantity && quantity > 20) {
+    return 0;
+  }
   if (+dis <= 5000) {
     return 0;
   } else if (5000 < dis && dis <= 20000) {

@@ -15,7 +15,11 @@ class DashboardController {
       const productCount = await ProductModel.countDocuments({
         is_deleted: false,
       });
-      const orderCountNew = await OrderModel.countDocuments();
+      const orderCountNew = await OrderModel.countDocuments({
+        status: {
+          $ne: 0,
+        },
+      });
 
       const orderCountSuccess = await OrderModel.countDocuments({
         status: {
@@ -53,12 +57,21 @@ class DashboardController {
           const { startDay, endDay } = getDateStartAndEnd(i);
           const countNew = await OrderModel.countDocuments({
             orderDate: { $gte: startDay, $lte: endDay },
+            status: {
+              $ne: 0,
+            },
           });
           const countSuccess = await OrderModel.countDocuments({
             shippedDate: { $gte: startDay, $lte: endDay },
+            status: {
+              $ne: 0,
+            },
           });
           const countCancel = await OrderModel.countDocuments({
             cancelOrderDate: { $gte: startDay, $lte: endDay },
+            status: {
+              $ne: 0,
+            },
           });
           listDataOrder.push({
             success: countSuccess,
@@ -136,7 +149,7 @@ class DashboardController {
     try {
       const listOrder = await OrderModel.find({
         status: {
-          $in: [1, 2, 3, 4, 5, 6, 7],
+          $in: [1, 2, 3],
         },
       })
         .sort({
@@ -156,7 +169,7 @@ class DashboardController {
         {
           $match: {
             status: {
-              $in: [4, 5],
+              $in: [5],
             },
           },
         },
@@ -230,7 +243,7 @@ class DashboardController {
         // Sắp xếp theo tổng doanh thu giảm dần
         { $sort: { totalMoney: -1 } },
         // Giới hạn kết quả trả về, có thể thay đổi tùy thuộc vào số lượng danh mục
-        { $limit: 10 },
+        { $limit: 5 },
         // Kết hợp với thông tin chi tiết của category từ collection Category
         {
           $lookup: {
@@ -302,9 +315,9 @@ class DashboardController {
       });
       const countShipped = await OrderModel.countDocuments({
         status: {
-          $in:[4,5]
+          $in: [4, 5],
         },
-        $or:[
+        $or: [
           {
             shippedDate: {
               $gte: startOfDay, // Lớn hơn hoặc bằng thời gian bắt đầu của ngày đó
@@ -316,8 +329,8 @@ class DashboardController {
               $gte: startOfDay, // Lớn hơn hoặc bằng thời gian bắt đầu của ngày đó
               $lt: endOfDay,
             },
-          }
-        ]
+          },
+        ],
       });
       const countCancel = await OrderModel.countDocuments({
         status: 6,
@@ -332,7 +345,7 @@ class DashboardController {
         countConfirm,
         countShipping,
         countShipped,
-        countCancel
+        countCancel,
       });
     } catch (error) {}
   }
@@ -357,18 +370,18 @@ class DashboardController {
         .sort({ published_at: -1 })
         .limit(5)
         .select({
-          thumbnail_url:1,
-          meta_title:1,
-          meta_description:1,
-          published_at:1,
-          _id:1
-        })
+          thumbnail_url: 1,
+          meta_title: 1,
+          meta_description: 1,
+          published_at: 1,
+          _id: 1,
+        });
 
       return res.status(STATUS.OK).json(listBlog);
-    } catch (error:any) {
+    } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
-        message:error.message,
-      })
+        message: error.message,
+      });
     }
   }
 }

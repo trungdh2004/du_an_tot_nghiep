@@ -1,14 +1,13 @@
-import React from "react";
 
 const OverlayVioletV2 = () => {
 	return (
 		<>
 			<div
-				className="fixed  inset-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80 bg-main"
+				className="fixed inset-0 overflow-hidden -top-40 -z-10 transform-gpu blur-3xl sm:-top-80 bg-main"
 				aria-hidden="true"
 			>
 				<div
-                    className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#80f2ff] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] 
+					className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#80f2ff] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] 
                     sm:w-[72.1875rem]"
 					style={{
 						clipPath:
@@ -16,7 +15,7 @@ const OverlayVioletV2 = () => {
 					}}
 				/>
 				<div
-                    className="relative bottom-5 left-[calc(80%+11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#80f7ff] to-[#9089fc] opacity-30 sm:left-[calc(50%+30rem)] 
+					className="relative bottom-5 left-[calc(80%+11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#80f7ff] to-[#9089fc] opacity-30 sm:left-[calc(50%+30rem)] 
                     sm:w-[72.1875rem]"
 					style={{
 						clipPath:

@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
 	Form,
 	FormControl,
@@ -22,15 +21,15 @@ import {
 import instance from "@/config/instance";
 import { cn } from "@/lib/utils";
 import { uploadFileService } from "@/service/upload";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { toast } from "sonner";
 
-import { z } from "zod";
-import { vi } from "date-fns/locale";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuth } from "@/hooks/auth";
+import CalendarYear from "@/components/common/CalendarYear";
 import { IUser } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 const formSchema = z.object({
 	full_name: z
@@ -45,14 +44,13 @@ const formSchema = z.object({
 	birthDay: z.string().optional(),
 });
 const AccountIndex = () => {
-	const queryClient = useQueryClient();
 	const { authUser, setAuthUser } = useAuth();
 	const [previewUrl, setPreviewUrl] = useState(() => {
-    return {
-      isLoading: false,
-      url:authUser?.avatarUrl || "",
-    }
-  });
+		return {
+			isLoading: false,
+			url: authUser?.avatarUrl || "",
+		};
+	});
 
 	const form = useForm({
 		resolver: zodResolver(formSchema),
@@ -61,20 +59,20 @@ const AccountIndex = () => {
 			phone: authUser?.phone || "",
 			birthDay: authUser?.birthDay || "",
 			email: authUser?.email || "",
-      avatarUrl:authUser?.avatarUrl || ""
+			avatarUrl: authUser?.avatarUrl || "",
 		},
 	});
 	const { mutate } = useMutation({
 		mutationFn: async (data: any) => {
 			return await instance.put(`/auth/changeUser/${authUser?._id}`, data);
 		},
-		onSuccess: ({data}) => {
-      console.log({data});
-      if(setAuthUser) {
-        console.log("cập nhập");
-        
-        setAuthUser(data.user as IUser)
-      }
+		onSuccess: ({ data }) => {
+			console.log({ data });
+			if (setAuthUser) {
+				console.log("cập nhập");
+
+				setAuthUser(data.user as IUser);
+			}
 			toast.success("Cập nhật thông tin thành công!");
 		},
 		onError: (error) => {
@@ -112,16 +110,16 @@ const AccountIndex = () => {
 		}
 	};
 	return (
-		<div className="w-full bg-white px-8 box-shadow rounded-md overflow-hidden">
+		<div className="w-full px-8 overflow-hidden bg-white rounded-md box-shadow">
 			<div className="py-5 border-b border-[#efedec]">
 				<h3 className="text-base md:text-lg text-[#333333] font-medium">
 					Hồ Sơ Của Tôi
 				</h3>
-				<span className="text-sm md:text-base text-gray-700">
+				<span className="text-sm text-gray-700 md:text-base">
 					Quản lý thông tin hồ sơ để bảo mật tài khoản của bạn
 				</span>
 			</div>
-			<div className="pt-8 pb-12  xl:px-10">
+			<div className="pt-8 pb-12 xl:px-10">
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)}>
 						<div className="flex flex-col md:flex-row">
@@ -130,11 +128,11 @@ const AccountIndex = () => {
 									control={form.control}
 									name="full_name"
 									render={({ field }) => (
-										<FormItem className="flex flex-col md:flex-row md:items-center pb-5 ">
+										<FormItem className="flex flex-col pb-5 md:flex-row md:items-center ">
 											<FormLabel className="w-full md:w-[40%] md:text-right text-sm md:text-base text-[rgba(85,85,85,.8)] pr-4">
 												Tên
 											</FormLabel>
-											<div className=" w-full">
+											<div className="w-full ">
 												<FormControl>
 													<Input
 														placeholder=""
@@ -151,7 +149,7 @@ const AccountIndex = () => {
 									control={form.control}
 									name="email"
 									render={({ field }) => (
-										<FormItem className="flex flex-col md:flex-row md:items-center pb-5 ">
+										<FormItem className="flex flex-col pb-5 md:flex-row md:items-center ">
 											<FormLabel className="w-full md:w-[40%] md:text-right text-sm md:text-base text-[rgba(85,85,85,.8)] pr-4">
 												Email
 											</FormLabel>
@@ -171,11 +169,11 @@ const AccountIndex = () => {
 									control={form.control}
 									name="phone"
 									render={({ field }) => (
-										<FormItem className="flex flex-col md:flex-row md:items-center pb-5 ">
+										<FormItem className="flex flex-col pb-5 md:flex-row md:items-center ">
 											<FormLabel className="w-full md:w-[40%] md:text-right text-sm md:text-base text-[rgba(85,85,85,.8)] pr-4">
 												Số điện thoại
 											</FormLabel>
-											<div className=" w-full">
+											<div className="w-full ">
 												<FormControl>
 													<Input
 														placeholder=""
@@ -192,7 +190,7 @@ const AccountIndex = () => {
 									control={form.control}
 									name="birthDay"
 									render={({ field }) => (
-										<FormItem className="flex flex-col md:flex-row md:items-center pb-5 ">
+										<FormItem className="flex flex-col pb-5 md:flex-row md:items-center ">
 											<FormLabel className="w-full md:w-[40%] md:text-right text-sm md:text-base text-[rgba(85,85,85,.8)] pr-4">
 												Ngày sinh
 											</FormLabel>
@@ -213,15 +211,12 @@ const AccountIndex = () => {
 																	) : (
 																		<span>Ngày sinh</span>
 																	)}
-																	<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+																	<CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
 																</Button>
 															</FormControl>
 														</PopoverTrigger>
-														<PopoverContent
-															className="w-auto p-0"
-															align="start"
-														>
-															<Calendar
+														<PopoverContent className="p-0 " align="start">
+															{/* <Calendar
 																locale={vi}
 																mode="single"
 																selected={field.value as any}
@@ -232,6 +227,22 @@ const AccountIndex = () => {
 																	date < new Date() ||
 																	date < new Date("1900-01-01")
 																}
+																initialFocus
+															/> */}
+															<CalendarYear
+																value={
+																	field.value
+																		? new Date(field.value)
+																		: undefined
+																}
+																onSelect={(value) => {
+																	field.onChange(value?.toISOString());
+																}}
+																disabled={(date) =>
+																	date > new Date() ||
+																	date < new Date("1900-01-01")
+																}
+																lengthYear={40}
 																initialFocus
 															/>
 														</PopoverContent>
@@ -251,19 +262,19 @@ const AccountIndex = () => {
 									render={({ field }) => (
 										<FormItem className="flex items-center pb-8">
 											<FormControl>
-												<div className="w-full flex flex-col justify-center items-center">
+												<div className="flex flex-col items-center justify-center w-full">
 													<div className="size-[100px]">
 														<img
 															src={previewUrl.url || ""}
-															className="relative w-full h-full border border-gray-300 rounded-full bg-gray-300"
+															className="relative w-full h-full bg-gray-300 border border-gray-300 rounded-full"
 															alt=""
 														/>
 														{previewUrl?.isLoading && (
-															<div className="absolute bg-slate-50/50 w-full inset-0 flex items-center justify-center">
+															<div className="absolute inset-0 flex items-center justify-center w-full bg-slate-50/50">
 																<AiOutlineLoading3Quarters
 																	size={20}
 																	strokeWidth="4px"
-																	className="animate-spin w-full "
+																	className="w-full animate-spin "
 																/>
 															</div>
 														)}
@@ -272,7 +283,7 @@ const AccountIndex = () => {
 														type="file"
 														className="hidden"
 														id="avatarInput"
-                            accept=".jpg,.png,.webp,.jpeg"
+														accept=".jpg,.png,.webp,.jpeg"
 														onChange={(event) =>
 															field.onChange(async () => {
 																// console.log("url", URL.createObjectURL(
@@ -297,7 +308,7 @@ const AccountIndex = () => {
 													/>
 													<label
 														htmlFor="avatarInput"
-														className="text-sm md:text-base border border-gray-300 rounded-sm px-4 py-2 mt-4 mb-3 cursor-pointer"
+														className="px-4 py-2 mt-4 mb-3 text-sm border border-gray-300 rounded-sm cursor-pointer md:text-base"
 													>
 														Chọn Ảnh
 													</label>
@@ -318,7 +329,7 @@ const AccountIndex = () => {
 						<div className="w-full md:w-[40%] flex justify-center my-5">
 							<button
 								type="submit"
-								className="text-white bg-blue-500 px-5 py-2 border rounded-sm"
+								className="px-5 py-2 text-white border rounded-sm bg-custom-500"
 							>
 								Cập nhật
 							</button>

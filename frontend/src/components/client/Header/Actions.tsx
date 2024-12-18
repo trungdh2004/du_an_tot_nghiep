@@ -1,24 +1,21 @@
 import { Button } from "@/components/ui/button";
-
 import { useAuth } from "@/hooks/auth";
-import { LucideShoppingCart } from "lucide-react";
+import {
+  deleteNotification,
+  getPagingNotification,
+  watchedNotification
+} from "@/service/notification.service";
+import {
+  INotification,
+  ISearchObjectNotifications,
+} from "@/types/notification.interface";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
+import Cart from "./Cart";
 import Notification from "./Notification";
 import Search from "./Search";
 import User from "./User";
-import Cart from "./Cart";
-import { useEffect, useState } from "react";
-import {
-	deleteNotification,
-	getPagingNotification,
-	watchedAllNotification,
-	watchedNotification,
-} from "@/service/notification.service";
-import { toast } from "sonner";
-import {
-	INotification,
-	ISearchObjectNotifications,
-} from "@/types/notification.interface";
 
 const Actions = () => {
 	const { isLoggedIn, authUser, socket } = useAuth();
@@ -31,7 +28,7 @@ const Actions = () => {
 			totalOptionPage: 0,
 			totalPage: 0,
 		});
-	const [before,setBefore] = useState<null|string>(null)
+	const [before, setBefore] = useState<null | string>(null);
 	const [countNotRead, setCountNotRead] = useState(0);
 
 	useEffect(() => {
@@ -56,7 +53,7 @@ const Actions = () => {
 				try {
 					const { data } = await getPagingNotification(1);
 					setDataNotification(data);
-					setBefore(data?.before)
+					setBefore(data?.before);
 					setCountNotRead(data.countNotificationNotRead);
 				} catch (error) {
 					setCountNotRead(0);
@@ -79,7 +76,7 @@ const Actions = () => {
 			// if (dataNotification.pageIndex < dataNotification.totalPage) {
 			const { data } = await getPagingNotification(
 				dataNotification.pageIndex + 1,
-				before
+				before,
 			);
 
 			setDataNotification((prev) => {
@@ -144,27 +141,27 @@ const Actions = () => {
 		}
 	};
 
-	const handleWatchedAllNotification = async () => {
-		try {
-			await watchedAllNotification();
-			setDataNotification((prev) => {
-				const newContent = prev.content.map((item) => {
-					return {
-						...item,
-						isRead: true,
-					};
-				});
+	// const handleWatchedAllNotification = async () => {
+	// 	try {
+	// 		await watchedAllNotification();
+	// 		setDataNotification((prev) => {
+	// 			const newContent = prev.content.map((item) => {
+	// 				return {
+	// 					...item,
+	// 					isRead: true,
+	// 				};
+	// 			});
 
-				return {
-					...prev,
-					content: newContent,
-				};
-			});
-			setCountNotRead(0);
-		} catch (error) {
-			toast.error("Đã xem tất cả bị lỗi");
-		}
-	};
+	// 			return {
+	// 				...prev,
+	// 				content: newContent,
+	// 			};
+	// 		});
+	// 		setCountNotRead(0);
+	// 	} catch (error) {
+	// 		toast.error("Đã xem tất cả bị lỗi");
+	// 	}
+	// };
 
 	return (
 		<div className="flex items-center justify-center max-h-8 gap-1 md:gap-4  *:rounded-full  *:cursor-pointer">
@@ -187,8 +184,8 @@ const Actions = () => {
 					<User />
 				</div>
 			) : (
-				<Link to={"/auth/login"} className="hidden md:block">
-					<Button className="h-8 px-3 text-xs rounded " size={"sm"}>
+				<Link to={`/auth/login`}>
+					<Button className="hidden h-8 py-1 text-sm lg:block md:block bg-custom-300 hover:bg-custom">
 						Đăng nhập
 					</Button>
 				</Link>

@@ -25,7 +25,7 @@ import {
 import { Input } from "../../components/ui/input";
 import SignInWithFacebookOrGoogle from "./SignInWithFacebookOrGoogle";
 const Login = () => {
-	const [searchParams, SetURLSearchParams] = useSearchParams();
+	const [searchParams] = useSearchParams();
 	const router = useNavigate();
 	const { setCarts, setTotalCart } = useCart();
 	const { setAuthUser, setIsLoggedIn } = useAuth();
@@ -49,7 +49,7 @@ const Login = () => {
 	const onSubmit = async (payload: z.infer<typeof formSchema>) => {
 		try {
 			const { data } = await loginAccount(payload);
-			const { user, accessToken, message } = data;
+			const { user, accessToken } = data;
 
 			// Cập nhật trạng thái đăng nhập và token Authorization
 			setAuthUser?.(user);
@@ -59,10 +59,8 @@ const Login = () => {
 				pagingCartV2(),
 				getCountMyShoppingCart(),
 			]);
-
 			setCarts(cartsResponse?.data?.listData || []);
 			setTotalCart(totalCountResponse?.data?.count || 0);
-			toast.success(message);
 			const historyUrl = searchParams.get("url");
 
 			if (historyUrl) {
@@ -155,19 +153,19 @@ const Login = () => {
 
 						<Link
 							to={"/auth/forgot-password"}
-							className="mt-2 text-blue-500 float-end "
+							className="mt-2 text-custom float-end "
 						>
 							Quên mật khẩu ?
 						</Link>
 						<Button
 							type="submit"
-							className="w-full mt-3 mb-6 text-base font-bold text-white bg-blue-500 hover:bg-blue-400"
+							className="w-full mt-3 mb-6 text-base font-bold text-white bg-custom hover:bg-custom-500"
 						>
 							Đăng nhập
 						</Button>
 						<p className="text-center">
 							Bạn chưa có tài khoản ?{" "}
-							<Link to={"/auth/register"} className="text-blue-500">
+							<Link to={"/auth/register"} className="text-custom">
 								Đăng ký
 							</Link>
 						</p>

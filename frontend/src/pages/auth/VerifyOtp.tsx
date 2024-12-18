@@ -14,7 +14,6 @@ import {
 import {
 	InputOTP,
 	InputOTPGroup,
-	InputOTPSeparator,
 	InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { Link } from "react-router-dom";

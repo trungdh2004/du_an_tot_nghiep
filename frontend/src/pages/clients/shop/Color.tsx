@@ -6,12 +6,12 @@ import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
 import { IColor } from "@/types/typeProduct";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { useQueryClient } from "@tanstack/react-query";
-import React, {
-	Dispatch,
-	SetStateAction,
-	useCallback,
-	useEffect,
-	useState,
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
 } from "react";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
@@ -20,7 +20,7 @@ interface Props {
 	setSearchParamsObject: Dispatch<SetStateAction<SearchObjectTypeProduct>>;
 	searchParamsObject: SearchObjectTypeProduct;
 }
-const Color = ({ setSearchParamsObject, searchParamsObject }: Props) => {
+const Color = ({ setSearchParamsObject }: Props) => {
 	const [colors, setColors] = useState([]);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [check, setCheck] = useState(false);
@@ -58,6 +58,7 @@ const Color = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 				colors = colors.filter((_color) => _color !== color);
 			}
 			searchParams.set("color", colors.join());
+			searchParams.set("pageIndex", "1");
 			setSearchParams(searchParams);
 
 			const paramsObject: any = Object.fromEntries(searchParams.entries());
@@ -69,8 +70,8 @@ const Color = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 			setSearchParamsObject((prev) => ({
 				...prev,
 				color: colorCheck,
+				pageIndex: 1,
 			}));
-			query.invalidateQueries({ queryKey: ["productShop"] });
 		},
 		[searchParams, setSearchParams, setSearchParamsObject, query],
 	);
@@ -115,9 +116,9 @@ const Color = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 								>
 									<Checkbox
 										className={cn(
-											`data-[state=checked]:bg-white data-[state=checked]:text-[#ffffff] rounded-full lg:w-7 lg:h-7 w-6 h-6 border-[#eee] p-1 text-[10px] font-bold `,
+											` data-[state=checked]:bg-white data-[state=checked]:text-[#ffffff] rounded-full lg:w-6 lg:h-6 w-5 h-5 border-[#eee] p-1 text-[10px] font-bold `,
 											color.code === "#ffffff" &&
-												"data-[state=checked]:text-black",
+												"data-[state=checked]:text-black ",
 										)}
 										style={{ backgroundColor: color.code }}
 										value={color._id}

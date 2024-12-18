@@ -37,6 +37,7 @@ interface CartItemProps {
 	productId: string;
 	checked: boolean;
 	onCheckedChange: (productId: string, itemId: string) => void;
+	checkAttribute: boolean;
 }
 
 const CartItem = ({
@@ -47,8 +48,9 @@ const CartItem = ({
 	listSizeAndColor,
 	attributeAlreadyExists,
 	onCheckedChange,
+	checkAttribute,
 }: CartItemProps) => {
-	const [quantity, setQuantity] = useState(item?.quantity); 
+	const [quantity, setQuantity] = useState(item?.quantity);
 	const [isOpen, setIsOpen] = useState(false);
 	const { carts, setItemCart, setCarts, setTotalCart } = useCart();
 	const [errors, setErrors] = useState({
@@ -57,7 +59,7 @@ const CartItem = ({
 	});
 	const { updateAttributeItemCart } = useUpdateAttributeItemCart();
 	const handleChangeQuantity = useDebounce(async (value: number) => {
-		setQuantity(value); 
+		setQuantity(value);
 		try {
 			await updateCartItem(item?._id as string, { quantity: value });
 			const { data } = await getCountMyShoppingCart();
@@ -77,6 +79,15 @@ const CartItem = ({
 			}
 		}
 	}, 700);
+	const getStockStatus = (product: ICartItem) => {
+		if (product?.attribute == null && !product?.is_simple)
+			return "Không khả dụng";
+		if (
+			(!product?.is_simple && Number(product?.attribute?.quantity) <= 0) ||
+			Number(product?.totalQuantity) <= 0
+		)
+			return "Hết hàng";
+	};
 	const handleChangeAttributes = (colorId: string, sizeId: string) => {
 		updateAttributeItemCart({
 			colorId,
@@ -86,7 +97,7 @@ const CartItem = ({
 			setIsOpen,
 			setErrors,
 		});
-	};	
+	};
 	return (
 		<div key={item._id} className="flex items-center item-group">
 			<div
@@ -95,19 +106,33 @@ const CartItem = ({
 				)}
 			>
 				{(item?.attribute?._id && item?.attribute?.quantity) ||
-				item?.is_simple ? (
+				(item?.is_simple && item?.totalQuantity > 0) ? (
 					<Checkbox
 						checked={checked}
 						onCheckedChange={() =>
 							onCheckedChange(productId, item._id as string)
 						}
-						className="data-[state=checked]:bg-red-500 border-gray-300 data-[state=checked]:border-red-500"
+						className="data-[state=checked]:bg-custom-500 border-gray-300 data-[state=checked]:border-red-500"
 					/>
 				) : (
 					<>
 						<IoBanOutline className="text-red-500 " />
 					</>
 				)}
+				{/* {(item?.attribute?._id && item?.attribute?.quantity) ||
+				(item?.is_simple && item?.totalQuantity > 0) ? (
+					<Checkbox
+						checked={checked}
+						onCheckedChange={() =>
+							onCheckedChange(productId, item._id as string)
+						}
+						className="data-[state=checked]:bg-custom-500 border-gray-300 data-[state=checked]:border-red-500"
+					/>
+				) : (
+					<>
+						<IoBanOutline className="text-red-500 " />
+					</>
+				)} */}
 			</div>
 			<div className="flex items-center w-full lg:w-[46.27949%]">
 				<div className="relative overflow-hidden rounded min-w-14 min-h-14 max-w-14 max-h-14 md:min-w-20 md:min-h-20 md:max-w-20 md:max-h-20">
@@ -118,8 +143,7 @@ const CartItem = ({
 					/>
 					<div className="absolute inset-x-0 bottom-0 bg-black/45">
 						<p className="text-xs text-center text-white">
-							{!item?.attribute?._id && !item?.is_simple && "Không khả dụng"}
-							{!item?.attribute?.quantity && !item?.is_simple ? "Hết hàng" : ""}
+							{getStockStatus(item)}
 						</p>
 					</div>
 				</div>
@@ -137,7 +161,24 @@ const CartItem = ({
 					>
 						{item.name}
 					</Link>
-					<div className={cn(item?.is_simple ? "hidden" : "inline-block")}>
+					<div
+						className={cn(
+							"text-sm text-left pointer-events-none ",
+							(!item?.attribute?.color && !item?.attribute?.size) ||
+								!item?.attribute?.quantity
+								? "text-red-500 max-sm:max-w-44 text-[10px]"
+								: "text-gray-500 ",
+							item?.is_simple ? "inline-block" : "hidden",
+						)}
+					>
+						{Number(item?.totalQuantity || 0) <= 0 &&
+							`Mặt hàng sản phẩm đơn giản này đã bán hết.`}
+					</div>
+					<div
+						className={cn(
+							item?.is_simple && !checkAttribute ? "hidden" : "inline-block",
+						)}
+					>
 						<Attribute
 							isOpen={isOpen}
 							setIsOpen={setIsOpen}
@@ -191,12 +232,17 @@ const CartItem = ({
 							</span>
 						</div>
 						<div className="ml-auto">
-							{(item?.attribute?._id && item?.attribute?.quantity) || item?.is_simple ? (
+							{(item?.attribute?._id && item?.attribute?.quantity) ||
+							(item?.is_simple && item?.totalQuantity > 0) ? (
 								<InputQuantity
 									size="mobile"
 									className="w-20"
 									defaultValue={quantity}
-									maxTotal={item?.attribute ? item?.attribute?.quantity : item?.totalQuantity }
+									maxTotal={
+										item?.attribute
+											? item?.attribute?.quantity
+											: item?.totalQuantity
+									}
 									getValue={handleChangeQuantity}
 								/>
 							) : (
@@ -210,7 +256,8 @@ const CartItem = ({
 				<span
 					className={cn(
 						"line-through text-black/50",
-						!item?.is_simple && !item?.attribute?.discount && "hidden",
+						(!item?.is_simple && !item?.attribute?.discount) ||
+							(item?.totalQuantity <= 0 && "hidden"),
 					)}
 				>
 					{formatCurrency(item?.attribute?.price || item?.price || 0)}
@@ -226,11 +273,14 @@ const CartItem = ({
 				</span>
 			</div>
 			<div className="hidden lg:flex w-[15.4265%] text-center items-center justify-center">
-				{(item?.attribute?._id && item?.attribute?.quantity) || item?.is_simple ? (
+				{(item?.attribute?._id && item?.attribute?.quantity) ||
+				(item?.is_simple && item?.totalQuantity > 0) ? (
 					<InputQuantity
 						size="small"
 						defaultValue={quantity}
-						maxTotal={item?.attribute ? item?.attribute?.quantity : item?.totalQuantity }
+						maxTotal={
+							item?.attribute ? item?.attribute?.quantity : item?.totalQuantity
+						}
 						getValue={handleChangeQuantity}
 					/>
 				) : (
@@ -241,7 +291,7 @@ const CartItem = ({
 				<span className="text-red-500">
 					{formatCurrency(
 						item?.is_simple
-							? item?.discount * Number(item?.quantity)
+							? item?.discount * Number(item?.quantity) || 0
 							: item?.attribute?.discount * Number(item?.quantity) || 0,
 					)}
 				</span>

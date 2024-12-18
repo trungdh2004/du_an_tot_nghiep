@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import Map, {
-	AttributionControl,
-	GeolocateControl,
-	NavigationControl,
+  AttributionControl,
+  GeolocateControl,
+  NavigationControl,
 } from "react-map-gl";
 
 interface IProps {
@@ -16,11 +16,10 @@ interface IProps {
 
 const MapComponent = ({
 	children,
-	width,
 	height,
 	longitude,
 	latitude,
-	zoom
+	zoom,
 }: IProps) => {
 	const [viewState, setViewState] = useState({
 		longitude: longitude || 105.62583879555804,
@@ -34,10 +33,10 @@ const MapComponent = ({
 				...prev,
 				longitude,
 				latitude,
-				zoom:zoom || 15.5
+				zoom: zoom || 15.5,
 			}));
 		}
-	}, [longitude, latitude,zoom]);
+	}, [longitude, latitude, zoom]);
 	return (
 		<Map
 			// mapLib={import("mapbox-gl")}

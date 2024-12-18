@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { FiMapPin } from "react-icons/fi";
-import ListAddressOrderDetail from "./ListAddressOrderDetail";
-import AddAddressOrder from "./AddAddressOrder";
-import { FaPlus } from "react-icons/fa";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { fetchAddress } from "@/service/address";
 import { Skeleton } from "@/components/ui/skeleton";
+import { fetchAddress } from "@/service/address";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { FaPlus } from "react-icons/fa";
+import { FiMapPin } from "react-icons/fi";
+import AddAddressOrder from "./AddAddressOrder";
+import ListAddressOrderDetail from "./ListAddressOrderDetail";
 const AddressOrder = ({ data, handleChangeAddress }: any) => {
 	const [openListAddress, setOpenListAddress] = useState(false);
 	const [openAdd, setOpenAdd] = useState(false);
@@ -14,15 +14,14 @@ const AddressOrder = ({ data, handleChangeAddress }: any) => {
 		isPending,
 		isError,
 		data: address,
-		isFetching,
-		isPlaceholderData,
 	} = useQuery({
 		queryKey: ["address", pageIndex],
 		queryFn: () => fetchAddress(pageIndex),
 		placeholderData: keepPreviousData,
 	});
+
 	return (
-		<div className="py-2 lg:py-4 ">
+		<div className="">
 			{isPending && (
 				<div className="flex flex-col space-y-3">
 					<Skeleton className="h-[125px] w-full rounded-xl" />
@@ -40,7 +39,7 @@ const AddressOrder = ({ data, handleChangeAddress }: any) => {
 						Địa chỉ nhận hàng
 					</p>
 				</div>
-				<div className="flex flex-col items-start justify-between gap-3 pl-4 lg:flex-row md:flex-row lg:items-center md:items-center">
+				<div className="flex flex-col items-start justify-between gap-3 pl-4">
 					{data?.address === null ? (
 						<div className="flex gap-3">
 							<p>Bạn chưa chọn địa chỉ nào</p>
@@ -53,11 +52,23 @@ const AddressOrder = ({ data, handleChangeAddress }: any) => {
 							</button>
 						</div>
 					) : (
-						<div className="flex flex-col gap-3 lg:flex-row md:flex-row">
-							<span className="text-sm font-semibold tracking-normal lg:text-base">
-								{data?.address?.username} {data?.address?.phone}
+						<div className="flex flex-col gap-3">
+							<span className="pr-3 text-sm tracking-normal">
+								<span>
+									<strong>Họ tên : </strong>
+								</span>
+								{data?.address?.username}
 							</span>
-							<p className="text-sm tracking-normal lg:text-base">
+							<span className="pr-3 text-sm tracking-normal">
+								<span>
+									<strong>Số điện thoại : </strong>
+								</span>
+								{data?.address?.phone}
+							</span>
+							<p className="pr-3 text-sm tracking-normal">
+								<span>
+									<strong>Địa chỉ : </strong>
+								</span>
 								{data?.address?.detailAddress} , {data?.address?.address}
 							</p>
 							{data?.address?.is_main && (
@@ -91,7 +102,12 @@ const AddressOrder = ({ data, handleChangeAddress }: any) => {
 				/>
 			)}
 			{!!openAdd && (
-				<AddAddressOrder open={openAdd} closeOpen={() => setOpenAdd(false)} />
+				<AddAddressOrder
+					open={openAdd}
+					closeOpen={() => setOpenAdd(false)}
+					handleChangeAddress={handleChangeAddress}
+					address={address}
+				/>
 			)}
 		</div>
 	);

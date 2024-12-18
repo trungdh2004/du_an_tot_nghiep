@@ -1,24 +1,25 @@
-import React, { useEffect, useState } from "react";
-import AddressOrder from "./AddressOrder";
-import ProductOrder from "./ProductOrder";
-import Vorcher from "./Vorcher";
-import Footer from "@/components/client/Footer";
-import PaymentMethod from "./PaymentMethod";
-import NoteOrder from "./NoteOrder";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import {
-	createOrderPayUponReceipt,
-	createOrderVNPayPayment,
-	pagingOrder,
+  createOrderPayUponReceipt,
+  createOrderVNPayPayment,
+  pagingOrder,
 } from "@/service/order";
-import { ObjectCheckoutOrder, ResponseData } from "@/types/ObjectCheckoutOrder";
-import { toast } from "sonner";
+import { ObjectCheckoutOrder } from "@/types/ObjectCheckoutOrder";
 import { IOrderMoneyValue } from "@/types/order";
+import { useMutation } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
+import MoneyOrder from "./MoneyOrder";
+import NoteOrder from "./NoteOrder";
+import ProductOrderV2 from "./orderV2/ProductOrderV2";
+import PaymentMethod from "./PaymentMethod";
+import Vorcher from "./Vorcher";
 
 const OrderPage = () => {
-	const [searchParams, setSearchParams] = useSearchParams();
+	const [searchParams] = useSearchParams();
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const paramsObject = Object.fromEntries(searchParams.entries());
+	const [spin, setSpin] = useState(false);
 	const stateOrder = JSON.parse(paramsObject.state);
 	const [orderParams, setOrderParams] = useState<any | {}>(stateOrder || {});
 	const [order, setOrder] = useState<any>({});
@@ -33,11 +34,16 @@ const OrderPage = () => {
 				throw error;
 			}
 		},
+		onMutate: () => {
+			setIsLoading(true);
+		},
 		onSuccess: (data) => {
 			setOrder(data);
+			setIsLoading(false);
 		},
 		onError: (error) => {
 			console.error("Error in creating order:", error);
+			setIsLoading(false);
 		},
 	});
 	useEffect(() => {
@@ -77,69 +83,102 @@ const OrderPage = () => {
 	}, [order]);
 
 	const navigate = useNavigate();
-	const handleCheckout = () => {
+	const handleCheckout = async () => {
 		if (order.data.length === 0) {
-			toast.error("Vui lòng mua thêm hàng");
+      toast.error("Vui lòng mua thêm hàng");
+      setSpin(false);
 			return;
 		}
 		if (!orderCheckout.addressId) {
-			toast.error("Vui lòng chọn địa chỉ giao hàng");
+      toast.error("Vui lòng chọn địa chỉ giao hàng");
+      setSpin(false);
 			return;
 		}
-		if (orderCheckout.paymentMethod === 1) {
-			try {
-				(async () => {
-					const { data } = await createOrderPayUponReceipt(orderCheckout);
-					toast.success("Thanh toán thành công");
-					navigate("/order/success");
-					return data;
-				})();
-			} catch (error) {
-				console.log("Error:", error);
-				toast.error("Thanh toán thất bại");
+		try {
+			if (orderCheckout.paymentMethod === 1) {
+				const { data } = await createOrderPayUponReceipt(orderCheckout);
+				toast.success("Thanh toán thành công");
+				navigate("/order/success");
+				return data;
 			}
-		}
 
-		if (orderCheckout.paymentMethod === 2) {
-			try {
-				(async () => {
-					const { data } = await createOrderVNPayPayment({
-						...orderCheckout,
-						returnUrl: `${window.location.origin}/orderprocessing`,
-					});
-					window.location.href = data.paymentUrl;
-					return data;
-				})();
-			} catch (error) {
-				console.log("Error:", error);
+			if (orderCheckout.paymentMethod === 2) {
+				const { data } = await createOrderVNPayPayment({
+					...orderCheckout,
+					returnUrl: `${window.location.origin}/orderprocessing`,
+				});
+				window.location.href = data.paymentUrl;
+				return data;
 			}
+			if (orderCheckout.paymentMethod === 3) {
+				const { data } = await createOrderVNPayPayment({
+					...orderCheckout,
+					returnUrl: `${window.location.origin}/orderprocessingv2`,
+				});
+				window.location.href = data.paymentUrl;
+				return data;
+			}
+		} catch (error: any) {
+			toast.error(error?.response?.data?.message);
+		} finally {
+			setSpin(false);
 		}
 	};
-
+  useEffect(() => {
+		if (order?.data?.length === 0) {
+			toast.error("Vui lòng mua thêm hàng");
+			const timeout = setTimeout(() => {
+				navigate("/");
+			}, 3000);
+			return () => clearTimeout(timeout);
+		}
+	}, [order, navigate]);
 	return (
 		<>
-			<div className=" w-full min-h-screen">
-				<div className=""></div>
-				<div className="lg:px-[130px] md:px-[65px] px-0">
-					<AddressOrder
+			<div className="grid grid-cols-12 gap-5 lg:px-[100px] md:px-[65px] px-0 py-8">
+				<div className="col-span-12 lg:col-span-8">
+					<ProductOrderV2
 						data={order}
 						handleChangeAddress={handleChangeAddress}
+						isLoading={isLoading}
+						setOrder={setOrder}
 					/>
-					<ProductOrder data={order} />
-					<Vorcher
-						data={order}
-						setOrderCheckout={setOrderCheckout}
-						setMoneyVoucher={setMoneyVoucher}
-						stateOrder={stateOrder}
-					/>
-					<NoteOrder setOrderCheckout={setOrderCheckout} />
-					<PaymentMethod
-						data={order}
-						handleCheckout={handleCheckout}
-						setOrderCheckout={setOrderCheckout}
-						orderCheckout={orderCheckout}
-						moneyVoucher={moneyVoucher}
-					/>
+				</div>
+				<div className="col-span-12 lg:col-span-4">
+					<div className="w-full">
+						<h4 className="hidden pb-5 text-xl font-bold text-center lg:pb-7 lg:block lg:text-left ">
+							Thông tin liên quan
+						</h4>
+						{/* <div className="hidden md:hidden lg:block">
+							<AddressOrder
+								data={order}
+								handleChangeAddress={handleChangeAddress}
+							/>
+						</div> */}
+						<MoneyOrder
+							data={order}
+							handleCheckout={handleCheckout}
+							setOrderCheckout={setOrderCheckout}
+							orderCheckout={orderCheckout}
+							moneyVoucher={moneyVoucher}
+						/>
+						<Vorcher
+							data={order}
+							setOrderCheckout={setOrderCheckout}
+							setMoneyVoucher={setMoneyVoucher}
+							stateOrder={stateOrder}
+						/>
+						<NoteOrder setOrderCheckout={setOrderCheckout} />
+						<PaymentMethod
+							data={order}
+							handleCheckout={handleCheckout}
+							setOrderCheckout={setOrderCheckout}
+							orderCheckout={orderCheckout}
+							moneyVoucher={moneyVoucher}
+							spin={spin}
+							setSpin={setSpin}
+						/>
+					</div>
 				</div>
 			</div>
 		</>

@@ -1,25 +1,32 @@
-import { FaTruckRampBox } from "react-icons/fa6";
-import { FcComboChart } from "react-icons/fc";
+import { BsClipboard2Pulse } from "react-icons/bs";
+import { FaArrowLeftLong, FaTruckRampBox } from "react-icons/fa6";
 import { FiHome } from "react-icons/fi";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
-import { LuLayoutDashboard } from "react-icons/lu";
 import { RiAccountPinCircleLine } from "react-icons/ri";
 
 const sidebarShipper: any[] = [
 	{
 		path: "/shipper",
-		icon: FiHome ,
+		icon: FiHome,
 		isVisible: true,
 		isAdmin: false,
 		label: "Trang chủ",
 	},
-	{
-		path: "/shipper/orderNew",
-		icon: HiOutlineInboxArrowDown  ,
+  {
+		path: "/shipper/for-shippers",
+		icon: BsClipboard2Pulse ,
 		isVisible: true,
 		isAdmin: false,
-		label: "Đơn hàng",
+		label: "Đơn hàng mới",
 	},
+	{
+		path: "/shipper/orderNew",
+		icon: HiOutlineInboxArrowDown,
+		isVisible: true,
+		isAdmin: false,
+		label: "Đơn hàng cần giao",
+	},
+  
 	{
 		path: "/shipper/orderSuccess",
 		icon: FaTruckRampBox,
@@ -28,20 +35,19 @@ const sidebarShipper: any[] = [
 		label: "Đơn hàng đã giao",
 	},
 	{
-		path: "/shipper/dashboard",
-		icon: FcComboChart ,
-		isVisible: true,
-		isAdmin: false,
-		label: "Thống kê",
-	},
-	{
 		path: "/shipper/account",
-		icon: RiAccountPinCircleLine ,
+		icon: RiAccountPinCircleLine,
 		isVisible: true,
 		isAdmin: false,
 		label: "Tài khoản",
 	},
+	{
+		path: "/",
+		icon: FaArrowLeftLong,
+		isVisible: true,
+		isAdmin: false,
+		label: "Quay lại trang chủ",
+	},
 ];
-
 
 export default sidebarShipper;

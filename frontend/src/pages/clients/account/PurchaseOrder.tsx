@@ -1,4 +1,4 @@
-import { formatQuantity } from "@/common/localFunction";
+import { formatQuantity, optimizeCloudinaryUrl } from "@/common/localFunction";
 import { cn } from "@/lib/utils";
 import { fetchOrderDetail, receivedClientOrder } from "@/service/order";
 import { IListStatusOrderDate, IOrderItemDetail } from "@/types/order";
@@ -10,17 +10,9 @@ import { BsChevronLeft } from "react-icons/bs";
 import { Link, useParams } from "react-router-dom";
 import LoadingTable from "./LoadingTable";
 
-type StatusHistoryItem = {
-	status?: string;
-	date?: string;
-	_id?: string;
-};
-type StatusHistoryObject = {
-	[key: string]: StatusHistoryItem;
-};
 const PurchaseOrder = () => {
 	const queryClient = useQueryClient();
-	const [status, setStatus] = useState(null);
+	const [_, setStatus] = useState(null);
 	// const [statusLists, setStatusLists] = useState<number[]>([0]);
 	// const [paymentMethod, setPaymentMethod] = useState<number>(1)
 	const statusIndex = [
@@ -49,7 +41,6 @@ const PurchaseOrder = () => {
 			name: "Đã hủy",
 		},
 	];
-	const [statusOrder, setStatusOrder] = useState<StatusHistoryObject>({});
 
 	const { id } = useParams();
 	const { data, isLoading } = useQuery({
@@ -79,8 +70,6 @@ const PurchaseOrder = () => {
 		{ status: 4, label: "Đã giao hàng", icon: Inbox },
 		{ status: 5, label: "Đã nhận", icon: Star },
 	];
-	const statusList = data?.data?.statusList;
-	console.log("statusLists", data?.data?.statusList);
 	const isStatusList = (stepStatus: number) => {
 		return data?.data?.statusList.some(
 			(status: number) => status === stepStatus,
@@ -112,25 +101,25 @@ const PurchaseOrder = () => {
 					)}
 				</div>
 				<div className="">
-					<div className=" bg-white py-3 md:py-5 px-2 md:px-5 border-b-2 box-shadow border-dotted border-gray-300  rounded flex flex-row justify-between items-center">
+					<div className="flex flex-row items-center justify-between px-2 py-3 bg-white border-b-2 border-gray-300 border-dotted rounded md:py-5 md:px-5 box-shadow">
 						<div className="">
 							<Link to={`/account/purchase`}>
-								<button className="text-xs md:text-base font-medium flex  items-center gap-1 text-gray-500 uppercase">
+								<button className="flex items-center gap-1 text-xs font-medium text-gray-500 uppercase md:text-base">
 									<BsChevronLeft size={16} /> Trở lại
 								</button>
 							</Link>
 						</div>
-						<div className="flex md:gap-x-3 md:justify-center md:items-center xl:gap-x-5 uppercase ">
-							<p className="hidden md:flex justify-center items-center gap-1 font-medium text-xs md:text-base text-gray-900 ">
+						<div className="flex uppercase md:gap-x-3 md:justify-center md:items-center xl:gap-x-5 ">
+							<p className="items-center justify-center hidden gap-1 text-xs font-medium text-gray-900 md:flex md:text-base ">
 								Mã đơn hàng:{" "}
 								<span className="text-gray-600">{data?.data.code} </span>
 							</p>
-							<span className="hidden md:block pb-1">|</span>
+							<span className="hidden pb-1 md:block">|</span>
 							<span
 								className={cn(
 									data?.data?.statusList.find((item: any) => item === 6)
 										? "text-red-500 text-xs md:text-base font-medium"
-										: "text-xs md:text-base font-medium text-blue-500",
+										: "text-xs md:text-base font-medium text-custom",
 								)}
 							>
 								{
@@ -155,13 +144,13 @@ const PurchaseOrder = () => {
 							)}
 						>
 							<div className="min-w-[963px] py-10 px-6 bg-white border-t border-gray-300 border-dotted rounded">
-								<div className=" relative flex justify-between items-start">
+								<div className="relative flex items-start justify-between ">
 									{steps.map((step, index) => (
 										<div
 											key={index}
 											className="z-10 max-w-[183px] w-full  flex flex-col justify-center items-center"
 										>
-											<div className="flex justify-center items-center  ">
+											<div className="flex items-center justify-center ">
 												<div
 													className={cn(
 														"w-14 h-14 bg-white flex items-center justify-center border-[4px]  rounded-full",
@@ -196,7 +185,7 @@ const PurchaseOrder = () => {
 													></span>
 												</div>
 											</div>
-											<div className="capitalize mt-5 text-center">
+											<div className="mt-5 text-center capitalize">
 												<p className="text-wrap max-w-40">{step.label}</p>
 												{/* <span className="text-xs text-[#00000042]">
                           {step?.time
@@ -240,8 +229,8 @@ const PurchaseOrder = () => {
 									: "block",
 							)}
 						>
-							<div className="p-5 border-b-2 border-dotted border-gray-300 bg-white rounded">
-								<h3 className="text-sm md:text-base font-medium md:pb-2 ">
+							<div className="p-5 bg-white border-b-2 border-gray-300 border-dotted rounded">
+								<h3 className="text-sm font-medium md:text-base md:pb-2 ">
 									Địa Chỉ Nhận Hàng
 								</h3>
 								<div className="flex flex-col md:flex-row">
@@ -262,7 +251,7 @@ const PurchaseOrder = () => {
 												if (!item) return null;
 												return (
 													<>
-														<div className="md:px-5 flex gap-5 md:border-l md:order-gray-200 ">
+														<div className="flex gap-5 md:px-5 md:border-l md:order-gray-200 ">
 															<div className="flex flex-col items-center">
 																<div className="w-8 h-8 flex justify-center items-center border border-gray-200 bg-[#26aa99] rounded-full">
 																	<FileText size={16} color="white" />
@@ -275,7 +264,7 @@ const PurchaseOrder = () => {
 																	)}
 																></div>
 															</div>
-															<div className="flex flex-col gap-y-1 md:flex-row md:gap-x-5 text-sm md:text-base">
+															<div className="flex flex-col text-sm gap-y-1 md:flex-row md:gap-x-5 md:text-base">
 																<div className="max-w-[130px]">
 																	{item?.date &&
 																		format(
@@ -300,54 +289,58 @@ const PurchaseOrder = () => {
 							</div>
 						</div>
 						{/* product */}
-						<div className="box-shadow bg-white">
+						<div className="bg-white box-shadow">
 							<div className="w-full bg-white">
-								{data?.data?.orderItems?.map(
-									(itemOrder: IOrderItemDetail, index: number) => {
-										return (
-											<>
-												<div
-													key={itemOrder._id}
-													className="w-full flex justify-between gap-3 md:gap-5 px-5 py-4 border-b border-dotted border-gray-300 "
-												>
-													<div className="size-[80px] md:size-[100px] bg-gray-100 ">
-														<img
-															src={itemOrder?.product.thumbnail}
-															className="w-full h-full"
-															alt=""
-														/>
-													</div>
-													<div className="flex flex-1 flex-col md:flex-row md:justify-between gap-2">
-														<div className="flex-1">
-															<h3 className="text-base md:text-[18px] font-medium line-clamp-1 ">
-																{itemOrder?.product.name}
-															</h3>
-															<div className="flex flex-row md:flex-col gap-x-3">
-																<p className="text-base text-[#0000008A] flex gap-x-1">
-																	<span className="hidden md:block">
-																		Phân loại đơn hàng:
-																	</span>
-																	<span className="text-gray-600 text-sm md:text-base font-normal">
-																		{itemOrder?.variant},
-																	</span>
-																</p>
-																<span className="text-sm text-gray-900 md:text-base">
-																	x{itemOrder?.quantity}
+								{data?.data?.orderItems?.map((itemOrder: IOrderItemDetail) => {
+									return (
+										<>
+											<div
+												key={itemOrder._id}
+												className="flex justify-between w-full gap-3 px-5 py-4 border-b border-gray-300 border-dotted md:gap-5 "
+											>
+												<div className="size-[80px] md:size-[100px] ">
+													<img
+														src={optimizeCloudinaryUrl(
+															itemOrder?.product.thumbnail,
+															100,
+															100,
+														)}
+														className="w-full h-full"
+														alt=""
+													/>
+												</div>
+												<div className="flex flex-col flex-1 gap-2 md:flex-row md:justify-between">
+													<div className="flex-1">
+														<h3 className="text-base md:text-[18px] font-medium line-clamp-1 ">
+															{itemOrder?.product.name}
+														</h3>
+														<div className="flex flex-row md:flex-col gap-x-3">
+															<p className="text-base text-[#0000008A] flex gap-x-1">
+																<span className="hidden md:block">
+																	Phân loại đơn hàng:
 																</span>
-															</div>
-														</div>
-														<div className="lg:w-[200px] text-red-500 text-sm md:text-base flex items-end md:items-center font-medium ">
-															{/* <span className="text-gray-500 line-through pr-3">{formatQuantity(itemOrder?.product.price, "₫")}</span> */}
-															<span className="">
-																{formatQuantity(itemOrder?.price, "₫")}
+																<span className="text-sm font-normal text-gray-600 md:text-base">
+																	{itemOrder?.variant},
+																</span>
+															</p>
+															<span className="text-sm text-gray-900 md:text-base">
+																x{itemOrder?.quantity}
 															</span>
 														</div>
 													</div>
+													<div className="lg:w-[200px] text-red-500 text-sm md:text-base flex items-end md:items-center font-medium ">
+														<span className="pr-3 text-gray-500 line-through">
+															{formatQuantity(itemOrder?.product.price, "₫")}
+														</span>
+														<span className="">
+															{formatQuantity(itemOrder?.price, "₫")}
+														</span>
+													</div>
 												</div>
-											</>
-										);
-									},
-								)}
+											</div>
+										</>
+									);
+								})}
 							</div>
 							<div className="flex border-t border-gray-200 ">
 								<div className="w-[65%] md:w-[75%] flex flex-col text-right ">
@@ -360,6 +353,9 @@ const PurchaseOrder = () => {
 									<span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted text-sm md:text-base rounded text-[rgba(0,0,0,.68)] leading-[160%]">
 										Voucher
 									</span>
+									<span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted text-sm md:text-base rounded text-[rgba(0,0,0,.68)] leading-[160%]">
+										Đã thanh toán
+									</span>
 									<span className="py-3 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-lg text-[rgba(0,0,0,.68)] leading-[160%]">
 										Thành tiền
 									</span>
@@ -367,7 +363,7 @@ const PurchaseOrder = () => {
 								<div className="w-[35%] md:w-[25%] flex flex-col text-right">
 									<span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-base text-[rgba(0,0,0,.68)] leading-[160%]">
 										{formatQuantity(
-											data?.data?.totalMoney,
+											data?.data?.totalMoney + (data?.data?.voucherAmount || 0),
 											"₫",
 										)}
 									</span>
@@ -378,6 +374,10 @@ const PurchaseOrder = () => {
 									<span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-base  text-[rgba(0,0,0,.68)] leading-[160%]">
 										{" "}
 										- {formatQuantity(data?.data?.voucherAmount, "₫")}
+									</span>
+									<span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-base  text-[rgba(0,0,0,.68)] leading-[160%]">
+										{" "}
+										- {formatQuantity(data?.data?.paymentAmount, "₫")}
 									</span>
 									<span className="py-3 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-red-500 text-sm md:text-lg leading-[160%]">
 										{formatQuantity(data?.data?.amountToPay, "₫")}
@@ -412,8 +412,8 @@ const PurchaseOrder = () => {
 							</div>
 							{data?.data?.statusList.includes(4) &&
 								!data?.data?.statusList.includes(5) && (
-									<div className="border-t-2 border-dotted border-gray-200 flex flex-col gap-y-3 md:flex-row md:justify-between md:items-center px-5 py-4">
-										<div className="text-sm md:text-base font-normal md:font-medium">
+									<div className="flex flex-col px-5 py-4 border-t-2 border-gray-200 border-dotted gap-y-3 md:flex-row md:justify-between md:items-center">
+										<div className="text-sm font-normal md:text-base md:font-medium">
 											Đã giao hàng:{" "}
 											{data?.data?.shippedDate &&
 												format(
@@ -423,7 +423,7 @@ const PurchaseOrder = () => {
 										</div>
 										<button
 											onClick={() => mutate(data?.data?._id)}
-											className="px-3 max-w-[200px] mx-auto md:mx-0 py-2 lg:px-8 lg:py-3 focus:outline-none text-white bg-blue-500 border border-blue-600 hover:bg-blue-600 transition-all duration-300 rounded-sm text-xs lg:text-[16px]"
+											className="px-3 max-w-[200px] mx-auto md:mx-0 py-2 lg:px-8 lg:py-3 focus:outline-none text-white bg-custom-500 border border-blue-600 hover:bg-custom-600 transition-all duration-300 rounded-sm text-xs lg:text-[16px]"
 										>
 											Đã nhận hàng
 										</button>

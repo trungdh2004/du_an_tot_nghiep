@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from "react";
+import Paginations from "@/components/common/Pagination";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import Paginations from "@/components/common/Pagination";
 import { selectShipper } from "@/service/order";
+import { SearchShipperOrder } from "@/types/shipper.interface";
+import { useState } from "react";
+import { toast } from "sonner";
 interface Props {
 	open: boolean;
 	closeOpen: (isOpen: boolean) => void;
 	dataOrderId: any;
 	// handleChangeAddress: (id: string) => void;
 	dataShipper: any;
-	pageIndex: number;
-	setPageIndex: (pageIndex: number) => void;
 	getOrderById: any;
+	searchObjecOrder: SearchShipperOrder;
+	setSearchObjectOrder: React.Dispatch<
+		React.SetStateAction<SearchShipperOrder>
+	>;
 }
 const OrderSelectShipper = ({
 	open,
@@ -22,18 +26,23 @@ const OrderSelectShipper = ({
 	// handleChangeAddress,
 	getOrderById,
 	dataShipper,
-	pageIndex,
-	setPageIndex,
+	searchObjecOrder,
+	setSearchObjectOrder,
 }: Props) => {
-	const [shipper, setShipper] = useState<string | undefined>(undefined);
+	console.log(dataOrderId);
+
+	const [shipper, setShipper] = useState<string | undefined>(
+		dataOrderId?.shipper?._id,
+	);
 	const id = dataOrderId._id;
 	const handleSelectShipper = async () => {
 		try {
 			const data = await selectShipper({ id, shipper });
 			getOrderById();
 			return data;
-		} catch (error) {
+		} catch (error: any) {
 			console.log(error);
+			toast.error(error.message);
 		}
 	};
 	return (
@@ -54,11 +63,11 @@ const OrderSelectShipper = ({
 								return (
 									<>
 										<div className="flex justify-between" key={shipper?._id}>
-											<div className="flex gap-3 items-center">
+											<div className="flex items-center gap-3">
 												<RadioGroupItem
 													value={shipper._id}
 													// id={`radio-${address._id}`}
-													className="lg:w-4 lg:h-4 w-3 h-3"
+													className="w-3 h-3 lg:w-4 lg:h-4"
 												/>
 
 												<div className="flex flex-col gap-2">
@@ -69,16 +78,16 @@ const OrderSelectShipper = ({
 															className="w-20 h-20"
 														/>
 														<div className="flex flex-col gap-1">
-															<span className="font-light text-sm">
+															<span className="text-sm font-light">
 																Họ tên : {shipper.fullName}
 															</span>
-															<span className="font-light text-sm">
+															<span className="text-sm font-light">
 																Số điện thoại : {shipper.phone}
 															</span>
-															<span className="font-light text-sm">
+															<span className="text-sm font-light">
 																Căn cước công dân : {shipper.idCitizen}
 															</span>
-															<span className="font-light text-sm">
+															<span className="text-sm font-light">
 																Địa chỉ : {shipper.city.name} -{" "}
 																{shipper.district.name} - {shipper.commune.name}
 															</span>
@@ -95,10 +104,13 @@ const OrderSelectShipper = ({
 					</div>
 					<div className="flex justify-center">
 						<Paginations
-							forcePage={pageIndex - 1}
+							forcePage={searchObjecOrder.pageIndex - 1}
 							pageCount={dataShipper?.totalPage}
 							handlePageClick={(event: any) => {
-								setPageIndex(event.selected + 1);
+								setSearchObjectOrder((prev) => ({
+									...prev,
+									pageIndex: event.selected + 1,
+								}));
 							}}
 						/>
 					</div>

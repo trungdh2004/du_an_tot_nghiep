@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Link, Outlet, useNavigate } from "react-router-dom";
-import { MdEdit } from "react-icons/md";
-import { FaRegUser } from "react-icons/fa";
-import { motion, Variants } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { useMediaQuery } from "usehooks-ts";
+import { optimizeCloudinaryUrl } from "@/common/localFunction";
 import sidebarAccount from "@/config/sidebarAccount";
 import { useAuth } from "@/hooks/auth";
-import { optimizeCloudinaryUrl } from "@/common/localFunction";
+import { cn } from "@/lib/utils";
+import { motion, Variants } from "framer-motion";
+import { useEffect, useState } from "react";
+import { MdEdit } from "react-icons/md";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useMediaQuery } from "usehooks-ts";
 
 const itemVariants: Variants = {
 	open: {
@@ -20,9 +19,9 @@ const itemVariants: Variants = {
 
 const AccountLayout = () => {
 	const [isOpen, setIsOpen] = useState(true);
-	const {authUser} = useAuth();
+	const { authUser } = useAuth();
 	const isMobile = useMediaQuery("(max-width: 1024px)");
-	const router = useNavigate()
+	const router = useNavigate();
 
 	useEffect(() => {
 		if (isMobile) {
@@ -35,6 +34,8 @@ const AccountLayout = () => {
 	const location = window.location.pathname;
 	return (
 		<>
+			<div className="bg-magic"></div>
+
 			<div className="padding max-md:px-0 min-h-[calc(100vh-60px)] ">
 				<div className="relative flex flex-col w-full gap-2 px-0 py-2 lg:flex-row lg:gap-8 lg:py-12">
 					<div className="block w-full lg:w-[250px]">
@@ -47,7 +48,16 @@ const AccountLayout = () => {
 								<motion.button className="flex items-center w-full px-2 border-b border-blue-400 ">
 									<div className="flex items-center flex-1 w-full gap-2 p-2 sm:pb-4">
 										<div className="overflow-hidden border rounded-full size-8 sm:size-12">
-											<img src={optimizeCloudinaryUrl(authUser?.avatarUrl as string,50,50) || "/avatar_25.jpg"} className="w-full h-full " />
+											<img
+												src={
+													optimizeCloudinaryUrl(
+														authUser?.avatarUrl as string,
+														50,
+														50,
+													) || "/avatar_25.jpg"
+												}
+												className="w-full h-full "
+											/>
 										</div>
 										<div className="">
 											<p className="font-semibold">{authUser?.full_name}</p>
@@ -64,7 +74,7 @@ const AccountLayout = () => {
 										onClick={() => setIsOpen(!isOpen)}
 										transition={{ duration: 0.2 }}
 										style={{ originY: 0.55 }}
-										className="p-2 text-blue-500 rounded-full hover:bg-gray-50/50 lg:hidden "
+										className="p-2 rounded-full text-custom hover:bg-gray-50/50 lg:hidden "
 									>
 										<svg
 											width="15"
@@ -100,7 +110,7 @@ const AccountLayout = () => {
 										},
 									}}
 									className={cn(
-										"hidden mt-2 absolute z-10 max-lg:backdrop-blur-lg bg-blue-500/10 lg:bg-transparent w-full",
+										"hidden mt-2 absolute z-10 max-lg:backdrop-blur-lg bg-custom-500/10 lg:bg-transparent w-full",
 										isOpen && "block",
 									)}
 								>
@@ -110,14 +120,14 @@ const AccountLayout = () => {
 											<motion.li
 												variants={itemVariants}
 												className={cn(
-													"w-full px-2 py-1 h-10 hover:bg-slate-50/40 cursor-pointer lg:rounded-md flex items-center hover:text-blue-500",
-													isCheck && "text-blue-500 bg-slate-50/40",
+													"w-full px-2 py-1 h-10 hover:bg-slate-50/40 cursor-pointer lg:rounded-md flex items-center hover:text-custom",
+													isCheck && "text-custom bg-slate-50/40",
 												)}
 												onClick={() => {
-													if(isMobile) {
-														setIsOpen(false)
+													if (isMobile) {
+														setIsOpen(false);
 													}
-													router(item.path)
+													router(item.path);
 												}}
 											>
 												{<item.icon size={20} className="mr-4" />}{" "}

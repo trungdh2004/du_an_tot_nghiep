@@ -9,7 +9,6 @@ import { deleteCartItem, pagingCartV2 } from "@/service/cart";
 import { createStateUrlCart } from "@/service/order";
 import { takeApplyDiscountCode } from "@/service/voucher";
 import useCart from "@/store/cart.store";
-import { IVoucher } from "@/types/voucher";
 import { AxiosError } from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { HiOutlineTrash } from "react-icons/hi";
@@ -68,7 +67,7 @@ const CartPage = () => {
 	}>({
 		totalQuantity: 0,
 		totalAmount: 0,
-	});
+	});  
 	const [discountCode, setDiscountCode] = useState<{
 		applyCode: string;
 		currentVoucherCode: UseVouchersType | null;
@@ -79,10 +78,12 @@ const CartPage = () => {
 		error: "",
 	});
 	const isItemValid = useCallback((item: any) => {
-		if (item?.is_simple) {
+		if (item?.is_simple && item?.totalQuantity > 0) {
 			return true;
 		}
-		return item?.attribute?._id && item?.attribute?.quantity > 0;
+		return (
+			!item?.is_simple && item?.attribute?._id && item?.attribute?.quantity > 0
+		);
 	}, []);
 	useEffect(() => {
 		(async () => {
@@ -105,35 +106,34 @@ const CartPage = () => {
 		}
 	}, [itemCart]);
 	useEffect(() => {
-		if(discountCode?.applyCode){
-			(async()=>{
+		if (discountCode?.applyCode) {
+			(async () => {
 				try {
 					const listId = getAllSelectedItems() as string[];
-				const { data } = await takeApplyDiscountCode({
-					code: discountCode?.applyCode,
-					listId,
-				});
-				setDiscountCode((prev) => ({
-					...prev,
-					error:'',
-					currentVoucherCode: {
-						voucher: data?.voucher,
-						valueCheck: data?.valueCheck,
-					},
-				}));
+					const { data } = await takeApplyDiscountCode({
+						code: discountCode?.applyCode,
+						listId,
+					});
+					setDiscountCode((prev) => ({
+						...prev,
+						error: "",
+						currentVoucherCode: {
+							voucher: data?.voucher,
+							valueCheck: data?.valueCheck,
+						},
+					}));
 				} catch (error) {
-					if(error instanceof AxiosError){
+					if (error instanceof AxiosError) {
 						setDiscountCode((prev) => ({
 							...prev,
-							error:error?.response?.data?.message,
+							error: error?.response?.data?.message,
 							currentVoucherCode: null,
 						}));
 					}
 				}
-				
-			})()
+			})();
 		}
-		
+
 		const isAllChecked = carts?.every((cart) =>
 			cart.items.every(
 				(item) => !isItemValid(item) || checkedState[item?._id as string],
@@ -288,14 +288,16 @@ const CartPage = () => {
 					)
 				: itemCart?.quantity || 0;
 			const newTotal = totalCart - quantityDecreased;
-			const newCarts = carts.map((cart) => ({
-				...cart,
-				items: cart.items.filter((item) =>
-					!Array.isArray(id)
-						? item._id !== id
-						: !id.includes(item._id as string),
-				),
-			}));
+			const newCarts = carts
+				.map((cart) => ({
+					...cart,
+					items: cart.items.filter((item) =>
+						!Array.isArray(id)
+							? item._id !== id
+							: !id.includes(item._id as string),
+					),
+				}))
+				.filter((item) => item?.items?.length > 0);
 			setCarts(newCarts);
 			setTotalCart(newTotal);
 		} catch (error) {
@@ -316,6 +318,7 @@ const CartPage = () => {
 			});
 			setDiscountCode((prev) => ({
 				...prev,
+        error:'',
 				currentVoucherCode: {
 					voucher: data?.voucher,
 					valueCheck: data?.valueCheck,
@@ -401,7 +404,7 @@ const CartPage = () => {
 						</p>
 						<Link
 							to={"/shop"}
-							className="px-10 py-2 text-white bg-red-500 rounded hover:bg-red-600"
+							className="px-10 py-2 text-white rounded bg-custom-500 hover:bg-custom-600"
 						>
 							Mua ngay
 						</Link>
@@ -413,7 +416,7 @@ const CartPage = () => {
 								<Checkbox
 									checked={allChecked}
 									onCheckedChange={handleCheckAll}
-									className="data-[state=checked]:bg-red-500 border-gray-300 data-[state=checked]:border-red-500"
+									className="data-[state=checked]:bg-custom-500 border-gray-300 data-[state=checked]:border-red-500"
 								/>
 							</div>
 							<div className="w-full md:w-[46.27949%]">Sản phẩm</div>
@@ -470,18 +473,16 @@ const CartPage = () => {
 												</div>
 												<div
 													className={cn(
-														"hidden  justify-between text-nowrap bg-red-500 text-xs md:text-sm text-white px-2.5 py-1 rounded-xl items-center gap-2",
-														discountCode?.currentVoucherCode?.valueCheck?.status && "max-md:flex",
+														"hidden  justify-between text-nowrap bg-custom-500 text-xs md:text-sm text-white px-2.5 py-1 rounded-xl items-center gap-2",
+														discountCode?.currentVoucherCode?.valueCheck
+															?.status && "max-md:flex",
 													)}
 												>
 													Giảm{" "}
-													{discountCode?.currentVoucherCode?.voucher
-														?.discountType == 2
-														? formatCurrency(
-																discountCode?.currentVoucherCode?.valueCheck
-																	?.amount,
-															)
-														: `${discountCode?.currentVoucherCode?.valueCheck?.amount}%`}
+													{formatCurrency(
+														discountCode?.currentVoucherCode?.valueCheck
+															?.amount || 0,
+													)}
 													<button
 														onClick={() =>
 															setDiscountCode({
@@ -502,18 +503,16 @@ const CartPage = () => {
 												</div>
 												<div
 													className={cn(
-														"hidden max-sm:w-full justify-between text-nowrap bg-red-500 text-xs md:text-sm text-white px-2.5 py-1 rounded-xl items-center gap-2",
-														discountCode?.currentVoucherCode?.valueCheck?.status &&
-															"hidden md:flex",
+														"hidden max-sm:w-full justify-between text-nowrap bg-custom-500 text-xs md:text-sm text-white px-2.5 py-1 rounded-xl items-center gap-2",
+														discountCode?.currentVoucherCode?.valueCheck
+															?.status && "hidden md:flex",
 													)}
 												>
 													Giảm{" "}
-													{discountCode?.currentVoucherCode?.voucher
-														?.discountType == 2
-														? formatCurrency(
-																discountCode?.currentVoucherCode?.valueCheck?.amount
-															)
-														: `${discountCode?.currentVoucherCode?.valueCheck?.amount}%`}
+													{formatCurrency(
+														discountCode?.currentVoucherCode?.valueCheck
+															?.amount || 0,
+													)}
 													<button
 														onClick={() =>
 															setDiscountCode({
@@ -562,7 +561,7 @@ const CartPage = () => {
 															getAllSelectedItems()?.length <= 0
 														}
 														className={cn(
-															"h-8 md:h-10 w-full md:w-40 bg-red-500 hover:bg-red-600 text-white px-5",
+															"h-8 md:h-10 w-full md:w-40 bg-custom-500 hover:bg-custom-600 text-white px-5",
 															(discountCode?.applyCode?.length < 3 ||
 																getAllSelectedItems()?.length <= 0) &&
 																"pointer-events-none bg-black/35",
@@ -582,7 +581,7 @@ const CartPage = () => {
 												id="checkedAllFotter"
 												checked={allChecked}
 												onCheckedChange={handleCheckAll}
-												className="data-[state=checked]:bg-red-500 border-gray-300 data-[state=checked]:border-red-500"
+												className="data-[state=checked]:bg-custom-500 border-gray-300 data-[state=checked]:border-red-500"
 											/>
 											<label
 												htmlFor="checkedAllFotter"
@@ -629,7 +628,7 @@ const CartPage = () => {
 										</div>
 										<Button
 											onClick={handleSubmitted}
-											className="text-xs sm:text-sm md:text-base md:h-12  w-32 md:w-[320px] bg-red-500 hover:bg-red-600"
+											className="text-xs sm:text-sm md:text-base md:h-12  w-32 md:w-[320px] bg-custom-500 hover:bg-custom-600"
 										>
 											Mua hàng{" "}
 											<span className="inline-block md:hidden">

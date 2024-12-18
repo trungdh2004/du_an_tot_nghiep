@@ -9,18 +9,16 @@ import { useLocation } from "react-router-dom";
 import SidebarItem from "./SidebarItem";
 import { useAuth } from "@/hooks/auth";
 
-
 const SidebarList = () => {
 	const location = useLocation();
 	const { authUser } = useAuth();
-	
 
 	return (
 		<div>
 			{sidebarConfig?.map((item, index) => {
-				if(item.isAdmin) {
-					if(!authUser?.is_admin) {
-						return null
+				if (item.isAdmin) {
+					if (!authUser?.is_admin) {
+						return null;
 					}
 				}
 
@@ -35,9 +33,9 @@ const SidebarList = () => {
 								</AccordionTrigger>
 								<AccordionContent className="pb-0 pl-4" datatype="open">
 									<div className="space-y-1  mt-2 ">
-										{item.children.map((row: any) => (
+										{item.children.map((row: any, index: number) => (
 											<SidebarItem
-												key={item.path + item.label}
+												key={index}
 												label={row.label}
 												Icon={row.icon}
 												path={`/admin${item.path}${row.path}`}

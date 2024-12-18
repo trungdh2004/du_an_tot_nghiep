@@ -1,15 +1,10 @@
-import {
-	getCountMyShoppingCart,
-	pagingNewCart,
-	updateCartItem,
-} from "@/service/cart";
+import { pagingNewCart, updateCartItem } from "@/service/cart";
 import useCart from "@/store/cart.store";
 import { ICart, ICartItem } from "@/types/cart";
 import { IListColorAttribute, IListSizeAttribute } from "@/types/product";
 import { AxiosError } from "axios";
 import { useMemo } from "react";
 import { toast } from "sonner";
-import useDebounce from "./shared";
 
 type TypeExitsColorSizeAttribute = {
 	_id?: string;
@@ -111,7 +106,7 @@ const useUpdateAttributeItemCart = () => {
 				...cart,
 				items: cart?.items?.map((itemCart) =>
 					itemCart?._id === item?._id
-						? { ...itemCart, attribute: data?.data?.attribute }
+						? { ...itemCart, attribute: data?.data?.attribute,is_simple:false }
 						: itemCart,
 				),
 			}));

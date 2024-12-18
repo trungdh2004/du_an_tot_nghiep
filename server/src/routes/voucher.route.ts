@@ -34,5 +34,6 @@ routerVoucher.post("/deleteList", authentication, VoucherController.deleteList);
 routerVoucher.get("/generateCodeAuto", VoucherController.generateCodeAuto);
 routerVoucher.put("/updatePublicHome/:id", VoucherController.updatePublicHome);
 routerVoucher.get("/listVoucherHome", VoucherController.listVoucherHome);
+routerVoucher.post("/pagingClient", VoucherController.pagingVoucherClient);
 
 export default routerVoucher;
