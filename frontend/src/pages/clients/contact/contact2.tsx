@@ -1,5 +1,6 @@
 import React from "react";
 
+
 const ContactPage: React.FC = () => {
 	return (
 		<div className="bg-green-500 h-screen flex items-center justify-center">
@@ -117,4 +118,4 @@ const ContactPage: React.FC = () => {
 	);
 };
 
-export default ContactPage;
+export default AboutPage;
