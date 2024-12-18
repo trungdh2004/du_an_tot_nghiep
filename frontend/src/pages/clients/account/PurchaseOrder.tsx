@@ -300,7 +300,11 @@ const PurchaseOrder = () => {
 											>
 												<div className="size-[80px] md:size-[100px] ">
 													<img
-														src={optimizeCloudinaryUrl(itemOrder?.product.thumbnail, 100,100)}
+														src={optimizeCloudinaryUrl(
+															itemOrder?.product.thumbnail,
+															100,
+															100,
+														)}
 														className="w-full h-full"
 														alt=""
 													/>
@@ -325,7 +329,9 @@ const PurchaseOrder = () => {
 														</div>
 													</div>
 													<div className="lg:w-[200px] text-red-500 text-sm md:text-base flex items-end md:items-center font-medium ">
-														<span className="pr-3 text-gray-500 line-through">{formatQuantity(itemOrder?.product.price, "₫")}</span>
+														<span className="pr-3 text-gray-500 line-through">
+															{formatQuantity(itemOrder?.product.price, "₫")}
+														</span>
 														<span className="">
 															{formatQuantity(itemOrder?.price, "₫")}
 														</span>
@@ -356,7 +362,10 @@ const PurchaseOrder = () => {
 								</div>
 								<div className="w-[35%] md:w-[25%] flex flex-col text-right">
 									<span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-base text-[rgba(0,0,0,.68)] leading-[160%]">
-										{formatQuantity(data?.data?.totalMoney, "₫")}
+										{formatQuantity(
+											data?.data?.totalMoney + (data?.data?.voucherAmount || 0),
+											"₫",
+										)}
 									</span>
 									<span className="py-2 md:py-4 px-3 border-b-2 border-r-2 border-dotted rounded text-sm md:text-base  text-[rgba(0,0,0,.68)] leading-[160%]">
 										{" "}
