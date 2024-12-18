@@ -19,6 +19,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { toast } from "sonner";
 import { boolean, z } from "zod";
 import { useAuth } from "@/hooks/auth";
+import { cn } from "@/lib/utils";
 const formSchema = z.object({
 	passwordOld: z
 		.string({ required_error: "Bạn phải nhập mật khẩu cũ" })
@@ -191,7 +192,12 @@ const ChangePassword = () => {
 						<div className="flex justify-center w-full my-5">
 							<button
 								type="submit"
-								className="px-5 py-2 text-white border rounded-sm bg-custom-500"
+								className={cn(
+									!!authUser?.uid
+										? "hidden"
+										: "px-5 py-2 text-white border rounded-sm bg-custom-500",
+								)}
+								// disabled={}
 							>
 								Cập nhật
 							</button>

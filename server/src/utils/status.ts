@@ -6,6 +6,7 @@ const STATUS = {
   INTERNAL: 500,
   OK: 200,
   CREATED: 201,
+  LOGOUT:413
 };
 
 export default STATUS;

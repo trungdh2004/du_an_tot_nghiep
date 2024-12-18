@@ -47,7 +47,7 @@ const authentication = async (
         const existingUser = await UserModel.findById(
           (data as PayloadToken).id
         );
-        
+
         if (!existingUser) {
           return res.status(STATUS.BAD_REQUEST).json({
             message: "Tài khoản không thỏa mãn",
@@ -55,7 +55,9 @@ const authentication = async (
         }
 
         if (existingUser?.blocked_at === true) {
-          return res.status(STATUS.AUTHORIZED).json({
+          res.clearCookie("token");
+
+          return res.status(STATUS.LOGOUT).json({
             message: "Tài khoản của bạn đã bị khóa",
           });
         }
@@ -64,7 +66,7 @@ const authentication = async (
           id: existingUser._id,
           email: existingUser.email,
           is_admin: existingUser.is_admin,
-          is_staff: existingUser.is_staff
+          is_staff: existingUser.is_staff,
         };
 
         next();
