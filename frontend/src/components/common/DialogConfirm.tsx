@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 
@@ -21,20 +20,19 @@ const DialogConfirm = ({
 	status = "danger",
 	labelConfirm,
 }: IDialogConfirm) => {
-	const [check, setCheck] = useState(false);
 	return (
 		<>
 			<Dialog open={open} onOpenChange={handleClose}>
 				<DialogContent className="w-[80%] rounded-md max-w-[400px] p-0 gap-0">
-					<DialogHeader className="border-b pb-2 font-bold px-4 py-2">
+					<DialogHeader className="px-4 py-2 pb-2 font-bold border-b">
 						{title ? title : "Xác nhận"}
 					</DialogHeader>
 
-					<div className="py-2 px-4">
+					<div className="px-4 py-2">
 						<span className="text-sm sm:text-base">{content}</span>
 					</div>
 
-					<div className="px-4 py-2 flex justify-end">
+					<div className="flex justify-end px-4 py-2">
 						<Button
 							size={"xs"}
 							variant={"ghost"}

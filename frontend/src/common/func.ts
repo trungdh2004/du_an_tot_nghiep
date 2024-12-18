@@ -64,6 +64,19 @@ export function formatDateMessage(pastDate: any) {
 
 	return `${oldDate?.getHours()}:${oldDate?.getMinutes()} ${oldDate?.getDate()}/${oldDate.getMonth()}/${oldDate.getFullYear()}`;
 }
-export function getYearsArray(startYear:number, endYear:number) {
-  return Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
+export function getYearsArray(startYear: number, endYear: number) {
+	return Array.from(
+		{ length: endYear - startYear + 1 },
+		(_, i) => startYear + i,
+	);
+}
+export function convertToKm(meters: number) {
+	return parseFloat((meters / 1000).toFixed(2));
+}
+export function estimateTime(km: number, speedKmh = 25) {
+	let timeInHours = parseFloat((km / 1000).toFixed(2)) / speedKmh;
+	let hours = Math.floor(timeInHours); 
+	let minutes = Math.round((timeInHours - hours) * 60); 
+
+	return { hours, minutes };
 }

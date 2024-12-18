@@ -1,12 +1,5 @@
-import OutOfStock from "@/assets/OutofStock.png";
-import { formatCurrency } from "@/common/func";
-import { optimizeCloudinaryUrl } from "@/common/localFunction";
-import { cn } from "@/lib/utils";
 import { IColor, IProduct } from "@/types/typeProduct";
 import { ISize } from "@/types/variants";
-import { FaStar } from "react-icons/fa";
-import { IoEyeOutline } from "react-icons/io5";
-import { Link } from "react-router-dom";
 import { TooltipComponent } from "./TooltipComponent";
 import ProductV2 from "./ProductV2";
 
@@ -15,7 +8,7 @@ const Product = ({ productShop }: any) => {
 		<div className="w-full pt-9">
 			<div className="grid w-full grid-cols-2 gap-2 lg:grid-cols-4 md:grid-cols-3 lg:gap-9 md:gap-7">
 				{productShop?.content?.map((product: IProduct) => {
-					return <ProductV2 product={product} />;
+					return <ProductV2 product={product} key={product?._id} />;
 				})}
 			</div>
 		</div>
@@ -31,7 +24,7 @@ export function ListColorComponent({ listColor }: { listColor: IColor[] }) {
 		<div className="flex items-center">
 			<div className="flex items-center justify-start -space-x-[6px]  *:inline-block  *:rounded-full">
 				{listColor?.splice(0, 4)?.map((color: any) => (
-					<div key={color.id} className="cursor-pointer">
+					<div key={color._id} className="cursor-pointer">
 						<TooltipComponent label={color?.name}>
 							<div className="flex items-center justify-center w-4 h-4 bg-white rounded-full ">
 								<div

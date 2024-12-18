@@ -16,12 +16,13 @@ import DetailProduct from "@/pages/clients/detail-home/page";
 import HomePage from "@/pages/clients/home/page";
 import IntroducePage from "@/pages/clients/introduce/IntroducePage";
 import OrderProcessing from "@/pages/clients/order/OrderProcessing";
+import OrderProcessingV2 from "@/pages/clients/order/OrderProcessingV2";
 import WrapperSearch from "@/pages/clients/search/WrapperSearch";
 import ShopProduct from "@/pages/clients/shop/ShopProduct";
-import TestComponent from "@/pages/clients/Test";
 import VoucherIndex from "@/pages/clients/vouchers/VoucherIndex";
 import NotFound from "@/pages/NotFound";
 import { Navigate } from "react-router-dom";
+import ProtectedRouter from "./ProtectedRouter";
 
 const MainRouter = [
 	{
@@ -50,7 +51,11 @@ const MainRouter = [
 
 			{
 				path: "/account",
-				element: <AccountLayout />,
+				element: (
+					<ProtectedRouter>
+						<AccountLayout />
+					</ProtectedRouter>
+				),
 				children: [
 					{
 						path: "",
@@ -82,7 +87,8 @@ const MainRouter = [
 		],
 	},
 	{ path: "/orderprocessing", element: <OrderProcessing /> },
-	{ path: "/testComponent", element: <TestComponent /> },
+	{ path: "/orderprocessingv2", element: <OrderProcessingV2 /> },
+	{ path: "/orderprocessingv3", element: <OrderProcessing /> },
 	{ path: "*", element: <NotFound /> },
 ];
 export default MainRouter;

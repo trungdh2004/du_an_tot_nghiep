@@ -65,7 +65,7 @@ const SizeAddandUpdate = ({
 	const onHandleUpdate = async (dataForm: SizeTypes) => {
 		try {
 			setOpenProcessLoadingEventNone();
-			const { data } = await updateSize(open, dataForm);
+		await updateSize(open, dataForm);
 			handleClose();
 			handlePaging();
 			toast.success("Bạn cập nhật size thành công");
@@ -78,7 +78,7 @@ const SizeAddandUpdate = ({
 	const onHandleAdd = async (dataForm: SizeTypes) => {
 		try {
 			setOpenProcessLoadingEventNone();
-			const { data } = await addSize(dataForm);
+			 await addSize(dataForm);
 			form.reset();
 			handleClose();
 			handlePaging();

@@ -1,9 +1,7 @@
-import Notification from "@/components/client/Header/Notification";
 import Search from "@/components/client/Header/Search";
 import User from "@/components/client/Header/User";
 import { useOpenSidebar } from "@/store/useSidebarAdmin";
 import { IoMenu } from "react-icons/io5";
-import { IoNotifications } from "react-icons/io5";
 import ActionsNotification from "./ActionNotification";
 
 const HeaderAdmin = () => {
@@ -17,9 +15,9 @@ const HeaderAdmin = () => {
 				>
 					<IoMenu size={20} strokeWidth={0.5} />
 				</div>
-				<div className="p-1 hover:bg-gray-100 rounded-full cursor-pointer">
+				{/* <div className="p-1 hover:bg-gray-100 rounded-full cursor-pointer">
 					<Search />
-				</div>
+				</div> */}
 			</div>
 
 			<div className="flex items-center gap-2">

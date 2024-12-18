@@ -1,8 +1,6 @@
 import instance from "@/config/instance";
 import { ObjectCheckoutOrder } from "@/types/ObjectCheckoutOrder";
 import { SearchObjectOrder } from "@/types/searchObjectOrder";
-import axios from "axios";
-import { boolean, string } from "zod";
 
 export const pagingOrder = async (listId: any) => {
 	const data = await instance.post(`/order/pagingCartOrder`, listId);
@@ -19,18 +17,28 @@ export const createOrderPayUponReceipt = async (
 	return data;
 };
 
-export const createOrderVNPayPayment = async (
-	orderCheckout: ObjectCheckoutOrder,
-) => {
-	const data = await instance.post(
-		`/order/createOrderVNPayPayment`,
-		orderCheckout,
-	);
+export const createOrderVNPayPayment = (orderCheckout: ObjectCheckoutOrder) => {
+	const data = instance.post(`/order/createOrderVNPayPayment`, orderCheckout);
 	return data;
 };
 
+// export const createOrderMoMo = async (
+// 	orderCheckout: ObjectCheckoutOrder,
+// ) => {
+// 	const data = await instance.post(
+// 		`/order/createOrderVNPayPayment`,
+// 		orderCheckout,
+// 	);
+// 	return data;
+// };
+
 export const returnUrlVnPay = async (dataUrl: any) => {
 	const data = await instance.get(`/order/returnVnPay?${dataUrl}`);
+	return data;
+};
+
+export const returnUrlMoMo = async (dataUrl: any) => {
+	const data = await instance.get(`/order/returnUrlMoMo?${dataUrl}`);
 	return data;
 };
 
@@ -65,6 +73,10 @@ export const selectShipper = async ({
 		shipper,
 	});
 	return data;
+};
+
+export const updateIsShiper = (id: string) => {
+	return instance.post(`/order/shippingUnit/${id}`);
 };
 
 export const cancelOrder = async (

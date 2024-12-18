@@ -192,7 +192,7 @@ class ProductComingController {
 
       const newUpdate = await ProductComingModel.findByIdAndUpdate(id, {
         product: productId,
-        date:new Date(date),
+        date: new Date(date),
         active,
       });
 
@@ -219,7 +219,8 @@ class ProductComingController {
           thumbnail: 1,
           quantity: 1,
           discount: 1,
-        },
+          slug: 1,
+      },
       });
 
       if (!existingProduct) {

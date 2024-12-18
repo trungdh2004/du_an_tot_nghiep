@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import Paginations from "@/components/common/Pagination";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import EditAddress from "../address/EditAddress";
-import Paginations from "@/components/common/Pagination";
+import { IAddress } from "@/types/address";
+import { useState } from "react";
 import AddAddressOrder from "./AddAddressOrder";
+import EditAddressOrder from "./EditAddressOrder";
 
 interface Props {
 	open: boolean;
 	closeOpen: (isOpen: boolean) => void;
-	dataAddress: any;
+	dataAddress: IAddress;
 	handleChangeAddress: (id: string) => void;
 	address: any;
 	pageIndex: number;
@@ -61,25 +62,25 @@ const ListAddressOrderDetail = ({
 												<RadioGroupItem
 													value={address._id}
 													// id={`radio-${address._id}`}
-													className="lg:w-4 lg:h-4 w-3 h-3"
+													className="w-3 h-3 lg:w-4 lg:h-4"
 												/>
 
 												<div className="flex flex-col gap-2">
 													<div className="flex gap-3">
-														<h3 className="font-medium lg:text-base md:text-base text-sm">
+														<h3 className="text-sm font-medium lg:text-base md:text-base">
 															{address.username}
 														</h3>
-														<span className="font-light lg:text-base md:text-base text-sm">
+														<span className="text-sm font-light lg:text-base md:text-base">
 															|
 														</span>
-														<span className="font-light lg:text-base md:text-base text-sm">
+														<span className="text-sm font-light lg:text-base md:text-base">
 															{address.phone}
 														</span>
 													</div>
-													<span className="font-light lg:text-base md:text-base text-sm">
+													<span className="text-sm font-light lg:text-base md:text-base">
 														{address.detailAddress}
 													</span>
-													<span className="font-light lg:text-base md:text-base text-sm">
+													<span className="text-sm font-light lg:text-base md:text-base">
 														{address.address}
 													</span>
 													{address.is_main && (
@@ -92,7 +93,7 @@ const ListAddressOrderDetail = ({
 												</div>
 											</div>
 											<h3
-												className="lg:text-sm md:text-sm text-xs text-blue-400 cursor-pointer"
+												className="text-xs text-blue-400 cursor-pointer lg:text-sm md:text-sm"
 												onClick={() => setOpenEditById(address._id)}
 											>
 												Cập nhật
@@ -128,14 +129,21 @@ const ListAddressOrderDetail = ({
 			</Dialog>
 
 			{!!openEditById && (
-				<EditAddress
+				<EditAddressOrder
 					open={!!openEditById}
 					handleClose={handleClose}
 					id={openEditById}
+					dataAddress={dataAddress}
+					handleChangeAddress={handleChangeAddress}
 				/>
 			)}
 			{!!openAdd && (
-				<AddAddressOrder open={openAdd} closeOpen={() => setOpenAdd(false)} />
+				<AddAddressOrder
+					open={openAdd}
+					closeOpen={() => setOpenAdd(false)}
+					handleChangeAddress={handleChangeAddress}
+					address={address}
+				/>
 			)}
 		</div>
 	);

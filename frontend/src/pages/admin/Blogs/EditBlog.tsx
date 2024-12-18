@@ -24,7 +24,12 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import useDebounce from "@/hooks/shared";
 import { cn } from "@/lib/utils";
-import { cancelPublish, publishBlogs, showBlogsEdit, updateBlogs } from "@/service/blog";
+import {
+	cancelPublish,
+	publishBlogs,
+	showBlogsEdit,
+	updateBlogs,
+} from "@/service/blog";
 import { getAllTags } from "@/service/tags-admin";
 import { uploadFileService } from "@/service/upload";
 import {
@@ -147,8 +152,12 @@ const EditBlog = () => {
 				toast.warning("Vui lòng chờ ảnh tải xong");
 			} else {
 				setOpenProcessLoadingEventNone();
+				const date = new Date(values.published_at);
+				date.setHours(0, 0, 0);
+
 				const payload = {
 					...values,
+					published_at: date,
 				};
 				setStatusLoading({ isSubmitted: true, isLoading: true });
 				// const reponse = await publishBlogs(id as string, payload);
@@ -340,10 +349,14 @@ const EditBlog = () => {
 																onSelect={(e) => {
 																	field.onChange(e?.toISOString());
 																}}
-																disabled={(date) =>
-																	date < new Date() ||
-																	date < new Date("1900-01-01")
-																}
+																disabled={(date) => {
+																	const newDate = new Date();
+																	newDate.setDate(newDate.getDate() - 1);
+																	return (
+																		date < newDate ||
+																		date < new Date("1900-01-01")
+																	);
+																}}
 																initialFocus
 															/>
 														</PopoverContent>

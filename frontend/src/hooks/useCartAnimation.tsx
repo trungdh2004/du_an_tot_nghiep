@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useCallback, useEffect, useState } from "react";
 
 interface ShowImageState {
 	src: string;
@@ -25,7 +25,7 @@ const useCartAnimation = () => {
 		if (!cartElement) return;
 
 		const itemRect = item.getBoundingClientRect();
-		const cartRect = cartElement.getBoundingClientRect();
+		// const cartRect = cartElement.getBoundingClientRect();
 
 		setShowImage({
 			src: imgSrc,

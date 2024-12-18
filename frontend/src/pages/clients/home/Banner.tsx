@@ -1,7 +1,5 @@
-import React from "react";
-import { MdOutlineLocalShipping } from "react-icons/md";
-import { MdPayments } from "react-icons/md";
 import { LuBadgeCheck } from "react-icons/lu";
+import { MdOutlineLocalShipping, MdPayments } from "react-icons/md";
 
 const Banner = () => {
 	return (

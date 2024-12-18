@@ -1,11 +1,10 @@
 import { cn } from "@/lib/utils";
 import { formatInTimeZone } from "date-fns-tz";
-import React from "react";
 import { CiCircleCheck } from "react-icons/ci";
 
 const OrderTrackingMobile = ({ data }: any) => {
 	return (
-		<div className="lg:hidden md:hidden sm:hidden flex flex-col justify-center gap-2">
+		<div className="flex flex-col justify-center gap-2 lg:hidden md:hidden sm:hidden">
 			<div className="flex">
 				<CiCircleCheck
 					size={20}

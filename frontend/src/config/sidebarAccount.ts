@@ -1,10 +1,7 @@
 import { FaRegUser } from "react-icons/fa6";
 import { RiLockPasswordLine } from "react-icons/ri";
-import { CiLocationOn } from "react-icons/ci";
 import { CgMenuBoxed } from "react-icons/cg";
-import { IoNotificationsOutline } from "react-icons/io5";
 import { RiSecurePaymentFill } from "react-icons/ri";
-import { IoLocationOutline } from "react-icons/io5";
 import { GrLocation } from "react-icons/gr";
 
 const sidebarAccount = [

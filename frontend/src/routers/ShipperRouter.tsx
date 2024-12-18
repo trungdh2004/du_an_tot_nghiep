@@ -8,6 +8,7 @@ import OrderNewIndex from "@/pages/shipper/OrderNew/OrderNewIndex";
 import OrderSusccesIndex from "@/pages/shipper/OrderSuscces/OrderSusccesIndex";
 import OrderDashboardIndex from "@/pages/shipper/OrderDashboard/OrderDashboardIndex";
 import AccountShipperIndex from "@/pages/shipper/AccountShipper/AccountShipperIndex";
+import ForShippersPage from "@/pages/shipper/ForShippers/page";
 
 const ShipperRouter = [
 	{
@@ -25,6 +26,10 @@ const ShipperRouter = [
 			{
 				path: "orderNew",
 				element: <OrderNewIndex />,
+			},
+      {
+				path: "for-shippers",
+				element: <ForShippersPage />,
 			},
 			{
 				path: "orderSuccess",

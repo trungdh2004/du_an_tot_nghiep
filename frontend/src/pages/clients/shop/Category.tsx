@@ -4,14 +4,7 @@ import { cn } from "@/lib/utils";
 import { getAllCategory } from "@/service/category-admin";
 import { ICategory } from "@/types/category";
 import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
-import { useQueryClient } from "@tanstack/react-query";
-import React, {
-	Dispatch,
-	SetStateAction,
-	useCallback,
-	useEffect,
-	useState,
-} from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 interface Props {
 	setSearchParamsObject: Dispatch<SetStateAction<SearchObjectTypeProduct>>;
@@ -19,7 +12,6 @@ interface Props {
 const Category = ({ setSearchParamsObject }: Props) => {
 	const [category, setCategory] = useState([]);
 	const [searchParams, setSearchParams] = useSearchParams();
-	const query = useQueryClient();
 	useEffect(() => {
 		(async () => {
 			try {

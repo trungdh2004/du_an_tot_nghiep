@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -13,15 +13,15 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
 import {
 	addAddress,
 	callCity,
 	callCommune,
 	callDistrict,
 } from "@/service/address";
-import AddressInformation from "./AddressInformation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import AddressInformation from "./AddressInformation";
 import AddressLocation from "./AddressLocation";
 // import MapSearchLocation from "@/components/map/MapSearchLocation";
 import MapSearchLocation from "@/components/map/MapSearchLocation";
@@ -31,7 +31,8 @@ const formSchema = z.object({
 		.string({
 			message: "Bạn phải nhập họ tên",
 		})
-		.min(0, {
+		.trim()
+		.min(1, {
 			message: "Bạn phải nhập họ tên",
 		}),
 	phone: z
@@ -83,10 +84,8 @@ interface ICommune {
 	name: string;
 }
 
-type Props = {};
-
-const Address = (props: Props) => {
-	const { data: citys, isLoading } = useQuery<ICity[]>({
+const Address = () => {
+	const { data: citys } = useQuery<ICity[]>({
 		queryKey: ["city"],
 		queryFn: async () => {
 			const { data } = await callCity();
@@ -153,12 +152,12 @@ const Address = (props: Props) => {
 	};
 
 	return (
-		<div className="padding py-8">
-			<h2 className="text-xl font-bold mb-5">Thêm địa chỉ</h2>
+		<div className="py-8 padding">
+			<h2 className="mb-5 text-xl font-bold">Thêm địa chỉ</h2>
 			<div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-						<div className="flex flex-row gap-3 w-full">
+						<div className="flex flex-row w-full gap-3">
 							<FormField
 								control={form.control}
 								name="username"
@@ -223,7 +222,7 @@ const Address = (props: Props) => {
 						<FormField
 							control={form.control}
 							name="location"
-							render={({ field }) => {
+							render={() => {
 								return (
 									<FormItem className="">
 										<div className="w-full h-[240px] border">

@@ -37,6 +37,7 @@ interface CartItemProps {
 	productId: string;
 	checked: boolean;
 	onCheckedChange: (productId: string, itemId: string) => void;
+	checkAttribute: boolean;
 }
 
 const CartItem = ({
@@ -47,6 +48,7 @@ const CartItem = ({
 	listSizeAndColor,
 	attributeAlreadyExists,
 	onCheckedChange,
+	checkAttribute,
 }: CartItemProps) => {
 	const [quantity, setQuantity] = useState(item?.quantity);
 	const [isOpen, setIsOpen] = useState(false);
@@ -104,7 +106,7 @@ const CartItem = ({
 				)}
 			>
 				{(item?.attribute?._id && item?.attribute?.quantity) ||
-				(item?.is_simple && item?.totalQuantity > 0)? (
+				(item?.is_simple && item?.totalQuantity > 0) ? (
 					<Checkbox
 						checked={checked}
 						onCheckedChange={() =>
@@ -117,6 +119,20 @@ const CartItem = ({
 						<IoBanOutline className="text-red-500 " />
 					</>
 				)}
+				{/* {(item?.attribute?._id && item?.attribute?.quantity) ||
+				(item?.is_simple && item?.totalQuantity > 0) ? (
+					<Checkbox
+						checked={checked}
+						onCheckedChange={() =>
+							onCheckedChange(productId, item._id as string)
+						}
+						className="data-[state=checked]:bg-custom-500 border-gray-300 data-[state=checked]:border-red-500"
+					/>
+				) : (
+					<>
+						<IoBanOutline className="text-red-500 " />
+					</>
+				)} */}
 			</div>
 			<div className="flex items-center w-full lg:w-[46.27949%]">
 				<div className="relative overflow-hidden rounded min-w-14 min-h-14 max-w-14 max-h-14 md:min-w-20 md:min-h-20 md:max-w-20 md:max-h-20">
@@ -158,7 +174,11 @@ const CartItem = ({
 						{Number(item?.totalQuantity || 0) <= 0 &&
 							`Mặt hàng sản phẩm đơn giản này đã bán hết.`}
 					</div>
-					<div className={cn(item?.is_simple ? "hidden" : "inline-block")}>
+					<div
+						className={cn(
+							item?.is_simple && !checkAttribute ? "hidden" : "inline-block",
+						)}
+					>
 						<Attribute
 							isOpen={isOpen}
 							setIsOpen={setIsOpen}
@@ -244,17 +264,12 @@ const CartItem = ({
 				</span>
 				<span
 					className={cn(
-						item?.totalQuantity > 0 &&
-							(item?.attribute?.discount || item?.is_simple)
+						item?.attribute?.discount || item?.is_simple
 							? "text-red-500"
 							: "text-gray-700",
 					)}
 				>
-					{formatCurrency(
-						item?.totalQuantity > 0
-							? item?.attribute?.discount || item?.discount || 0
-							: 0,
-					)}
+					{formatCurrency(item?.attribute?.discount || item?.discount || 0)}
 				</span>
 			</div>
 			<div className="hidden lg:flex w-[15.4265%] text-center items-center justify-center">
@@ -275,11 +290,9 @@ const CartItem = ({
 			<div className="hidden lg:block w-[10.43557%] text-center">
 				<span className="text-red-500">
 					{formatCurrency(
-						item?.totalQuantity > 0
-							? item?.is_simple
-								? item?.discount * Number(item?.quantity)
-								: item?.attribute?.discount * Number(item?.quantity) || 0
-							: 0,
+						item?.is_simple
+							? item?.discount * Number(item?.quantity) || 0
+							: item?.attribute?.discount * Number(item?.quantity) || 0,
 					)}
 				</span>
 			</div>

@@ -1,5 +1,5 @@
 import { formatQuantity } from "@/common/localFunction";
-import { getCountProduct, getToDayOrder } from "@/service/dashboard.service";
+import { getToDayOrder } from "@/service/dashboard.service";
 import { useQuery } from "@tanstack/react-query";
 
 const OrderToDayDashBoard = () => {
@@ -16,7 +16,7 @@ const OrderToDayDashBoard = () => {
 	return (
 		<div className="flex flex-col w-full h-auto p-2 bg-white rounded-xl box-shadow">
 			<div className="flex items-center justify-between py-2 border-b">
-				<p className="font-semibold">Biểu đồ phương thức đăng kí</p>
+				<p className="font-semibold">Biểu đồ đơn hàng hôm nay</p>
 				<div className="flex items-center gap-2"></div>
 			</div>
 			<div className="py-4">

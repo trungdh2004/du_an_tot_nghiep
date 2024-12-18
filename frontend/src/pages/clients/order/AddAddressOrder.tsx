@@ -1,31 +1,30 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
 import {
-	addAddress,
-	callCity,
-	callCommune,
-	callDistrict,
+  addAddress,
+  callCity,
+  callCommune,
+  callDistrict,
 } from "@/service/address";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 // import MapSearchLocation from "@/components/map/MapSearchLocation";
 import MapSearchLocation from "@/components/map/MapSearchLocation";
 import AddressLocation from "../address/AddressLocation";
-import AddressInformation from "../address/AddressInformation";
 
 const formSchema = z.object({
 	username: z
@@ -86,9 +85,16 @@ interface ICommune {
 interface Props {
 	open: boolean;
 	closeOpen: (isOpen: boolean) => void;
+	handleChangeAddress: (id: string) => void;
+	address: any;
 }
-const AddAddressOrder = ({ open, closeOpen }: Props) => {
-	const { data: citys, isLoading } = useQuery<ICity[]>({
+const AddAddressOrder = ({
+	open,
+	closeOpen,
+	handleChangeAddress,
+	address,
+}: Props) => {
+	const { data: citys } = useQuery<ICity[]>({
 		queryKey: ["city"],
 		queryFn: async () => {
 			const { data } = await callCity();
@@ -96,15 +102,17 @@ const AddAddressOrder = ({ open, closeOpen }: Props) => {
 		},
 		staleTime: Infinity,
 	});
+
 	const { mutate } = useMutation({
 		mutationFn: async (dataNew: any) => addAddress(dataNew),
-		onSuccess: () => {
-			form.reset();
-
+		onSuccess: ({ data }) => {
 			queryClient.invalidateQueries({
 				queryKey: ["address"],
 			});
 			toast.success("Bạn thêm địa chỉ thành công");
+			if (address?.content?.length === 0) {
+				handleChangeAddress(data?.data?._id);
+			}
 			closeOpen(false);
 		},
 		onError: () => {
@@ -162,7 +170,7 @@ const AddAddressOrder = ({ open, closeOpen }: Props) => {
 					<h2 className="text-xl font-bold">Thêm địa chỉ</h2>
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-							<div className="flex flex-row gap-3 w-full">
+							<div className="flex flex-row w-full gap-3">
 								<FormField
 									control={form.control}
 									name="username"
@@ -227,7 +235,7 @@ const AddAddressOrder = ({ open, closeOpen }: Props) => {
 							<FormField
 								control={form.control}
 								name="location"
-								render={({ field }) => {
+								render={() => {
 									return (
 										<FormItem className="">
 											<div className="w-full h-[240px] border">

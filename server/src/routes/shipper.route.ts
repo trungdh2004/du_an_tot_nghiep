@@ -14,10 +14,13 @@ routerShipper.get("/getOrderByCode/:code",authenticationShipper, shipperControll
 routerShipper.put("/updateStatusShippingOrder/:id",authenticationShipper, shipperController.updateStatusShippingOrder);
 routerShipper.put("/updateStatusShippedOrder/:id",authenticationShipper, shipperController.updateStatusShippedOrder);
 routerShipper.post("/getListOrderSuccessShipper",authenticationShipper, shipperController.getListOrderSuccessShipper);
+routerShipper.post("/getListOrderIsShipper",authenticationShipper, shipperController.getListOrderIsShipper);
 routerShipper.post("/pagingOrderShipper",authenticationShipper, shipperController.pagingOrderShipper);
 routerShipper.post("/pagingOrderShipperAdmin/:id",authentication, shipperController.pagingOrderShipper);
 routerShipper.get("/getDetailShipper/:id",authentication, shipperController.shipperDetailAdmin);
 routerShipper.post("/getDetailShipperAdmin/:id",authentication, shipperController.pagingOrderShipperAdmin);
 routerShipper.post("/changeAccountShipper",authenticationShipper, shipperController.changeAccountShipper);
+routerShipper.post("/refuseOrderShipper/:id",authenticationShipper, shipperController.refuseOrderShipper);
+routerShipper.post("/confirmOrderShipper/:id",authenticationShipper, shipperController.confirmOrderShipper);
 
 export default routerShipper;

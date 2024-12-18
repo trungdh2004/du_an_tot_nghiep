@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import {
 	ColumnDef,
@@ -6,27 +6,18 @@ import {
 	getCoreRowModel,
 	useReactTable,
 	getSortedRowModel,
-	SortingState,
-	VisibilityState,
 	RowSelectionState,
 } from "@tanstack/react-table";
 
 import {
 	Table,
 	TableBody,
-	TableCaption,
 	TableCell,
 	TableHead,
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { Button } from "../ui/button";
-import {
-	DropdownMenu,
-	DropdownMenuCheckboxItem,
-	DropdownMenuContent,
-	DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+
 import { DataTablePagination } from "./DataTablePagination";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 

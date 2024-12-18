@@ -1,6 +1,7 @@
 import BlogNewPublic from "./BlogNewPublic";
 import CategoryDashboard from "./Category.dashboard";
 import { ComponentChart } from "./Chart";
+import { ComponentChartType } from "./ChartType";
 import CountTotal from "./CountTotal";
 import ListOrderNew from "./ListOrderNew";
 import OrderToDayDashBoard from "./OrderToDay.dashboard";
@@ -31,7 +32,7 @@ const Dashboard = () => {
 				</div>
 
 				<div className="col-span-12 bg-white md:col-span-4 box-shadow rounded-xl">
-					<CategoryDashboard />
+					<ComponentChartType />
 				</div>
 				<div className="col-span-12 md:col-span-8 ">
 					<BlogNewPublic />

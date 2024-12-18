@@ -209,16 +209,16 @@ class VoucherController {
         });
       }
 
-      const newStartDate = new Date(startDate)
-      const newEndDate = new Date(endDate)
-      newStartDate.setHours(0, 0, 0, 0)
-      newEndDate.setHours(0, 0, 0, 0)
+      const newStartDate = new Date(startDate);
+      const newEndDate = new Date(endDate);
+      newStartDate.setHours(0, 0, 0, 0);
+      newEndDate.setHours(0, 0, 0, 0);
 
       const newVoucher = await VoucherModel.create({
         name,
         description,
-        startDate:newStartDate,
-        endDate:newEndDate,
+        startDate: newStartDate,
+        endDate: newEndDate,
         discountType,
         discountValue,
         usageLimit,
@@ -279,7 +279,6 @@ class VoucherController {
       const existingOrderVoucher = await OrderModel.findOne({
         user: user?.id,
         voucher: existingVoucher?.id,
-        voucherVersion: existingVoucher.version,
         status: {
           $ne: 0,
         },
@@ -486,10 +485,10 @@ class VoucherController {
         });
       }
 
-      const newStartDate = new Date(startDate)
-      const newEndDate = new Date(endDate)
-      newStartDate.setHours(0, 0, 0, 0)
-      newEndDate.setHours(0, 0, 0, 0)
+      const newStartDate = new Date(startDate);
+      const newEndDate = new Date(endDate);
+      newStartDate.setHours(0, 0, 0, 0);
+      newEndDate.setHours(0, 0, 0, 0);
 
       const existingVoucher = await VoucherModel.findById(id);
 
@@ -515,8 +514,8 @@ class VoucherController {
       const newVoucher = await VoucherModel.findByIdAndUpdate(id, {
         name,
         description,
-        startDate:newStartDate,
-        endDate:newEndDate,
+        startDate: newStartDate,
+        endDate: newEndDate,
         discountType,
         discountValue,
         usageLimit,
@@ -672,8 +671,6 @@ class VoucherController {
         data: listVoucher,
         count: countVoucher,
       });
-      
-      console.log(">>>>>> List Voucher",result);
       return res.status(STATUS.OK).json(result);
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
@@ -776,8 +773,7 @@ class VoucherController {
           $gte: newDate,
         },
       }).limit(limit);
-      console.log(">>>>>> List Voucher",listVoucher);
-      
+
       return res.status(STATUS.OK).json({
         message: "Danh sách voucher",
         data: listVoucher,
@@ -796,9 +792,6 @@ class VoucherController {
       const skip = (pageIndex - 1) * limit || 0;
 
       const newDate = new Date();
-
-      console.log("newDate",newDate);
-      
 
       const listVoucher = await VoucherModel.find({
         status: 1,

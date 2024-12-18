@@ -23,7 +23,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import AddressLocation from "./AddressLocation";
-import MapComponent from "@/components/map/Map";
 import MapSearchLocation from "@/components/map/MapSearchLocation";
 import { ICity, ICommune, IDistrict } from "@/types/address";
 
@@ -32,7 +31,8 @@ const formSchema = z.object({
 		.string({
 			message: "Bạn phải nhập họ tên",
 		})
-		.min(0, {
+		.trim()
+		.min(1, {
 			message: "Bạn phải nhập họ tên",
 		}),
 	phone: z
@@ -92,7 +92,7 @@ const EditAddress = ({ open, handleClose, id }: IProps) => {
 			toast.error("Bạn cập nhật địa chỉ thất bại");
 		},
 	});
-	const { data: citys = [], isLoading } = useQuery<ICity[]>({
+	const { data: citys = [] } = useQuery<ICity[]>({
 		queryKey: ["city"],
 		queryFn: async () => {
 			const { data } = await callCity();
@@ -141,7 +141,9 @@ const EditAddress = ({ open, handleClose, id }: IProps) => {
 	}, [id]);
 
 	const onSubmit = async (dataForm: any) => {
-		mutate(dataForm);
+		console.log("dataForm", dataForm);
+
+		// mutate(dataForm);
 	};
 
 	const handleOnChangeCity = async (value: ICity) => {
@@ -180,10 +182,10 @@ const EditAddress = ({ open, handleClose, id }: IProps) => {
 	return (
 		<Dialog open={open} onOpenChange={handleClose}>
 			<DialogContent className="w-[90%] sm:max-w-[660px] rounded-md max-h-[90vh] p-2 sm:p-4 overflow-y-auto">
-				<h2 className="text-xl font-bold mb-2">Cập nhật địa chỉ</h2>
+				<h2 className="mb-2 text-xl font-bold">Cập nhật địa chỉ</h2>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-						<div className="flex flex-row gap-3 w-full">
+						<div className="flex flex-row w-full gap-3">
 							<FormField
 								control={form.control}
 								name="username"
@@ -248,7 +250,7 @@ const EditAddress = ({ open, handleClose, id }: IProps) => {
 						<FormField
 							control={form.control}
 							name="location"
-							render={({ field }) => {
+							render={() => {
 								return (
 									<FormItem className="">
 										<div className="w-full h-[240px]">

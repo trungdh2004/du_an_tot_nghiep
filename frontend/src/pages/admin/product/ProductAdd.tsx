@@ -1,9 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { array, z } from "zod";
+import { z } from "zod";
 
+import { formatCurrency } from "@/common/func";
+import FroalaEditor from "@/components/common/Froala";
+import InputNumberFormat from "@/components/common/InputNumberFormat";
+import {
+	ListColorComponent,
+	ListSizeComponent,
+} from "@/components/common/Product";
+import SelectComponent from "@/components/common/SelectComponent";
+import { TooltipComponent } from "@/components/common/TooltipComponent";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
 	Form,
 	FormControl,
@@ -13,50 +22,40 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-	AiOutlineCloudUpload,
-	AiOutlineLoading3Quarters,
-	AiFillCloseCircle,
-} from "react-icons/ai";
+import instance from "@/config/instance";
 import { cn } from "@/lib/utils";
+import { getAllCategory } from "@/service/category-admin";
+import { addProduct } from "@/service/product";
+import { getAllSize } from "@/service/size-admin";
 import { uploadFileService, uploadMultipleFileService } from "@/service/upload";
 import {
 	useProcessBarLoading,
 	useProcessBarLoadingEventNone,
 } from "@/store/useSidebarAdmin";
-import ImageUploading, { ImageListType } from "react-images-uploading";
-import { CiCirclePlus } from "react-icons/ci";
-import { getAllCategory } from "@/service/category-admin";
-import { getAllSize } from "@/service/size-admin";
-import instance from "@/config/instance";
-import { IColor, IItemListColor, IProduct } from "@/types/typeProduct";
-import { MdDeleteForever } from "react-icons/md";
-import FroalaEditor from "@/components/common/Froala";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { addProduct } from "@/service/product";
-import { useNavigate } from "react-router-dom";
-import SelectComponent from "@/components/common/SelectComponent";
+import { IColor, IProduct } from "@/types/typeProduct";
 import { ISize } from "@/types/variants";
-import { ICategory } from "@/types/category";
-import { Checkbox } from "@/components/ui/checkbox";
-import InputNumberFormat from "@/components/common/InputNumberFormat";
-import { IoEyeOutline } from "react-icons/io5";
-import { FaStar } from "react-icons/fa";
-import { formatCurrency } from "@/common/func";
+import { useMutation } from "@tanstack/react-query";
 import {
-	ListColorComponent,
-	ListSizeComponent,
-} from "@/components/common/Product";
-import { TooltipComponent } from "@/components/common/TooltipComponent";
+	AiFillCloseCircle,
+	AiOutlineCloudUpload,
+	AiOutlineLoading3Quarters,
+} from "react-icons/ai";
 import { BsStars } from "react-icons/bs";
+import { CiCirclePlus } from "react-icons/ci";
+import { FaStar } from "react-icons/fa";
+import { IoEyeOutline } from "react-icons/io5";
+import { MdDeleteForever } from "react-icons/md";
+import ImageUploading, { ImageListType } from "react-images-uploading";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const formSchema = z
 	.object({
 		name: z.string().nonempty({ message: "Nhập tên sản phẩm" }),
-		price: z.string().min(1, "Phải lớn hơn 0"),
+		price: z.number().min(1, "Phải lớn hơn 0"),
 		description: z.string().nonempty("Nhập mô tả sản phẩm"),
-		discount: z.string().min(1, "Phải lớn hơn 0"),
+		discount: z.number().min(1, "Phải lớn hơn 0"),
 		is_hot: z.boolean(),
 		is_simple: z.boolean(),
 		quantity: z.number(),
@@ -149,9 +148,19 @@ const formSchema = z
 			path: ["quantity"], // Chỉ rõ trường bị lỗi
 		},
 	)
+	.refine(
+		(data) => {
+			if (data.discount > data.price) {
+				return false;
+			}
+			return true;
+		},
+		{
+			message: "Giá giảm phải nhỏ hơn giá gốc",
+			path: ["discount"],
+		},
+	)
 	.superRefine((data, ctx) => {
-		console.log({ data, ctx });
-
 		if (!data.is_simple && (!data.attributes || data.attributes.length === 0)) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
@@ -165,11 +174,11 @@ const formSchema = z
 			if (data.attributes && data.attributes.length > 0) {
 				// Nếu có attributes, không yêu cầu các trường con
 				data.attributes.forEach((attr, index) => {
-					const colorPath = ["attributes", index, "color"];
-					const sizePath = ["attributes", index, "size"];
-					const pricePath = ["attributes", index, "price"];
-					const quantityPath = ["attributes", index, "quantity"];
-					const discountPath = ["attributes", index, "discount"];
+					// const colorPath = ["attributes", index, "color"];
+					// const sizePath = ["attributes", index, "size"];
+					// const pricePath = ["attributes", index, "price"];
+					// const quantityPath = ["attributes", index, "quantity"];
+					// const discountPath = ["attributes", index, "discount"];
 
 					if (attr.color) {
 						z.object({
@@ -200,10 +209,16 @@ const formSchema = z
 				});
 			}
 		}
-
-		if (data.attributes && data.attributes.length > 1) {
+		if (data.attributes && data.attributes.length > 0) {
 			const combinations = new Set();
 			data.attributes.forEach((attr, index) => {
+				if (attr.discount > attr.price) {
+					ctx.addIssue({
+						code: z.ZodIssueCode.custom,
+						message: "Giá giảm phải nhỏ hơn giá gốc",
+						path: ["attributes", index, "discount"],
+					});
+				}
 				const combination = `${attr.color?._id}-${attr.size?._id}`;
 				if (combinations.has(combination)) {
 					ctx.addIssue({
@@ -251,12 +266,12 @@ const ProductAddPage = () => {
 	const { setOpenProcessLoadingEventNone, setCloseProcessLoadingEventNone } =
 		useProcessBarLoadingEventNone();
 	const form = useForm<ProductFormValues>({
-		// resolver: zodResolver(formSchema),
+		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: "",
 			category: null,
-			price: "",
-			discount: "",
+			price: 0,
+			discount: 0,
 			featured: false,
 			description: "",
 			thumbnail: "",
@@ -267,7 +282,7 @@ const ProductAddPage = () => {
 			quantity: 0,
 		},
 	});
-	const { isOpen, setOpen, setClose } = useProcessBarLoading();
+	const { setOpen, setClose } = useProcessBarLoading();
 	const [previewUrl, setPreviewUrl] = useState({
 		isLoading: false,
 		url: "",
@@ -277,7 +292,7 @@ const ProductAddPage = () => {
 	const [category, setCategory] = useState([]);
 	const [size, setSize] = useState<ISize[]>([]);
 	const [color, setColor] = useState<IColor[]>([]);
-	const [isPending, setIsPending] = useState(false);
+	const [isPending] = useState(false);
 	const { mutate } = useMutation({
 		mutationFn: (value: IProduct) => addProduct(value),
 		onSuccess: () => {
@@ -337,7 +352,7 @@ const ProductAddPage = () => {
 				...values,
 				images,
 				category: values.category?._id,
-				attributes: attribute,
+				attributes: values.is_simple ? [] : attribute,
 				price: +values.price,
 				discount: +values.discount,
 			};
@@ -454,7 +469,7 @@ const ProductAddPage = () => {
 												<FormControl>
 													<SelectComponent<ICate>
 														value={field.value}
-														onChange={(newValue: ICate, action) => {
+														onChange={(newValue: ICate) => {
 															field.onChange(newValue);
 															form.clearErrors(`category`);
 														}}
@@ -783,8 +798,6 @@ const ProductAddPage = () => {
 																									},
 																								];
 
-																								console.log("list", list);
-
 																								setImages(list);
 																								field.onChange(list);
 																								if (list.length > 0) {
@@ -824,17 +837,19 @@ const ProductAddPage = () => {
 																field.onChange(e);
 																console.log({ e });
 																if (e) {
-																	form.setValue("attributes", []);
+																	// form.setValue("attributes", []);
 																} else {
-																	form.setValue("attributes", [
-																		{
-																			size: null,
-																			color: null,
-																			price: 0,
-																			quantity: 0,
-																			discount: 0,
-																		},
-																	]);
+																	if (form.watch("attributes").length === 0) {
+																		form.setValue("attributes", [
+																			{
+																				size: null,
+																				color: null,
+																				price: 0,
+																				quantity: 0,
+																				discount: 0,
+																			},
+																		]);
+																	}
 																	form.setValue("quantity", 0);
 																}
 															}}
@@ -936,7 +951,7 @@ const ProductAddPage = () => {
 																	<FormLabel>Kích thước</FormLabel>
 																	<SelectComponent<ISize>
 																		value={field.value}
-																		onChange={(newValue: ISize, action) => {
+																		onChange={(newValue: ISize) => {
 																			field.onChange(newValue);
 																			form.clearErrors(
 																				`attributes.${index}.size`,
@@ -963,7 +978,7 @@ const ProductAddPage = () => {
 																		<FormLabel>Màu</FormLabel>
 																		<SelectComponent<IColor>
 																			value={field.value}
-																			onChange={(newValue: IColor, action) => {
+																			onChange={(newValue: IColor) => {
 																				field.onChange(newValue);
 																				form.clearErrors(
 																					`attributes.${index}.color`,
@@ -1114,7 +1129,7 @@ const ProductAddPage = () => {
 
 													<TooltipComponent label="Tự tạo mô tả theo tên">
 														<div
-															className="flex items-center justify-center rounded-full cursor-pointer  size-7 group hover:bg-gray-50"
+															className="flex items-center justify-center rounded-full cursor-pointer size-7 group hover:bg-gray-50"
 															onClick={handleDescription}
 														>
 															<BsStars

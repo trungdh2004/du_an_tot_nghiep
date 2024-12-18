@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import Map, {
-	AttributionControl,
-	GeolocateControl,
-	NavigationControl,
+  AttributionControl,
+  GeolocateControl,
+  NavigationControl,
 } from "react-map-gl";
 
 interface IProps {
@@ -16,7 +16,6 @@ interface IProps {
 
 const MapComponent = ({
 	children,
-	width,
 	height,
 	longitude,
 	latitude,

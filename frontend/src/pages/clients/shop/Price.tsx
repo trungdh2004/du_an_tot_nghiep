@@ -1,16 +1,14 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import ReactSlider from "react-slider";
-import { SearchObjectTypeProduct } from "@/types/searchObjecTypes";
 import { useDebounceValue } from "usehooks-ts";
-import { useQueryClient } from "@tanstack/react-query";
 interface Props {
 	setSearchParamsObject: Dispatch<SetStateAction<SearchObjectTypeProduct>>;
 	searchParamsObject: SearchObjectTypeProduct;
 }
 const Price = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 	const [searchParams, setSearchParams] = useSearchParams();
-	const query = useQueryClient();
 	const [values, setValues] = useState([
 		(searchParamsObject.min as number) || 0,
 		(searchParamsObject.max as number) || 5000000,
@@ -20,7 +18,6 @@ const Price = ({ setSearchParamsObject, searchParamsObject }: Props) => {
 	const handleSearchPrice = (values: number[]) => {
 		setValues(values);
 	};
-
 	useEffect(() => {
 		if (check) {
 			setCheck(false);

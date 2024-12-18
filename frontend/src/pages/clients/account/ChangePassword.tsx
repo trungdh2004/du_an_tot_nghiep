@@ -1,9 +1,6 @@
-import React from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
 	Form,
 	FormControl,
@@ -12,23 +9,17 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
-import instance from "@/config/instance";
-import { cn } from "@/lib/utils";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
 import { Input } from "@/components/ui/input";
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { changePassword } from "@/service/account";
 import { IPassword } from "@/types/auth";
-import { toast } from "sonner";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { toast } from "sonner";
+import { boolean, z } from "zod";
+import { useAuth } from "@/hooks/auth";
+import { cn } from "@/lib/utils";
 const formSchema = z.object({
 	passwordOld: z
 		.string({ required_error: "Bạn phải nhập mật khẩu cũ" })
@@ -41,7 +32,6 @@ const formSchema = z.object({
 		.min(6, { message: "Mật khẩu ít nhất phải 6 ký tự" }),
 });
 const ChangePassword = () => {
-	const queryClient = useQueryClient();
 	const form = useForm({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -53,10 +43,12 @@ const ChangePassword = () => {
 	const [isPasswordOld, setIsPasswordOld] = useState(false);
 	const [isPasswordNew, setIsPasswordNew] = useState(false);
 	const [isConfirmPassword, setIsConfirmPassword] = useState(false);
-
+	const [checkUid, setCheckUid] = useState(false);
+	const { authUser } = useAuth();
+	console.log("authUser", authUser?.uid);
 	const onSubmit = async (data: IPassword) => {
 		try {
-			const response = await changePassword(data);
+			await changePassword(data);
 			toast.success("Thay đổi mật khẩu thành công");
 			form.reset();
 		} catch (error) {
@@ -66,12 +58,12 @@ const ChangePassword = () => {
 		}
 	};
 	return (
-		<div className="w-full bg-white px-4 md:px-8 box-shadow rounded-md overflow-hidden">
+		<div className="w-full px-4 overflow-hidden bg-white rounded-md md:px-8 box-shadow">
 			<div className="py-2 md:py-5 border-b border-[#efedec]">
 				<h3 className="text-base md:text-lg text-[#333333] font-medium">
 					Thay đổi mật khẩu
 				</h3>
-				<span className="text-sm md:text-base text-gray-700">
+				<span className="text-sm text-gray-700 md:text-base">
 					Để bảo mật tài khoản, vui lòng không chia sẻ mật khẩu cho người khác
 				</span>
 			</div>
@@ -79,12 +71,12 @@ const ChangePassword = () => {
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)}>
 						<div className="flex ">
-							<div className="order-2 md:order-1 w-full md:pr-8 xl:pr-24">
+							<div className="order-2 w-full md:order-1 md:pr-8 xl:pr-24">
 								<FormField
 									control={form.control}
 									name="passwordOld"
 									render={({ field }) => (
-										<FormItem className="flex flex-col md:flex-row md:items-center pb-5 ">
+										<FormItem className="flex flex-col pb-5 md:flex-row md:items-center ">
 											<FormLabel className="w-full md:w-[40%] md:text-right text-sm md:text-base text-[rgba(85,85,85,.8)] pr-4">
 												Mật khẩu cũ
 											</FormLabel>{" "}
@@ -95,6 +87,7 @@ const ChangePassword = () => {
 															{...field}
 															type={isPasswordOld ? "text" : "password"}
 															className=""
+															disabled={!!authUser?.uid}
 														/>
 													</FormControl>
 													{isPasswordOld ? (
@@ -111,7 +104,7 @@ const ChangePassword = () => {
 														/>
 													)}
 												</div>
-												<FormMessage className="text-xs pt-2" />
+												<FormMessage className="pt-2 text-xs" />
 											</div>
 										</FormItem>
 									)}
@@ -120,7 +113,7 @@ const ChangePassword = () => {
 									control={form.control}
 									name="passwordNew"
 									render={({ field }) => (
-										<FormItem className="flex flex-col md:flex-row md:items-center pb-5 ">
+										<FormItem className="flex flex-col pb-5 md:flex-row md:items-center ">
 											<FormLabel className="w-full md:w-[40%] md:text-right text-sm md:text-base text-[rgba(85,85,85,.8)] pr-4">
 												Mật khẩu mới
 											</FormLabel>{" "}
@@ -131,6 +124,7 @@ const ChangePassword = () => {
 															{...field}
 															type={isPasswordNew ? "text" : "password"}
 															className=""
+															disabled={!!authUser?.uid}
 														/>
 													</FormControl>
 													{isPasswordNew ? (
@@ -147,7 +141,7 @@ const ChangePassword = () => {
 														/>
 													)}
 												</div>
-												<FormMessage className="text-xs pt-2" />
+												<FormMessage className="pt-2 text-xs" />
 											</div>
 										</FormItem>
 									)}
@@ -156,7 +150,7 @@ const ChangePassword = () => {
 									control={form.control}
 									name="confirmPassword"
 									render={({ field }) => (
-										<FormItem className="flex flex-col md:flex-row md:items-center pb-5 ">
+										<FormItem className="flex flex-col pb-5 md:flex-row md:items-center ">
 											<FormLabel className="w-full md:w-[40%] md:text-right text-sm md:text-base text-[rgba(85,85,85,.8)] pr-4">
 												Nhập lại mật khẩu mới
 											</FormLabel>{" "}
@@ -167,6 +161,7 @@ const ChangePassword = () => {
 															{...field}
 															type={isConfirmPassword ? "text" : "password"}
 															className=""
+															disabled={!!authUser?.uid}
 														/>
 													</FormControl>
 													{isConfirmPassword ? (
@@ -187,17 +182,22 @@ const ChangePassword = () => {
 														/>
 													)}
 												</div>
-												<FormMessage className="text-xs pt-2" />
+												<FormMessage className="pt-2 text-xs" />
 											</div>
 										</FormItem>
 									)}
 								/>
 							</div>
 						</div>
-						<div className="w-full  flex justify-center my-5">
+						<div className="flex justify-center w-full my-5">
 							<button
 								type="submit"
-								className="text-white bg-custom-500 px-5 py-2 border rounded-sm"
+								className={cn(
+									!!authUser?.uid
+										? "hidden"
+										: "px-5 py-2 text-white border rounded-sm bg-custom-500",
+								)}
+								// disabled={}
 							>
 								Cập nhật
 							</button>

@@ -37,6 +37,7 @@ import { formatCurrency } from "../../config/func";
 import LocationModel from "../../models/Location.schema";
 import CustomerModel from "../../models/Customer.schema";
 import sendToMail from "../../mail/mailConfig";
+import * as crypto from "crypto";
 
 const long = +process.env.LONGSHOP! || 105.62573250208116;
 const lat = +process.env.LATSHOP! || 21.045193948892585;
@@ -126,236 +127,6 @@ interface IReturnVnPay {
 }
 
 class OrderController {
-  async createOrderPayUponReceipt(req: RequestModel, res: Response) {
-    try {
-      const user = req.user;
-      const { listId, addressId, voucher, paymentMethod, note } = req.body;
-
-      if (paymentMethod !== 1) {
-        return res.status(STATUS.BAD_REQUEST).json({
-          message: "Phương thức thanh toán lỗi",
-        });
-      }
-
-      if (!listId || listId.length === 0) {
-        return res.status(STATUS.BAD_REQUEST).json({
-          message: "Bạn chưa chọn sản phẩm",
-        });
-      }
-
-      if (!addressId) {
-        return res.status(STATUS.BAD_REQUEST).json({
-          message: "Bạn chưa chọn địa chỉ",
-        });
-      }
-
-      let address = await AddressModel.findById(addressId);
-
-      if (!address) {
-        return res.status(STATUS.BAD_REQUEST).json({
-          message: "Không có địa chỉ",
-        });
-      }
-
-      const findLocationShop = await LocationModel.findOne();
-
-      const longShop = findLocationShop?.long || long;
-      const latShop = findLocationShop?.lat || lat;
-
-      const addressDetail = await AddressModel.aggregate([
-        {
-          $geoNear: {
-            near: {
-              type: "Point",
-              coordinates: [longShop, latShop],
-            },
-            distanceField: "dist",
-            spherical: true,
-          },
-        },
-        {
-          $match: {
-            _id: new mongoose.Types.ObjectId(address._id),
-          },
-        },
-        {
-          $limit: 1,
-        },
-      ]);
-
-      if (!addressDetail) {
-        return res.status(STATUS.BAD_REQUEST).json({
-          message: "Không có địa chỉ",
-        });
-      }
-
-      let voucherMain = null;
-
-      if (voucher) {
-        const existingVoucher = await VoucherModel.findById(voucher);
-
-        if (existingVoucher) {
-          const check = await OrderModel.findOne({
-            voucher: existingVoucher._id,
-            user: user?.id,
-            status: {
-              $ne: 0,
-            },
-          });
-
-          if (!check) {
-            const data = checkVoucher(existingVoucher);
-            if (data.check) {
-              voucherMain = data.voucher as IVoucher;
-            }
-            if (!data.check) {
-              return res.status(STATUS.BAD_REQUEST).json({
-                message: data.message,
-              });
-            }
-          } else {
-            return res.status(STATUS.BAD_REQUEST).json({
-              message: "Bạn đã sử dụng voucher",
-            });
-          }
-        } else {
-          return res.status(STATUS.BAD_REQUEST).json({
-            message: "Không có voucher",
-          });
-        }
-      }
-
-      const listCartItem = await CartItemModel.find<IProductCart>({
-        _id: {
-          $in: listId,
-        },
-      }).populate([
-        {
-          path: "attribute",
-          populate: [
-            {
-              path: "color",
-              model: "Color",
-            },
-            {
-              path: "size",
-              model: "Size",
-            },
-          ],
-        },
-      ]);
-
-      if (!listCartItem || listCartItem.length === 0) {
-        return res.status(STATUS.BAD_REQUEST).json({
-          message: "Không có sản phẩm nào",
-        });
-      }
-      const listDateNew = listCartItem.map((item) => {
-        return {
-          product: item.product,
-          status: 1,
-          color: {
-            name: ((item.attribute as IAttribute).color as IColor)?.name,
-            code: ((item.attribute as IAttribute).color as IColor)?.code,
-          },
-          size: ((item.attribute as IAttribute).size as ISize)?.name,
-          price: (item.attribute as IAttribute).discount,
-          quantity: item.quantity,
-          totalMoney: +item.quantity * +(item.attribute as IAttribute).discount,
-          attribute: item.attribute,
-        };
-      });
-
-      const shippingCost = addressDetail
-        ? chargeShippingFee(addressDetail[0]?.dist)
-        : 0;
-
-      const checkTotalMoney = listDateNew?.reduce((acc: number, item: any) => {
-        return acc + item.totalMoney;
-      }, 0);
-
-      if (voucherMain) {
-        if (voucherMain.minimumOrderValue > checkTotalMoney) {
-          return res.status(STATUS.BAD_REQUEST).json({
-            message: "Đơn hàng không đạt đủ điều kiện voucher",
-          });
-        }
-      }
-
-      const listOrderItem = await OrderItemsModel.create(listDateNew);
-
-      const listIdOrderItem =
-        listOrderItem?.length > 0 ? listOrderItem?.map((item) => item._id) : [];
-
-      const totalMoney = listCartItem.reduce(
-        (acc: number, item: IProductCart) => {
-          const totalMoney =
-            +item.quantity * +(item.attribute as IAttribute).discount;
-          return acc + +totalMoney;
-        },
-        0
-      );
-
-      // Tạo một ngày mới sau 2 ngày
-
-      let code = generateOrderCode();
-      code = await generateCode(code);
-
-      const { amountReduced, totalMoneyNew } = amountReducedVoucher(
-        totalMoney,
-        voucherMain
-      );
-
-      const newOrder = await OrderModel.create({
-        user: user?.id,
-        address: {
-          username: address.username,
-          phone: address.phone,
-          address: address.address,
-          detailAddress: address.detailAddress,
-          location: address.location,
-        },
-        totalMoney: totalMoneyNew + shippingCost,
-        amountToPay: totalMoneyNew + shippingCost,
-        voucherAmount: amountReduced,
-        voucher: voucherMain,
-        voucherVersion: voucherMain?.version,
-        distance: addressDetail[0].dist,
-        shippingCost: shippingCost || 0,
-        paymentMethod,
-        note,
-        code,
-        orderItems: listIdOrderItem,
-        status: 1,
-        statusList: [0, 1],
-      });
-
-      if (!newOrder) {
-        return res.status(STATUS.BAD_REQUEST).json({
-          message: "Tạo đơn hàng thất bại",
-        });
-      }
-      // await CartItemModel.deleteMany({
-      //   _id: {
-      //     $in: listId,
-      //   },
-      // });
-      socketNotificationAdmin(
-        `<p>Đơn hàng: <span style="color:blue;font-weight:500;">${newOrder.code}</span> vừa được đặt, vui lòng kiểm tra thông tin</p>`,
-        TYPE_NOTIFICATION_ADMIN.ORDER,
-        newOrder._id
-      );
-
-      return res.status(STATUS.OK).json({
-        message: "Tạo đơn hàng thành công",
-      });
-    } catch (error: any) {
-      return res.status(STATUS.INTERNAL).json({
-        message: error.message,
-      });
-    }
-  }
-
   async createOrderPayUponReceiptV2(req: RequestModel, res: Response) {
     try {
       const user = req.user;
@@ -460,13 +231,65 @@ class OrderController {
         });
       }
 
+      if (listId.length !== listCartItem.length) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đã có sản phẩm bị xóa mời bạn trờ về",
+        });
+      }
+
+      const checkProduct = listCartItem.find(
+        (item) => item?.product?.is_deleted
+      );
+
+      if (checkProduct) {
+        const stringName = truncateSentence(checkProduct.product.name, 30);
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: `Sản phẩm '${stringName}' đã bị xóa`,
+        });
+      }
+      const checkAttribute = listCartItem.find(
+        (item) => !item.attribute && !item?.product?.is_simple
+      );
+
+      if (checkAttribute) {
+        const stringName = truncateSentence(checkAttribute.product.name, 30);
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: `Sản phẩm '${stringName}' đã xóa loại sản phẩm bạn chọn`,
+        });
+      }
+
+      const checkQuantity = listCartItem.find((item) => {
+        const quantity = item.quantity;
+        const quantityAttribute = item?.product?.is_simple
+          ? item.product.quantity
+          : item.attribute.quantity;
+
+        if (quantity > quantityAttribute) {
+          return true;
+        }
+        return false;
+      });
+
+      if (checkQuantity) {
+        const stringName = truncateSentence(checkQuantity.product.name, 30);
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: `Sản phẩm '${stringName}' đã vượt quá số lượng`,
+        });
+      }
+
+      // return res.status(STATUS.BAD_REQUEST).json({
+      //   message: "hhihi",
+      //   checkQuantity,
+      //   checkAttribute,
+      // });
+
       const listDateNew = listCartItem.map((item) => {
-        const variant = item?.is_simple
+        const variant = item?.product?.is_simple
           ? "Sản phẩm đơn giản"
           : `${item?.attribute?.size?.name || "Size"} - ${
               item?.attribute?.color?.name || "Màu"
             }`;
-        const price = item.is_simple
+        const price = item?.product.is_simple
           ? item.product.discount
           : item.attribute.discount;
         return {
@@ -477,17 +300,17 @@ class OrderController {
           quantity: item.quantity,
           totalMoney: +item.quantity * +price,
           attribute: item?.attribute?._id || null,
-          is_simple: item.is_simple || false,
+          is_simple: item?.product.is_simple || false,
         };
       });
 
       const listDataMail = listCartItem.map((item) => {
-        const variant = item?.is_simple
+        const variant = item?.product?.is_simple
           ? "Sản phẩm đơn giản"
           : `${item?.attribute?.size?.name || "Size"} - ${
               item?.attribute?.color?.name || "Màu"
             }`;
-        const price = item.is_simple
+        const price = item?.product.is_simple
           ? item.product.discount
           : item.attribute.discount;
         return {
@@ -502,13 +325,11 @@ class OrderController {
         };
       });
 
-      // voucher
-
       const listProduct = listCartItem.map((item) => {
         const productId = item.product._id;
         let totalMoney = 0;
 
-        if (item.is_simple) {
+        if (item?.product.is_simple) {
           totalMoney = item.product.discount * item.quantity;
         } else {
           totalMoney = item.attribute.discount * item.quantity;
@@ -522,7 +343,7 @@ class OrderController {
 
       const totalMoney = listCartItem.reduce((sum, item) => {
         let total = 0;
-        if (item.is_simple) {
+        if (item?.product.is_simple) {
           total = item.product.discount * item.quantity;
         } else {
           total = item.attribute.discount * item.quantity;
@@ -584,10 +405,6 @@ class OrderController {
         };
       }
 
-      const shippingCost = addressDetail
-        ? chargeShippingFee(addressDetail[0]?.dist)
-        : 0;
-
       const listOrderItem = await OrderItemsModel.create(listDateNew);
 
       const listIdOrderItem =
@@ -596,7 +413,13 @@ class OrderController {
       const totalMoney2 = listOrderItem.reduce((acc: number, item) => {
         return acc + item.totalMoney;
       }, 0);
+      const totalQuantity = listCartItem.reduce((acc: number, item) => {
+        return acc + item.quantity;
+      }, 0);
 
+      const shippingCost = addressDetail
+        ? chargeShippingFee(addressDetail[0]?.dist, totalMoney, totalQuantity)
+        : 0;
       // // Tạo một ngày mới sau 2 ngày
 
       let code = generateOrderCode();
@@ -626,6 +449,13 @@ class OrderController {
         orderItems: listIdOrderItem,
         status: 1,
         statusList: [0, 1],
+        informationOrder: [
+          {
+            name: "Đặt hàng thành công",
+            date: Date.now(),
+            content: "Đơn hàng đặt thành công",
+          },
+        ],
       });
 
       if (!newOrder) {
@@ -806,10 +636,6 @@ class OrderController {
         }
       }
 
-      const shippingCost = addressMain
-        ? chargeShippingFee(addressMain[0]?.dist)
-        : 0;
-
       const listIdObject = listId.map(
         (item: string) => new mongoose.Types.ObjectId(item)
       );
@@ -902,6 +728,10 @@ class OrderController {
           },
         },
       ]);
+
+      const shippingCost = addressMain
+        ? chargeShippingFee(addressMain[0]?.dist)
+        : 0;
 
       return res.status(STATUS.OK).json({
         message: "Lấy thành công ",
@@ -1014,10 +844,6 @@ class OrderController {
         }
       }
 
-      const shippingCost = addressMain
-        ? chargeShippingFee(addressMain[0]?.dist)
-        : 0;
-
       const listCartItem = await CartItemModel.find<IndexCartItem>({
         _id: {
           $in: [...listId],
@@ -1052,7 +878,6 @@ class OrderController {
           },
           {
             path: "attribute",
-            // match: { $ne: null },
             populate: [
               {
                 path: "color",
@@ -1065,6 +890,20 @@ class OrderController {
         ])
         .sort({ createdAt: -1 });
 
+      const check = listCartItem.find((item) => {
+        if (!item.product.is_simple && !item.attribute) {
+          return true;
+        }
+
+        return false;
+      });
+
+      if (check) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: `Sản phẩm "${check.product.name}" xảy ra lỗi mời bạn quay lại giỏ hàng`,
+        });
+      }
+
       const listData = listCartItem.reduce((acc: IListCart[], item) => {
         const findCart = acc.find((sub) => sub.productId === item.product._id);
 
@@ -1074,12 +913,14 @@ class OrderController {
             _id: item._id,
             thumbnail: item.product.thumbnail,
             name: item.product.name,
-            discount: item.is_simple
+            discount: item.product.is_simple
               ? item.product.discount
               : item.attribute.discount,
-            price: item.is_simple ? item.product.price : item.attribute.price,
+            price: item.product.is_simple
+              ? item.product.price
+              : item.attribute.price,
             attribute: item.attribute,
-            is_simple: item.is_simple,
+            is_simple: item.product.is_simple,
             createdAt: item.createdAt,
             productId: item.product._id,
           };
@@ -1093,12 +934,14 @@ class OrderController {
           _id: item._id,
           thumbnail: item.product.thumbnail,
           name: item.product.name,
-          discount: item.is_simple
+          discount: item.product.is_simple
             ? item.product.discount
             : item.attribute.discount,
-          price: item.is_simple ? item.product.price : item.attribute.price,
+          price: item.product.is_simple
+            ? item.product.price
+            : item.attribute.price,
           attribute: item.attribute,
-          is_simple: item.is_simple,
+          is_simple: item.product.is_simple,
           createdAt: item.createdAt,
           productId: item.product._id,
         };
@@ -1139,6 +982,14 @@ class OrderController {
       }, 0);
 
       let voucherMain = null;
+
+      const totalQuantity = listCartItem.reduce((acc: number, item) => {
+        return acc + item.quantity;
+      }, 0);
+
+      const shippingCost = addressMain
+        ? chargeShippingFee(addressMain[0]?.dist, totalMoney, totalQuantity)
+        : 0;
 
       if (voucher) {
         const existingVoucher = await VoucherModel.findOne({
@@ -1214,6 +1065,12 @@ class OrderController {
         },
       ]);
 
+      if (listId.length !== listCartItem.length) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đã có sản phẩm bị xóa",
+        });
+      }
+
       const checkProduct = listCartItem.find(
         (item) => item?.product?.is_deleted
       );
@@ -1225,7 +1082,7 @@ class OrderController {
         });
       }
       const checkAttribute = listCartItem.find(
-        (item) => !item.attribute && !item.is_simple
+        (item) => !item.attribute && !item?.product?.is_simple
       );
 
       if (checkAttribute) {
@@ -1237,7 +1094,7 @@ class OrderController {
 
       const checkQuantity = listCartItem.find((item) => {
         const quantity = item.quantity;
-        const quantityAttribute = item.is_simple
+        const quantityAttribute = item?.product?.is_simple
           ? item.product.quantity
           : item.attribute.quantity;
 
@@ -1258,7 +1115,7 @@ class OrderController {
         const productId = item.product._id;
         let totalMoney = 0;
 
-        if (item.is_simple) {
+        if (item?.product?.is_simple) {
           totalMoney = item.product.discount * item.quantity;
         } else {
           totalMoney = item.attribute.discount * item.quantity;
@@ -1272,7 +1129,7 @@ class OrderController {
 
       const totalMoney = listCartItem.reduce((sum, item) => {
         let total = 0;
-        if (item.is_simple) {
+        if (item?.product?.is_simple) {
           total = item.product.discount * item.quantity;
         } else {
           total = item.attribute.discount * item.quantity;
@@ -1342,7 +1199,7 @@ class OrderController {
       const { listId, addressId, voucher, paymentMethod, note, returnUrl } =
         req.body;
 
-      if (paymentMethod !== 2) {
+      if (paymentMethod !== 2 && paymentMethod !== 3 && paymentMethod !== 4) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Phương thức thanh toán lỗi",
         });
@@ -1397,9 +1254,6 @@ class OrderController {
           message: "Không có địa chỉ",
         });
       }
-      const shippingCost = addressDetail
-        ? chargeShippingFee(addressDetail[0]?.dist)
-        : 0;
 
       const listCartItem = await CartItemModel.find<IndexCartItem>({
         _id: {
@@ -1439,6 +1293,52 @@ class OrderController {
       if (!listCartItem || listCartItem.length === 0) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Không có sản phẩm nào",
+        });
+      }
+
+      if (listId.length !== listCartItem.length) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đã có sản phẩm bị xóa mời bạn trờ về",
+        });
+      }
+
+      const checkProduct = listCartItem.find(
+        (item) => item?.product?.is_deleted
+      );
+
+      if (checkProduct) {
+        const stringName = truncateSentence(checkProduct.product.name, 30);
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: `Sản phẩm '${stringName}' đã bị xóa`,
+        });
+      }
+      const checkAttribute = listCartItem.find(
+        (item) => !item.attribute && !item?.product?.is_simple
+      );
+
+      if (checkAttribute) {
+        const stringName = truncateSentence(checkAttribute.product.name, 30);
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: `Sản phẩm '${stringName}' đã xóa loại sản phẩm bạn chọn`,
+        });
+      }
+
+      const checkQuantity = listCartItem.find((item) => {
+        const quantity = item.quantity;
+        const quantityAttribute = item?.product?.is_simple
+          ? item.product.quantity
+          : item.attribute.quantity;
+
+        if (quantity > quantityAttribute) {
+          return true;
+        }
+        return false;
+      });
+
+      if (checkQuantity) {
+        const stringName = truncateSentence(checkQuantity.product.name, 30);
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: `Sản phẩm '${stringName}' đã vượt quá số lượng`,
         });
       }
 
@@ -1533,7 +1433,7 @@ class OrderController {
           : item.attribute.discount;
         return {
           product: item.product?._id,
-          status: 1,
+          status: 0,
           variant: variant,
           price: price,
           quantity: item.quantity,
@@ -1552,6 +1452,13 @@ class OrderController {
         return acc + item?.totalMoney;
       }, 0);
 
+      const totalQuantity = listOrderItem.reduce((acc: number, item) => {
+        return acc + item.quantity;
+      }, 0);
+
+      const shippingCost = addressDetail
+        ? chargeShippingFee(addressDetail[0]?.dist, totalMoney2, totalQuantity)
+        : 0;
       // Tạo một ngày mới sau 2 ngày
 
       let code = generateOrderCode();
@@ -1579,6 +1486,13 @@ class OrderController {
         note,
         code,
         orderItems: listIdOrderItem,
+        informationOrder: [
+          {
+            name: "Đặt hàng thành công",
+            date: Date.now(),
+            content: "Đơn hàng đặt thành công",
+          },
+        ],
       });
 
       if (!newOrder) {
@@ -1603,24 +1517,106 @@ class OrderController {
 
       const stateDeCodeUrl = encodeURIComponent(stateJson);
 
-      const ipAddress = String(
-        req.headers["x-forwarded-for"] ||
-          req.connection.remoteAddress ||
-          req.socket.remoteAddress ||
-          req.ip
-      );
+      if (paymentMethod === 3) {
+        const secretKey = process.env.SECRETKEY_MOMO!;
+        const accessKey = process.env.ACCESSKEY_MOMO!;
+        const partnerCode = process.env.PARTNERCODE_MOMO!;
 
-      const paymentUrl = vnpay.buildPaymentUrl({
-        vnp_Amount: newOrder?.amountToPay,
-        vnp_IpAddr: ipAddress,
-        vnp_TxnRef: `${newOrder._id}`,
-        vnp_OrderInfo: "Thanh toan cho ma GD:" + newOrder._id,
-        vnp_OrderType: ProductCode.Other,
-        vnp_ReturnUrl: `${returnUrl}?state=${stateDeCodeUrl}`, // Đường dẫn nên là của frontend
-        vnp_Locale: VnpLocale.VN,
-      });
+        const orderInfo = "Thanh toan MoMo";
+        const redirectUrl = `${returnUrl}?state=${stateDeCodeUrl}`;
+        const ipnUrl =
+          "https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b";
+        const requestType = "payWithMethod";
+        const amount = newOrder?.amountToPay;
+        const orderId = newOrder?._id;
+        const requestId = orderId;
+        const extraData = "";
+        const orderGroupId = "";
+        const autoCapture = true;
+        const lang = "vi";
 
-      return res.status(STATUS.OK).json({ paymentUrl });
+        const rawSignature =
+          "accessKey=" +
+          accessKey +
+          "&amount=" +
+          amount +
+          "&extraData=" +
+          extraData +
+          "&ipnUrl=" +
+          ipnUrl +
+          "&orderId=" +
+          orderId +
+          "&orderInfo=" +
+          orderInfo +
+          "&partnerCode=" +
+          partnerCode +
+          "&redirectUrl=" +
+          redirectUrl +
+          "&requestId=" +
+          requestId +
+          "&requestType=" +
+          requestType;
+
+        var signature = crypto
+          .createHmac("sha256", secretKey)
+          .update(rawSignature)
+          .digest("hex");
+
+        const requestBody = JSON.stringify({
+          partnerCode: partnerCode,
+          partnerName: "Test",
+          storeId: "MomoTestStore",
+          requestId: requestId,
+          amount: amount,
+          orderId: orderId,
+          orderInfo: orderInfo,
+          redirectUrl: redirectUrl,
+          ipnUrl: ipnUrl,
+          lang: lang,
+          requestType: requestType,
+          autoCapture: autoCapture,
+          extraData: extraData,
+          orderGroupId: orderGroupId,
+          signature: signature,
+        });
+        const responsive = await fetch(
+          "https://test-payment.momo.vn/v2/gateway/api/create",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: requestBody,
+          }
+        );
+
+        const data = await responsive.json();
+        if (!responsive.ok) {
+          return res.status(STATUS.BAD_REQUEST).json(data);
+        }
+
+        if (data?.resultCode !== 0) {
+          return res.status(STATUS.BAD_REQUEST).json(data);
+        }
+        return res.status(STATUS.OK).json({ paymentUrl: data?.payUrl });
+      } else {
+        const ipAddress = String(
+          req.headers["x-forwarded-for"] ||
+            req.connection.remoteAddress ||
+            req.socket.remoteAddress ||
+            req.ip
+        );
+        const paymentUrl = vnpay.buildPaymentUrl({
+          vnp_Amount: newOrder?.amountToPay,
+          vnp_IpAddr: ipAddress,
+          vnp_TxnRef: `${newOrder._id}`,
+          vnp_OrderInfo: "Thanh toan cho ma GD:" + newOrder._id,
+          vnp_OrderType: ProductCode.Other,
+          vnp_ReturnUrl: `${returnUrl}?state=${stateDeCodeUrl}`, // Đường dẫn nên là của frontend
+          vnp_Locale: VnpLocale.VN,
+        });
+        return res.status(STATUS.OK).json({ paymentUrl });
+      }
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
@@ -1646,6 +1642,10 @@ class OrderController {
         vnp_TxnRef,
         vnp_SecureHash,
       } = req.query;
+
+      console.log({
+        body: req.query,
+      });
 
       if (
         !vnp_Amount ||
@@ -1894,6 +1894,242 @@ class OrderController {
     }
   }
 
+  // momo
+  async returnUrlMomo(req: RequestModel, res: Response) {
+    try {
+      const user = req.user;
+      const {
+        state,
+        orderId,
+        amount,
+        transId,
+        resultCode,
+        payType,
+        responseTime,
+        requestId,
+      } = req.query;
+
+      if (!orderId || !amount || !requestId) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Giao dịch bất ổn xin mời về trang chủ",
+          url: "/",
+          type: 1,
+        });
+      }
+
+      const existingOrder = await OrderModel.findById(orderId).populate({
+        path: "orderItems",
+        populate: {
+          path: "product",
+          select: {
+            name: 1,
+            thumbnail: 1,
+          },
+        },
+      });
+
+      if (!existingOrder) {
+        if (state) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Không có đơn hàng nào",
+            type: 2,
+            url: `?state=${encodeURIComponent(state as string)}`,
+          });
+        } else {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Không có đơn hàng nào",
+            url: "/",
+            type: 1,
+          });
+        }
+      }
+
+      const secretKey = process.env.SECRETKEY_MOMO!;
+      const accessKey = process.env.ACCESSKEY_MOMO!;
+      const partnerCode = process.env.PARTNERCODE_MOMO!;
+
+      const rawSignature = `accessKey=${accessKey}&orderId=${orderId}&partnerCode=${partnerCode}&requestId=${requestId}`;
+
+      const signature = crypto
+        .createHmac("sha256", secretKey)
+        .update(rawSignature)
+        .digest("hex");
+
+      const requestBody = JSON.stringify({
+        partnerCode,
+        requestId: orderId,
+        orderId,
+        signature,
+        lang: "vi",
+      });
+
+      const responsive = await fetch(
+        "https://test-payment.momo.vn/v2/gateway/api/query",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: requestBody,
+        }
+      );
+      const data = await responsive.json();
+
+      if (!responsive.ok) {
+        await OrderModel.findByIdAndDelete(existingOrder._id);
+
+        await OrderItemsModel.deleteMany({
+          _id: {
+            $in: existingOrder.orderItems,
+          },
+        });
+
+        if (state) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Giao dịch xảy ra lỗi",
+            type: 2,
+            url: `?state=${encodeURIComponent(state as string)}`,
+          });
+        } else {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Giao dịch xảy ra lỗi",
+            url: "/",
+            type: 1,
+          });
+        }
+      }
+
+      if (data?.resultCode !== 0) {
+        await OrderModel.findByIdAndDelete(existingOrder._id);
+
+        await OrderItemsModel.deleteMany({
+          _id: {
+            $in: existingOrder.orderItems,
+          },
+        });
+
+        if (state) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Giao dịch xảy ra lỗi",
+            type: 2,
+            url: `?state=${encodeURIComponent(state as string)}`,
+          });
+        } else {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Giao dịch xảy ra lỗi",
+            url: "/",
+            type: 1,
+          });
+        }
+      }
+
+      const payment = await PaymentModel.create({
+        user: user?.id,
+        method: 2,
+        codeOrder: existingOrder.code,
+        transactionId: transId,
+        amount: amount,
+        paymentDate: responseTime,
+        cardType: payType,
+        bankCode: "MoMo",
+      });
+
+      const updateOder = await OrderModel.findByIdAndUpdate(
+        existingOrder._id,
+        {
+          payment: payment._id,
+          status: 1,
+          $push: {
+            statusList: 1,
+          },
+          amountToPay: 0,
+          paymentStatus: true,
+          paymentAmount: +amount,
+        },
+        { new: true }
+      );
+
+      if (!updateOder) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Xử lí đơn hàng lỗi chúng tôi sẽ hoàn trả tiền sau",
+          url: "/",
+          type: 1,
+        });
+      }
+
+      await OrderItemsModel.updateMany(
+        {
+          _id: {
+            $in: existingOrder.orderItems,
+          },
+        },
+        {
+          status: 1,
+        }
+      );
+
+      socketNotificationAdmin(
+        `<p>Đơn hàng <span style="color:blue;font-weight:500;">${updateOder?.code}</span> vừa được đặt, vui lòng kiểm tra thông tin</p>`,
+        TYPE_NOTIFICATION_ADMIN.ORDER,
+        updateOder?._id
+      );
+      socketNotificationAdmin(
+        `<p>Có giao dịch thanh toán online với số tiền : <span style="color:red;font-weight:500;">${formatCurrency(
+          payment?.amount
+        )}</span>, vui lòng kiểm tra thông tin</p>`,
+        TYPE_NOTIFICATION_ADMIN.PAYMENT,
+        `${payment?._id}`
+      );
+
+      const totalMoney = existingOrder?.orderItems?.reduce(
+        (sum, item) => sum + (item as IOrderItem).totalMoney,
+        0
+      );
+
+      const dataSendMail = {
+        orderItems: existingOrder?.orderItems,
+        code: existingOrder.code,
+        createdAt: new Date(existingOrder.createdAt).toLocaleString(),
+        address: existingOrder.address,
+        amountToPay: formatCurrency(0),
+        totalMoney: formatCurrency(totalMoney),
+        shippingCost: formatCurrency(existingOrder.shippingCost),
+        note: existingOrder.note,
+        voucher: formatCurrency(existingOrder.voucherAmount),
+        payment: formatCurrency(+amount),
+      };
+
+      sendToMail(
+        user?.email as string,
+        "Thông báo đặt hàng thành công tại NUCSHOP",
+        dataSendMail,
+        process.env.EMAIL!,
+        "/order.ejs"
+      );
+
+      if (state) {
+        const data = JSON.parse(state as string);
+
+        await CartItemModel.deleteMany({
+          _id: {
+            $in: data.listId,
+          },
+        });
+      }
+
+      return res.status(STATUS.OK).json({
+        message: "Đơn hàng giao dịch thành công",
+        type: 3,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  //zalo pay
+
   // server khi nhận đơn hàng
   async pagingOrderAdmin(req: RequestModel, res: Response) {
     try {
@@ -1907,6 +2143,7 @@ class OrderController {
         method,
         is_shipper,
         paymentStatus,
+        keyword,
       } = req.body;
       let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
@@ -1915,6 +2152,14 @@ class OrderController {
       let queryMethod = {};
       let queryPaymentStatus = {};
       let shipperQuery = {};
+      let queryKeyword = keyword
+        ? {
+            name: {
+              $regex: keyword,
+              $options: "i",
+            },
+          }
+        : {};
 
       if (startDate || endDate) {
         let dateStartString = null;
@@ -2194,6 +2439,12 @@ class OrderController {
         });
       }
 
+      if (existingOrder.status !== 1) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đơn hàng xảy ra lỗi",
+        });
+      }
+
       const checkAttribute = existingOrder.orderItems.find((item) => {
         const orderItem = item as IOrderItem;
 
@@ -2240,6 +2491,51 @@ class OrderController {
         });
       }
 
+      let futureDateTimeOrder = handleFutureDateTimeOrder(1000);
+
+      if (existingOrder.distance) {
+        futureDateTimeOrder = handleFutureDateTimeOrder(existingOrder.distance);
+      }
+      const orderUpdate = await OrderModel.findOneAndUpdate(
+        {
+          _id: existingOrder._id,
+          status: 1,
+        },
+        {
+          status: 2,
+          $push: {
+            statusList: 2,
+            informationOrder: {
+              name: "Xác nhận đơn hàng",
+              date: Date.now(),
+              content: "Đơn hàng đang được chuẩn bị",
+            },
+          },
+          confirmedDate: Date.now(),
+          estimatedDeliveryDate: futureDateTimeOrder,
+        }
+      );
+
+      if (!orderUpdate) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đồng ý đơn hàng lỗi vì có xung đột ",
+        });
+      }
+
+      await OrderItemsModel.updateMany(
+        {
+          _id: {
+            $in: existingOrder.orderItems,
+          },
+        },
+        {
+          status: 2,
+        },
+        {
+          now: true,
+        }
+      );
+
       existingOrder.orderItems.map(async (item, index) => {
         const orderItem = item as IOrderItem;
         const id = orderItem?.attribute?._id;
@@ -2260,44 +2556,63 @@ class OrderController {
         });
       });
 
-      let futureDateTimeOrder = handleFutureDateTimeOrder(1000);
-
-      if (existingOrder.distance) {
-        futureDateTimeOrder = handleFutureDateTimeOrder(existingOrder.distance);
-      }
-
-      const orderUpdate = await OrderModel.findByIdAndUpdate(
-        existingOrder._id,
-        {
-          status: 2,
-          $push: {
-            statusList: 2,
-          },
-          confirmedDate: Date.now(),
-          estimatedDeliveryDate: futureDateTimeOrder,
-        }
-      );
-
-      await OrderItemsModel.updateMany(
-        {
-          _id: {
-            $in: existingOrder.orderItems,
-          },
-        },
-        {
-          status: 2,
-        },
-        {
-          now: true,
-        }
-      );
-
       socketNotificationOrderClient(
         existingOrder?.code as string,
         2,
         `${existingOrder?.user}`,
         existingOrder?._id as string
       );
+
+      return res.status(STATUS.OK).json({
+        message: "Cập nhập đơn hàng thành công",
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  // chuyể đơn vị vận chuyển
+  async shippingUnit(req: RequestModel, res: Response) {
+    try {
+      const { id } = req.params;
+      const user = req.user;
+
+      if (!id)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn chưa chọn đơn hàng",
+        });
+
+      const existingOrder = await OrderModel.findById(id).populate({
+        path: "orderItems",
+        populate: [
+          {
+            path: "attribute",
+          },
+          {
+            path: "product",
+          },
+        ],
+      });
+
+      if (!existingOrder) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có đơn hàng nào",
+        });
+      }
+
+      await OrderModel.findByIdAndUpdate(existingOrder._id, {
+        is_shipper: true,
+        $push: {
+          informationOrder: {
+            name: "Sang bên vị vận chuyển",
+            date: Date.now(),
+            content:
+              "Đơn hàng đã đóng gói thành công và chuyển sang vận chuyển",
+          },
+        },
+      });
 
       return res.status(STATUS.OK).json({
         message: "Cập nhập đơn hàng thành công",
@@ -2341,6 +2656,12 @@ class OrderController {
         });
       }
 
+      if (existingOrder.status > 2) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đơn hàng không được sửa shipper",
+        });
+      }
+
       const existingShipper = await ShipperModel.findById(shipper);
 
       if (!existingShipper) {
@@ -2353,9 +2674,16 @@ class OrderController {
         id,
         {
           shipper: existingShipper._id,
+          $push: {
+            informationOrder: {
+              name: "Đã chọn người vận chuyển",
+              date: Date.now(),
+              content: `Đơn hàng đã được giao cho shipper ${existingShipper.fullName}`,
+            },
+          },
         },
         { new: true }
-      ).populate("address");
+      );
 
       socketNewOrderShipperClient(updateOrder, `${existingShipper.user}`);
 
@@ -2524,6 +2852,11 @@ class OrderController {
           status: 5,
           $push: {
             statusList: 5,
+            informationOrder: {
+              name: "Giao hàng thành công",
+              date: Date.now(),
+              content: `Đơn hàng đã được nhận bởi ${existingOrder.address.username}`,
+            },
           },
           deliveredDate: Date.now(),
         },
@@ -2593,7 +2926,19 @@ class OrderController {
         });
       }
 
-      if (existingOrder.status !== 1 && cancelBy !== 3) {
+      if (existingOrder.status !== 1 && existingOrder.status !== 3) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đơn hàng không thể huy",
+        });
+      }
+
+      if (existingOrder.status === 1 && cancelBy === 3) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đơn hàng không thể hủy",
+        });
+      }
+
+      if (existingOrder.status === 3 && cancelBy !== 3) {
         return res.status(STATUS.BAD_REQUEST).json({
           message: "Đơn hàng không thể hủy",
         });
@@ -2605,6 +2950,11 @@ class OrderController {
           status: 6,
           $push: {
             statusList: 6,
+            informationOrder: {
+              name: "Đơn hàng đã hủy",
+              date: Date.now(),
+              content: noteCancel,
+            },
           },
           noteCancel,
           cancelBy: cancelBy,

@@ -192,10 +192,15 @@ class AuthController {
 
       const existingEmail = await UserModel.findOne<IUser>({
         email,
-        uid,
       });
 
       if (existingEmail) {
+        if (existingEmail.uid !== uid) {
+          return res.status(STATUS.BAD_REQUEST).json({
+            message: "Email này đã có tài khoản",
+          });
+        }
+
         const accessToken = await this.generateAccessToken({
           id: existingEmail._id,
           email: existingEmail.email,
@@ -302,6 +307,23 @@ class AuthController {
             is_admin: (data as PayloadToken).is_admin,
             is_staff: (data as PayloadToken).is_staff,
           };
+
+          const user = await UserModel.findById((data as PayloadToken).id);
+
+          if (!user) {
+            res.clearCookie("token");
+
+            return res.status(STATUS.BAD_REQUEST).json({
+              message: "Không có tài khoản",
+            });
+          }
+
+          if (user.blocked_at) {
+            res.clearCookie("token");
+            return res.status(STATUS.BAD_REQUEST).json({
+              message: "Tài khoản đã bị khóa",
+            });
+          }
 
           const newAccessToken = await this.generateAccessToken(payload);
           const newRefreshToken = await this.generateRefreshToken(payload);

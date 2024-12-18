@@ -38,7 +38,7 @@ interface IStateInfoProduct {
 	}[];
 }
 
-const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
+const InfoProduct: React.FC<Props> = ({ product }) => {
 	const { isLoggedIn } = useAuth();
 	const navigate = useNavigate();
 	const { startAnimation, RenderAnimation } = useCartAnimation();
@@ -78,7 +78,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 					discount: currentAttribute?.discount as number,
 				});
 				setIsErrorAttribute(false);
-				setAttributeId(currentAttribute?._id || "");        
+				setAttributeId(currentAttribute?._id || "");
 				setTotalQuantity(currentAttribute?.quantity as number);
 			} else if (chooseSizeId) {
 				const quantity = product?.listSize?.find(
@@ -242,7 +242,7 @@ const InfoProduct: React.FC<Props> = ({ product, isLoading = false }) => {
 							</div>
 							<p className="flex items-center gap-1 text-nowrap max-md:border-none">
 								<span className="font-medium text-black">
-									{product?.ratingCount}
+									{product?.ratingQuantity}
 								</span>
 								Đánh giá
 							</p>

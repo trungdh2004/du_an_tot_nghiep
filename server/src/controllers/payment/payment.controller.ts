@@ -42,18 +42,100 @@ class PaymentController {
 
   async pagingAdmin(req: RequestModel, res: Response) {
     try {
-      const { pageIndex = 1, pageSize } = req.body;
+      const { pageIndex = 1, pageSize, keyword, startDate, endDate } = req.body;
       const limit = pageSize || 10;
       const skip = (pageIndex - 1) * limit;
+      let queryKeyword = keyword
+        ? {
+            codeOrder: {
+              $regex: keyword,
+              $options: "i",
+            },
+          }
+        : {};
+      let queryDate = {};
 
-      const listPayment = await PaymentModel.find()
+      if (startDate || endDate) {
+        let dateStartString = null;
+        let dateEndString = null;
+        if (startDate && endDate) {
+          dateStartString = new Date(startDate);
+          dateEndString = new Date(endDate);
+          const startOfDay = new Date(
+            dateStartString.getUTCFullYear(),
+            dateStartString.getUTCMonth(),
+            dateStartString.getUTCDate(),
+            0,
+            0,
+            0
+          );
+          const endOfDay = new Date(
+            dateEndString.getUTCFullYear(),
+            dateEndString.getUTCMonth(),
+            dateEndString.getUTCDate(),
+            23,
+            59,
+            59
+          );
+          queryDate = {
+            createdAt: {
+              $gte: startOfDay, // Lớn hơn hoặc bằng thời gian bắt đầu của ngày đó
+              $lt: endOfDay,
+            },
+          };
+        } else if (startDate) {
+          dateStartString = new Date(startDate);
+          const startOfDay = new Date(
+            dateStartString.getUTCFullYear(),
+            dateStartString.getUTCMonth(),
+            dateStartString.getUTCDate(),
+            0,
+            0,
+            0
+          );
+          queryDate = {
+            createdAt: {
+              $gte: startOfDay, // Lớn hơn hoặc bằng thời gian bắt đầu của ngày đó
+            },
+          };
+        } else if (endDate) {
+          dateEndString = new Date(endDate);
+
+          const endOfDay = new Date(
+            dateEndString.getUTCFullYear(),
+            dateEndString.getUTCMonth(),
+            dateEndString.getUTCDate(),
+            23,
+            59,
+            59
+          );
+
+          queryDate = {
+            createdAt: {
+              $lte: endOfDay,
+            },
+          };
+        }
+      }
+
+      console.log({
+        queryKeyword,
+      });
+
+      const listPayment = await PaymentModel.find({
+        ...queryKeyword,
+        ...queryDate,
+      })
         .skip(skip)
         .limit(limit)
         .sort({
           createdAt: -1,
         });
 
-      const countPayment = await PaymentModel.countDocuments();
+      const countPayment = await PaymentModel.countDocuments({
+        ...queryKeyword,
+        ...queryDate,
+      });
 
       const data = formatDataPaging({
         limit,

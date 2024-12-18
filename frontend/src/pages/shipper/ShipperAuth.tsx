@@ -22,9 +22,7 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { vi } from "date-fns/locale";
 import AddressLocation from "../clients/address/AddressLocation";
 import { useQuery } from "@tanstack/react-query";
 import { callCity, callCommune, callDistrict } from "@/service/address";
@@ -95,7 +93,7 @@ const ShipperAuth = () => {
 		isLoading: false,
 		url: "",
 	});
-	const { data: citys, isLoading } = useQuery<ICity[]>({
+	const { data: citys } = useQuery<ICity[]>({
 		queryKey: ["city"],
 		queryFn: async () => {
 			const { data } = await callCity();
@@ -109,7 +107,7 @@ const ShipperAuth = () => {
 	const onSubmit = async (payload: z.infer<typeof formSchema>) => {
 		try {
 			console.log("payload", payload);
-			const { data } = await registerShipper(payload as IShipper);
+			await registerShipper(payload as IShipper);
 			toast.success("Đăng kí tài khoản thành công");
 			router("/shipper/pending");
 		} catch (error) {
@@ -136,7 +134,7 @@ const ShipperAuth = () => {
 		try {
 			form.setValue("district", value);
 			form.setValue("commune", null);
-			const address = form.getValues("city")?.name;
+			// const address = form.getValues("city")?.name;
 			const { data } = await callCommune(value.idDistrict);
 			setCommune(data);
 		} catch (error: any) {
@@ -162,17 +160,17 @@ const ShipperAuth = () => {
 	return (
 		<div className="h-[100vh] ">
 			<OverlayViolet />
-			<div className="flex items-center justify-center min-h-screen py-4 px-2 w-full">
-				<div className="flex gap-4 justify-around w-full">
+			<div className="flex items-center justify-center w-full min-h-screen px-2 py-4">
+				<div className="flex justify-around w-full gap-4">
 					<div className="hidden md:flex  justify-center items-center max-w-[400px]">
 						<img src="/shipperAuth.png" alt="" />
 					</div>
-					<div className="dark:bg-slate-800 w-full max-w-xs md:max-w-sm px-2 md:px-4 lg:px-4 py-4 bg-white shadow-md border border-gray-200 rounded-2xl">
+					<div className="w-full max-w-xs px-2 py-4 bg-white border border-gray-200 shadow-md dark:bg-slate-800 md:max-w-sm md:px-4 lg:px-4 rounded-2xl">
 						<div>
 							<Form {...form}>
 								<form onSubmit={form.handleSubmit(onSubmit)}>
 									<div className="space-y-2">
-										<h2 className="text-center text-2xl font-bold col-span-2">
+										<h2 className="col-span-2 text-2xl font-bold text-center">
 											Thông tin đăng kí
 										</h2>
 										{/* end line */}
@@ -181,7 +179,7 @@ const ShipperAuth = () => {
 												control={form.control}
 												name="avatar"
 												render={({ field }) => (
-													<FormItem className="flex flex-wrap  items-center ">
+													<FormItem className="flex flex-wrap items-center ">
 														<label
 															htmlFor="file-upload"
 															className={cn(
@@ -212,11 +210,11 @@ const ShipperAuth = () => {
 																id="preview"
 															/>
 															{previewUrl?.isLoading && (
-																<div className="absolute bg-slate-50/50 w-full inset-0 flex items-center justify-center">
+																<div className="absolute inset-0 flex items-center justify-center w-full bg-slate-50/50">
 																	<AiOutlineLoading3Quarters
 																		size={20}
 																		strokeWidth="4px"
-																		className="animate-spin w-full "
+																		className="w-full animate-spin "
 																	/>
 																</div>
 															)}
@@ -326,7 +324,7 @@ const ShipperAuth = () => {
 																		) : (
 																			<span>Ngày sinh</span>
 																		)}
-																		<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+																		<CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
 																	</Button>
 																</FormControl>
 															</PopoverTrigger>
@@ -391,13 +389,13 @@ const ShipperAuth = () => {
 									</div>
 									<Button
 										type="submit"
-										className="w-full mt-3 text-white text-base font-bold bg-blue-500 hover:bg-blue-400"
+										className="w-full mt-3 text-base font-bold text-white bg-blue-500 hover:bg-blue-400"
 										disabled={previewUrl?.isLoading}
 									>
 										{previewUrl?.isLoading && (
 											<AiOutlineLoading3Quarters
 												size={20}
-												className="animate-spin text-white mr-2"
+												className="mr-2 text-white animate-spin"
 											/>
 										)}{" "}
 										Đăng kí

@@ -49,7 +49,6 @@ class AddressController {
 
   async postAddress(req: RequestModel, res: Response) {
     try {
-
       const { error } = addressValidation.validate(req.body);
 
       if (error) {
@@ -58,7 +57,7 @@ class AddressController {
         });
       }
 
-      let is_main = false
+      let is_main = false;
 
       const {
         username,
@@ -86,13 +85,13 @@ class AddressController {
       }
 
       const countAddress = await AddressModel.countDocuments({
-        user:req.user?.id,
-        is_main:true,
-        deleted:false,
-      })
+        user: req.user?.id,
+        is_main: true,
+        deleted: false,
+      });
 
-      if(countAddress === 0) {
-        is_main = true
+      if (countAddress === 0) {
+        is_main = true;
       }
 
       const newAddress = await AddressModel.create({
@@ -103,12 +102,12 @@ class AddressController {
         district,
         commune,
         address,
-        location:{
-          type: 'Point',
-          coordinates:location
+        location: {
+          type: "Point",
+          coordinates: location,
         },
         detailAddress,
-        is_main:is_main
+        is_main: is_main,
       });
 
       return res.status(STATUS.OK).json({
@@ -153,10 +152,16 @@ class AddressController {
         });
       }
 
-      await AddressModel.findByIdAndUpdate(existingAddress._id, {
-        deleted: true,
-        is_main:false
-      });
+      await AddressModel.findByIdAndDelete(existingAddress._id);
+
+      if (existingAddress.is_main) {
+        await AddressModel.findOneAndUpdate(
+          {
+            is_main: false,
+          },
+          { is_main: true }
+        );
+      }
 
       return res.status(STATUS.OK).json({
         message: "Xóa địa chỉ thành công",
@@ -310,9 +315,9 @@ class AddressController {
           district,
           commune,
           address,
-          location:{
-            type: 'Point',
-            coordinates:location
+          location: {
+            type: "Point",
+            coordinates: location,
           },
           detailAddress,
         },
@@ -330,10 +335,9 @@ class AddressController {
     }
   }
 
-
-  async getAddressMeter(req:RequestModel,res:Response) {
+  async getAddressMeter(req: RequestModel, res: Response) {
     try {
-      const {location,meter} = req.body;
+      const { location, meter } = req.body;
       // const data = await AddressModel.find({
       //   location:{
       //     $geoWithin: {
@@ -342,33 +346,32 @@ class AddressController {
       //         meter / 6378.1 // Khoảng cách tính bằng bán kính Trái Đất (6378.1 km)
       //       ]
       //     }
-          
+
       //   }
       // })
       const nearbyLocations = await AddressModel.aggregate([
         {
           $geoNear: {
             near: {
-              type: 'Point',
-              coordinates: location
+              type: "Point",
+              coordinates: location,
             },
-            distanceField: 'dist.calculated',
-            spherical: true
-          }
+            distanceField: "dist.calculated",
+            spherical: true,
+          },
         },
         {
-          $match: { _id:new mongoose.Types.ObjectId("66b1f3bc0f8ee5d0274e5263") }
+          $match: {
+            _id: new mongoose.Types.ObjectId("66b1f3bc0f8ee5d0274e5263"),
+          },
         },
       ]);
 
-
       return res.status(STATUS.OK).json({
         nearbyLocations,
-        message:"Lấy thành công"
-      })
-      
-
-    } catch (error:any) {
+        message: "Lấy thành công",
+      });
+    } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
         message: error.message,
       });

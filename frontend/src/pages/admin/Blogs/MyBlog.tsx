@@ -12,22 +12,22 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import instance from "@/config/instance";
 import { getAllTags } from "@/service/tags-admin";
+import { IBlogs } from "@/types/blogs";
 import { SearchObjectBlog } from "@/types/searchObjecTypes";
 import { typeResponse } from "@/types/typeReponse";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import { FaCommentDots, FaEye, FaRegComment, FaRegHeart } from "react-icons/fa";
+import { FaEye, FaRegComment, FaRegHeart } from "react-icons/fa";
 import { GrPowerReset } from "react-icons/gr";
 import { MdOutlinePublic, MdOutlinePublicOff } from "react-icons/md";
 import { SlOptionsVertical } from "react-icons/sl";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Select from "react-select";
 import { useDebounceCallback } from "usehooks-ts";
 
 const MyBlogs = () => {
-	const [blogs, setBlogs] = useState<IBlog[]>([]);
+	const [blogs, setBlogs] = useState<IBlogs[]>([]);
 	const [tags, setTags] = useState<ITag[]>([]);
-	const navigate = useNavigate();
 	const [response, setResponse] = useState<typeResponse>({
 		pageCount: 0,
 		totalElement: 0,
@@ -87,10 +87,10 @@ const MyBlogs = () => {
 		<>
 			<div className="">
 				<div className="flex flex-col gap-3 mb-5">
-					<div className="flex justify-between items-center">
+					<div className="flex items-center justify-between">
 						<h3 className="text-2xl font-semibold">Bài viết của tôi</h3>
 					</div>
-					<div className="flex justify-between items-center gap-3">
+					<div className="flex items-center justify-between gap-3">
 						<div className=" w-[40%]">
 							<Input
 								placeholder="Tìm kiếm bài viết"
@@ -160,9 +160,9 @@ const MyBlogs = () => {
 				</TabsList>
 			</Tabs>
 
-			<div className="grid grid-cols-12 gap-6 xl:gap-8 mt-10">
+			<div className="grid grid-cols-12 gap-6 mt-10 xl:gap-8">
 				{blogs.length ? (
-					blogs.map((item: IBlog, index: number) => (
+					blogs.map((item: any, index: number) => (
 						<>
 							<div
 								key={index}
@@ -196,13 +196,13 @@ const MyBlogs = () => {
 											</DropdownMenuContent>
 										</DropdownMenu>
 									</div>
-									<div className="h1/2 bg-gray-200 border-b border-gray-300">
+									<div className="bg-gray-200 border-b border-gray-300 h1/2">
 										<img
 											src={item.thumbnail_url || "/no-image.png"}
-											className="w-full h-full object-cover"
+											className="object-cover w-full h-full"
 											alt=""
 										/>
-										<div className="-mt-5 pl-5">
+										<div className="pl-5 -mt-5">
 											<img
 												src={item.user_id?.avatarUrl || "/avatar_25.jpg"}
 												className="w-[40px] h-[40px] border-[3px] border-white rounded-full"
@@ -211,8 +211,8 @@ const MyBlogs = () => {
 										</div>
 									</div>
 									{/* card-content */}
-									<div className="h1/2 p-5">
-										<div className="flex justify-between items-center">
+									<div className="p-5 h1/2">
+										<div className="flex items-center justify-between">
 											<h3 className="text-sm font-medium">
 												{item.user_id?.full_name}
 											</h3>
@@ -243,7 +243,7 @@ const MyBlogs = () => {
 										>
 											{item.title || "Bài viết chưa có tiêu đề"}
 										</Link>
-										<p className="text-xs pt-2 text-gray-400 line-clamp-2">
+										<p className="pt-2 text-xs text-gray-400 line-clamp-2">
 											{item.meta_description}
 										</p>
 										<div className="flex gap-2 min-[900px]:space-x-1 xl:space-x-4 absolute bottom-5 right-4">
@@ -279,13 +279,15 @@ const MyBlogs = () => {
 					</div>
 				)}
 			</div>
-			<div className="flex justify-center mt-5">
-				<Paginations
-					forcePage={searchObject.pageIndex - 1}
-					pageCount={response.pageCount}
-					handlePageClick={handleChangePag}
-				/>
-			</div>
+			{response.pageCount > 1 && (
+				<div className="flex justify-center mt-5">
+					<Paginations
+						forcePage={searchObject.pageIndex - 1}
+						pageCount={response.pageCount}
+						handlePageClick={handleChangePag}
+					/>
+				</div>
+			)}
 		</>
 	);
 };

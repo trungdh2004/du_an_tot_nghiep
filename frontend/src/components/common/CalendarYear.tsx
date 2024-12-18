@@ -16,7 +16,8 @@ interface Props {
 	lengthYear?: number;
 	minYear?: number;
 	onSelect: (value?: Date) => void;
-	initialFocus: boolean;
+	initialFocus?: boolean;
+	disabled?: (date: Date) => boolean;
 }
 
 declare function DayPicker(props: Props): JSX.Element;
@@ -28,7 +29,7 @@ const CalendarYear = ({
 	lengthYear,
 	minYear,
 	onSelect,
-	...props
+	disabled,
 }: CalendarProps) => {
 	const [currentMonth, setCurrentMonth] = React.useState<Date | undefined>(
 		value,
@@ -49,7 +50,7 @@ const CalendarYear = ({
 	];
 	const newDateYear = new Date().getFullYear();
 
-	const listYear = Array.from({ length: lengthYear ?? 16 }, (item, index) => {
+	const listYear = Array.from({ length: lengthYear ?? 16 }, (_, index) => {
 		return newDateYear - index - (minYear ?? 0);
 	});
 
@@ -58,7 +59,7 @@ const CalendarYear = ({
 			mode="single"
 			selected={value}
 			onSelect={onSelect}
-			className="rounded-md border shadow"
+			className="border rounded-md shadow"
 			captionLayout="dropdown"
 			locale={vi}
 			month={currentMonth}
@@ -69,12 +70,12 @@ const CalendarYear = ({
 			}}
 			components={{
 				Caption: (props: any) => {
-					const { day, modifiers, displayMonth, ...buttonProps } = props;
-					let dataNow = new Date(displayMonth);
+					const {  displayMonth} = props;
+					const dataNow = new Date(displayMonth);
 					const month = dataNow.getMonth();
 					const year = dataNow.getFullYear();
 					return (
-						<div className="grid grid-cols-3 w-full gap-2">
+						<div className="grid w-full grid-cols-3 gap-2">
 							<div className="col-span-2">
 								<Select
 									value={`${month}`}
@@ -106,7 +107,7 @@ const CalendarYear = ({
 									</SelectTrigger>
 									<SelectContent className="max-h-56">
 										<SelectGroup>
-											{listYear?.map((month, index) => (
+											{listYear?.map((month) => (
 												<SelectItem value={month + ""}>{month}</SelectItem>
 											))}
 										</SelectGroup>
@@ -117,7 +118,7 @@ const CalendarYear = ({
 					);
 				},
 			}}
-			{...props}
+			disabled={disabled}
 		/>
 	);
 };

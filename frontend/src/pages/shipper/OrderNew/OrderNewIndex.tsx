@@ -1,49 +1,62 @@
-import { Button } from "@/components/ui/button";
-import React, { useEffect, useState } from "react";
-import OrderItem from "../component/OrderItem";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { pagingOrderShipper } from "@/service/shipper";
-import { cn } from "@/lib/utils";
-import { IoReload } from "react-icons/io5";
+import Paginations from "@/components/common/Pagination";
 import { TooltipComponent } from "@/components/common/TooltipComponent";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
+import { pagingOrderShipper } from "@/service/shipper";
+import { useEffect, useState } from "react";
+import { IoReload } from "react-icons/io5";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
+import OrderItem from "../component/OrderItem";
 
 const OrderNewIndex = () => {
+  const [_, setPageIndex] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParamsObject, setSearchParamsObject] = useState(()=>{
+    const paramsObject: any = Object.fromEntries(searchParams.entries());
+    return {
+      pageIndex: paramsObject?.pageIndex | 1,
+      pageSize: 12,
+    }
+    
+  });
 	const [status, setStatus] = useState(2);
 	const [resultOrder, setResultOrder] = useState({
 		content: [],
 		pageIndex: 1,
 		totalPage: 1,
 	});
+  const getOrderShipper = async (pageIndex:number) =>{
+    try {
+      const { data } = await pagingOrderShipper(pageIndex, status);
 
+      setResultOrder({
+        content: data.content,
+        pageIndex: data.pageIndex,
+        totalPage: data.totalPage,
+      });
+    } catch (error) {}
+  }
 	useEffect(() => {
-		(async () => {
-			try {
-				const { data } = await pagingOrderShipper(1, status);
-
-				setResultOrder({
-					content: data.content,
-					pageIndex: data.pageIndex,
-					totalPage: data.totalPage,
-				});
-			} catch (error) {}
-		})();
-	}, [status]);
+		getOrderShipper(searchParamsObject.pageIndex);
+	}, [status,searchParamsObject]);
 
 	const handleNextPage = async () => {
 		try {
 			const pageNext = resultOrder.pageIndex + 1 || 2;
 			const { data } = await pagingOrderShipper(pageNext, status);
-			setResultOrder({
-				content: data.content,
-				pageIndex: data.pageIndex,
-				totalPage: data.totalPage,
+			setResultOrder((prev: any) => {
+				return {
+					...prev,
+					content: [...prev.content, ...data.content],
+					pageIndex: data.pageIndex,
+				};
 			});
 		} catch (error) {}
 	};
@@ -62,21 +75,17 @@ const OrderNewIndex = () => {
 		}
 	};
 
-	const hasMore =
-		resultOrder.content.length === 0
-			? false
-			: resultOrder.pageIndex !== resultOrder.totalPage;
 
 	return (
-		<div className=" relative">
-			<header className="p-2 md:px-4 md:mb-4 flex justify-between items-end sticky top-0 bg-main w-full">
-				<h2 className="font-semibold text-xl sm:text-2xl leading-8">
+		<div className="relative ">
+			<header className="sticky top-0 flex items-end justify-between w-full p-2 md:px-4 md:mb-4 bg-main">
+				<h2 className="text-xl font-semibold leading-8 sm:text-2xl">
 					Đơn hàng
 				</h2>
 				<div className="flex items-center gap-2">
 					<TooltipComponent label="Lấy dữ liệu mới">
 						<button
-							className="p-1 rounded-sm bg-orange-400 text-white"
+							className="p-1 text-white bg-orange-400 rounded-sm"
 							onClick={handleReset}
 						>
 							<IoReload size={20} />
@@ -119,12 +128,39 @@ const OrderNewIndex = () => {
 					</div>
 				</div>
 			</header>
+      <div className="grid w-full grid-cols-1 gap-4 px-2 md:grid-cols-2 md:px-4">
+					{resultOrder?.content?.map((order: any) => (
+						<OrderItem key={order._id} order={order} onHandleSuccess={()=>getOrderShipper(1)}/>
+					))}
 
-			<InfiniteScroll
+					{resultOrder?.content?.length === 0 && (
+						<div className="flex items-center justify-center w-full h-20 col-span-2 p-4 text-center border rounded-md">
+							Không có đơn hàng
+						</div>
+					)}
+				</div>
+        {resultOrder?.content?.length > 0 && (
+						<div className="flex items-center justify-center py-4">
+							<Paginations
+								pageCount={resultOrder?.totalPage}
+								handlePageClick={(event: any) => {
+									setPageIndex(event.selected + 1);
+									setSearchParamsObject((prev) => ({
+										...prev,
+										pageIndex: event.selected + 1,
+									}));
+									searchParams.set("pageIndex", event.selected + 1);
+									setSearchParams(searchParams);
+								}}
+								forcePage={searchParamsObject.pageIndex - 1}
+							/>
+						</div>
+					)}
+			{/* <InfiniteScroll
 				dataLength={resultOrder.content.length} //This is important field to render the next resultOrder
 				next={handleNextPage}
-				hasMore={hasMore}
-				loader={<p className="text-center text-sm text-gray-400">Loading...</p>}
+				hasMore={resultOrder?.pageIndex !== resultOrder?.totalPage}
+				loader={<p className="text-sm text-center text-gray-400">Loading...</p>}
 				endMessage={<p style={{ textAlign: "center" }}></p>}
 				refreshFunction={() => {
 					console.log("refreshFunction");
@@ -139,18 +175,18 @@ const OrderNewIndex = () => {
 				}
 				scrollableTarget="scrollableDiv"
 			>
-				<div className="grid grid-cols-1 md:grid-cols-2 w-full gap-4 px-2 md:px-4">
+				<div className="grid w-full grid-cols-1 gap-4 px-2 md:grid-cols-2 md:px-4">
 					{resultOrder?.content?.map((order: any) => (
-						<OrderItem key={order._id} order={order} />
+						<OrderItem key={order._id} order={order} onHandleSuccess={getOrderShipper}/>
 					))}
 
 					{resultOrder?.content?.length === 0 && (
-						<div className="w-full col-span-2 border rounded-md h-20 flex items-center justify-center p-4 text-center">
+						<div className="flex items-center justify-center w-full h-20 col-span-2 p-4 text-center border rounded-md">
 							Không có đơn hàng
 						</div>
 					)}
 				</div>
-			</InfiniteScroll>
+			</InfiniteScroll> */}
 		</div>
 	);
 };

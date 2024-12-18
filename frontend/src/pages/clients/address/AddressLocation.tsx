@@ -6,7 +6,10 @@ import {
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { callCity } from "@/service/address";
+import { PopoverClose } from "@radix-ui/react-popover";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
@@ -41,7 +44,6 @@ interface IProps {
 const AddressLocation = ({
 	field,
 	districts,
-	citys,
 	commune,
 	classContent,
 	iCity,
@@ -51,7 +53,19 @@ const AddressLocation = ({
 	handleOnChangeDistrict,
 	handleOnChangeCommune,
 }: IProps) => {
-	const [initValue, setInitValue] = useState("idProvince");
+	const { data: citys = [] } = useQuery<ICity[]>({
+		queryKey: ["city"],
+		queryFn: async () => {
+			const { data } = await callCity();
+			return data;
+		},
+		staleTime: Infinity,
+	});
+	const [initValue, setInitValue] = useState("idDistrict");
+
+	useEffect(() => {
+		handleOnChangeCity(citys[0]);
+	}, [citys]);
 
 	return (
 		<Popover>
@@ -72,14 +86,7 @@ const AddressLocation = ({
 				)}
 			>
 				<Tabs value={initValue} className="w-full">
-					<TabsList className="grid w-full grid-cols-3  bg-white">
-						<TabsTrigger
-							value="idProvince"
-							onClick={() => setInitValue("idProvince")}
-							className="border-b data-[state=active]:border-custom data-[state=active]:text-custom rounded-none"
-						>
-							Thành phố
-						</TabsTrigger>
+					<TabsList className="grid w-full grid-cols-2  bg-white">
 						<TabsTrigger
 							onClick={() => setInitValue("idDistrict")}
 							value="idDistrict"
@@ -97,31 +104,6 @@ const AddressLocation = ({
 							Xã
 						</TabsTrigger>
 					</TabsList>
-
-					<TabsContent
-						value="idProvince"
-						className="max-h-[240px] w-full overflow-y-auto scroll-custom px-1"
-					>
-						<div>
-							{citys?.map((row) => (
-								<button
-									className={cn(
-										"w-full text-start border-b p-1 cursor-pointer hover:bg-gray-50 text-sm",
-										row?.idProvince === iCity?.idProvince &&
-											"bg-gray-100 text-slate-400",
-									)}
-									onClick={() => {
-										handleOnChangeCity(row);
-										setInitValue("idDistrict");
-									}}
-									disabled={row?.idProvince === iCity?.idProvince}
-								>
-									{row?.name}
-								</button>
-							))}
-						</div>
-					</TabsContent>
-
 					<TabsContent
 						value="idDistrict"
 						className="max-h-[240px] w-full overflow-y-auto scroll-custom px-1"
@@ -161,19 +143,21 @@ const AddressLocation = ({
 					>
 						<div>
 							{commune?.map((row) => (
-								<button
-									className={cn(
-										"w-full text-start border-b p-1 cursor-pointer hover:bg-gray-50 text-sm",
-										row?.idCommune === idCommune?.idCommune &&
-											"bg-gray-100 text-slate-400",
-									)}
-									onClick={() => {
-										handleOnChangeCommune(row);
-									}}
-									disabled={row?.idCommune === idCommune?.idCommune}
-								>
-									{row?.name}
-								</button>
+								<PopoverClose asChild>
+									<button
+										className={cn(
+											"w-full text-start border-b p-1 cursor-pointer hover:bg-gray-50 text-sm",
+											row?.idCommune === idCommune?.idCommune &&
+												"bg-gray-100 text-slate-400",
+										)}
+										onClick={() => {
+											handleOnChangeCommune(row);
+										}}
+										disabled={row?.idCommune === idCommune?.idCommune}
+									>
+										{row?.name}
+									</button>
+								</PopoverClose>
 							))}
 
 							{commune?.length === 0 && (

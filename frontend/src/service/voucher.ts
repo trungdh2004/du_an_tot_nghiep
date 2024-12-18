@@ -19,7 +19,7 @@ export const getPaginatedVouchers = async (
 export const getPaginatedVouchersClient = async (
 	SearchObjectType: SearchObjectType,
 ) => {
-	return instance.post(`${url}/paging`, SearchObjectType);
+	return instance.post(`${url}/pagingClient`, SearchObjectType);
 };
 
 export const updateVoucherById = async (payload?: IVoucher) => {

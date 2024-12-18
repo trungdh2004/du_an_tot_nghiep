@@ -10,6 +10,8 @@ import UserModel from "../../models/User.Schema";
 import { socketNotificationOrderClient } from "../../socket/socketNotifycationClient.service";
 import STATUS from "../../utils/status";
 import { IOrderItem } from "./../../interface/order";
+import { socketNotificationAdmin } from "../../socket/socketNotifycationServer.service";
+import { TYPE_NOTIFICATION_ADMIN } from "../../config/typeNotification";
 
 class ShipperController {
   async registerShipper(req: RequestModel, res: Response) {
@@ -233,18 +235,17 @@ class ShipperController {
         status: {
           $in: [2, 3],
         },
-      })
-        .select({
-          code: 1,
-          address: 1,
-          _id: 1,
-          status: 1,
-          totalMoney: 1,
-          amountToPay: 1,
-          shippingCost: 1,
-          orderItems: 1,
-          note: 1,
-        });
+      }).select({
+        code: 1,
+        address: 1,
+        _id: 1,
+        status: 1,
+        totalMoney: 1,
+        amountToPay: 1,
+        shippingCost: 1,
+        orderItems: 1,
+        note: 1,
+      });
 
       return res.status(STATUS.OK).json(listOrder);
     } catch (error: any) {
@@ -447,7 +448,7 @@ class ShipperController {
 
       if (existingOrder.shipper.toString() !== shipper?.id.toString()) {
         return res.status(STATUS.BAD_REQUEST).json({
-          message: "Bạn không có quyền đơn hàng này",
+          message: "Đơn hàng này không phải của bạn",
         });
       }
 
@@ -457,6 +458,11 @@ class ShipperController {
           status: 3,
           $push: {
             statusList: 3,
+            informationOrder: {
+              name: "Đơn hàng đang vận chuyển",
+              date: Date.now(),
+              content: `Đơn hàng mã ${existingOrder.code} đang đã được vận chuyển`,
+            },
           },
           shippingDate: Date.now(),
         },
@@ -525,6 +531,11 @@ class ShipperController {
           status: 4,
           $push: {
             statusList: 4,
+            informationOrder: {
+              name: "Đơn hàng đã giao thành công",
+              date: Date.now(),
+              content: `Đơn hàng mã ${existingOrder.code} đã được giao thành công`,
+            },
           },
           shippedDate: Date.now(),
         },
@@ -654,11 +665,11 @@ class ShipperController {
       })
         .sort({ confirmedDate: -1 })
         .skip(skip)
-        .limit(limit)
+        .limit(limit);
 
       const count = await OrderModel.countDocuments({
-        status: status,
         shipper: shipper?.id,
+        ...queryStatus,
       });
 
       const result = formatDataPaging({
@@ -679,10 +690,9 @@ class ShipperController {
   async pagingOrderShipperAdmin(req: RequestModel, res: Response) {
     try {
       const { id } = req.params;
-      const pageIndex = Number(req.query.page) || 1;
-      const { status = 2 } = req.body;
+      const { status = 2, pageIndex, pageSize } = req.body;
 
-      let limit = 10;
+      let limit = pageSize || 10;
       let skip = (pageIndex - 1) * limit || 0;
 
       let queryStatus = {};
@@ -713,10 +723,10 @@ class ShipperController {
       })
         .sort({ confirmedDate: -1 })
         .skip(skip)
-        .limit(limit)
+        .limit(limit);
 
       const count = await OrderModel.countDocuments({
-        status: status,
+        ...queryStatus,
         shipper: id,
       });
 
@@ -781,7 +791,173 @@ class ShipperController {
       });
     } catch (error: any) {
       return res.status(STATUS.INTERNAL).json({
-        message:error?.message,
+        message: error?.message,
+      });
+    }
+  }
+  async getListOrderIsShipper(req: RequestShipper, res: Response) {
+    try {
+      const shipper = req.shipper;
+      const { pageSize, pageIndex } = req.body;
+      let limit = pageSize || 10;
+      let skip = (pageIndex - 1) * limit || 0;
+      const listOrder = await OrderModel.find({
+        status: 2,
+        is_shipper: true,
+        shipper: null,
+      })
+        .skip(skip)
+        .limit(limit)
+        .select("-informationOrder");
+
+      const count = await OrderModel.countDocuments({
+        status: 2,
+        is_shipper: true,
+        shipper: null,
+      });
+
+      const data = formatDataPaging({
+        pageIndex: pageSize,
+        limit,
+        count,
+        data: listOrder,
+      });
+
+      return res.status(STATUS.OK).json({
+        ...data,
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async refuseOrderShipper(req: RequestShipper, res: Response) {
+    try {
+      const { id } = req.params;
+      const shipper = req.shipper;
+
+      if (!shipper) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn không phải là shipper",
+        });
+      }
+
+      if (!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Chưa nhập giá trị",
+        });
+      }
+
+      const existingOrder = await OrderModel.findById(id).populate(
+        "orderItems"
+      );
+
+      if (!existingOrder)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có đơn hàng",
+        });
+
+      if (existingOrder.shipper.toString() !== shipper?.id.toString()) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đơn hàng này không phải của bạn",
+        });
+      }
+
+      if (existingOrder.status !== 2) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đơn hàng này không không thể hủy giao",
+        });
+      }
+      const updateOrder = await OrderModel.findByIdAndUpdate(
+        id,
+        {
+          status: 2,
+          $push: {
+            informationOrder: {
+              name: "Từ chối giao hàng",
+              date: Date.now(),
+              content: `Nhân viên ${shipper.fullName} đã từ chối giao hàng`,
+            },
+          },
+          shipper: null,
+        },
+        { new: true }
+      );
+
+      socketNotificationAdmin(
+        `<p>Đơn hàng: <span style="color:blue;font-weight:500;">${existingOrder.code}</span> đã bị từ chối giao bởi ${shipper.fullName}</p>`,
+        TYPE_NOTIFICATION_ADMIN.ORDER,
+        existingOrder._id
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Cập nhập đơn thành công",
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
+      });
+    }
+  }
+
+  async confirmOrderShipper(req: RequestShipper, res: Response) {
+    try {
+      const { id } = req.params;
+      const shipper = req.shipper;
+
+      if (!shipper) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Bạn không phải là shipper",
+        });
+      }
+
+      if (!id) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Chưa nhập giá trị",
+        });
+      }
+
+      const existingOrder = await OrderModel.findById(id);
+
+      if (!existingOrder)
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Không có đơn hàng",
+        });
+
+      if (existingOrder.shipper) {
+        return res.status(STATUS.BAD_REQUEST).json({
+          message: "Đơn hàng này đã có người khác giao",
+        });
+      }
+      const updateOrder = await OrderModel.findByIdAndUpdate(
+        id,
+        {
+          $push: {
+            informationOrder: {
+              name: "Nhận giao hàng",
+              date: Date.now(),
+              content: `Nhân viên ${shipper?.fullName} đã nhận giao hàng`,
+            },
+          },
+          shipper: shipper?.id,
+        },
+        { new: true }
+      );
+
+      socketNotificationAdmin(
+        `<p>Đơn hàng: <span style="color:blue;font-weight:500;">${existingOrder.code}</span> đã nhận giao bởi ${shipper.fullName}</p>`,
+        TYPE_NOTIFICATION_ADMIN.ORDER,
+        existingOrder._id
+      );
+
+      return res.status(STATUS.OK).json({
+        message: "Cập nhập đơn thành công",
+      });
+    } catch (error: any) {
+      return res.status(STATUS.INTERNAL).json({
+        message: error.message,
       });
     }
   }

@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { FiMapPin } from "react-icons/fi";
-import ListAddressOrderDetail from "./ListAddressOrderDetail";
-import AddAddressOrder from "./AddAddressOrder";
-import { FaPlus } from "react-icons/fa";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { fetchAddress } from "@/service/address";
 import { Skeleton } from "@/components/ui/skeleton";
+import { fetchAddress } from "@/service/address";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { FaPlus } from "react-icons/fa";
+import { FiMapPin } from "react-icons/fi";
+import AddAddressOrder from "./AddAddressOrder";
+import ListAddressOrderDetail from "./ListAddressOrderDetail";
 const AddressOrder = ({ data, handleChangeAddress }: any) => {
 	const [openListAddress, setOpenListAddress] = useState(false);
 	const [openAdd, setOpenAdd] = useState(false);
@@ -14,13 +14,12 @@ const AddressOrder = ({ data, handleChangeAddress }: any) => {
 		isPending,
 		isError,
 		data: address,
-		isFetching,
-		isPlaceholderData,
 	} = useQuery({
 		queryKey: ["address", pageIndex],
 		queryFn: () => fetchAddress(pageIndex),
 		placeholderData: keepPreviousData,
 	});
+
 	return (
 		<div className="">
 			{isPending && (
@@ -54,19 +53,19 @@ const AddressOrder = ({ data, handleChangeAddress }: any) => {
 						</div>
 					) : (
 						<div className="flex flex-col gap-3">
-							<span className="text-sm tracking-normal pr-3">
+							<span className="pr-3 text-sm tracking-normal">
 								<span>
 									<strong>Họ tên : </strong>
 								</span>
 								{data?.address?.username}
 							</span>
-							<span className="text-sm tracking-normal pr-3">
+							<span className="pr-3 text-sm tracking-normal">
 								<span>
 									<strong>Số điện thoại : </strong>
 								</span>
 								{data?.address?.phone}
 							</span>
-							<p className="text-sm tracking-normal pr-3">
+							<p className="pr-3 text-sm tracking-normal">
 								<span>
 									<strong>Địa chỉ : </strong>
 								</span>
@@ -103,7 +102,12 @@ const AddressOrder = ({ data, handleChangeAddress }: any) => {
 				/>
 			)}
 			{!!openAdd && (
-				<AddAddressOrder open={openAdd} closeOpen={() => setOpenAdd(false)} />
+				<AddAddressOrder
+					open={openAdd}
+					closeOpen={() => setOpenAdd(false)}
+					handleChangeAddress={handleChangeAddress}
+					address={address}
+				/>
 			)}
 		</div>
 	);

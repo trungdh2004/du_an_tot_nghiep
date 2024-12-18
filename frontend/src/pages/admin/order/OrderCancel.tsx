@@ -1,21 +1,21 @@
-import SearchOrder from "./SearchOrder";
 import { formatCurrency } from "@/common/func";
 import TableComponent from "@/components/common/TableComponent";
-import { Input } from "@/components/ui/input";
-import { pagingOrder, pagingOrderAdmin } from "@/service/order";
+import { pagingOrderAdmin } from "@/service/order";
 import { SearchObjectOrder } from "@/types/searchObjectOrder";
 import { typeResponse } from "@/types/typeReponse";
 import { ColumnDef } from "@tanstack/react-table";
 import { format, parseISO } from "date-fns";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { IoEyeSharp } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import SearchOrder from "./SearchOrder";
 const OrderCancel = () => {
 	interface IOrder {
 		_id: string;
 		code: string;
 		createdAt: string;
 		totalMoney: number;
+		orderDate: string;
 		user: {
 			full_name: string;
 		};
@@ -29,7 +29,7 @@ const OrderCancel = () => {
 			status: 6,
 			pageIndex: 1,
 			pageSize: 5,
-			sort: 1,
+			sort: -1,
 			method: null,
 			startDate: null,
 			endDate: null,
@@ -139,10 +139,10 @@ const OrderCancel = () => {
 			},
 		},
 		{
-			accessorKey: "createdAt",
+			accessorKey: "orderDate",
 			header: "Ngày đặt hàng",
 			cell: ({ row }) => {
-				const parsedDate = parseISO(row.original.createdAt);
+				const parsedDate = parseISO(row.original.orderDate);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
 				return <div className="font-medium">{formattedDate}</div>;
 			},
@@ -153,7 +153,7 @@ const OrderCancel = () => {
 		<div>
 			<div className="flex flex-col gap-3">
 				<div className="flex flex-col gap-3">
-					<h4 className="font-medium text-xl">Danh sách đơn hàng đã hủy</h4>
+					<h4 className="text-xl font-medium">Danh sách đơn hàng đã hủy</h4>
 					<SearchOrder
 						searchObjectOrder={searchObjectOrder}
 						setSearchObjectOrder={setSearchObjectOrder}

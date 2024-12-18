@@ -1,24 +1,9 @@
+import TableComponent from "@/components/common/TableComponent";
 import { pagingCustomer } from "@/service/customer";
 import { ICustomer } from "@/types/customer";
-import { typeResponse } from "@/types/typeReponse";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
-import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import TableComponent from "@/components/common/TableComponent";
-import { useDebounceCallback } from "usehooks-ts";
-import { parseISO, format } from "date-fns";
-import {
-	DropdownMenu,
-	DropdownMenuCheckboxItem,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuRadioGroup,
-	DropdownMenuRadioItem,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { useEffect, useState } from "react";
+
 import { formatCurrency } from "@/common/func";
 
 interface User {
@@ -41,7 +26,7 @@ interface IData {
 }
 const CustomerList = () => {
 	const [rowSelection, setRowSelection] = useState<RowSelectionState>({}); // xử lí selected
-	const [listRowSeleted, setListRowSelected] = useState<IData[]>([]);
+	const [, setListRowSelected] = useState<IData[]>([]);
 	const [data, setData] = useState([]);
 	const [searchObject, setSearchObject] = useState<ICustomer>({
 		sort: -1,
@@ -91,22 +76,24 @@ const CustomerList = () => {
 	};
 	const columns: ColumnDef<IData>[] = [
 		{
+			id: "full_name",
 			accessorKey: "full_name",
 			header: () => {
-				return <div className="md:text-base text-xs">Tên</div>;
+				return <div className="text-xs md:text-base">Tên</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs">
+					<div className="text-xs md:text-base">
 						{row?.original?.user?.full_name}
 					</div>
 				);
 			},
 		},
 		{
+			id: "avatarUrl",
 			accessorKey: "avatarUrl",
 			header: () => {
-				return <div className="md:text-base text-xs">Ảnh</div>;
+				return <div className="text-xs md:text-base">Ảnh</div>;
 			},
 			cell: ({ row }) => {
 				return (
@@ -118,72 +105,77 @@ const CustomerList = () => {
 			},
 		},
 		{
+			id: "totalOrder",
 			accessorKey: "totalOrder",
 			header: () => {
-				return <div className="md:text-base text-xs">Số đơn hàng</div>;
+				return <div className="text-xs md:text-base">Số đơn hàng</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs text-center">
+					<div className="text-xs text-center md:text-base">
 						{row?.original?.totalOrder}
 					</div>
 				);
 			},
 		},
 		{
+			id: "totalOrderCancel",
 			accessorKey: "totalOrderCancel",
 			header: () => {
-				return <div className="md:text-base text-xs">Số đơn hủy hàng</div>;
+				return <div className="text-xs md:text-base">Số đơn hủy hàng</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs text-center">
+					<div className="text-xs text-center md:text-base">
 						{row?.original?.totalOrderCancel}
 					</div>
 				);
 			},
 		},
 		{
+			id: "totalOrderSuccess",
 			accessorKey: "totalOrderSuccess",
 			header: () => {
 				return (
-					<div className="md:text-base text-xs">Số đơn hàng thành công</div>
+					<div className="text-xs md:text-base">Số đơn hàng thành công</div>
 				);
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs text-center">
+					<div className="text-xs text-center md:text-base">
 						{row?.original?.totalOrderSuccess}
 					</div>
 				);
 			},
 		},
 		{
-			accessorKey: "totalOrder",
+			id: "totalMoney",
+			accessorKey: "totalMoney",
 			header: () => {
-				return <div className="md:text-base text-xs">Số tiền hàng</div>;
+				return <div className="text-xs md:text-base">Số tiền hàng</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs text-center">
+					<div className="text-xs text-center md:text-base">
 						{formatCurrency(row?.original?.totalMoney)}
 					</div>
 				);
 			},
 		},
-		{
-			accessorKey: "totalOrder",
-			header: () => {
-				return <div className="md:text-base text-xs">Xếp hạng</div>;
-			},
-			cell: ({ row }) => {
-				return (
-					<div className="md:text-base text-xs text-center">
-						{row?.original?.rank}
-					</div>
-				);
-			},
-		},
+		// {
+		// 	id: "rank",
+		// 	accessorKey: "rank",
+		// 	header: () => {
+		// 		return <div className="text-xs md:text-base">Xếp hạng</div>;
+		// 	},
+		// 	cell: ({ row }) => {
+		// 		return (
+		// 			<div className="text-xs text-center md:text-base">
+		// 				{row?.original?.rank}
+		// 			</div>
+		// 		);
+		// 	},
+		// },
 		// {
 		// 	id: "actions",
 		// 	enableHiding: false,
@@ -191,9 +183,9 @@ const CustomerList = () => {
 		// 		return (
 		// 			<DropdownMenu>
 		// 				<DropdownMenuTrigger asChild>
-		// 					<Button variant="ghost" className="h-8 w-8 p-0">
+		// 					<Button variant="ghost" className="w-8 h-8 p-0">
 		// 						<span className="sr-only">Open menu</span>
-		// 						<HiOutlineDotsVertical className="h-4 w-4" />
+		// 						<HiOutlineDotsVertical className="w-4 h-4" />
 		// 					</Button>
 		// 				</DropdownMenuTrigger>
 		// 				<DropdownMenuContent align="end">
@@ -221,7 +213,7 @@ const CustomerList = () => {
 	];
 	return (
 		<div>
-			<h4 className="font-medium md:text-xl text-base py-4">
+			<h4 className="py-4 text-base font-medium md:text-xl">
 				Danh sách khách hàng
 			</h4>
 			<TableComponent

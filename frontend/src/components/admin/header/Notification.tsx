@@ -6,22 +6,18 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IoNotificationsOutline } from "react-icons/io5";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { IoCheckmark } from "react-icons/io5";
 import { HiMiniEllipsisHorizontal } from "react-icons/hi2";
-import { IoIosRemoveCircleOutline } from "react-icons/io";
 import {
 	INotificationAdmin,
 	ISearchObjectNotificationsAdmin,
 } from "@/types/notification.interface";
 import { TYPE_NOTIFICATION } from "@/config/configType";
 import { useNavigate } from "react-router-dom";
-import {
-	watchedNotification,
-	watchedNotificationAdmin,
-} from "@/service/notification.service";
+
 import { calculateTimeDistance } from "@/common/func";
 
 interface IProps {

@@ -21,7 +21,6 @@ import {
 	YAxis,
 } from "recharts";
 import { toast } from "sonner";
-import classNames from "classnames";
 
 interface RevenueData {
 	value: number;
@@ -41,38 +40,42 @@ interface FilterParams {
 const MONTHS = Array.from({ length: 12 }, (_, i) => (i + 1).toString());
 const CustomTooltip = ({ active, payload, label }: any) => {
 	if (!active || !payload?.length) return null;
+	console.log({ payload });
+
 	return (
 		<div className="p-4 bg-white border rounded shadow">
 			<p className="font-bold">{label}</p>
-			<p className="text-sm">Doanh thu: {formatCurrency(payload[0].netRevenue)}</p>
+			<p className="text-sm">Doanh thu: {formatCurrency(payload[0].value)}</p>
 			<p className="text-sm">
 				Tổng doanh thu: {formatCurrency(payload[0].payload.totalMoney)}
 			</p>
-      <p className="text-sm">
-				Số đơn hàng: {payload[0].payload.count}
-			</p>
-      <p className="text-sm">
+			<p className="text-sm">Số đơn hàng: {payload[0].payload.count}</p>
+			<p className="text-sm">
 				Số đơn thành công: {payload[0].payload.countOrderSuccess}
 			</p>
-      <p className="text-sm">
+			<p className="text-sm">
 				Số đơn thất bại: {payload[0].payload.countOrderCancel}
 			</p>
 		</div>
 	);
 };
 type Props = {
-  title:string,
+	title: string;
 	isShowFilter?: boolean;
 	className?: string;
 };
-const RevenueChartFilter = ({title, isShowFilter = false, className }: Props) => {
+const RevenueChartFilter = ({
+	title,
+	isShowFilter = false,
+	className,
+}: Props) => {
 	const [filterParams, setFilterParams] = useState<FilterParams>({
 		type: "year",
-		year: String(new Date()?.getFullYear()) ,
+		year: String(new Date()?.getFullYear()),
 		month: "",
 	});
 	const [data, setData] = useState<RevenueData[]>([]);
-	const [isLoading, setIsLoading] = useState(false);
+	const [_, setIsLoading] = useState(false);
 
 	const fetchData = async () => {
 		setIsLoading(true);
@@ -99,15 +102,22 @@ const RevenueChartFilter = ({title, isShowFilter = false, className }: Props) =>
 	};
 
 	const showYearSelect =
-		filterParams.type === "" || filterParams.type === "year" || filterParams.type === "month";
+		filterParams.type === "" ||
+		filterParams.type === "year" ||
+		filterParams.type === "month";
 	const showMonthSelect = filterParams.type === "month";
 	return (
 		<div className={className}>
-      <div className="flex items-center justify-between py-2 pl-2 mb-5 border-b">
+			<div className="flex items-center justify-between py-2 pl-2 mb-5 border-b">
 				<p className="font-semibold">{title}</p>
 				<div className="flex items-center gap-2"></div>
 			</div>
-			<div className={cn(" gap-4 mb-3 flex-col md:flex-row justify-end md:pr-7", isShowFilter ? "flex" : "hidden")}>
+			<div
+				className={cn(
+					" gap-4 mb-3 flex-col md:flex-row justify-end md:pr-7",
+					isShowFilter ? "flex" : "hidden",
+				)}
+			>
 				<Select
 					value={filterParams.type}
 					onValueChange={handleFilterChange("type")}
@@ -129,12 +139,14 @@ const RevenueChartFilter = ({title, isShowFilter = false, className }: Props) =>
 						<SelectTrigger className="max-sm:w-11/12 max-sm:mx-auto md:w-[180px]">
 							<SelectValue placeholder="Chọn năm" />
 						</SelectTrigger>
-						<SelectContent>
-							{getYearsArray(2010, new Date().getFullYear())?.map((year) => (
-								<SelectItem key={year} value={String(year)}>
-									{year}
-								</SelectItem>
-							))}
+						<SelectContent className="max-h-56">
+							{getYearsArray(2010, new Date().getFullYear())
+								?.reverse()
+								?.map((year) => (
+									<SelectItem key={year} value={String(year)}>
+										{year}
+									</SelectItem>
+								))}
 						</SelectContent>
 					</Select>
 				)}
@@ -147,7 +159,7 @@ const RevenueChartFilter = ({title, isShowFilter = false, className }: Props) =>
 						<SelectTrigger className="max-sm:w-11/12 max-sm:mx-auto md:w-[180px]">
 							<SelectValue placeholder="Chọn tháng" />
 						</SelectTrigger>
-						<SelectContent>
+						<SelectContent className="max-h-56">
 							{MONTHS.map((month) => (
 								<SelectItem key={month} value={month}>
 									Tháng {month}
@@ -157,7 +169,7 @@ const RevenueChartFilter = ({title, isShowFilter = false, className }: Props) =>
 					</Select>
 				)}
 			</div>
-			<div className="h-[400px] w-full">
+			<div className="flex-1 w-full">
 				<ResponsiveContainer width="100%" height="100%">
 					<LineChart
 						data={data}
@@ -169,9 +181,18 @@ const RevenueChartFilter = ({title, isShowFilter = false, className }: Props) =>
 						}}
 					>
 						<CartesianGrid strokeDasharray="3 3" />
-						<XAxis dataKey="name" angle={-60} tick={{ fontSize: "12px", }} />
-						<YAxis yAxisId={1} tick={{ fontSize: "12px" }}/>
-						<YAxis orientation="right" dataKey="count" yAxisId={2} tick={{ fontSize: "12px" }}/>
+						<XAxis
+							dataKey="name"
+							angle={-50}
+							tick={{ fontSize: "10px", dy: 14 }}
+						/>
+						<YAxis yAxisId={1} tick={{ fontSize: "12px" }} />
+						<YAxis
+							orientation="right"
+							dataKey="count"
+							yAxisId={2}
+							tick={{ fontSize: "12px" }}
+						/>
 						<Tooltip content={<CustomTooltip />} />
 						<Legend />
 						<Line
@@ -180,39 +201,39 @@ const RevenueChartFilter = ({title, isShowFilter = false, className }: Props) =>
 							stroke="#4CC9FE"
 							name="Doanh thu"
 							strokeWidth={2}
-              yAxisId={1}
+							yAxisId={1}
 						/>
-            <Line
+						<Line
 							type="monotone"
 							dataKey="totalMoney"
 							stroke="#659287"
 							name="Tổng doanh thu"
 							strokeWidth={2}
-              yAxisId={1}
+							yAxisId={1}
 						/>
-            <Line
+						<Line
 							type="monotone"
 							dataKey="countOrderSuccess"
 							stroke="#8884d8"
 							name="Đơn thành công"
 							strokeWidth={2}
-              yAxisId={2}
+							yAxisId={2}
 						/>
-            <Line
+						<Line
 							type="monotone"
 							dataKey="count"
 							stroke="#FFE6A9"
 							name="Số đơn hàng"
 							strokeWidth={2}
-              yAxisId={2}
+							yAxisId={2}
 						/>
-            <Line
+						<Line
 							type="monotone"
 							dataKey="countOrderCancel"
 							stroke="#f32718"
 							name="Đơn đã huỷ"
 							strokeWidth={2}
-              yAxisId={2}
+							yAxisId={2}
 						/>
 					</LineChart>
 				</ResponsiveContainer>

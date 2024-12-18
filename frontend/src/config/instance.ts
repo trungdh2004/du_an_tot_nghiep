@@ -1,5 +1,6 @@
+import { ResponseData } from './../types/ObjectCheckoutOrder';
 import axios from "axios";
-import { JwtPayload, jwtDecode } from "jwt-decode";
+
 
 const instance = axios.create({
 	baseURL: process.env.SERVER_URL,
@@ -38,9 +39,6 @@ instance.interceptors.response.use(
 	async (error) => {
 		const originalRequest = error.config;
 
-		// If error is 401 and it's not a retry, attempt to refresh the token
-		console.log(error);
-
 		if (error.response.status === 401) {
 			originalRequest._retry = true;
 			try {
@@ -50,10 +48,15 @@ instance.interceptors.response.use(
 				originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
 				return instance(originalRequest);
 			} catch (refreshError) {
-				// Handle refresh token failure, possibly logging out the user
 				console.error("Refresh token failed", refreshError);
+				
 				return Promise.reject(refreshError);
 			}
+		}
+
+		if(error.response.status === 413) {
+			instance.defaults.headers.common["Authorization"] = null;
+			window.location.href = "/auth/login";
 		}
 
 		return Promise.reject(error);
@@ -61,4 +64,3 @@ instance.interceptors.response.use(
 );
 
 export default instance;
-

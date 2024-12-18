@@ -1,7 +1,5 @@
-import { Dialog } from "@/components/ui/dialog";
 import { actionUpdateReactions, getBlogDetailClient } from "@/service/blog";
 import { IBlogs } from "@/types/blogs";
-import { DialogContent } from "@radix-ui/react-dialog";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { format } from "date-fns";
@@ -204,7 +202,6 @@ const BlogDetail = () => {
 					</div>
 				</div>
 			</div>
-			
 		</div>
 	);
 };

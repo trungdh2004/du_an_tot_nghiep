@@ -17,3 +17,16 @@ export const searchDetailPageService = ({
 	const uri = `${url}/searchClientDetail?keyword=${keyword}&type=${type}&pageIndex=${pageIndex}`;
 	return instance.get(uri);
 };
+
+export const contactFormService = (
+	name: string,
+	email: string,
+	content: string,
+) => {
+	const uri = `${url}/contactForm`;
+	return instance.post(uri, {
+		name,
+		email,
+		content,
+	});
+};

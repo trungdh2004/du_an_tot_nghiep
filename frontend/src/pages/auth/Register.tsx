@@ -18,7 +18,6 @@ import { Input } from "../../components/ui/input";
 import SignInWithFacebookOrGoogle from "./SignInWithFacebookOrGoogle";
 import { createAccount } from "@/service/account";
 import { toast } from "sonner";
-import { AxiosError } from "axios";
 import OverlayViolet from "@/components/OverlayViolet";
 
 const Register = () => {
@@ -146,9 +145,7 @@ const Register = () => {
 										name="forgotPassword"
 										render={({ field }) => (
 											<FormItem className="space-y-0">
-												<FormLabel className="">
-													Xác nhận mật khẩu
-												</FormLabel>
+												<FormLabel className="">Xác nhận mật khẩu</FormLabel>
 												<div className="relative">
 													<FormControl>
 														<Input

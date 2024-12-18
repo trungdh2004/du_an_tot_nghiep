@@ -1,14 +1,7 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import Actions from "./Actions";
+import { Dispatch, SetStateAction, useState } from "react";
 import Reaction from "./Reaction";
-import SendComment from "./SendComment";
 import CommentEditor from "@/components/common/CommentForm";
-import {
-	Comment,
-	IObjectComment,
-	IPageComment,
-} from "@/types/TypeObjectComment";
-import { format } from "date-fns";
+import { Comment, IPageComment } from "@/types/TypeObjectComment";
 import TYPE_COMMENT from "@/config/typeComment";
 import { useAuth } from "@/hooks/auth";
 import {
@@ -17,11 +10,8 @@ import {
 	reactionsComment,
 } from "@/service/comment";
 import { cn } from "@/lib/utils";
-import { AiFillLike } from "react-icons/ai";
-import DialogLoginComment from "./DialogLoginComment";
 import { useLocation, useNavigate } from "react-router-dom";
 import { calculateTimeDistance } from "@/common/func";
-import { Button } from "@/components/ui/button";
 type Props = {
 	comment: Comment;
 	setComment: Dispatch<SetStateAction<Comment[]>>;
@@ -31,7 +21,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 	const [content, setContent] = useState(``);
 	const [pageIndex, setPageIndex] = useState(1);
 	const [check, setCheck] = useState<IPageComment | null>(null);
-	const [open, setOpen] = useState(false);
+	const [_, setOpen] = useState(false);
 	const [openFeedback, setOpenFeedback] = useState<string | null>(null);
 	const [openAnswer, setOpenAnswer] = useState(false);
 	const navigate = useNavigate();
@@ -239,25 +229,25 @@ const CommentItem = ({ comment, setComment }: Props) => {
 	const isFeedbackOpen = openFeedback === comment?._id;
 	return (
 		<div>
-			<div className="flex items-start gap-1 md:gap-3 w-full">
-				<div className="size-7 md:size-10 rounded-full border">
+			<div className="flex items-start w-full gap-1 md:gap-3">
+				<div className="border rounded-full size-7 md:size-10">
 					<img
 						src={comment?.user?.avatarUrl || `/avatar_25.jpg`}
 						alt=""
-						className="w-full h-full object-cover rounded-full"
+						className="object-cover w-full h-full rounded-full"
 					/>
 				</div>
 				<div className="flex-1">
 					<div className="flex flex-col gap-2">
 						<div className="flex items-center gap-2">
-							<span className="font-semibold text-base">
+							<span className="text-base font-semibold">
 								{comment?.user?.full_name}
 							</span>
 							<span className="text-xs text-gray-400">
 								{calculateTimeDistance(new Date(comment?.createdAt))} trước
 							</span>
 						</div>
-						<span className="break-all text-sm">
+						<span className="text-sm break-all">
 							<div dangerouslySetInnerHTML={{ __html: comment?.content }} />
 						</span>
 					</div>
@@ -286,7 +276,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 								handleChange={handleChange}
 							/>
 						) : (
-							<div className="bg-custom-400 p-2 px-4 rounded-full">
+							<div className="p-2 px-4 rounded-full bg-custom-400">
 								Bạn hãy đăng nhập để được bình luận
 							</div>
 						))}
@@ -310,18 +300,18 @@ const CommentItem = ({ comment, setComment }: Props) => {
 				comment?.replies?.map((comment: any) => {
 					const isFeedbackOpen = openFeedback === comment?._id;
 					return (
-						<div className="flex items-start gap-1 md:gap-3 w-full pl-8">
-							<div className="size-7 md:size-10 rounded-full border">
+						<div className="flex items-start w-full gap-1 pl-8 md:gap-3">
+							<div className="border rounded-full size-7 md:size-10">
 								<img
 									src={comment?.user?.avatarUrl || `/avatar_25.jpg`}
 									alt=""
-									className="w-full h-full object-cover rounded-full"
+									className="object-cover w-full h-full rounded-full"
 								/>
 							</div>
 							<div className="flex-1">
 								<div className="flex flex-col gap-2">
 									<div className="flex items-center gap-1">
-										<span className="font-semibold text-base">
+										<span className="text-base font-semibold">
 											{comment?.user?.full_name}
 										</span>
 										<span className="text-xs text-gray-400">
@@ -329,7 +319,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 											trước
 										</span>
 									</div>
-									<span className="break-all text-sm">
+									<span className="text-sm break-all">
 										<div
 											dangerouslySetInnerHTML={{ __html: comment?.content }}
 										/>
@@ -360,7 +350,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 											handleChange={handleChange}
 										/>
 									) : (
-										<div className="bg-custom-400 p-2 px-4 rounded-full">
+										<div className="p-2 px-4 rounded-full bg-custom-400">
 											Bạn hãy đăng nhập để được bình luận
 										</div>
 									))}
@@ -376,7 +366,7 @@ const CommentItem = ({ comment, setComment }: Props) => {
 							handleLoadMoreComments(comment);
 						}}
 					>
-						<h3 className="font-bold text-sm text-slate-600 hover:underline pl-9">
+						<h3 className="text-sm font-bold text-slate-600 hover:underline pl-9">
 							Xem thêm bình luận
 						</h3>
 					</div>

@@ -1,4 +1,3 @@
-import InputNumber from "@/components/common/InputNumber";
 import { TooltipComponent } from "@/components/common/TooltipComponent";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -100,7 +99,11 @@ const voucherSchema = z
 			message: "Giá trị giảm tối đa là 100% cho loại giảm giá phần trăm",
 			path: ["discountValue"],
 		},
-	);
+	)
+	.refine((data) => data.startDate <= data.endDate, {
+		message: "Ngày bắt đầu không được lớn hơn ngày kết thúc",
+		path: ["startDate"],
+	});;
 export type VoucherFormValues = z.infer<typeof voucherSchema>;
 
 const VoucherForm = () => {
@@ -153,7 +156,9 @@ const VoucherForm = () => {
 
 	const handleCreateVoucher = async (
 		payload: z.infer<typeof voucherSchema>,
-	) => {
+  ) => {
+    console.log(payload);
+    
 		try {
 			const { status, type, listUseProduct, ...voucherData } = payload;
 			const formattedData = {
@@ -477,8 +482,8 @@ const VoucherForm = () => {
 													field.onChange(e?.toISOString());
 												}}
 												disabled={(date) => {
-													const newDate = new Date()
-													newDate.setDate(newDate.getDate() - 1)
+													const newDate = new Date();
+													newDate.setDate(newDate.getDate() - 1);
 
 													return (
 														date < newDate || date < new Date("1900-01-01")

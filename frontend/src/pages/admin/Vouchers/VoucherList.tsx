@@ -1,35 +1,34 @@
-import React, { useEffect, useState } from "react";
-import TableComponent from "@/components/common/TableComponent";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { HiOutlineDotsVertical } from "react-icons/hi";
-import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
-import { parseISO, format, isValid } from "date-fns";
-import { useDebounceCallback } from "usehooks-ts";
-import { toast } from "sonner";
 import DialogConfirm from "@/components/common/DialogConfirm";
+import TableComponent from "@/components/common/TableComponent";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SearchObjectType } from "@/types/searchObjecTypes";
 import { typeResponse } from "@/types/typeReponse";
+import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
+import { format, isValid, parseISO } from "date-fns";
+import { useEffect, useState } from "react";
+import { HiOutlineDotsVertical } from "react-icons/hi";
+import { toast } from "sonner";
+import { useDebounceCallback } from "usehooks-ts";
 
 // Cập nhật services import
-import {
-	activeVoucherById,
-	deActiveVoucherById,
-	getPaginatedVouchers,
-	updateViewHomeVoucherById,
-	updateVoucherById,
-} from "@/service/voucher";
 import { formatCurrency } from "@/common/func";
-import { Link } from "react-router-dom";
+import {
+  activeVoucherById,
+  deActiveVoucherById,
+  getPaginatedVouchers,
+  updateViewHomeVoucherById,
+} from "@/service/voucher";
 import { AxiosError } from "axios";
+import { Link } from "react-router-dom";
 
 interface IVoucher {
 	code: string;
@@ -47,14 +46,14 @@ interface IVoucher {
 	updatedAt: string;
 	usageCount: number;
 	usageLimit: number;
-  isHome?: boolean;
+	isHome?: boolean;
 	user: string;
 	_id: string;
 }
 
 const VoucherList = () => {
 	const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-	const [listRowSelected, setListRowSelected] = useState<IVoucher[]>([]);
+	const [_, setListRowSelected] = useState<IVoucher[]>([]);
 	const [data, setData] = useState<IVoucher[]>([]);
 	const [openActivateVoucher, setOpenActivateVoucher] = useState<string>("");
 	const [openDeactivateVoucher, setOpenDeactivateVoucher] =
@@ -112,16 +111,16 @@ const VoucherList = () => {
 			toast.error("Kích hoạt voucher thất bại");
 		}
 	};
-  const handleUpdateIsViewHome = async (id: string,isHome:boolean) => {
-    try {
-      const {data} =  await updateViewHomeVoucherById(id,isHome);
-      toast.success(data?.message);
-    } catch (error) {
-      if(error instanceof AxiosError){
-        toast.error(error.response?.data.message);
-      }
-    }
-  };
+	const handleUpdateIsViewHome = async (id: string, isHome: boolean) => {
+		try {
+			const { data } = await updateViewHomeVoucherById(id, isHome);
+			toast.success(data?.message);
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				toast.error(error.response?.data.message);
+			}
+		}
+	};
 	const handleDeactivateVoucher = async (id: string) => {
 		try {
 			setOpenDeactivateVoucher("");
@@ -149,7 +148,11 @@ const VoucherList = () => {
 		setRowSelection({});
 		setListRowSelected([]);
 	};
-
+  const handleCopy = (code:string) => {
+		navigator.clipboard.writeText(code).then(() => {
+      toast.success('Copy voucher thành công.')
+    });
+	};
 	const columns: ColumnDef<IVoucher>[] = [
 		{
 			id: "select",
@@ -186,16 +189,18 @@ const VoucherList = () => {
 			accessorKey: "code",
 			header: () => <div className="text-xs md:text-base">Mã code</div>,
 			cell: ({ row }) => (
-				<div className="text-xs md:text-base">{row.original.code}</div>
+				<div className="text-xs cursor-pointer md:text-base" onClick={()=>handleCopy(row.original.code)}>{row.original.code}</div>
 			),
 		},
-		
+
 		{
 			accessorKey: "startDate",
 			header: () => <div className="text-xs md:text-base">Ngày bắt đầu</div>,
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.startDate);
-				const formattedDate = isValid(parsedDate) ? format(parsedDate, "dd/MM/yyyy") : "Ngày không hợp lệ";
+				const formattedDate = isValid(parsedDate)
+					? format(parsedDate, "dd/MM/yyyy")
+					: "Ngày không hợp lệ";
 				return <div className="text-xs md:text-base">{formattedDate}</div>;
 			},
 		},
@@ -204,7 +209,9 @@ const VoucherList = () => {
 			header: () => <div className="text-xs md:text-base">Ngày kết thúc</div>,
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row?.original?.endDate);
-				const formattedDate = isValid(parsedDate) ? format(parsedDate, "dd/MM/yyyy") : "Ngày không hợp lệ";
+				const formattedDate = isValid(parsedDate)
+					? format(parsedDate, "dd/MM/yyyy")
+					: "Ngày không hợp lệ";
 				return <div className="text-xs md:text-base">{formattedDate}</div>;
 			},
 		},
@@ -256,12 +263,20 @@ const VoucherList = () => {
 				<div className="text-xs md:text-base ">{row.original.usageCount}</div>
 			),
 		},
-    {
+		{
 			accessorKey: "viewHome",
 			header: () => <div className="text-xs md:text-base">ViewHome</div>,
 			cell: ({ row }) => (
 				<label className="relative inline-flex items-center cursor-pointer">
-					<input id="switch-2" type="checkbox" defaultChecked={row?.original?.isHome} className="sr-only peer" onChange={(e)=>handleUpdateIsViewHome(row?.original?._id,e?.target?.checked)} />
+					<input
+						id="switch-2"
+						type="checkbox"
+						defaultChecked={row?.original?.isHome}
+						className="sr-only peer"
+						onChange={(e) =>
+							handleUpdateIsViewHome(row?.original?._id, e?.target?.checked)
+						}
+					/>
 					<label htmlFor="switch-2" className="hidden" />
 					<div className="peer h-4 w-11 rounded-full border bg-slate-200 after:absolute after:-top-1 after:left-0 after:h-6 after:w-6 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-300 peer-checked:after:translate-x-full peer-focus:ring-green-300" />
 				</label>
@@ -386,6 +401,5 @@ const VoucherList = () => {
 		</div>
 	);
 };
-
 
 export default VoucherList;

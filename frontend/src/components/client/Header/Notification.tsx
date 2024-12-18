@@ -6,21 +6,15 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { formatDistanceToNow } from "date-fns";
-import { vi } from "date-fns/locale";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IoNotificationsOutline } from "react-icons/io5";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { IoCheckmark } from "react-icons/io5";
 import { HiMiniEllipsisHorizontal } from "react-icons/hi2";
 import { IoIosRemoveCircleOutline } from "react-icons/io";
-import {
-	INotification,
-	ISearchObjectNotifications,
-} from "@/types/notification.interface";
+import { ISearchObjectNotifications } from "@/types/notification.interface";
 import { TYPE_NOTIFICATION } from "@/config/configType";
 import { useNavigate } from "react-router-dom";
-import { watchedNotification } from "@/service/notification.service";
 import { calculateTimeDistance } from "@/common/func";
 
 interface IProps {
@@ -110,7 +104,7 @@ const Notification = ({
 									<DropdownMenuItem
 										className={cn(
 											" group mb-1 pr-5",
-											!item.isRead && "bg-custom-100/40",
+											!item.isRead && "bg-blue-100/40",
 										)}
 										onClick={async () => {
 											if (item.directType === TYPE_NOTIFICATION.ORDER) {

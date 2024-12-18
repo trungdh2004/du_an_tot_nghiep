@@ -2,34 +2,31 @@ import TableComponent from "@/components/common/TableComponent";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 
-import { SearchObjectType } from "@/types/searchObjecTypes";
-import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
-import React, { useEffect, useState } from "react";
-import { parseISO, format } from "date-fns";
-import { IoFilter } from "react-icons/io5";
-import instance from "@/config/instance";
+import DialogConfirm from "@/components/common/DialogConfirm";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { HiOutlineDotsVertical } from "react-icons/hi";
-import { Button } from "@/components/ui/button";
-import { typeResponse } from "@/types/typeReponse";
-import { useDebounceCallback } from "usehooks-ts";
-import { toast } from "sonner";
-import DialogConfirm from "@/components/common/DialogConfirm";
-import TagAdd from "./TagAddandUpdate";
-import {
-	hiddenListTag,
-	hiddentag,
-	pagingTags,
-	unhiddenListTag,
-	unhiddentag,
+  hiddenListTag,
+  hiddentag,
+  pagingTags,
+  unhiddenListTag,
+  unhiddentag,
 } from "@/service/tags-admin";
+import { SearchObjectType } from "@/types/searchObjecTypes";
+import { typeResponse } from "@/types/typeReponse";
+import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
+import { format, parseISO } from "date-fns";
+import { useEffect, useState } from "react";
+import { HiOutlineDotsVertical } from "react-icons/hi";
+import { toast } from "sonner";
+import { useDebounceCallback } from "usehooks-ts";
+import TagAdd from "./TagAddandUpdate";
 
 const TagIndex = () => {
 	interface IData {
@@ -94,7 +91,7 @@ const TagIndex = () => {
 	};
 	const handleHiddenCate = async (id: string | boolean) => {
 		try {
-			const { data } = await hiddentag(id);
+			await hiddentag(id);
 			setOpenHiddenTag(false);
 			handleTags();
 			toast.success("Đã ẩn thẻ tag thành công");
@@ -105,7 +102,7 @@ const TagIndex = () => {
 
 	const handleUnhiddenCate = async (id: string | boolean) => {
 		try {
-			const { data } = await unhiddentag(id);
+			await unhiddentag(id);
 			setopenUnhiddenTag(false);
 			handleTags();
 			toast.success("Bỏ ẩn thẻ tag thành công");
@@ -115,7 +112,7 @@ const TagIndex = () => {
 	};
 	const handleManyTag = async (listId: any) => {
 		try {
-			const { data } = await hiddenListTag(listId);
+			await hiddenListTag(listId);
 			setOpenManyTag(false);
 			handleTags();
 			setRowSelection({});
@@ -128,7 +125,7 @@ const TagIndex = () => {
 
 	const handleUnManyTag = async (listId: any) => {
 		try {
-			const { data } = await unhiddenListTag(listId);
+			await unhiddenListTag(listId);
 			setOpenUnManyTag(false);
 			handleTags();
 			setRowSelection({});
@@ -189,22 +186,22 @@ const TagIndex = () => {
 		{
 			accessorKey: "name",
 			header: () => {
-				return <div className="md:text-base text-xs">Tên</div>;
+				return <div className="text-xs md:text-base">Tên</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs">{row?.original?.name}</div>
+					<div className="text-xs md:text-base">{row?.original?.name}</div>
 				);
 			},
 		},
 		{
 			accessorKey: "description",
 			header: () => {
-				return <div className="md:text-base text-xs">Mô tả</div>;
+				return <div className="text-xs md:text-base">Mô tả</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs">
+					<div className="text-xs md:text-base">
 						{row?.original?.description}
 					</div>
 				);
@@ -214,12 +211,12 @@ const TagIndex = () => {
 		{
 			accessorKey: "createdAt",
 			header: () => {
-				return <div className="md:text-base text-xs">Ngày tạo</div>;
+				return <div className="text-xs md:text-base">Ngày tạo</div>;
 			},
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.createdAt);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
-				return <div className="md:text-base text-xs">{formattedDate}</div>;
+				return <div className="text-xs md:text-base">{formattedDate}</div>;
 			},
 		},
 		{
@@ -229,9 +226,9 @@ const TagIndex = () => {
 				return (
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-							<Button variant="ghost" className="h-8 w-8 p-0">
+							<Button variant="ghost" className="w-8 h-8 p-0">
 								<span className="sr-only">Open menu</span>
-								<HiOutlineDotsVertical className="h-4 w-4" />
+								<HiOutlineDotsVertical className="w-4 h-4" />
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
@@ -265,7 +262,7 @@ const TagIndex = () => {
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex flex-col gap-3">
-				<h4 className="font-medium md:text-xl text-base">Danh sách thẻ nhãn</h4>
+				<h4 className="text-base font-medium md:text-xl">Danh sách thẻ nhãn</h4>
 				<div className="flex justify-between">
 					<Input
 						placeholder="Tìm kiếm thẻ tag"

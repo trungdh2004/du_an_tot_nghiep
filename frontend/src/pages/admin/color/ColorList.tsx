@@ -92,7 +92,7 @@ const ColorList = () => {
 	}, [searchObject]);
 	const handleHiddenColor = async (id: string | boolean) => {
 		try {
-			const { data } = await hiddencolor(id);
+			await hiddencolor(id);
 			setOpenHiddenColor(false);
 			handleColor();
 			toast.success("Đã ẩn danh mục thành công");
@@ -102,7 +102,7 @@ const ColorList = () => {
 	};
 	const handleUnhiddenColor = async (id: string | boolean) => {
 		try {
-			const { data } = await unhiddencolor(id);
+			 await unhiddencolor(id);
 			setopenUnhiddenColor(false);
 			handleColor();
 			toast.success("Ẩn màu sắc thành công");
@@ -112,7 +112,7 @@ const ColorList = () => {
 	};
 	const handleHiddenListColors = async (listId: any) => {
 		try {
-			const { data } = await hiddenListColor(listId);
+			await hiddenListColor(listId);
 			setOpenHiddenListColors(false);
 			handleColor();
 			setRowSelection({});
@@ -124,7 +124,7 @@ const ColorList = () => {
 	};
 	const handleUnhiddenListColors = async (listId: any) => {
 		try {
-			const { data } = await unHiddenListColor(listId);
+		 await unHiddenListColor(listId);
 			setOpenUnHiddenListColors(false);
 			handleColor();
 			setRowSelection({});
@@ -192,34 +192,34 @@ const ColorList = () => {
 		{
 			accessorKey: "name",
 			header: () => {
-				return <div className="md:text-base text-xs">Tên</div>;
+				return <div className="text-xs md:text-base">Tên</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs">{row?.original?.name}</div>
+					<div className="text-xs md:text-base">{row?.original?.name}</div>
 				);
 			},
 		},
 		{
 			accessorKey: "code",
 			header: () => {
-				return <div className="md:text-base text-xs">Mã màu</div>;
+				return <div className="text-xs md:text-base">Mã màu</div>;
 			},
 			cell: ({ row }) => {
 				return (
-					<div className="md:text-base text-xs">{row?.original?.code}</div>
+					<div className="text-xs md:text-base">{row?.original?.code}</div>
 				);
 			},
 		},
 		{
 			accessorKey: "color",
 			header: () => {
-				return <div className="md:text-base text-xs">Màu</div>;
+				return <div className="text-xs md:text-base">Màu</div>;
 			},
 			cell: ({ row }) => {
 				return (
 					<div
-						className="md:text-base text-xs w-8 h-8 border rounded-full"
+						className="w-8 h-8 text-xs border rounded-full md:text-base"
 						style={{ backgroundColor: `${row.original.code}` }}
 					></div>
 				);
@@ -228,12 +228,12 @@ const ColorList = () => {
 		{
 			accessorKey: "createdAt",
 			header: () => {
-				return <div className="md:text-base text-xs">Ngày tạo</div>;
+				return <div className="text-xs md:text-base">Ngày tạo</div>;
 			},
 			cell: ({ row }) => {
 				const parsedDate = parseISO(row.original.createdAt);
 				const formattedDate = format(parsedDate, "dd/MM/yyyy");
-				return <div className=" md:text-base text-xs">{formattedDate}</div>;
+				return <div className="text-xs md:text-base">{formattedDate}</div>;
 			},
 		},
 		{
@@ -243,9 +243,9 @@ const ColorList = () => {
 				return (
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-							<Button variant="ghost" className="h-8 w-8 p-0">
+							<Button variant="ghost" className="w-8 h-8 p-0">
 								<span className="sr-only">Open menu</span>
-								<HiOutlineDotsVertical className="h-4 w-4" />
+								<HiOutlineDotsVertical className="w-4 h-4" />
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
@@ -257,14 +257,14 @@ const ColorList = () => {
 							</Button>
 							{row?.original?.deleted ? (
 								<DropdownMenuItem
-									className="text-green-400 text-center pl-4"
+									className="pl-4 text-center text-green-400"
 									onClick={() => setopenUnhiddenColor(row?.original?._id)}
 								>
 									Bỏ ẩn
 								</DropdownMenuItem>
 							) : (
 								<DropdownMenuItem
-									className="text-red-400 text-center pl-4"
+									className="pl-4 text-center text-red-400"
 									onClick={() => setOpenHiddenColor(row?.original?._id)}
 								>
 									Ẩn
@@ -279,10 +279,10 @@ const ColorList = () => {
 	return (
 		<>
 			<div className="flex flex-col gap-3 mb-5">
-				<h4 className="font-medium md:text-xl text-base">Danh sách danh mục</h4>
+				<h4 className="text-base font-medium md:text-xl">Danh sách màu sắc</h4>
 				<div className="flex justify-between">
 					<Input
-						placeholder="Tìm kiếm danh mục"
+						placeholder="Tìm kiếm màu sắc"
 						className="w-[40%] md:text-base text-xs"
 						onChange={(event) => debounced(event.target.value)}
 					/>
@@ -377,10 +377,10 @@ const ColorList = () => {
 			{!!openUnhiddenColor && (
 				<DialogConfirm
 					open={!!openUnhiddenColor}
-					title="Xác nhận bỏ ẩn danh mục"
+					title="Xác nhận bỏ ẩn màu sắc"
 					handleClose={() => setopenUnhiddenColor(false)}
 					handleSubmit={() => handleUnhiddenColor(openUnhiddenColor)}
-					content="Bạn có chắc muốn bỏ ẩn danh mục này?"
+					content="Bạn có chắc muốn bỏ ẩn màu sắc này?"
 					labelConfirm="Bỏ ẩn"
 				/>
 			)}

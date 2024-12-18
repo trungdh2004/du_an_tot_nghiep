@@ -153,6 +153,17 @@ class ProductController {
         ])
         .lean();
 
+      await ProductModel.findOneAndUpdate(
+        {
+          slug: slug,
+        },
+        {
+          $inc: {
+            viewCount: 1,
+          },
+        }
+      );
+
       const listColor = (product?.attributes as IAttribute[])?.reduce(
         (acc: RowIColor[], item) => {
           let group = acc.find(
@@ -324,6 +335,11 @@ class ProductController {
           }
         );
 
+        if (is_simple !== existingProduct.is_simple) {
+          await CartItemModel.deleteMany({
+            product: existingProduct._id,
+          });
+        }
         return res.status(STATUS.OK).json({
           message: "Tạo thành công",
           data: product,
@@ -755,7 +771,7 @@ class ProductController {
             queryRating = {
               rating: {
                 $lte: 5,
-                $gt:4
+                $gt: 4,
               },
             };
             break;
@@ -763,7 +779,7 @@ class ProductController {
             queryRating = {
               rating: {
                 $lte: 4,
-                $gt:3
+                $gt: 3,
               },
             };
             break;
@@ -771,7 +787,7 @@ class ProductController {
             queryRating = {
               rating: {
                 $lte: 3,
-                $gt:2
+                $gt: 2,
               },
             };
             break;
@@ -779,7 +795,7 @@ class ProductController {
             queryRating = {
               rating: {
                 $lte: 2,
-                $gt:1
+                $gt: 1,
               },
             };
             break;
@@ -787,7 +803,7 @@ class ProductController {
             queryRating = {
               rating: {
                 $lte: 1,
-                $gte:0
+                $gte: 0,
               },
             };
             break;

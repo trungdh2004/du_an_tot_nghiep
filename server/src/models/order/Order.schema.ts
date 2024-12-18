@@ -176,6 +176,17 @@ const OrderSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       default: null,
     },
+    is_shipper: {
+      type: Boolean,
+      default: false,
+    },
+    informationOrder: [
+      {
+        name: String,
+        date: Date,
+        content: String,
+      },
+    ],
     orderItems: [
       {
         type: mongoose.Types.ObjectId,
