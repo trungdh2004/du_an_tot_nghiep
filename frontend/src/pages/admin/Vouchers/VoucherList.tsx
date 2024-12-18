@@ -148,7 +148,11 @@ const VoucherList = () => {
 		setRowSelection({});
 		setListRowSelected([]);
 	};
-
+  const handleCopy = (code:string) => {
+		navigator.clipboard.writeText(code).then(() => {
+      toast.success('Copy voucher thành công.')
+    });
+	};
 	const columns: ColumnDef<IVoucher>[] = [
 		{
 			id: "select",
@@ -185,7 +189,7 @@ const VoucherList = () => {
 			accessorKey: "code",
 			header: () => <div className="text-xs md:text-base">Mã code</div>,
 			cell: ({ row }) => (
-				<div className="text-xs md:text-base">{row.original.code}</div>
+				<div className="text-xs cursor-pointer md:text-base" onClick={()=>handleCopy(row.original.code)}>{row.original.code}</div>
 			),
 		},
 

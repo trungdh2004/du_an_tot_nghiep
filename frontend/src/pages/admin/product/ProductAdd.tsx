@@ -150,7 +150,6 @@ const formSchema = z
 	)
 	.refine(
 		(data) => {
-			console.log("data", data);
 			if (data.discount > data.price) {
 				return false;
 			}
@@ -174,7 +173,7 @@ const formSchema = z
 			// Nếu is_simple là true, cho phép attributes là mảng rỗng
 			if (data.attributes && data.attributes.length > 0) {
 				// Nếu có attributes, không yêu cầu các trường con
-				data.attributes.forEach((attr) => {
+				data.attributes.forEach((attr, index) => {
 					// const colorPath = ["attributes", index, "color"];
 					// const sizePath = ["attributes", index, "size"];
 					// const pricePath = ["attributes", index, "price"];
@@ -210,10 +209,16 @@ const formSchema = z
 				});
 			}
 		}
-
-		if (data.attributes && data.attributes.length > 1) {
+		if (data.attributes && data.attributes.length > 0) {
 			const combinations = new Set();
 			data.attributes.forEach((attr, index) => {
+				if (attr.discount > attr.price) {
+					ctx.addIssue({
+						code: z.ZodIssueCode.custom,
+						message: "Giá giảm phải nhỏ hơn giá gốc",
+						path: ["attributes", index, "discount"],
+					});
+				}
 				const combination = `${attr.color?._id}-${attr.size?._id}`;
 				if (combinations.has(combination)) {
 					ctx.addIssue({
